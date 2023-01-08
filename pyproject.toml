@@ -6,15 +6,8 @@ authors = ["Sidharth Rao <sidharthmrao@gmail.com>"]
 
 [tool.poetry.dependencies]
 python=">=3.7,<3.12"
-robotpy = {version = "2023.0.0b7", extras = ["commands2"]}
-robotpy-photonvision = "2023.1.1b7"
-wpilib = "2023.1.1.0"
-pre-commit = "^2.20.0"
-black = "^22.6.0"
-flake8 = "^4.0.1"
-isort = "^5.10.1"
-logger = "^1.4"
-robotpy-toolkit-7407 = "0.5.14"
+robotpy = {extras = ["commands2"], version = "^2023.1.1"}
+robotpy-toolkit-7407 = "^0.5.19"
 
 [tool.poetry.dev-dependencies]
 

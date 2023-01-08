@@ -1,6 +1,8 @@
 import commands2
 import ctre
 import wpilib
+from wpimath.geometry import Pose3d, Translation2d, Rotation2d, Translation3d, Rotation3d
+
 import command
 import config
 import constants
@@ -10,7 +12,8 @@ import subsystem
 import utils
 from oi.OI import OI
 
-from robotpy_toolkit_7407.motors import TalonFX
+from robotpy_toolkit_7407.sensors.photonvision import PhotonCamera, PhotonOdometry
+
 
 class Robot(wpilib.TimedRobot):
     def __init__(self):
@@ -22,20 +25,24 @@ class Robot(wpilib.TimedRobot):
         OI.map_controls()
         period = .03
         commands2.CommandScheduler.getInstance().setPeriod(period)
-        
+
+        self.cam = PhotonCamera("hello", Pose3d(Translation3d(0, 1, 2), Rotation3d(roll=1, pitch=2, yaw=3)), height=1, pitch=1)
+
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
+        self.cam.refresh()
+        print(self.cam.latest_target)
 
     # Initialize subsystems
 
     # Pneumatics
 
     def teleopInit(self):
-        a = ctre.VictorSPX(1)
-        a.set(ctre.ControlMode.PercentOutput, .5)
+        pass
 
     def teleopPeriodic(self):
         pass
+
     def autonomousInit(self):
         pass
 
