@@ -729,14 +729,14 @@ wpilib = ">=2023.1.1.0,<2024.0.0"
 
 [[package]]
 name = "robotpy-toolkit-7407"
-version = "0.5.20"
+version = "0.5.21"
 description = "FRC Wired Boars Team 7407's Toolkit for usage with RobotPy"
 category = "main"
 optional = false
 python-versions = ">3.9,<3.12"
 files = [
-    {file = "robotpy_toolkit_7407-0.5.20-py3-none-any.whl", hash = "sha256:0026df56024a22afaefdf5cfb859d9cf6b71ef6475787dffab29795685e1ce36"},
-    {file = "robotpy_toolkit_7407-0.5.20.tar.gz", hash = "sha256:d23cfb51c21197f419d370bf1a0ba6fafa6543e0c405a9732420c153f1cd1a7e"},
+    {file = "robotpy_toolkit_7407-0.5.21-py3-none-any.whl", hash = "sha256:972319d026b3874219f94cfc529571935705b8f8f06423b0e3cb4a496e771c1f"},
+    {file = "robotpy_toolkit_7407-0.5.21.tar.gz", hash = "sha256:16a5acbc2125062f4a0584cd7d4b58be1e744b2ab4ab57cff625e1ece1949ae2"},
 ]
 
 [package.dependencies]
@@ -907,4 +907,4 @@ robotpy-wpiutil = ">=2023.1.1,<2023.2.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">3.9,<3.12"
-content-hash = "896eb0c8cdfa46f4cd69e5168af96c7945a5e745edabe1195e20ee72699746f4"
+content-hash = "331c39aae5d67ede35a2b181060b3d2141354207a8f5eacd5b05ad08d277cc10"

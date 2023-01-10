@@ -1,18 +1,13 @@
 import commands2
-import ctre
 import wpilib
-from wpimath.geometry import Pose3d, Translation2d, Rotation2d, Translation3d, Rotation3d
+from photonvision import PhotonTrackedTarget
+from robotpy_apriltag import AprilTagFieldLayout, AprilTag
+from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
 
-import command
-import config
-import constants
-import robot_systems
-import sensors
-import subsystem
-import utils
+from wpimath.geometry import Pose3d, Rotation3d, Translation3d, Transform3d
 from oi.OI import OI
 
-from robotpy_toolkit_7407.sensors.photonvision import PhotonCamera, PhotonOdometry
+from robotpy_toolkit_7407.sensors.photonvision import PhotonCamera, PhotonOdometry, PhotonTarget
 
 
 class Robot(wpilib.TimedRobot):
@@ -26,7 +21,31 @@ class Robot(wpilib.TimedRobot):
         period = .03
         commands2.CommandScheduler.getInstance().setPeriod(period)
 
-        self.cam = PhotonCamera("hello", Pose3d(Translation3d(0, 1, 2), Rotation3d(roll=1, pitch=2, yaw=3)), height=1, pitch=1)
+        self.gyro = PigeonIMUGyro_Wrapper(13)
+
+        self.cam = PhotonCamera("hello", Pose3d(Translation3d(0, 1, 2), Rotation3d(roll=1, pitch=2, yaw=3)), height=1,
+                                pitch=1)
+
+        april_tag_1 = AprilTag()
+        april_tag_1.ID = 1
+        april_tag_1.pose = Pose3d(Translation3d(0, 0, 0), Rotation3d(roll=0, pitch=0, yaw=0))
+
+        target = PhotonTarget(PhotonTrackedTarget(1, 1, 1, 1, 1, Transform3d(Pose3d(1, 1, 1, Rotation3d(1, 1, 1)), Pose3d(1, 1, 1, Rotation3d(1, 1, 1))), Transform3d(Pose3d(1, 1, 1, Rotation3d(1, 1, 1)), Pose3d(1, 1, 1, Rotation3d(1, 1, 1))), .1, [(1,1),(1,1),(1,1),(1,1)]))
+
+        self.odometry = PhotonOdometry(
+            self.cam,
+            AprilTagFieldLayout(
+                apriltags=[
+                    april_tag_1
+                ],
+                fieldLength=50,
+                fieldWidth=30
+            ),
+            self.gyro
+        )
+
+        self.odometry.refresh()
+        print(self.odometry.getRobotPose())
 
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
@@ -57,4 +76,5 @@ class Robot(wpilib.TimedRobot):
 
 
 if __name__ == "__main__":
-    wpilib.run(Robot)
+    # wpilib.run(Robot)
+    Robot.robotInit(Robot())
