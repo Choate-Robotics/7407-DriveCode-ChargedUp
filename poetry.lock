@@ -230,17 +230,6 @@ files = [
 ]
 
 [[package]]
-name = "logger"
-version = "1.4"
-description = "Python logging helper"
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "logger-1.4.tar.gz", hash = "sha256:4ecac57133c6376fa215f0fe6b4dc4d60e4d1ad8be005cab4e8a702df682f8b3"},
-]
-
-[[package]]
 name = "packaging"
 version = "23.0"
 description = "Core utilities for Python packages"
@@ -729,18 +718,17 @@ wpilib = ">=2023.1.1.0,<2024.0.0"
 
 [[package]]
 name = "robotpy-toolkit-7407"
-version = "0.5.21"
+version = "0.5.22"
 description = "FRC Wired Boars Team 7407's Toolkit for usage with RobotPy"
 category = "main"
 optional = false
 python-versions = ">3.9,<3.12"
 files = [
-    {file = "robotpy_toolkit_7407-0.5.21-py3-none-any.whl", hash = "sha256:972319d026b3874219f94cfc529571935705b8f8f06423b0e3cb4a496e771c1f"},
-    {file = "robotpy_toolkit_7407-0.5.21.tar.gz", hash = "sha256:16a5acbc2125062f4a0584cd7d4b58be1e744b2ab4ab57cff625e1ece1949ae2"},
+    {file = "robotpy_toolkit_7407-0.5.22-py3-none-any.whl", hash = "sha256:f4aaadfb6969796c26123055df5a6022e953b162b562de5ab9b9d072c35c9fbd"},
+    {file = "robotpy_toolkit_7407-0.5.22.tar.gz", hash = "sha256:056b6804f7e9e23f0ff6f1203484964c985d72526183806f584b5d348b7b18fd"},
 ]
 
 [package.dependencies]
-logger = ">=1.4,<2.0"
 pynetworktables = ">=2021.0.0,<2022.0.0"
 robotpy = {version = ">=2023.1.1,<2024.0.0", extras = ["commands2"]}
 robotpy-apriltag = ">=2023.1.1.0,<2024.0.0.0"
@@ -907,4 +895,4 @@ robotpy-wpiutil = ">=2023.1.1,<2023.2.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">3.9,<3.12"
-content-hash = "331c39aae5d67ede35a2b181060b3d2141354207a8f5eacd5b05ad08d277cc10"
+content-hash = "c8dfc61bd559085110f587c83e7c85d079157f8175cbffc6cf3383300c073b0e"
