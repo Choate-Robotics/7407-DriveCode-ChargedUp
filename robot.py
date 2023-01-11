@@ -1,13 +1,13 @@
 import commands2
 import wpilib
-from photonvision import PhotonTrackedTarget, PhotonCamera
+from photonvision import PhotonTrackedTarget
 from robotpy_apriltag import AprilTagFieldLayout, AprilTag
 from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
 
 from wpimath.geometry import Pose3d, Rotation3d, Translation3d, Transform3d
 from oi.OI import OI
 
-from robotpy_toolkit_7407.sensors.photonvision import PhotonOdometry, PhotonTarget
+from robotpy_toolkit_7407.sensors.photonvision import PhotonOdometry, PhotonTarget, PhotonCamera
 
 
 class Robot(wpilib.TimedRobot):
@@ -21,43 +21,74 @@ class Robot(wpilib.TimedRobot):
         period = .03
         commands2.CommandScheduler.getInstance().setPeriod(period)
 
-        # self.gyro = PigeonIMUGyro_Wrapper(13)
+        self.gyro = PigeonIMUGyro_Wrapper(13)
+        self.camera = PhotonCamera("globalshuttercamera",
+                                   Pose3d(Translation3d(0, 1, 2), Rotation3d(roll=1, pitch=2, yaw=3)),
+                                   scale_constant=(1/1.1),
+                                   height=1, pitch=1)
 
-        # self.cam = PhotonCamera("hello", Pose3d(Translation3d(0, 1, 2), Rotation3d(roll=1, pitch=2, yaw=3)), height=1,
-        #                         pitch=1)
+        # self.camera = PhotonCamera("C922_Pro_Stream_Webcam",
+        #                            Pose3d(Translation3d(0, 0, 0), Rotation3d(roll=0, pitch=0, yaw=0)))
 
-        # april_tag_1 = AprilTag()
-        # april_tag_1.ID = 1
-        # april_tag_1.pose = Pose3d(Translation3d(0, 0, 0), Rotation3d(roll=0, pitch=0, yaw=0))
-        #
-        # target = PhotonTarget(PhotonTrackedTarget(1, 1, 1, 1, 1, Transform3d(Pose3d(1, 1, 1, Rotation3d(1, 1, 1)), Pose3d(1, 1, 1, Rotation3d(1, 1, 1))), Transform3d(Pose3d(1, 1, 1, Rotation3d(1, 1, 1)), Pose3d(1, 1, 1, Rotation3d(1, 1, 1))), .1, [(1,1),(1,1),(1,1),(1,1)]))
+        self.field_layout = {
+            'apriltags': {
+                0: Pose3d(
+                    Translation3d(x=0, y=0, z=0),
+                    Rotation3d(roll=0, pitch=0, yaw=0)
+                ),
+                1: Pose3d(
+                    Translation3d(x=5, y=4, z=2),
+                    Rotation3d(roll=0, pitch=0, yaw=0)
+                ),
+                2: Pose3d(
+                    Translation3d(x=2, y=3, z=6),
+                    Rotation3d(roll=0, pitch=0, yaw=0)
+                ),
+                3: Pose3d(
+                    Translation3d(x=10, y=3, z=1),
+                    Rotation3d(roll=0, pitch=0, yaw=0)
+                ),
+                5: Pose3d(
+                    Translation3d(x=10, y=3, z=1),
+                    Rotation3d(roll=0, pitch=0, yaw=0)
+                ),
+                10: Pose3d(
+                    Translation3d(x=10, y=3, z=1),
+                    Rotation3d(roll=0, pitch=0, yaw=0)
+                ),
+                11: Pose3d(
+                    Translation3d(x=10, y=3, z=1),
+                    Rotation3d(roll=0, pitch=0, yaw=0)
+                ),
+                12: Pose3d(
+                    Translation3d(x=10, y=3, z=1),
+                    Rotation3d(roll=0, pitch=0, yaw=0)
+                ),
+            },
+            'fieldLength': 50,
+            'fieldWidth': 30
+        }
 
-        # self.odometry = PhotonOdometry(
-        #     self.cam,
-        #     AprilTagFieldLayout(
-        #         apriltags=[
-        #             april_tag_1
-        #         ],
-        #         fieldLength=50,
-        #         fieldWidth=30
-        #     ),
-        #     self.gyro
-        # )
-
-        # self.odometry.refresh()
-        # print(self.odometry.getRobotPose())
-
-        self.camera_local = PhotonCamera("globalshuttercamera")
+        self.odometry = PhotonOdometry(
+            self.camera,
+            self.field_layout,
+            self.gyro
+        )
 
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
-        if self.camera_local.hasTargets():
-            for num, target in enumerate(self.camera_local.getLatestResult().getTargets()):
-                print(f"TARGET {num}: ", (target.getBestCameraToTarget().x_feet, target.getBestCameraToTarget().y_feet, target.getBestCameraToTarget().z_feet))
-        else:
-            print("SlothBot: TARGET NOT FOUND")
 
-        # print(self.cam.latest_target)
+        self.odometry.refresh()
+
+        if self.odometry.camera.hasTargets():
+            print("Target Pose: ",
+                  self.odometry.camera.latest_best_target.relative_pose.translation().toTranslation2d())
+            print("Robot Pose: ", self.odometry.getRobotPose())
+        else:
+            print(self.odometry.camera.latest_best_target)
+
+        if self.odometry.camera.latest_best_target is not None:
+            print(self.odometry.camera.latest_best_target.relative_pose.x_feet, self.odometry.camera.latest_best_target.relative_pose.y_feet)
 
     # Initialize subsystems
 
