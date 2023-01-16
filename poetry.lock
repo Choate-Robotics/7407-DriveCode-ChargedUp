@@ -721,14 +721,14 @@ wpilib = ">=2023.1.1.0,<2024.0.0"
 
 [[package]]
 name = "robotpy-toolkit-7407"
-version = "0.5.35"
+version = "0.5.40"
 description = "FRC Wired Boars Team 7407's Toolkit for usage with RobotPy"
 category = "main"
 optional = false
 python-versions = ">3.9,<3.12"
 files = [
-    {file = "robotpy_toolkit_7407-0.5.35-py3-none-any.whl", hash = "sha256:39d97f31f61381da592d8504824c9b9f296c6491276116460f4cae43bf4162df"},
-    {file = "robotpy_toolkit_7407-0.5.35.tar.gz", hash = "sha256:ba5d2dbb5f33c2ea8911b0fdc5b50187d9e5d255935816da167c23fc6343451e"},
+    {file = "robotpy_toolkit_7407-0.5.40-py3-none-any.whl", hash = "sha256:424a2f7811d9f8c7ce78975cdbdc330c8195aa88ffa9d8fddc423d8ccc2d9d8e"},
+    {file = "robotpy_toolkit_7407-0.5.40.tar.gz", hash = "sha256:d0f8ab01d25fa6cfb5c80bcd57201cdbf0cb3b9ec09b0ed2ddd176287fd43fa7"},
 ]
 
 [package.dependencies]
@@ -736,7 +736,7 @@ pynetworktables = ">=2021.0.0,<2022.0.0"
 robotpy = {version = ">=2023.1.1,<2024.0.0", extras = ["commands2"]}
 robotpy-apriltag = ">=2023.1.1.0,<2024.0.0.0"
 robotpy-ctre = ">=2023.0.0,<2024.0.0"
-robotpy-photonvision = ">=2023.1.1b7,<2024.0.0"
+robotpy-photonvision = ">=2023.1.2,<2024.0.0"
 robotpy-rev = ">=2023.1.1,<2024.0.0"
 
 [[package]]

@@ -1,15 +1,23 @@
 import math
 
+import networktables
+import ntcore
+
 import commands2
 import wpilib
 from photonvision import PhotonTrackedTarget
 from robotpy_apriltag import AprilTagFieldLayout, AprilTag
 from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
+from robotpy_toolkit_7407.sensors.limelight import Limelight
 
 from wpimath.geometry import Pose3d, Rotation3d, Translation3d, Transform3d
 from oi.OI import OI
 
 from robotpy_toolkit_7407.sensors.photonvision import PhotonOdometry, PhotonTarget, PhotonCamera
+
+from wpilib import SmartDashboard
+
+from networktables import NetworkTables
 
 
 class Robot(wpilib.TimedRobot):
@@ -24,41 +32,22 @@ class Robot(wpilib.TimedRobot):
         commands2.CommandScheduler.getInstance().setPeriod(period)
 
         self.gyro = PigeonIMUGyro_Wrapper(10)
-        self.camera = PhotonCamera("Global_Shutter_Camera",
-                                   Pose3d(Translation3d(x=.71/2, y=-.69/2, z=.65),
-                                          Rotation3d(roll=0, pitch=0, yaw=0)),
-                                   scale_constant=1)
-
-        # self.camera = PhotonCamera("C922_Pro_Stream_Webcam",
-        #                            Pose3d(Translation3d(0, 0, 0), Rotation3d(roll=0, pitch=0, yaw=0)))
-
-        self.field_layout = {
-            'apriltags': {
-                1: Pose3d(
-                    Translation3d(x=2, y=-2, z=0.70485),
-                    Rotation3d(roll=0, pitch=0, yaw=0)
-                ),
-            },
-            'fieldLength': 50,
-            'fieldWidth': 30
-        }
-
-        self.odometry = PhotonOdometry(
-            self.camera,
-            self.field_layout,
-            self.gyro,
-            start_pose=Pose3d(Translation3d(0, 0, 0), Rotation3d(roll=0, pitch=0, yaw=0))
-        )
 
         self.gyro.reset_angle()
 
+        NetworkTables.initialize(server=f"10.74.07.2")
+        self.limelight = NetworkTables.getTable("limelight")
+        SmartDashboard.init()
+
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
-
-        self.odometry.refresh()
-
-        print("Robot Pose: ", self.odometry.pose_estimate)
-        print("Gyro Angle: ", math.degrees(self.gyro.get_robot_heading()))
+        botpose = self.limelight.getValue("botpose", None)
+        if botpose:
+            botpose = [round(x, 2) for x in botpose]
+            print(botpose)
+            SmartDashboard.putString("botpose_x", str(botpose[0]))
+            SmartDashboard.putString("botpose_y", str(botpose[1]))
+            SmartDashboard.putString("botpose_z", str(botpose[2]))
 
     # Initialize subsystems
 
