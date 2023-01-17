@@ -1,23 +1,9 @@
-import math
-
-import networktables
-import ntcore
-
 import commands2
 import wpilib
-from photonvision import PhotonTrackedTarget
-from robotpy_apriltag import AprilTagFieldLayout, AprilTag
 from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
 from robotpy_toolkit_7407.sensors.limelight import Limelight
-
-from wpimath.geometry import Pose3d, Rotation3d, Translation3d, Transform3d
 from oi.OI import OI
-
-from robotpy_toolkit_7407.sensors.photonvision import PhotonOdometry, PhotonTarget, PhotonCamera
-
 from wpilib import SmartDashboard
-
-from networktables import NetworkTables
 
 
 class Robot(wpilib.TimedRobot):
@@ -32,18 +18,17 @@ class Robot(wpilib.TimedRobot):
         commands2.CommandScheduler.getInstance().setPeriod(period)
 
         self.gyro = PigeonIMUGyro_Wrapper(10)
+        # Target is .46272 meters above ground
 
         self.gyro.reset_angle()
 
-        NetworkTables.initialize(server=f"10.74.07.2")
-        self.limelight = NetworkTables.getTable("limelight")
+        self.limelight = Limelight(cam_height=0, cam_angle=0, robot_ip="10.74.07.2")
         SmartDashboard.init()
 
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
-        botpose = self.limelight.getValue("botpose", None)
+        botpose = self.limelight.get_bot_pose(round_to=2)
         if botpose:
-            botpose = [round(x, 2) for x in botpose]
             print(botpose)
             SmartDashboard.putString("botpose_x", str(botpose[0]))
             SmartDashboard.putString("botpose_y", str(botpose[1]))

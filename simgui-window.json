@@ -1,13 +1,13 @@
 {
   "MainWindow": {
     "GLOBAL": {
-      "height": "1118",
+      "height": "1044",
       "maximized": "0",
       "style": "0",
       "userScale": "2",
-      "width": "458",
-      "xpos": "2411",
-      "ypos": "41"
+      "width": "958",
+      "xpos": "961",
+      "ypos": "35"
     }
   },
   "Window": {
@@ -19,7 +19,7 @@
     "###Joysticks": {
       "Collapsed": "0",
       "Pos": "439,598",
-      "Size": "452,73"
+      "Size": "796,73"
     },
     "###NetworkTables": {
       "Collapsed": "0",
@@ -39,7 +39,7 @@
     "###Timing": {
       "Collapsed": "0",
       "Pos": "5,150",
-      "Size": "135,127"
+      "Size": "133,104"
     },
     "Debug##Default": {
       "Collapsed": "0",
