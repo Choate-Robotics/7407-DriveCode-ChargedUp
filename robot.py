@@ -38,8 +38,10 @@ class _Robot(wpilib.TimedRobot):
             SmartDashboard.putString("botpose_x", str(botpose[0]))
             SmartDashboard.putString("botpose_y", str(botpose[1]))
             SmartDashboard.putString("botpose_z", str(botpose[2]))
+        else:
+            print("Botpose not found")
 
-        print(Sensors.odometry.robot_pose)
+        print(Sensors.odometry.get_limelight_robot_pose())
 
     # Initialize subsystems
 

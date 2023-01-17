@@ -11,7 +11,6 @@ class FieldOdometry:
         self.robot_pose: Pose2d | None = None
 
         self.limelight_front = Limelight(0, 0, robot_ip="10.74.07.2")
-        self.limelight_robot_pose: Pose3d | None = None
 
         self.last_update_time = None
         self.min_update_wait_time = .05  # seconds to wait before checking for pose update
@@ -26,13 +25,16 @@ class FieldOdometry:
         :rtype: Pose3d
         """
         est_pose = self.limelight_front.get_bot_pose()
-        if est_pose is None:
+        if est_pose is None or len(est_pose) == 1:
             return None
 
-        return Pose3d(
-            Translation3d(est_pose[0], est_pose[1], est_pose[2]),
-            Rotation3d(est_pose[3], est_pose[4], est_pose[5])
-        )
+        try:
+            return Pose3d(
+                Translation3d(est_pose[0], est_pose[1], est_pose[2]),
+                Rotation3d(est_pose[3], est_pose[4], est_pose[5])
+            )
+        except:
+            return None
 
     def weighted_pose_average(self, robot_pose: Pose2d, limelight_pose: Pose3d, robot_weight: float,
                               limelight_weight: float) -> Pose2d:
@@ -67,14 +69,16 @@ class FieldOdometry:
             Rotation2d(self.drivetrain.gyro.get_robot_heading())
         )
 
+        limelight_robot_pose: Pose3d | None = None
+
         current_time = time.time()
         if self.last_update_time is None or (current_time - self.last_update_time >= self.min_update_wait_time):
-            self.limelight_robot_pose = self.get_limelight_robot_pose()
+            limelight_robot_pose = self.get_limelight_robot_pose()
 
-        if self.limelight_robot_pose is not None:
+        if limelight_robot_pose is not None:
             weighted_pose = self.weighted_pose_average(
                 self.robot_pose,
-                self.limelight_robot_pose,
+                limelight_robot_pose,
                 self.robot_pose_weight,
                 self.limelight_pose_weight
             )
