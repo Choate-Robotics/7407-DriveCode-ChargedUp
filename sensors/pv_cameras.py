@@ -16,16 +16,17 @@ class PV_Cameras:
     def getPoses(self):
       """this function returns a list of the type (target_id, transformCameraToTarget) for every target"""
       derivedRobotPoses = []
-      for camera in self.cameras:
+      for camera in self.cameras:#Iterate through all cameras
         cameraToTargets = []
         photonResult = camera.getLatestResult()
-        if photonResult.hasTargets():
+        if photonResult.hasTargets():#If we have any targets
             cameraToTargets += [
                 (target.getFiducialId(), target.getBestCameraToTarget())
                 for target in photonResult.getTargets()
                 if target.getPoseAmbiguity() < constants.kPhotonvisionAmbiguityCutoff
             ]
-        if cameraToTargets != 0: 
+
+        if cameraToTargets != 0: #If we have any targets
           derivedRobotPoses += [
               constants.kApriltagPositionDict[tag_id]
               + point.inverse()

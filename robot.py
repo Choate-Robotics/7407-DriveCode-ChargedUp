@@ -6,7 +6,7 @@ from oi.OI import OI
 from wpilib import SmartDashboard
 
 from robot_systems import Robot, Sensors
-from sensors import FieldOdometry
+from sensors import FieldOdometry, PV_Cameras
 
 
 class _Robot(wpilib.TimedRobot):
@@ -24,24 +24,24 @@ class _Robot(wpilib.TimedRobot):
         # Target is .46272 meters above ground
 
         self.gyro.reset_angle()
-
-        self.limelight = Limelight(cam_height=0, cam_angle=0, robot_ip="10.74.07.2")
-        SmartDashboard.init()
+        #self.limelight = Limelight(cam_height=0, cam_angle=0, robot_ip="10.74.07.2")
+        #SmartDashboard.init()
+        self.pv = PV_Cameras.init()
 
         Sensors.odometry = FieldOdometry(Robot.drivetrain)
 
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
-        botpose = self.limelight.get_bot_pose(round_to=2)
-        if botpose:
-            print(botpose)
-            SmartDashboard.putString("botpose_x", str(botpose[0]))
-            SmartDashboard.putString("botpose_y", str(botpose[1]))
-            SmartDashboard.putString("botpose_z", str(botpose[2]))
-        else:
-            print("Botpose not found")
+        botposes = self.pv.getPoses()
+        # if botpose:
+        #     print(botpose)
+        #     SmartDashboard.putString("botpose_x", str(botpose[0]))
+        #     SmartDashboard.putString("botpose_y", str(botpose[1]))
+        #     SmartDashboard.putString("botpose_z", str(botpose[2]))
+        # else:
+        #     print("Botpose not found")
 
-        print(Sensors.odometry.get_limelight_robot_pose())
+        print(botposes)
 
     # Initialize subsystems
 
