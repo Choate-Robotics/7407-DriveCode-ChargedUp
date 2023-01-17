@@ -1,9 +1,9 @@
 import subsystem
 import sensors
-import wpilib
 
 
 class Robot:
+    drivetrain = subsystem.Drivetrain()
     pass
 
 
@@ -12,4 +12,5 @@ class Pneumatics:
 
 
 class Sensors:
+    odometry: sensors.FieldOdometry
     pass

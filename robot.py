@@ -5,8 +5,11 @@ from robotpy_toolkit_7407.sensors.limelight import Limelight
 from oi.OI import OI
 from wpilib import SmartDashboard
 
+from robot_systems import Robot, Sensors
+from sensors import FieldOdometry
 
-class Robot(wpilib.TimedRobot):
+
+class _Robot(wpilib.TimedRobot):
     def __init__(self):
         super().__init__()
 
@@ -25,6 +28,8 @@ class Robot(wpilib.TimedRobot):
         self.limelight = Limelight(cam_height=0, cam_angle=0, robot_ip="10.74.07.2")
         SmartDashboard.init()
 
+        Sensors.odometry = FieldOdometry(Robot.drivetrain)
+
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
         botpose = self.limelight.get_bot_pose(round_to=2)
@@ -33,6 +38,8 @@ class Robot(wpilib.TimedRobot):
             SmartDashboard.putString("botpose_x", str(botpose[0]))
             SmartDashboard.putString("botpose_y", str(botpose[1]))
             SmartDashboard.putString("botpose_z", str(botpose[2]))
+
+        print(Sensors.odometry.robot_pose)
 
     # Initialize subsystems
 
@@ -58,5 +65,5 @@ class Robot(wpilib.TimedRobot):
 
 
 if __name__ == "__main__":
-    wpilib.run(Robot)
+    wpilib.run(_Robot)
     # Robot.robotInit(Robot())
