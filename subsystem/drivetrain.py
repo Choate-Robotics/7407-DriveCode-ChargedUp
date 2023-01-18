@@ -1,9 +1,7 @@
 import math
 
 from wpimath.geometry import Pose2d
-
-import constants
-import ctre
+from ctre import CANCoder
 import rev
 import wpilib
 from robotpy_toolkit_7407.motors.rev_motors import SparkMax, SparkMaxConfig
@@ -27,7 +25,7 @@ MOVE_CONFIG = SparkMaxConfig(
 class SparkMaxSwerveNode(SwerveNode):
     m_move: SparkMax
     m_turn: SparkMax
-    encoder: ctre.CANCoder
+    encoder: CANCoder
     encoder_zeroed_absolute_pos: float = 0
     drive_reversed: bool = False
     turn_reversed: bool = False

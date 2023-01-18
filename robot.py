@@ -38,15 +38,12 @@ class _Robot(wpilib.TimedRobot):
 
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
-        botpose = Sensors.limelight_front.get_bot_pose(round_to=2)
-        if botpose:
-            # print(botpose)
-            SmartDashboard.putString("botpose_x", str(botpose[0]))
-            SmartDashboard.putString("botpose_y", str(botpose[1]))
-            SmartDashboard.putString("botpose_z", str(botpose[2]))
-        else:
-            # print("Botpose not found")
-            pass
+        bot_pose = Sensors.limelight_front.get_bot_pose(round_to=2)
+        if bot_pose:
+            SmartDashboard.putString("bot_pose_x", str(bot_pose[0]))
+            SmartDashboard.putString("bot_pose_y", str(bot_pose[1]))
+            SmartDashboard.putString("bot_pose_z", str(bot_pose[2]))
+            print("LIMELIGHT POSE: ", bot_pose)
 
         Sensors.odometry.update()
         # print(Sensors.odometry.get_robot_pose())

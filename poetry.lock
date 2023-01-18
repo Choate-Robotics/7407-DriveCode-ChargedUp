@@ -723,14 +723,14 @@ wpilib = ">=2023.1.1.0,<2024.0.0"
 
 [[package]]
 name = "robotpy-toolkit-7407"
-version = "0.5.49.4"
+version = "0.5.49.8"
 description = "FRC Wired Boars Team 7407's Toolkit for usage with RobotPy"
 category = "main"
 optional = false
 python-versions = ">3.9,<3.12"
 files = [
-    {file = "robotpy_toolkit_7407-0.5.49.4-py3-none-any.whl", hash = "sha256:426e91e44e6924c060d3580a307e09d3712d324dc3abc37e57d2765c23943c6e"},
-    {file = "robotpy_toolkit_7407-0.5.49.4.tar.gz", hash = "sha256:450004fe891e929db559a4ef827b6b38a65cbaabf43570ee0415e88cc7bebf84"},
+    {file = "robotpy_toolkit_7407-0.5.49.8-py3-none-any.whl", hash = "sha256:4308754d39a66c9c9708b505e78283ae096129b95ecb31238181ef5bd92e9d7f"},
+    {file = "robotpy_toolkit_7407-0.5.49.8.tar.gz", hash = "sha256:c83ed7afe1bd22be5302e61bb8fc823e582fce7cec2f31e3464eac6f1e82a630"},
 ]
 
 [package.dependencies]

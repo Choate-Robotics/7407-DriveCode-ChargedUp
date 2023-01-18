@@ -71,9 +71,12 @@ class FieldOdometry:
 
         if vision_robot_pose_list:
             for vision_robot_pose in vision_robot_pose_list:
-                if vision_robot_pose:
+                if vision_robot_pose[0] and vision_robot_pose[1]:
+                    vision_time = vision_robot_pose[1]
+                    vision_robot_pose = vision_robot_pose[0]
+
                     self.drivetrain.odometry_estimator.addVisionMeasurement(vision_robot_pose.toPose2d(),
-                                                                            Timer.getFPGATimestamp())
+                                                                            vision_time)
 
                     weighted_pose = weighted_pose_average(
                         self.robot_pose,
