@@ -1,5 +1,7 @@
 import time
 
+from wpilib import Timer
+
 from subsystem import Drivetrain
 from wpimath.geometry import Pose2d, Rotation2d, Translation2d, Pose3d, Rotation3d, Translation3d
 from robotpy_toolkit_7407.sensors.limelight import Limelight
@@ -18,7 +20,9 @@ class FieldOdometry:
         self.limelight_pose_weight = .1
         self.robot_pose_weight = 1 - self.limelight_pose_weight
 
-    def get_limelight_robot_pose(self) -> Pose3d | None:
+        self.get_vision_controller_pose = self.get_limelight_robot_pose
+
+    def get_limelight_robot_pose(self) -> list[Pose3d] | None:
         """
         Returns the robot's pose relative to the field, estimated by the limelight.
         :return: Limelight estimate of robot pose.
@@ -29,10 +33,10 @@ class FieldOdometry:
             return None
 
         try:
-            return Pose3d(
+            return [Pose3d(
                 Translation3d(est_pose[0], est_pose[1], est_pose[2]),
                 Rotation3d(est_pose[3], est_pose[4], est_pose[5])
-            )
+            )]
         except:
             return None
 
@@ -69,28 +73,35 @@ class FieldOdometry:
             Rotation2d(self.drivetrain.gyro.get_robot_heading())
         )
 
-        limelight_robot_pose: Pose3d | None = None
+        vision_robot_pose_list: list[Pose3d] | None = None
 
         current_time = time.time()
         if self.last_update_time is None or (current_time - self.last_update_time >= self.min_update_wait_time):
-            limelight_robot_pose = self.get_limelight_robot_pose()
+            vision_robot_pose_list = self.get_vision_controller_pose()
 
-        if limelight_robot_pose is not None:
-            weighted_pose = self.weighted_pose_average(
-                self.robot_pose,
-                limelight_robot_pose,
-                self.robot_pose_weight,
-                self.limelight_pose_weight
-            )
+        if vision_robot_pose_list is not None:
+            for vision_robot_pose in vision_robot_pose_list:
+                self.drivetrain.odometry_estimator.addVisionMeasurement(vision_robot_pose.toPose2d(),
+                                                                        Timer.getFPGATimestamp())
 
-            self.drivetrain.odometry.resetPosition(
-                weighted_pose,
-                self.robot_pose.rotation(),
-            )
+                weighted_pose = self.weighted_pose_average(
+                    self.robot_pose,
+                    vision_robot_pose,
+                    self.robot_pose_weight,
+                    self.limelight_pose_weight
+                )
 
-            self.robot_pose = Pose2d(
-                self.drivetrain.odometry.getPose().translation(),
-                Rotation2d(self.drivetrain.gyro.get_robot_heading())
-            )
+                self.drivetrain.odometry.resetPosition(
+                    weighted_pose,
+                    self.robot_pose.rotation(),
+                )
 
-            self.last_update_time = current_time
+                self.robot_pose = Pose2d(
+                    self.drivetrain.odometry.getPose().translation(),
+                    Rotation2d(self.drivetrain.gyro.get_robot_heading())
+                )
+
+                self.last_update_time = current_time
+
+    def get_robot_pose(self) -> Pose2d:
+        return self.robot_pose
