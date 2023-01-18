@@ -8,7 +8,7 @@ from oi.OI import OI
 from wpilib import SmartDashboard
 
 from robot_systems import Robot, Sensors
-from sensors import FieldOdometry
+from sensors import FieldOdometry, PV_Cameras
 
 
 class _Robot(wpilib.TimedRobot):
@@ -33,8 +33,12 @@ class _Robot(wpilib.TimedRobot):
         Robot.drivetrain.init()
 
         SmartDashboard.init()
+        #self.limelight = Limelight(cam_height=0, cam_angle=0, robot_ip="10.74.07.2")
+        #SmartDashboard.init()
+        self.pv = PV_Cameras()
+        # self.pv.init()
 
-        Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.limelight_controller)
+        Sensors.odometry = FieldOdometry(Robot.drivetrain)
 
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()

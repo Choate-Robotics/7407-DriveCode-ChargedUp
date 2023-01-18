@@ -1,0 +1,1 @@
+kRobotVisionPoseWeight = .1
