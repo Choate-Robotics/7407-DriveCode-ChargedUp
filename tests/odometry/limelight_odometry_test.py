@@ -1,7 +1,10 @@
 from unittest.mock import MagicMock
 import pytest
+from wpimath.geometry import Pose2d, Translation2d, Rotation2d
 
 from sensors import FieldOdometry
+from subsystem.drivetrain import Drivetrain
+from robotpy_toolkit_7407.sensors.limelight import LimelightController, Limelight
 
 from logging import Logger
 
@@ -15,22 +18,21 @@ def field_odometry() -> FieldOdometry:
     :return: A mocked FieldOdometry object.
     :rtype: FieldOdometry
     """
-    mock_drivetrain: MagicMock = MagicMock()
-    mock_drivetrain.odometry.getPose.return_value = [1, 1, 1]
+    mock_drivetrain: Drivetrain = MagicMock()
+    mock_drivetrain.odometry.getPose.return_value = Pose2d(
+        Translation2d(0, 0),
+        Rotation2d(1)
+    )
     mock_drivetrain.gyro.get_robot_heading.return_value = 0
     mock_drivetrain.odometry_estimator.addVisionMeasurement.return_value = None
     mock_drivetrain.odometry.resetPosition.return_value = None
 
-    limelight: MagicMock = MagicMock()
-    limelight.get_bot_pose.return_value = [1, 1, 1, .5, .5, .5]
+    mock_limelight: Limelight = MagicMock()
+    mock_limelight.get_bot_pose.return_value = [1, 1, 1, 0, 0, 0]
 
-    field_odometry: MagicMock = MagicMock()
-    field_odometry.drivetrain = mock_drivetrain
-    field_odometry.robot_pose = [1, 1, 1]
-    field_odometry.robot_pose_weight = .9
-    field_odometry.limelight_pose_weight = 1 - field_odometry.robot_pose_weight
-    field_odometry.min_update_wait_time = .01
-    field_odometry.last_update_time = None
+    limelight_controller: LimelightController = LimelightController([mock_limelight])
+
+    field_odometry: FieldOdometry = FieldOdometry(mock_drivetrain, limelight_controller)
 
     return field_odometry
 
@@ -40,7 +42,7 @@ def test_field_odometry_init(field_odometry: FieldOdometry):
 
 
 def test_field_odometry_get_vision_controller_pose(field_odometry: FieldOdometry):
-    assert field_odometry.get_vision_controller_pose() is not None
+    assert field_odometry.vision_estimator.get_estimated_robot_pose() is not None
 
 
 def test_field_odometry_update(field_odometry: FieldOdometry):

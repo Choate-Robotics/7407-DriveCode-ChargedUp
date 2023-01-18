@@ -1,5 +1,6 @@
 import time
 
+from robotpy_toolkit_7407.sensors.odometry import VisionEstimator
 from wpilib import Timer
 
 from subsystem import Drivetrain
@@ -39,42 +40,24 @@ class FieldOdometry:
     """
     Keeps track of robot position relative to field using a vision estimator (e.g. limelight, photon-vision)
     """
-    def __init__(self, drivetrain: Drivetrain):
-        self.drivetrain = drivetrain
-        self.robot_pose: Pose2d | None = None
 
-        self.limelight_front = Limelight(0, 0, robot_ip="10.74.07.2")
+    def __init__(self, drivetrain: Drivetrain, vision_estimator: VisionEstimator):
+        self.drivetrain = drivetrain
+        self.robot_pose: Pose2d | None = self.drivetrain.odometry.getPose()
 
         self.last_update_time = None
         self.min_update_wait_time = .05  # seconds to wait before checking for pose update
 
-        self.limelight_pose_weight = .1
-        self.robot_pose_weight = 1 - self.limelight_pose_weight
+        self.vision_estimator = vision_estimator
 
-        self.get_vision_controller_pose = self.get_limelight_robot_pose
-
-    def get_limelight_robot_pose(self) -> list[Pose3d] | None:
-        """
-        Returns the robot's pose relative to the field, estimated by the limelight.
-        :return: Limelight estimate of robot pose.
-        :rtype: Pose3d
-        """
-        est_pose = self.limelight_front.get_bot_pose()
-        if est_pose is None or len(est_pose) == 1:
-            return None
-
-        try:
-            return [Pose3d(
-                Translation3d(est_pose[0], est_pose[1], est_pose[2]),
-                Rotation3d(est_pose[3], est_pose[4], est_pose[5])
-            )]
-        except:
-            return None
+        self.vision_estimator_pose_weight = .1
+        self.robot_pose_weight = 1 - self.vision_estimator_pose_weight
 
     def update(self):
         """
         Updates the robot's pose relative to the field. This should be called periodically.
         """
+
         self.robot_pose = Pose2d(
             self.drivetrain.odometry.getPose().translation(),
             Rotation2d(self.drivetrain.gyro.get_robot_heading())
@@ -84,31 +67,36 @@ class FieldOdometry:
 
         current_time = time.time()
         if self.last_update_time is None or (current_time - self.last_update_time >= self.min_update_wait_time):
-            vision_robot_pose_list = self.get_vision_controller_pose()
+            vision_robot_pose_list = self.vision_estimator.get_estimated_robot_pose()
 
-        if vision_robot_pose_list is not None:
+        if vision_robot_pose_list:
             for vision_robot_pose in vision_robot_pose_list:
-                self.drivetrain.odometry_estimator.addVisionMeasurement(vision_robot_pose.toPose2d(),
-                                                                        Timer.getFPGATimestamp())
+                if vision_robot_pose:
+                    self.drivetrain.odometry_estimator.addVisionMeasurement(vision_robot_pose.toPose2d(),
+                                                                            Timer.getFPGATimestamp())
 
-                weighted_pose = weighted_pose_average(
-                    self.robot_pose,
-                    vision_robot_pose,
-                    self.robot_pose_weight,
-                    self.limelight_pose_weight
-                )
+                    weighted_pose = weighted_pose_average(
+                        self.robot_pose,
+                        vision_robot_pose,
+                        self.robot_pose_weight,
+                        self.vision_estimator_pose_weight
+                    )
 
-                self.drivetrain.odometry.resetPosition(
-                    weighted_pose,
-                    self.robot_pose.rotation(),
-                )
+                    self.drivetrain.odometry.resetPosition(
+                        self.robot_pose.rotation(),
+                        weighted_pose,
+                        self.drivetrain.swerve_positions[0],
+                        self.drivetrain.swerve_positions[1],
+                        self.drivetrain.swerve_positions[2],
+                        self.drivetrain.swerve_positions[3]
+                    )
 
-                self.robot_pose = Pose2d(
-                    self.drivetrain.odometry.getPose().translation(),
-                    Rotation2d(self.drivetrain.gyro.get_robot_heading())
-                )
+                    self.robot_pose = Pose2d(
+                        self.drivetrain.odometry.getPose().translation(),
+                        Rotation2d(self.drivetrain.gyro.get_robot_heading())
+                    )
 
-                self.last_update_time = current_time
+                    self.last_update_time = current_time
 
     def get_robot_pose(self) -> Pose2d:
         """

@@ -1,7 +1,9 @@
 import commands2
 import wpilib
 from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
-from robotpy_toolkit_7407.sensors.limelight import Limelight
+from robotpy_toolkit_7407.sensors.limelight import Limelight, LimelightController
+
+import command
 from oi.OI import OI
 from wpilib import SmartDashboard
 
@@ -25,30 +27,40 @@ class _Robot(wpilib.TimedRobot):
 
         self.gyro.reset_angle()
 
-        self.limelight = Limelight(cam_height=0, cam_angle=0, robot_ip="10.74.07.2")
+        Sensors.limelight_front = Limelight(cam_height=0, cam_angle=0, robot_ip="10.74.07.2")
+        Sensors.limelight_controller = LimelightController([Sensors.limelight_front])
+
+        Robot.drivetrain.init()
+
         SmartDashboard.init()
 
-        Sensors.odometry = FieldOdometry(Robot.drivetrain)
+        Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.limelight_controller)
 
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
-        botpose = self.limelight.get_bot_pose(round_to=2)
+        botpose = Sensors.limelight_front.get_bot_pose(round_to=2)
         if botpose:
-            print(botpose)
+            # print(botpose)
             SmartDashboard.putString("botpose_x", str(botpose[0]))
             SmartDashboard.putString("botpose_y", str(botpose[1]))
             SmartDashboard.putString("botpose_z", str(botpose[2]))
         else:
-            print("Botpose not found")
+            # print("Botpose not found")
+            pass
 
-        print(Sensors.odometry.get_limelight_robot_pose())
+        Sensors.odometry.update()
+        # print(Sensors.odometry.get_robot_pose())
 
     # Initialize subsystems
 
     # Pneumatics
 
     def teleopInit(self):
-        pass
+        commands2.CommandScheduler.getInstance().schedule(
+            command.DrivetrainZero(Robot.drivetrain).andThen(
+                command.DriveSwerveCustom(Robot.drivetrain)
+            )
+        )
 
     def teleopPeriodic(self):
         pass

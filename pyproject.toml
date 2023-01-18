@@ -6,7 +6,7 @@ authors = ["Sidharth Rao <sidharthmrao@gmail.com>"]
 
 [tool.poetry.dependencies]
 python=">3.9,<3.12"
-robotpy-toolkit-7407 = "^0.5.22"
+robotpy-toolkit-7407 = "^0.5.49.1"
 
 [tool.poetry.dev-dependencies]
 

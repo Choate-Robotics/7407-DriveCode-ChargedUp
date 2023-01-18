@@ -1,5 +1,6 @@
 import subsystem
 import sensors
+from robotpy_toolkit_7407.sensors.limelight import LimelightController, Limelight
 
 
 class Robot:
@@ -13,4 +14,6 @@ class Pneumatics:
 
 class Sensors:
     odometry: sensors.FieldOdometry
+    limelight_front: Limelight
+    limelight_controller: LimelightController
     pass
