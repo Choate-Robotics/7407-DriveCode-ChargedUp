@@ -33,12 +33,9 @@ class _Robot(wpilib.TimedRobot):
         Robot.drivetrain.init()
 
         SmartDashboard.init()
-        #self.limelight = Limelight(cam_height=0, cam_angle=0, robot_ip="10.74.07.2")
-        #SmartDashboard.init()
         self.pv = PV_Cameras()
-        # self.pv.init()
 
-        Sensors.odometry = FieldOdometry(Robot.drivetrain)
+        Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.limelight_controller)
 
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
@@ -48,6 +45,7 @@ class _Robot(wpilib.TimedRobot):
             SmartDashboard.putString("bot_pose_y", str(bot_pose[1]))
             SmartDashboard.putString("bot_pose_z", str(bot_pose[2]))
             print("LIMELIGHT POSE: ", bot_pose)
+            print("PHOTON POSE: ", self.pv.get_estimated_robot_pose())
 
         Sensors.odometry.update()
         # print(Sensors.odometry.get_robot_pose())
