@@ -71,6 +71,6 @@ kApriltagPositionDict = {  # this is gathered from a mapping of the field, deriv
 }
 
 kCameras = {
-  "Global_Shutter_Camera":Transform3d(Pose3d(),Pose3d(0.258, 0, 1.01, Rotation3d()),)
+  "Global_Shutter_Camera":Transform3d(Pose3d(),Pose3d(0, 0, 0, Rotation3d()),)
 
 }

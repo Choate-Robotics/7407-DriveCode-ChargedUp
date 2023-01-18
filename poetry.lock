@@ -383,7 +383,7 @@ wpilib = ">=2023.1.1.0,<2024.0.0"
 
 [[package]]
 name = "robotpy-toolkit-7407"
-version = "0.5.45"
+version = "0.5.49.7"
 description = "FRC Wired Boars Team 7407's Toolkit for usage with RobotPy"
 category = "main"
 optional = false
@@ -814,8 +814,8 @@ robotpy-rev = [
     {file = "robotpy_rev-2023.1.2-cp39-cp39-win_amd64.whl", hash = "sha256:8c3a9fe49bfc5d3b58c47d586e1b2087268a8494e911439a71aa3f457641c9c5"},
 ]
 robotpy-toolkit-7407 = [
-    {file = "robotpy_toolkit_7407-0.5.45-py3-none-any.whl", hash = "sha256:aec4ad51c53e7b5800594055ad650f3e80539ed3a248164cecbf33b21eba3f03"},
-    {file = "robotpy_toolkit_7407-0.5.45.tar.gz", hash = "sha256:1677416ad8dad7cae33bbf91901c947f92957fafc7245e2fc1871efdce330ada"},
+    {file = "robotpy_toolkit_7407-0.5.49.7-py3-none-any.whl", hash = "sha256:82675f7c178ca95f9f9c1aed399f0ae8ff1c290b1e3c64b0397a16c71c9b84c2"},
+    {file = "robotpy_toolkit_7407-0.5.49.7.tar.gz", hash = "sha256:dca27c137f6187073df17c0c99348aef57d6417729dbec5bb8e0a3b9879ecf95"},
 ]
 robotpy-wpilib-utilities = [
     {file = "robotpy-wpilib-utilities-2023.0.0.tar.gz", hash = "sha256:03ebacc0d63a237056730a45410200f6ae8f263d226b09f98c0f38e4ec98ec42"},

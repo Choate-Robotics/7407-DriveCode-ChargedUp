@@ -18,19 +18,19 @@ class PV_Cameras:
       derivedRobotPoses = []
       for camera in self.cameras:#Iterate through all cameras
         cameraToTargets = []
-        photonResult = camera.getLatestResult()
+        photonResult = camera[0].getLatestResult()
         if photonResult.hasTargets():#If we have any targets
             cameraToTargets += [
                 (target.getFiducialId(), target.getBestCameraToTarget())
                 for target in photonResult.getTargets()
-                if target.getPoseAmbiguity() < constants.kPhotonvisionAmbiguityCutoff
+                if target.getPoseAmbiguity() < 0.4
             ]
 
         if cameraToTargets != 0: #If we have any targets
           derivedRobotPoses += [
-              constants.kApriltagPositionDict[tag_id]
+              (constants.kApriltagPositionDict[tag_id]
               + point.inverse()
-              + constants.kLimelightRelativeToRobotTransform.inverse()
+              + camera[1].inverse(),Timer.getFPGATimestamp())
               for tag_id, point in cameraToTargets
           ]
         
@@ -42,7 +42,7 @@ class PV_Cameras:
         if len(poses) != 0:
           for pose in poses:
             self.poseEstimator.addVisionMeasurement(
-                pose.toPose2d(), Timer.getFPGATimestamp()
+                pose.toPose3d(), Timer.getFPGATimestamp()
             )
 
         # estimatedPosition = self.drive.getPose()
