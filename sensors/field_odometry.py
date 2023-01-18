@@ -7,7 +7,38 @@ from wpimath.geometry import Pose2d, Rotation2d, Translation2d, Pose3d, Rotation
 from robotpy_toolkit_7407.sensors.limelight import Limelight
 
 
+def weighted_pose_average(robot_pose: Pose2d, vision_pose: Pose3d, robot_weight: float,
+                          vision_weight: float) -> Pose2d:
+    """
+    Returns a weighted average of two poses.
+    :param robot_pose: Pose of the robot.
+    :type robot_pose: Pose2d
+    :param vision_pose: Pose of the limelight.
+    :type vision_pose: Pose3d
+    :param robot_weight: Weight of the robot pose.
+    :type robot_weight: float
+    :param vision_weight: Weight of the limelight pose.
+    :type vision_weight: float
+    :return: Weighted average of the two poses.
+    :rtype: Pose2d
+    """
+
+    vision_pose = vision_pose.toPose2d()
+
+    return Pose2d(
+        Translation2d(
+            (robot_pose.translation().X() * robot_weight + vision_pose.translation().X() * vision_weight),
+            (robot_pose.translation().Y() * robot_weight + vision_pose.translation().Y() * vision_weight)
+        ),
+        Rotation2d(
+            robot_pose.rotation().radians() * robot_weight + vision_pose.rotation().radians() * vision_weight)
+    )
+
+
 class FieldOdometry:
+    """
+    Keeps track of robot position relative to field using a vision estimator (e.g. limelight, photon-vision)
+    """
     def __init__(self, drivetrain: Drivetrain):
         self.drivetrain = drivetrain
         self.robot_pose: Pose2d | None = None
@@ -40,34 +71,10 @@ class FieldOdometry:
         except:
             return None
 
-    def weighted_pose_average(self, robot_pose: Pose2d, limelight_pose: Pose3d, robot_weight: float,
-                              limelight_weight: float) -> Pose2d:
-        """
-        Returns a weighted average of two poses.
-        :param robot_pose: Pose of the robot.
-        :type robot_pose: Pose2d
-        :param limelight_pose: Pose of the limelight.
-        :type limelight_pose: Pose3d
-        :param robot_weight: Weight of the robot pose.
-        :type robot_weight: float
-        :param limelight_weight: Weight of the limelight pose.
-        :type limelight_weight: float
-        :return: Weighted average of the two poses.
-        :rtype: Pose2d
-        """
-
-        limelight_pose = limelight_pose.toPose2d()
-
-        return Pose2d(
-            Translation2d(
-                (robot_pose.translation().X() * robot_weight + limelight_pose.translation().X() * limelight_weight),
-                (robot_pose.translation().Y() * robot_weight + limelight_pose.translation().Y() * limelight_weight)
-            ),
-            Rotation2d(
-                robot_pose.rotation().radians() * robot_weight + limelight_pose.rotation().radians() * limelight_weight)
-        )
-
     def update(self):
+        """
+        Updates the robot's pose relative to the field. This should be called periodically.
+        """
         self.robot_pose = Pose2d(
             self.drivetrain.odometry.getPose().translation(),
             Rotation2d(self.drivetrain.gyro.get_robot_heading())
@@ -84,7 +91,7 @@ class FieldOdometry:
                 self.drivetrain.odometry_estimator.addVisionMeasurement(vision_robot_pose.toPose2d(),
                                                                         Timer.getFPGATimestamp())
 
-                weighted_pose = self.weighted_pose_average(
+                weighted_pose = weighted_pose_average(
                     self.robot_pose,
                     vision_robot_pose,
                     self.robot_pose_weight,
@@ -104,4 +111,9 @@ class FieldOdometry:
                 self.last_update_time = current_time
 
     def get_robot_pose(self) -> Pose2d:
+        """
+        Returns the robot's pose relative to the field.
+        :return: Robot pose.
+        :rtype: Pose2d
+        """
         return self.robot_pose
