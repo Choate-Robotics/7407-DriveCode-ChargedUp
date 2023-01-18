@@ -5,6 +5,7 @@ import rev
 import wpilib
 from robotpy_toolkit_7407.motors.rev_motors import SparkMax, SparkMaxConfig
 from robotpy_toolkit_7407.subsystem_templates.drivetrain import SwerveNode, SwerveDrivetrain
+from oi.keymap import Keymap
 
 from robotpy_toolkit_7407.utils.units import (
     deg,
@@ -96,6 +97,16 @@ class Drivetrain(SwerveDrivetrain):
         SparkMax(4, config=TURN_CONFIG),
         wpilib.AnalogEncoder(3),
     )
+
+    axis_dx = Keymap.Drivetrain.DRIVE_X_AXIS
+    axis_dy = Keymap.Drivetrain.DRIVE_Y_AXIS
+    axis_rotation = Keymap.Drivetrain.DRIVE_ROTATION_AXIS
+    axis_y2 = Keymap.Drivetrain.DRIVE_Y2_AXIS
+    track_width: meters = constants.track_width
+    max_vel: meters_per_second = constants.drivetrain_max_vel
+    max_angular_vel: radians_per_second = constants.drivetrain_max_angular_vel
+    deadzone_velocity: meters_per_second = 0.01
+    deadzone_angular_velocity: radians_per_second = (5 * deg / s).asNumber(rad / s)
 
 
 
