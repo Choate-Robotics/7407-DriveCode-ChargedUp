@@ -105,8 +105,7 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         self.zero()
 
     def isFinished(self) -> bool:
-        self.subsystem.gyro.reset_angle()
-        return self.zero_success()
+        return True
 
     def end(self, interrupted: bool) -> None:
         ...

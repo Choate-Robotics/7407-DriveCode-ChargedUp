@@ -25,12 +25,14 @@ MOVE_CONFIG = SparkMaxConfig(
 )
 
 class SparkMaxSwerveNode(SwerveNode):
-    m_move: SparkMax
-    m_turn: SparkMax
-    encoder: ctre.CANCoder
-    encoder_zeroed_absolute_pos: float = 0
-    drive_reversed: bool = False
-    turn_reversed: bool = False
+
+    def __init__(self, m_move: SparkMax, m_turn: SparkMax, encoder: ctre.CANCoder, encoder_zeroed_absolute_pos: float = 0, drive_reversed: bool = False, turn_reversed: bool = False):
+        self.m_move = m_move
+        self.m_turn = m_turn
+        self.encoder = encoder
+        self.encoder_zeroed_absolute_pos = encoder_zeroed_absolute_pos
+        self.drive_reversed = drive_reversed
+        self.turn_reversed = turn_reversed
 
     def init(self):
         super().init()
@@ -41,8 +43,8 @@ class SparkMaxSwerveNode(SwerveNode):
     def zero(self):
         diff_rad = self.encoder_zeroed_absolute_pos - self.encoder.getAbsolutePosition()
         
+        # diff_rad = diff * 2 * math.pi
         current_position_rad = self.get_current_motor_angle()
-
         real_position = current_position_rad - diff_rad
         self.m_turn.set_sensor_position(
             (real_position / (2 * math.pi) * constants.drivetrain_turn_gear_ratio)
@@ -75,14 +77,14 @@ class SparkMaxSwerveNode(SwerveNode):
 
 class Drivetrain(SwerveDrivetrain):
     n_00 = SparkMaxSwerveNode(
-        SparkMax(7, config=MOVE_CONFIG),
-        SparkMax(8, config=TURN_CONFIG),
+        SparkMax(1, config=MOVE_CONFIG),
+        SparkMax(2, config=TURN_CONFIG),
         wpilib.AnalogEncoder(1),
         
     )
     n_01 = SparkMaxSwerveNode(
-        SparkMax(1, config=MOVE_CONFIG),
-        SparkMax(2, config=TURN_CONFIG),
+        SparkMax(3, config=MOVE_CONFIG),
+        SparkMax(4, config=TURN_CONFIG),
         wpilib.AnalogEncoder(0),
     )
 
@@ -93,20 +95,20 @@ class Drivetrain(SwerveDrivetrain):
         
     )
     n_11 = SparkMaxSwerveNode(
-        SparkMax(3, config=MOVE_CONFIG),
-        SparkMax(4, config=TURN_CONFIG),
+        SparkMax(7, config=MOVE_CONFIG),
+        SparkMax(8, config=TURN_CONFIG),
         wpilib.AnalogEncoder(3),
     )
 
-    axis_dx = Keymap.Drivetrain.DRIVE_X_AXIS
-    axis_dy = Keymap.Drivetrain.DRIVE_Y_AXIS
-    axis_rotation = Keymap.Drivetrain.DRIVE_ROTATION_AXIS
-    axis_y2 = Keymap.Drivetrain.DRIVE_Y2_AXIS
-    track_width: meters = constants.track_width
-    max_vel: meters_per_second = constants.drivetrain_max_vel
-    max_angular_vel: radians_per_second = constants.drivetrain_max_angular_vel
-    deadzone_velocity: meters_per_second = 0.01
-    deadzone_angular_velocity: radians_per_second = (5 * deg / s).asNumber(rad / s)
+    # axis_dx = Keymap.Drivetrain.DRIVE_X_AXIS
+    # axis_dy = Keymap.Drivetrain.DRIVE_Y_AXIS
+    # axis_rotation = Keymap.Drivetrain.DRIVE_ROTATION_AXIS
+    # axis_y2 = Keymap.Drivetrain.DRIVE_Y2_AXIS
+    # track_width: meters = constants.track_width
+    # max_vel: meters_per_second = constants.drivetrain_max_vel
+    # max_angular_vel: radians_per_second = constants.drivetrain_max_angular_vel
+    # deadzone_velocity: meters_per_second = 0.01
+    # deadzone_angular_velocity: radians_per_second = (5 * deg / s).asNumber(rad / s)
 
 
 
