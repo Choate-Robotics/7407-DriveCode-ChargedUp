@@ -9,8 +9,8 @@ controllerDRIVER = XBoxController
 controllerOPERATOR = XBoxController
 
 class Controllers:
-    DRIVER = 0
-    OPERATOR = 1
+    DRIVER: int = 0
+    OPERATOR: int = 1
 
 
 class Keymap:

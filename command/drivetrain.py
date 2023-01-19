@@ -105,7 +105,7 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         self.zero()
 
     def isFinished(self) -> bool:
-        return True
+        return self.zero_success()
 
     def end(self, interrupted: bool) -> None:
         ...

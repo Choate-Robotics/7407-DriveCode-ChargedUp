@@ -79,31 +79,31 @@ class Drivetrain(SwerveDrivetrain):
     n_00 = SparkMaxSwerveNode(
         SparkMax(1, config=MOVE_CONFIG),
         SparkMax(2, config=TURN_CONFIG),
-        wpilib.AnalogEncoder(1),
+        ctre.CANCoder(1),
         
     )
     n_01 = SparkMaxSwerveNode(
         SparkMax(3, config=MOVE_CONFIG),
         SparkMax(4, config=TURN_CONFIG),
-        wpilib.AnalogEncoder(0),
+        ctre.CANCoder(0),
     )
 
     n_10 = SparkMaxSwerveNode(
         SparkMax(5, config=MOVE_CONFIG),
         SparkMax(6, config=TURN_CONFIG),
-        wpilib.AnalogEncoder(2),
+        ctre.CANCoder(2),
         
     )
     n_11 = SparkMaxSwerveNode(
         SparkMax(7, config=MOVE_CONFIG),
         SparkMax(8, config=TURN_CONFIG),
-        wpilib.AnalogEncoder(3),
+        ctre.CANCoder(3),
     )
 
-    # axis_dx = Keymap.Drivetrain.DRIVE_X_AXIS
-    # axis_dy = Keymap.Drivetrain.DRIVE_Y_AXIS
-    # axis_rotation = Keymap.Drivetrain.DRIVE_ROTATION_AXIS
-    # axis_y2 = Keymap.Drivetrain.DRIVE_Y2_AXIS
+    axis_dx = Keymap.Drivetrain.DRIVE_X_AXIS
+    axis_dy = Keymap.Drivetrain.DRIVE_Y_AXIS
+    axis_rotation = Keymap.Drivetrain.DRIVE_ROTATION_AXIS
+    axis_y2 = Keymap.Drivetrain.DRIVE_Y2_AXIS
     # track_width: meters = constants.track_width
     # max_vel: meters_per_second = constants.drivetrain_max_vel
     # max_angular_vel: radians_per_second = constants.drivetrain_max_angular_vel

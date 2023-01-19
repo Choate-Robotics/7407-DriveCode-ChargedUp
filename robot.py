@@ -15,8 +15,8 @@ class _Robot(wpilib.TimedRobot):
         # Initialize Operator Interface
         OI.init()
         OI.map_controls()
-        # period = .03
-        # commands2.CommandScheduler.getInstance().setPeriod(period)
+        period = .03
+        commands2.CommandScheduler.getInstance().setPeriod(period)
 
         # self.gyro = PigeonIMUGyro_Wrapper(10)
         # # Target is .46272 meters above ground
