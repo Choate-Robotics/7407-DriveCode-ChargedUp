@@ -33,16 +33,15 @@ class PV_Cameras:
               + camera[1].inverse(),Timer.getFPGATimestamp())
               for tag_id, point in cameraToTargets
           ]
-        
+
       return derivedRobotPoses
 
-
-    def updatePoses(self): #Call this periodically
-        poses = self.getPoses()
-        if len(poses) != 0:
-          for pose in poses:
-            self.poseEstimator.addVisionMeasurement(
-                pose.toPose3d(), Timer.getFPGATimestamp()
-            )
+    # def updatePoses(self): #Call this periodically
+    #     poses = self.getPoses()
+    #     if len(poses) != 0:
+    #       for pose in poses:
+    #         self.poseEstimator.addVisionMeasurement(
+    #             pose.toPose3d(), Timer.getFPGATimestamp()
+    #         )
 
         # estimatedPosition = self.drive.getPose()

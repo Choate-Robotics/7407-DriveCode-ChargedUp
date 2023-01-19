@@ -4,9 +4,13 @@ from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
 from robotpy_toolkit_7407.sensors.limelight import Limelight
 from oi.OI import OI
 from wpilib import SmartDashboard
-
+from networktables import NetworkTables
 from robot_systems import Robot, Sensors
 from sensors import FieldOdometry, PV_Cameras
+from wpimath.geometry import (
+    Pose3d,
+    Pose2d,
+)
 
 
 class _Robot(wpilib.TimedRobot):
@@ -17,6 +21,7 @@ class _Robot(wpilib.TimedRobot):
         # Initialize Operator Interface
         OI.init()
         OI.map_controls()
+        #NetworkTables.initialize()
         period = .03
         commands2.CommandScheduler.getInstance().setPeriod(period)
 
@@ -27,6 +32,9 @@ class _Robot(wpilib.TimedRobot):
         #self.limelight = Limelight(cam_height=0, cam_angle=0, robot_ip="10.74.07.2")
         #SmartDashboard.init()
         self.pv = PV_Cameras()
+        self.testPose = Pose2d(8.689, 10.168, -0.22)
+
+        #self.robotPoseArray = [testPose.X(), testPose.Y(), testPose.rotation().radians()]
         # self.pv.init()
 
         Sensors.odometry = FieldOdometry(Robot.drivetrain)
@@ -36,11 +44,16 @@ class _Robot(wpilib.TimedRobot):
         botposes = self.pv.getPoses()
         if botposes:
             print(botposes[0])
-            SmartDashboard.putString("botpose_x", str(botposes[0]))
+            #SmartDashboard.putString("botpose", str(botposes[0]))
+            botpose = botposes[0][0].toPose2d()
+            SmartDashboard.putNumberArray("botpose", [botpose.X(), botpose.Y(), botpose.rotation().radians()])
             # SmartDashboard.putString("botpose_y", str(botposes[0][1]))
             # SmartDashboard.putString("botpose_z", str(botposes[0][2]))
-        else:
-            print("Botpose not found")
+        # else:
+        #     print("Botpose not found")
+        #     #SmartDashboard.putString("botpose", "bruh")
+        #     print(self.testPose.X(), self.testPose.Y(), self.testPose.rotation().radians())
+        #     SmartDashboard.putNumberArray("botpose", [self.testPose.X(), self.testPose.Y(), self.testPose.rotation().radians()])
 
         print(botposes)
 
