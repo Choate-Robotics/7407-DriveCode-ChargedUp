@@ -53,7 +53,7 @@ class FieldOdometry:
         self.vision_estimator_pose_weight = .1
         self.robot_pose_weight = 1 - self.vision_estimator_pose_weight
 
-    def update(self):
+    def update(self) -> Pose2d:
         """
         Updates the robot's pose relative to the field. This should be called periodically.
         """
@@ -100,6 +100,8 @@ class FieldOdometry:
                     )
 
                     self.last_update_time = current_time
+
+        return self.get_robot_pose()
 
     def get_robot_pose(self) -> Pose2d:
         """

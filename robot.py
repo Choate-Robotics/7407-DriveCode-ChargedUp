@@ -22,33 +22,30 @@ class _Robot(wpilib.TimedRobot):
         period = .03
         commands2.CommandScheduler.getInstance().setPeriod(period)
 
-        self.gyro = PigeonIMUGyro_Wrapper(10)
-        # Target is .46272 meters above ground
-
-        self.gyro.reset_angle()
-
         Sensors.limelight_front = Limelight(cam_height=0, cam_angle=0, robot_ip="10.74.07.2")
         Sensors.limelight_controller = LimelightController([Sensors.limelight_front])
 
         Robot.drivetrain.init()
 
         SmartDashboard.init()
-        self.pv = PV_Cameras()
+        Sensors.pv_controller = PV_Cameras()
 
         Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.limelight_controller)
 
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
-        bot_pose = Sensors.limelight_front.get_bot_pose(round_to=2)
-        if bot_pose:
-            SmartDashboard.putString("bot_pose_x", str(bot_pose[0]))
-            SmartDashboard.putString("bot_pose_y", str(bot_pose[1]))
-            SmartDashboard.putString("bot_pose_z", str(bot_pose[2]))
-            print("LIMELIGHT POSE: ", bot_pose)
-            print("PHOTON POSE: ", self.pv.get_estimated_robot_pose())
+        limelight_bot_pose = Sensors.limelight_controller.get_estimated_robot_pose()
+        pv_bot_pose = Sensors.pv_controller.get_estimated_robot_pose()
 
-        Sensors.odometry.update()
-        # print(Sensors.odometry.get_robot_pose())
+        print("LIMELIGHT POSE: ", limelight_bot_pose)
+        print("PHOTON_VI POSE: ", pv_bot_pose)
+
+        print("ODOMETRY| POSE: ", Sensors.odometry.update())
+
+        SmartDashboard.putString("LIMELIGHT POSE", str(limelight_bot_pose))
+        SmartDashboard.putString("PHOTON_VI POSE", str(pv_bot_pose))
+        SmartDashboard.putString("ODOMETRY POSE", str(Sensors.odometry.update()))
+
 
     # Initialize subsystems
 
