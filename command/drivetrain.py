@@ -2,15 +2,6 @@ from robotpy_toolkit_7407.command import SubsystemCommand
 
 from subsystem import Drivetrain
 
-
-def curve_abs(x):
-    return x**2.4
-
-def curve(x):
-    if x < 0:
-        return -curve_abs(-x)
-    return curve_abs(x)
-
 class DrivetrainZero(SubsystemCommand[Drivetrain]):
     def __init__(self, subsystem: Drivetrain):
         super().__init__(subsystem)
