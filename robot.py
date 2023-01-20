@@ -2,9 +2,11 @@ import commands2
 import wpilib
 from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
 from robotpy_toolkit_7407.sensors.limelight import Limelight
+from robotpy_toolkit_7407 import Subsystem
 from oi.OI import OI
 from wpilib import SmartDashboard
 import command
+import constants
 from robot_systems import Robot
 
 class _Robot(wpilib.TimedRobot):
@@ -15,8 +17,8 @@ class _Robot(wpilib.TimedRobot):
         # Initialize Operator Interface
         OI.init()
         OI.map_controls()
-        period = .03
-        commands2.CommandScheduler.getInstance().setPeriod(period)
+    
+        commands2.CommandScheduler.getInstance().setPeriod(constants.period)
 
         # self.gyro = PigeonIMUGyro_Wrapper(10)
         # # Target is .46272 meters above ground

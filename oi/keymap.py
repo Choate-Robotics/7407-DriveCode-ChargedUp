@@ -18,4 +18,3 @@ class Keymap:
         DRIVE_X_AXIS = JoystickAxis(Controllers.DRIVER, controllerDRIVER.L_JOY[0])
         DRIVE_Y_AXIS = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.L_JOY[1])
         DRIVE_ROTATION_AXIS = JoystickAxis(Controllers.DRIVER, controllerDRIVER.R_JOY[0])
-        DRIVE_Y2_AXIS = JoystickAxis(Controllers.DRIVER, controllerDRIVER.R_JOY[1])

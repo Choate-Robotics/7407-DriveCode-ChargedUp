@@ -6,7 +6,7 @@
       "style": "0",
       "userScale": "2",
       "width": "958",
-      "xpos": "961",
+      "xpos": "791",
       "ypos": "64"
     }
   },
@@ -23,7 +23,7 @@
     },
     "###NetworkTables": {
       "Collapsed": "0",
-      "Pos": "439,219",
+      "Pos": "290,783",
       "Size": "750,185"
     },
     "###Other Devices": {
@@ -39,7 +39,7 @@
     "###Timing": {
       "Collapsed": "0",
       "Pos": "5,150",
-      "Size": "135,127"
+      "Size": "135,150"
     },
     "Debug##Default": {
       "Collapsed": "0",
