@@ -1,5 +1,6 @@
 import math
 
+from robotpy_toolkit_7407.utils.units import meters
 from wpimath.geometry import Pose2d
 from ctre import CANCoder
 import rev
@@ -71,6 +72,12 @@ class SparkMaxSwerveNode(SwerveNode):
 
     def get_motor_velocity(self) -> float:
         return self.m_move.get_sensor_velocity() / constants.drivetrain_move_gear_ratio
+
+    def get_drive_motor_traveled_distance(self) -> float:  # in meters
+        return self.m_move.get_sensor_position() / constants.drivetrain_move_gear_ratio
+
+    def get_turn_motor_angle(self) -> float:  # Radians
+        return self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio
 
 
 class Drivetrain(SwerveDrivetrain):

@@ -32,20 +32,29 @@ class _Robot(wpilib.TimedRobot):
 
         Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.limelight_controller)
 
+        # self.start_limelight_pose = Sensors.limelight_controller.get_estimated_robot_pose()[0].toPose2d()
+        # self.start_robot_pose = Sensors.odometry.get_robot_pose()
+
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
         limelight_bot_pose = Sensors.limelight_controller.get_estimated_robot_pose()
         pv_bot_pose = Sensors.pv_controller.get_estimated_robot_pose()
+        current_robot_pose = Sensors.odometry.update()
 
-        print("LIMELIGHT POSE: ", limelight_bot_pose)
-        print("PHOTON_VI POSE: ", pv_bot_pose)
+        # print("LIMELIGHT POSE: ", limelight_bot_pose)
+        # print("PHOTON_VI POSE: ", pv_bot_pose)
+        #
+        # print("ODOMETRY| POSE: ", Sensors.odometry.update())
+        #
+        # SmartDashboard.putString("LIMELIGHT POSE", str(limelight_bot_pose))
+        # SmartDashboard.putString("PHOTON_VI POSE", str(pv_bot_pose))
+        SmartDashboard.putString("ODOMETRY POSE", str(current_robot_pose))
+        SmartDashboard.putString("DRIVETRAIN POSE", str(Robot.drivetrain.odometry.getPose()))
 
-        print("ODOMETRY| POSE: ", Sensors.odometry.update())
+        # SmartDashboard.putString("ROBOT_EST_POSE_X", str(round(current_robot_pose.x - self.start_robot_pose.x, 2)))
+        # SmartDashboard.putString("ROBOT_EST_POSE_Y", str(round(current_robot_pose.y - self.start_robot_pose.y, 2)))
 
-        SmartDashboard.putString("LIMELIGHT POSE", str(limelight_bot_pose))
-        SmartDashboard.putString("PHOTON_VI POSE", str(pv_bot_pose))
-        SmartDashboard.putString("ODOMETRY POSE", str(Sensors.odometry.update()))
-
+        # print(Sensors.limelight_controller.limelights[0].table.getValue("json", None))
 
     # Initialize subsystems
 

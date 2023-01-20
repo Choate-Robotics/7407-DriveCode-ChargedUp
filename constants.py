@@ -17,8 +17,8 @@ from wpimath.geometry import (
     Rotation3d,
     Transform3d,
 )
-drivetrain_turn_gear_ratio = 80.4848
 
+drivetrain_turn_gear_ratio = 80.4848
 
 drivetrain_move_gear_ratio = ((544318 * rev_sensor_unit) / (511 * inch)).asNumber(
     rad / m
@@ -32,8 +32,7 @@ drivetrain_target_max_vel = (7 * mile / hour).asNumber(m / s)
 drivetrain_max_angular_vel = (2 * rev / s).asNumber(rad / s)
 drivetrain_max_climb_vel = (2 * mile / hour).asNumber(m / s)
 
-
-#Change this later on we don't really need these conversions
+# Change this later on we don't really need these conversions
 kCentimetersPerInch = 2.54
 """centimeters / inch"""
 
@@ -43,8 +42,9 @@ kCentimetersPerMeter = 100
 kMetersPerInch = kCentimetersPerInch / kCentimetersPerMeter
 """meters / inch"""
 
-#Thanks to 1757 + 6328 for providing field constants
-kApriltagPositionDict = {  # this is gathered from a mapping of the field, derived with positions and ZYX order rotations converted to Quaternions in bulk in a spreadsheet
+# Thanks to 1757 + 6328 for providing field constants
+kApriltagPositionDict = {
+    # this is gathered from a mapping of the field, derived with positions and ZYX order rotations converted to Quaternions in bulk in a spreadsheet
     1: Pose3d(
         (kMetersPerInch * 610.77),
         (kMetersPerInch * 42.19),
@@ -96,6 +96,8 @@ kApriltagPositionDict = {  # this is gathered from a mapping of the field, deriv
 }
 
 kCameras = {
-  "Global_Shutter_Camera":Transform3d(Pose3d(),Pose3d(0, 0, 0, Rotation3d()),)
-
+    "Global_Shutter_Camera": Transform3d(
+        Pose3d(),
+        Pose3d(0, 0, 0, Rotation3d())
+    )
 }
