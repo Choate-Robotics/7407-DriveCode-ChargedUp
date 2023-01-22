@@ -6,6 +6,7 @@ from robotpy_toolkit_7407.subsystem_templates.drivetrain import SwerveDrivetrain
 import config
 import ctre
 import constants
+import wpilib
 
 class Claw(Subsystem):
 
@@ -22,6 +23,8 @@ class Claw(Subsystem):
         self.encoder = encoder
         # Speed variable 
         self.raw_output = None
+        # Claw compress settings
+        self.is_claw_compressed = False
 
     def init(self):
         # Initialize motor
@@ -30,6 +33,8 @@ class Claw(Subsystem):
         self.zero()
         # Initialized as True
         self.initialized = True
+        # Initializing pneumatic cylinder
+        self.cylinder = wpilib.DoubleSolenoid(1, wpilib.PneumaticsModuleType.REVPH, 4, 5)
 
     def set_angle(self, pos: float):
         # Pos is value from 0-2pi
@@ -60,7 +65,18 @@ class Claw(Subsystem):
     # def get claw motor speed
     # Being solved by datastore in self.speed
 
+    def open_claw(self):
+        # Enable pneumatic cylinder
+        # Set distance forward (closes claw)
+        self.cylinder.set(wpilib.DoubleSolenoid.Value.kForward)
+        # Setting speed
+        self.set_claw_speed(constants.claw_motor_speed)
+        # Update bool
+        self.is_claw_compressed = True
 
-    # def open claw 
-
-    # def close claw
+    def close_claw(self):
+        self.cylinder.set(wpilib.DoubleSolenoid.Value.kReverse)
+        # Setting speed to 0
+        self.set_claw_speed(0)
+        # Update bool
+        self.is_claw_compressed = False
