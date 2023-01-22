@@ -3,7 +3,7 @@ from robotpy_toolkit_7407 import Subsystem
 from robotpy_toolkit_7407.motors.revmotor import SparkMax
 from robotpy_toolkit_7407.utils.units import meters
 from robotpy_toolkit_7407.sensors.limit_switches.limit_switch import LimitSwitch
-
+import math
 import constants
 import config
 #importing packages
@@ -66,7 +66,6 @@ class Elevator(Subsystem): #elevator class
         boundary_y = constants.vertical_boundary - constants.pivot_point_height
         pivot_point = constants.pivot_point_height
         
-    
     
     '''def set_speed(self):
      #motor_cfg = SparkMax(motion_cruise_velocity=1500*Sparkmax_motors.k_sensor_vel_to_rad_per_sec,motion_acceleration=5000*Sparkmax_motors.k_sensor_accel_to_rad_per_sec_sq)
