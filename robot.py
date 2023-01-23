@@ -3,10 +3,11 @@ import wpilib
 from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
 from robotpy_toolkit_7407.sensors.limelight import Limelight
 from oi.OI import OI
+from robot_systems import Pneumatics, Sensors, Robot
 from wpilib import SmartDashboard
 
 
-class Robot(wpilib.TimedRobot):
+class _Robot(wpilib.TimedRobot):
     def __init__(self):
         super().__init__()
 
@@ -16,7 +17,7 @@ class Robot(wpilib.TimedRobot):
         OI.map_controls()
         period = .03
         commands2.CommandScheduler.getInstance().setPeriod(period)
-
+        Pneumatics.compressor.enableAnalog(90, 120)
         self.gyro = PigeonIMUGyro_Wrapper(10)
         # Target is .46272 meters above ground
 
@@ -27,12 +28,12 @@ class Robot(wpilib.TimedRobot):
 
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
-        botpose = self.limelight.get_bot_pose(round_to=2)
-        if botpose:
-            print(botpose)
-            SmartDashboard.putString("botpose_x", str(botpose[0]))
-            SmartDashboard.putString("botpose_y", str(botpose[1]))
-            SmartDashboard.putString("botpose_z", str(botpose[2]))
+        # botpose = self.limelight.get_bot_pose(round_to=2)
+        # if botpose:
+        #     print(botpose)
+        #     SmartDashboard.putString("botpose_x", str(botpose[0]))
+        #     SmartDashboard.putString("botpose_y", str(botpose[1]))
+        #     SmartDashboard.putString("botpose_z", str(botpose[2]))
 
     # Initialize subsystems
 
@@ -58,5 +59,5 @@ class Robot(wpilib.TimedRobot):
 
 
 if __name__ == "__main__":
-    wpilib.run(Robot)
+    wpilib.run(_Robot)
     # Robot.robotInit(Robot())

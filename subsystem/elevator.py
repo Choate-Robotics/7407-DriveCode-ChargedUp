@@ -1,6 +1,7 @@
 import wpilib
+import rev
 from robotpy_toolkit_7407 import Subsystem
-from robotpy_toolkit_7407.motors.revmotor import SparkMax
+from robotpy_toolkit_7407.motors.rev_motors import SparkMax
 from robotpy_toolkit_7407.utils.units import meters
 from robotpy_toolkit_7407.sensors.limit_switches.limit_switch import LimitSwitch
 
@@ -13,14 +14,19 @@ class Elevator(Subsystem): #elevator class
     motor_extend: SparkMax = SparkMax(config.elevator_motor_extend_id)#motor that extends the arm
     right_rotation_motor: SparkMax = SparkMax(config.elevator_right_rotation_motor_id, inverted = True) #motor that rotates the arm
     left_rotation_motor: SparkMax = SparkMax(config.elevator_left_rotation_motor_id, inverted = False) #motor that rotates the arm
+    brake: wpilib.Solenoid = wpilib.Solenoid(1, wpilib.PneumaticsModuleType.REVPH, config.elevator_brake_id) #brake that holds the arm in place
     initialized: bool = False
     extend_sensor = LimitSwitch(9) #senses when extension is at zero
-    turn_sensor = LimitSwitch(8) #senses when turn is at zero
+    turn_sensor = rev.CANSparkMax(config.elevator_left_rotation_motor_id, rev.MotorType.kBrushless).getAbsoluteEncoder(rev._rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle) #senses the rotation of the elevator
+
+
 
     def init(self): #initializing motors
         self.motor_extend.init()
         self.right_rotation_motor.init()
         self.left_rotation_motor.init()
+        self.right_rotation_motor.follow(config.elevator_left_rotation_motor_id, True)
+        self.brake.set(True)
         
     
     def set_length(self, h: meters): #set arm extension
@@ -36,6 +42,11 @@ class Elevator(Subsystem): #elevator class
     def get_rotation(self, h: meters): #returns arm rotation
         return self.left_rotation_motor.get_sensor_position() / constants.elevator_gear_ratio
     
+    def enable_brake(self):
+        self.brake.set(True)
+
+    def disable_brake(self):
+        self.brake.set(False)
 
     def zero_elevator(self): #brings elevator to zero position (no extension, no rotation)
         self.motor_extend.set_sensor_position(0)
