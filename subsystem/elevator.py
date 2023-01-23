@@ -73,16 +73,22 @@ class Elevator(Subsystem): #elevator class
         self.set_height(config.elevator_max_height)
     
     def boundary_box(self, degree):
-        boundary_x = constants.robot_length/2 + constants.horizontal_boundary
-        boundary_y = constants.vertical_boundary - constants.pivot_point_height
-        pivot_point = constants.pivot_point_height
+        top_box_height = constants.vertical_boundary - constants.pivot_point_height
+        bottom_box_height = constants.pivot_point_height
+        horizontal_length = 0.5(constants.robot_length) + constants.horizontal_boundary
+        top_box_angle = math.acos(top_box_height/constants.max_elevator_height)
+        side_box_angle = math.acos(horizontal_length/constants.max_elevator_height)
+        bottom_box_angle = math.acos(bottom_box_height/constants.max_elevator_height)
         
-    
-    '''def set_speed(self):
-     #motor_cfg = SparkMax(motion_cruise_velocity=1500*Sparkmax_motors.k_sensor_vel_to_rad_per_sec,motion_acceleration=5000*Sparkmax_motors.k_sensor_accel_to_rad_per_sec_sq)
+        if degree < top_box_angle:
+            pass
+        elif (90 - degree) > side_box_angle:
+            pass
+        elif (180 - degree) > bottom_box_angle:
+            pass
 
-    for m in self.motor_extend.motors:
-            m._set_config(motor_cfg)'''
+        
+
     
 
     
