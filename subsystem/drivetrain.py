@@ -57,6 +57,7 @@ class SparkMaxSwerveNode(SwerveNode):
 
     def raw_output(self, power):
         self.m_move.set_raw_output(power)
+        self.m_turn.set_raw_output(power)
 
     # reposition the wheels
     def set_motor_angle(self, pos: radians):
@@ -100,18 +101,18 @@ class Drivetrain(SwerveDrivetrain):
     n_01 = SparkMaxSwerveNode(
         SparkMax(3, config=MOVE_CONFIG),
         SparkMax(4, config=TURN_CONFIG),
-        CANCoder(23)
+        CANCoder(21)
     )
 
     n_10 = SparkMaxSwerveNode(
         SparkMax(14, config=MOVE_CONFIG),
         SparkMax(13, config=TURN_CONFIG),
-        CANCoder(22)
+        CANCoder(23)
     )
     n_11 = SparkMaxSwerveNode(
         SparkMax(5, config=MOVE_CONFIG),
         SparkMax(6, config=TURN_CONFIG),
-        CANCoder(21),
+        CANCoder(22),
     )
 
     gyro = PigeonIMUGyro_Wrapper(0)
