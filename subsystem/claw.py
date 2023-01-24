@@ -3,6 +3,7 @@ from robotpy_toolkit_7407 import Subsystem
 from robotpy_toolkit_7407.motors.rev_motors import SparkMax, SparkMaxConfig
 from robotpy_toolkit_7407.sensors.limit_switches.limit_switch import LimitSwitch
 from robotpy_toolkit_7407.subsystem_templates.drivetrain import SwerveDrivetrain
+from robotpy_toolkit_7407.pneumatics.pistons.double_solenoid import DoubleSolenoidPiston
 import config
 import ctre
 import constants
@@ -11,8 +12,20 @@ import wpilib
 class Claw(Subsystem):
 
     claw_motor: SparkMax = SparkMax(config.claw_motor_extend_id)
-    claw_close_piston: wpilib.DoubleSolenoid = wpilib.DoubleSolenoid(1, wpilib.PneumaticsModuleType.REVPH, 4, 5)
+    claw_close_piston: DoubleSolenoidPiston = DoubleSolenoidPiston(1, wpilib.PneumaticsModuleType.REVPH, 4, 5)
     claw_motor_initialized: bool = False
+
+    def __init__(self, claw_motor, claw_close_piston):
+        """
+        Constructor 
+
+        Args:
+            claw_motor (SparkMax): The motor that controls the claw
+            claw_close_piston (DoubleSolenoidPiston): The piston that opens/closes the claw
+        """
+        self.claw_motor = claw_motor
+        self.claw_close_piston = claw_close_piston
+        self.claw_motor_initialized: bool = False
 
     def init(self):
         self.claw_motor.init()
@@ -39,24 +52,24 @@ class Claw(Subsystem):
         self.claw_motor.set_sensor_position(0)
         self.set_angle(0)
 
-    # def set claw motor speed
-    def set_claw_speed(self, speed: float):
+    # def set claw motor output (speed)
+    def set_claw_ouput(self, speed: float):
         """
-        Set the speed of the claw motor
+        Set the output of the claw motor
 
         Args:
-            speed (float): Speed from -1 to 1
+            output (float): Speed from -1 to 1
         """
         self.claw_motor.set_raw_output(speed)
         self.raw_output = speed
 
     def open_claw(self):
         # Set distance forward (closes claw)
-        self.claw_close_piston.set(wpilib.DoubleSolenoid.Value.kForward)
-        self.set_claw_speed(constants.claw_motor_speed)
+        self.claw_close_piston.extend()
+        self.set_claw_ouput(constants.claw_motor_speed)
         self.is_claw_compressed = True
 
     def close_claw(self):
-        self.claw_close_piston.set(wpilib.DoubleSolenoid.Value.kReverse)
-        self.set_claw_speed(0)
+        self.claw_close_piston.retract()
+        self.set_claw_ouput(0)
         self.is_claw_compressed = False
