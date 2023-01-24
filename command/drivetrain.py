@@ -1,3 +1,5 @@
+import logging
+
 from robotpy_toolkit_7407.command import SubsystemCommand
 
 from subsystem import Drivetrain
@@ -21,6 +23,7 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
         pass
 
     def execute(self) -> None:
+
         dx, dy, d_theta = (
             self.subsystem.axis_dx.value,
             self.subsystem.axis_dy.value,

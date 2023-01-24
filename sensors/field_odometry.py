@@ -1,3 +1,5 @@
+import time
+
 from robotpy_toolkit_7407.sensors.odometry import VisionEstimator
 
 from subsystem import Drivetrain
@@ -67,43 +69,43 @@ class FieldOdometry:
             Rotation2d(self.drivetrain.gyro.get_robot_heading())
         )
 
-        # vision_robot_pose_list: list[Pose3d] | None = None
-        #
-        # current_time = time.time()
-        # if self.last_update_time is None or (current_time - self.last_update_time >= self.min_update_wait_time):
-        #     vision_robot_pose_list = self.vision_estimator.get_estimated_robot_pose()
-        #
-        # if vision_robot_pose_list:
-        #     for vision_robot_pose in vision_robot_pose_list:
-        #         if vision_robot_pose[0] and vision_robot_pose[1]:
-        #             vision_time = vision_robot_pose[1]
-        #             vision_robot_pose = vision_robot_pose[0]
-        #
-        #             self.drivetrain.odometry_estimator.addVisionMeasurement(vision_robot_pose.toPose2d(),
-        #                                                                     vision_time)
-        #
-        #             weighted_pose = weighted_pose_average(
-        #                 self.robot_pose,
-        #                 vision_robot_pose,
-        #                 self.robot_pose_weight,
-        #                 self.vision_estimator_pose_weight
-        #             )
-        #
-        #             self.drivetrain.odometry.resetPosition(
-        #                 self.robot_pose.rotation(),
-        #                 weighted_pose,
-        #                 self.drivetrain.swerve_positions[0],
-        #                 self.drivetrain.swerve_positions[1],
-        #                 self.drivetrain.swerve_positions[2],
-        #                 self.drivetrain.swerve_positions[3]
-        #             )
-        #
-        #             self.robot_pose = Pose2d(
-        #                 self.drivetrain.odometry.getPose().translation(),
-        #                 Rotation2d(self.drivetrain.gyro.get_robot_heading())
-        #             )
-        #
-        #             self.last_update_time = current_time
+        vision_robot_pose_list: list[Pose3d] | None = None
+
+        current_time = time.time()
+        if self.last_update_time is None or (current_time - self.last_update_time >= self.min_update_wait_time):
+            vision_robot_pose_list = self.vision_estimator.get_estimated_robot_pose()
+
+        if vision_robot_pose_list:
+            for vision_robot_pose in vision_robot_pose_list:
+                if vision_robot_pose[0] and vision_robot_pose[1]:
+                    vision_time = vision_robot_pose[1]
+                    vision_robot_pose = vision_robot_pose[0]
+
+                    self.drivetrain.odometry_estimator.addVisionMeasurement(vision_robot_pose.toPose2d(),
+                                                                            vision_time)
+
+                    weighted_pose = weighted_pose_average(
+                        self.robot_pose,
+                        vision_robot_pose,
+                        self.robot_pose_weight,
+                        self.vision_estimator_pose_weight
+                    )
+
+                    self.drivetrain.odometry.resetPosition(
+                        self.robot_pose.rotation(),
+                        weighted_pose,
+                        self.drivetrain.swerve_positions[0],
+                        self.drivetrain.swerve_positions[1],
+                        self.drivetrain.swerve_positions[2],
+                        self.drivetrain.swerve_positions[3]
+                    )
+
+                    self.robot_pose = Pose2d(
+                        self.drivetrain.odometry.getPose().translation(),
+                        Rotation2d(self.drivetrain.gyro.get_robot_heading())
+                    )
+
+                    self.last_update_time = current_time
 
         return self.get_robot_pose()
 

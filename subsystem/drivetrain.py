@@ -30,11 +30,13 @@ class SparkMaxSwerveNode(SwerveNode):
     encoder_zeroed_absolute_pos: float = 0
     drive_reversed: bool = False
     turn_reversed: bool = False
+    start_dist: float = 0
 
     def init(self):
         super().init()
         self.m_move.init()
         self.m_turn.init()
+        self.start_dist = self.m_move.get_sensor_position() / constants.drivetrain_move_gear_ratio
 
     # make the turn motor set their sensor 0 to current horizontal thingy
     def zero(self):
@@ -74,7 +76,9 @@ class SparkMaxSwerveNode(SwerveNode):
         return self.m_move.get_sensor_velocity() / constants.drivetrain_move_gear_ratio
 
     def get_drive_motor_traveled_distance(self) -> float:  # in meters
-        return self.m_move.get_sensor_position() / constants.drivetrain_move_gear_ratio
+        print("DRIVE MOTOR TRAVELED DISTANCE: ", (self.m_move.get_sensor_position() / constants.drivetrain_move_gear_ratio) - self.start_dist)
+        print(self.start_dist)
+        return (self.m_move.get_sensor_position() / constants.drivetrain_move_gear_ratio) - self.start_dist
 
     def get_turn_motor_angle(self) -> float:  # Radians
         return self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio
