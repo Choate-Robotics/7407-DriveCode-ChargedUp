@@ -1,7 +1,7 @@
 import commands2
 import wpilib
 from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
-from robotpy_toolkit_7407.sensors.limelight import Limelight
+from robotpy_toolkit_7407.sensors.limelight import Limelight, LimelightController
 from oi.OI import OI
 from wpilib import SmartDashboard
 import command
