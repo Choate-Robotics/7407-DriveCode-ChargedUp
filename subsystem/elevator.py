@@ -71,29 +71,47 @@ class Elevator(Subsystem): #elevator class
     
     def extend_max_elevator(self):
         self.set_height(config.elevator_max_height)
+
     
     def boundary_box(self, degree):
+
+        degree = abs(degree)
+
+        def get_length_ratio(angle, adjacent):
+            #Gets the length of the angle using cosine
+            max_length = adjacent / math.cos(angle)
+            #if the length of the angle is greater than the max_elevator_height, return one
+            #else give a percentage of the height of the current line and the max_elevator_height
+            #protects against any irregular numbers heigher than the max elevator height by always 
+            #defaulting to 1
+            if max_length > constants.max_elevator_height:
+                return 1
+            else:
+                return max_length / constants.max_elevator_height #where is the hype at 
+
+        #Finds the length of each the dimensions for the boundry box using the constants
         top_box_height = constants.vertical_boundary - constants.pivot_point_height
         bottom_box_height = constants.pivot_point_height
         horizontal_length = 0.5(constants.robot_length) + constants.horizontal_boundary
+
+
+        #finds the angle on each side where the length is equal to the max_elevator_height
         top_box_angle = math.acos(top_box_height/constants.max_elevator_height)
         side_box_angle = math.acos(horizontal_length/constants.max_elevator_height)
         bottom_box_angle = math.acos(bottom_box_height/constants.max_elevator_height)
         
+        #if the degree is within the minimun range of each of these boundry sides
+
+        # assuming the top is zero...
+
+        #if the degree is within the max_elevator_extension and facing the top
         if degree < top_box_angle:
-            pass
-        elif (90 - degree) > side_box_angle:
-            pass
-        elif (180 - degree) > bottom_box_angle:
-            pass
+            return get_length_ratio(degree, top_box_angle)
+        #if the degree is within the max_elevator_extension and facing the sides
+        elif (degree) > side_box_angle and degree < side_box_angle+(90 - side_box_angle):
+            return get_length_ratio( 90- degree, side_box_angle)
+        #if the degree is within the max_elevator_extension and facing the bottom
+        elif (degree) > bottom_box_angle:
+            return get_length_ratio( 180 - degree, bottom_box_angle)
 
         
-
-    
-
-    
-
-    
-    
-    
-    
