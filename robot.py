@@ -45,10 +45,13 @@ class _Robot(wpilib.TimedRobot):
         SmartDashboard.putString("DRIVETRAIN POSE", str(Robot.drivetrain.odometry.getPose()))
 
     def teleopInit(self):
-        # commands2.CommandScheduler.getInstance().schedule(
-        #     command.DrivetrainZero(Robot.drivetrain)
-        # )
+        commands2.CommandScheduler.getInstance().schedule(
+            command.DrivetrainZero(Robot.drivetrain)
+        )
 
+        # Robot.drivetrain.n_00.raw_output(.1)
+        # Robot.drivetrain.n_01.raw_output(.1)
+        # Robot.drivetrain.n_10.raw_output(.1)
         # Robot.drivetrain.n_11.raw_output(.1)
         pass
     def teleopPeriodic(self):

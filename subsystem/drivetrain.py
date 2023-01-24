@@ -3,7 +3,6 @@ import math
 from wpimath.geometry import Pose2d
 from ctre import CANCoder
 import rev
-import wpilib
 from robotpy_toolkit_7407.motors.rev_motors import SparkMax, SparkMaxConfig
 from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
 
@@ -57,7 +56,6 @@ class SparkMaxSwerveNode(SwerveNode):
 
     def raw_output(self, power):
         self.m_move.set_raw_output(power)
-        self.m_turn.set_raw_output(power)
 
     # reposition the wheels
     def set_motor_angle(self, pos: radians):
@@ -91,28 +89,30 @@ class SparkMaxSwerveNode(SwerveNode):
         return self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio
 
 
-
 class Drivetrain(SwerveDrivetrain):
     n_00 = SparkMaxSwerveNode(
         SparkMax(16, config=MOVE_CONFIG),
         SparkMax(15, config=TURN_CONFIG),
         CANCoder(24),
+        absolute_encoder_zeroed_pos=354.023
     )
     n_01 = SparkMaxSwerveNode(
         SparkMax(3, config=MOVE_CONFIG),
         SparkMax(4, config=TURN_CONFIG),
-        CANCoder(21)
+        CANCoder(21),
+        absolute_encoder_zeroed_pos=42.539
     )
-
     n_10 = SparkMaxSwerveNode(
         SparkMax(14, config=MOVE_CONFIG),
         SparkMax(13, config=TURN_CONFIG),
-        CANCoder(23)
+        CANCoder(23),
+        absolute_encoder_zeroed_pos=13.535
     )
     n_11 = SparkMaxSwerveNode(
         SparkMax(5, config=MOVE_CONFIG),
         SparkMax(6, config=TURN_CONFIG),
         CANCoder(22),
+        absolute_encoder_zeroed_pos=48.603
     )
 
     gyro = PigeonIMUGyro_Wrapper(0)
@@ -125,4 +125,3 @@ class Drivetrain(SwerveDrivetrain):
     deadzone_velocity: meters_per_second = 0.01
     deadzone_angular_velocity: radians_per_second = math.radians(5)
     start_pose: Pose2d = Pose2d(0, 0, 0)
-
