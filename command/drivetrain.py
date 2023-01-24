@@ -72,15 +72,20 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         self.subsystem = subsystem
 
     def zero(self):
-        self.subsystem.n_00.zero()
-        self.subsystem.n_01.zero()
-        self.subsystem.n_10.zero()
-        self.subsystem.n_11.zero()
+        # self.subsystem.n_00.zero()
+        # self.subsystem.n_01.zero()
+        # self.subsystem.n_10.zero()
+        # self.subsystem.n_11.zero()
+        #
+        # self.subsystem.n_00.set_motor_angle(0)
+        # self.subsystem.n_01.set_motor_angle(0)
+        # self.subsystem.n_10.set_motor_angle(0)
+        # self.subsystem.n_11.set_motor_angle(0)
 
-        self.subsystem.n_00.set_motor_angle(0)
-        self.subsystem.n_01.set_motor_angle(0)
-        self.subsystem.n_10.set_motor_angle(0)
-        self.subsystem.n_11.set_motor_angle(0)
+        self.subsystem.n_00.raw_output(.2)
+        self.subsystem.n_01.raw_output(.2)
+        self.subsystem.n_10.raw_output(.2)
+        self.subsystem.n_11.raw_output(.2)
 
     def zero_success(self):
         threshold = 0.02
@@ -108,8 +113,9 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         self.zero()
 
     def isFinished(self) -> bool:
-        self.subsystem.gyro.reset_angle()
-        return self.zero_success()
+        # self.subsystem.gyro.reset_angle()
+        # return self.zero_success()
+        return False
 
     def end(self, interrupted: bool) -> None:
         # for i in [self.subsystem.n_00, self.subsystem.n_01, self.subsystem.n_10, self.subsystem.n_11]:

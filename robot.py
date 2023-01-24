@@ -41,25 +41,8 @@ class _Robot(wpilib.TimedRobot):
         limelight_bot_pose = Sensors.limelight_controller.get_estimated_robot_pose()
         pv_bot_pose = Sensors.pv_controller.get_estimated_robot_pose()
         current_robot_pose = Sensors.odometry.update()
-
-        # print("LIMELIGHT POSE: ", limelight_bot_pose)
-        # print("PHOTON_VI POSE: ", pv_bot_pose)
-        #
-        # print("ODOMETRY| POSE: ", Sensors.odometry.update())
-        #
-        # SmartDashboard.putString("LIMELIGHT POSE", str(limelight_bot_pose))
-        # SmartDashboard.putString("PHOTON_VI POSE", str(pv_bot_pose))
         SmartDashboard.putString("ODOMETRY POSE", str(current_robot_pose))
         SmartDashboard.putString("DRIVETRAIN POSE", str(Robot.drivetrain.odometry.getPose()))
-
-        # SmartDashboard.putString("ROBOT_EST_POSE_X", str(round(current_robot_pose.x - self.start_robot_pose.x, 2)))
-        # SmartDashboard.putString("ROBOT_EST_POSE_Y", str(round(current_robot_pose.y - self.start_robot_pose.y, 2)))
-
-        # print(Sensors.limelight_controller.limelights[0].table.getValue("json", None))
-
-    # Initialize subsystems
-
-    # Pneumatics
 
     def teleopInit(self):
         commands2.CommandScheduler.getInstance().schedule(
@@ -84,5 +67,5 @@ class _Robot(wpilib.TimedRobot):
 
 
 if __name__ == "__main__":
-    wpilib.run(Robot)
+    wpilib.run(_Robot)
     # Robot.robotInit(Robot())
