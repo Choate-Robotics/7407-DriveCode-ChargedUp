@@ -7,7 +7,7 @@ import constants
 from robot_systems import Robot
 from subsystem import Elevator
 
-class setPosition(SubsystemCommand[Elevator]):
+class SetPosition(SubsystemCommand[Elevator]):
 
     def __init__(self, subsystem: T, target: Pose3d):
         super().__init__(subsystem)
@@ -32,3 +32,20 @@ class setPosition(SubsystemCommand[Elevator]):
 
     def end(self, interrupted):
         self.subsystem.set_position(self.position)
+
+class ZeroArm(SubsystemCommand[Elevator]):
+    def __init__(self, subsystem: T):
+        super().__init__(subsystem)
+    
+    def initialize(self):
+        self.subsystem.motor_extend.set_target_position(0)
+        self.subsystem.left_rotation_motor.set_target_position(0)
+    
+    def execute(self):
+        self.subsystem.zero_elevator()
+
+    def isFinished(self):
+        return self.extend_sensor.get_value() == False and self.turn_sensor.get_value() == False
+
+    def end(self):
+        pass

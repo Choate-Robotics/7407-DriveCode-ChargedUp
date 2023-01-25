@@ -49,24 +49,8 @@ class Elevator(Subsystem): #elevator class
         self.brake.set(False)
 
     def zero_elevator(self): #brings elevator to zero position (no extension, no rotation)
-        self.motor_extend.set_sensor_position(0)
-        while(self.extend_sensor.get_value() == False):
-            h = self.get_length()
-            h -= 0.005
-            self.set_length(h)
-        #We didnt know where we were before, so after we have reached the zero position we tell the motor sensor this is zero. Like Zeroing the CNC machine.
-        self.motor_extend.set_target_position(0)
-        
-
-        while(self.turn_sensor.get_value() == False):
-            h = self.get_length()
-            h -= 0.005
-            self.set_rotation(h)
-         # reset motor's sensor position to 0 
-        self.right_rotation_motor.set_target_position(0)
-        self.right_rotation_motor.set_sensor_position(0)
-        self.left_rotation_motor.set_target_position(0)
-        self.left_rotation_motor.set_sensor_position(0)
+        self.set_length(self.get_length()-0.005)
+        self.set_rotation(self.get_rotation()-0.005)
     
     
     def extend_max_elevator(self):
