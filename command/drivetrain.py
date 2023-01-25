@@ -117,3 +117,4 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
             self.subsystem.n_11,
         ]:
             node.m_turn.set_sensor_position(0)
+            node.set_motor_angle(0)

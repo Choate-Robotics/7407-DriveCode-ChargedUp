@@ -56,11 +56,6 @@ class _Robot(wpilib.TimedRobot):
         commands2.CommandScheduler.getInstance().schedule(
             command.DrivetrainZero(Robot.drivetrain)
         )
-
-        # Robot.drivetrain.n_00.raw_output(.1)
-        # Robot.drivetrain.n_01.raw_output(.1)
-        # Robot.drivetrain.n_10.raw_output(.1)
-        # Robot.drivetrain.n_11.raw_output(.1)
         pass
 
     def teleopPeriodic(self):
@@ -75,6 +70,19 @@ class _Robot(wpilib.TimedRobot):
         )
         SmartDashboard.putString(
             "N11", str(Robot.drivetrain.n_11.encoder.getAbsolutePosition())
+        )
+
+        SmartDashboard.putString(
+            "N00_m", str(Robot.drivetrain.n_00.get_turn_motor_angle())
+        )
+        SmartDashboard.putString(
+            "N01_m", str(Robot.drivetrain.n_01.get_turn_motor_angle())
+        )
+        SmartDashboard.putString(
+            "N10_m", str(Robot.drivetrain.n_10.get_turn_motor_angle())
+        )
+        SmartDashboard.putString(
+            "N11_m", str(Robot.drivetrain.n_11.get_turn_motor_angle())
         )
 
     def autonomousInit(self):
