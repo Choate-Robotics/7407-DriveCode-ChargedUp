@@ -82,7 +82,7 @@ class SparkMaxSwerveNode(SwerveNode):
 
     def get_drive_motor_traveled_distance(self) -> meters:
         drive_motor_traveled_distance: meters = (
-                                                        self.m_move.get_sensor_position() * drive_motor_encoder_units__to__meters) - self.start_dist
+                                                            self.m_move.get_sensor_position() * drive_motor_encoder_units__to__meters) - self.start_dist
         return drive_motor_traveled_distance
 
     def get_turn_motor_angle(self) -> radians:
