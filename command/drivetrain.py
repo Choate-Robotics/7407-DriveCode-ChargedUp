@@ -1,5 +1,3 @@
-import logging
-
 from robotpy_toolkit_7407.command import SubsystemCommand
 
 from subsystem import Drivetrain
@@ -108,11 +106,14 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         self.zero()
 
     def isFinished(self) -> bool:
-        # self.subsystem.gyro.reset_angle()
-        # return self.zero_success()
-        return False
+        self.subsystem.gyro.reset_angle()
+        return self.zero_success()
 
     def end(self, interrupted: bool) -> None:
-        # for i in [self.subsystem.n_00, self.subsystem.n_01, self.subsystem.n_10, self.subsystem.n_11]:
-        #     i.m_turn.set_sensor_position(0)
-        ...
+        for node in [
+            self.subsystem.n_00,
+            self.subsystem.n_01,
+            self.subsystem.n_10,
+            self.subsystem.n_11,
+        ]:
+            node.m_turn.set_sensor_position(0)
