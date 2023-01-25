@@ -110,11 +110,13 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         return self.zero_success()
 
     def end(self, interrupted: bool) -> None:
-        for node in [
-            self.subsystem.n_00,
-            self.subsystem.n_01,
-            self.subsystem.n_10,
-            self.subsystem.n_11,
-        ]:
-            node.m_turn.set_sensor_position(0)
-            node.set_motor_angle(0)
+        # for node in [
+        #     self.subsystem.n_00,
+        #     self.subsystem.n_01,
+        #     self.subsystem.n_10,
+        #     self.subsystem.n_11,
+        # ]:
+        #     node.m_turn.set_sensor_position(0)
+        #     node.set_motor_angle(0)
+
+        ...

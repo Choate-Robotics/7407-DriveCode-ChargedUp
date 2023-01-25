@@ -470,14 +470,14 @@ invoke = ["invoke (>=2.0)"]
 
 [[package]]
 name = "pathspec"
-version = "0.10.3"
+version = "0.11.0"
 description = "Utility library for gitignore style pattern matching of file paths."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pathspec-0.10.3-py3-none-any.whl", hash = "sha256:3c95343af8b756205e2aba76e843ba9520a24dd84f68c22b9f93251507509dd6"},
-    {file = "pathspec-0.10.3.tar.gz", hash = "sha256:56200de4077d9d0791465aa9095a01d421861e405b5096955051deefd697d6f6"},
+    {file = "pathspec-0.11.0-py3-none-any.whl", hash = "sha256:3a66eb970cbac598f9e5ccb5b2cf58930cd8e3ed86d393d541eaf2d8b1705229"},
+    {file = "pathspec-0.11.0.tar.gz", hash = "sha256:64d338d4e0914e91c1792321e6907b5a593f1ab1851de7fc269557a21b30ebbc"},
 ]
 
 [[package]]
@@ -783,14 +783,14 @@ files = [
 
 [[package]]
 name = "robotpy"
-version = "2023.2.1.2"
+version = "2023.2.1.3"
 description = "Meta package to make installing robotpy easier"
 category = "main"
 optional = false
 python-versions = ">=3.7,<3.12"
 files = [
-    {file = "robotpy-2023.2.1.2-py3-none-any.whl", hash = "sha256:7931393fb283b014548be961f3cb532c8b4fdc34e0f6df8747913bbb6e216e59"},
-    {file = "robotpy-2023.2.1.2.tar.gz", hash = "sha256:5c2997efde016b6ae6323471a434370ed9b18c417345bcd72231417271a812a3"},
+    {file = "robotpy-2023.2.1.3-py3-none-any.whl", hash = "sha256:eebf4f01310f987388572a624221e81cc10ab5e701b6c5ed7055bfc2ff5be251"},
+    {file = "robotpy-2023.2.1.3.tar.gz", hash = "sha256:fa574b1edf6208b23e4658037ff0988814660c647029ca25d504431d97bf96f8"},
 ]
 
 [package.dependencies]
@@ -806,12 +806,13 @@ robotpy-wpiutil = "2023.2.1.1"
 wpilib = "2023.2.1.1"
 
 [package.extras]
-all = ["numpy", "pyfrc (>=2023.0.1,<2024.0.0)", "pyntcore (==2023.2.1.2)", "robotpy-apriltag (==2023.2.1.1)", "robotpy-commands-v2 (==2023.2.1.1)", "robotpy-cscore (==2023.2.1.1)", "robotpy-ctre (>=2023.0.0,<2024.0.0)", "robotpy-hal (==2023.2.1.1)", "robotpy-halsim-ds-socket (==2023.2.1.1)", "robotpy-halsim-gui (==2023.2.1.1)", "robotpy-halsim-ws (==2023.2.1.1)", "robotpy-installer (>=2023.0.1,<2024.0.0)", "robotpy-navx (>=2023.0.1,<2024.0.0)", "robotpy-opencv", "robotpy-photonvision (>=2023.1.2,<2024.0.0)", "robotpy-playingwithfusion (>=2023.0.0,<2024.0.0)", "robotpy-rev (>=2023.1.1,<2024.0.0)", "robotpy-wpilib-utilities (==2023.0.0)", "robotpy-wpimath (==2023.2.1.1)", "robotpy-wpiutil (==2023.2.1.1)", "wpilib (==2023.2.1.1)"]
+all = ["numpy", "pyfrc (>=2023.0.1,<2024.0.0)", "pyntcore (==2023.2.1.2)", "robotpy-apriltag (==2023.2.1.1)", "robotpy-commands-v2 (==2023.2.1.1)", "robotpy-cscore (==2023.2.1.1)", "robotpy-ctre (>=2023.0.0,<2024.0.0)", "robotpy-hal (==2023.2.1.1)", "robotpy-halsim-ds-socket (==2023.2.1.1)", "robotpy-halsim-gui (==2023.2.1.1)", "robotpy-halsim-ws (==2023.2.1.1)", "robotpy-installer (>=2023.0.1,<2024.0.0)", "robotpy-navx (>=2023.0.1,<2024.0.0)", "robotpy-opencv", "robotpy-pathplannerlib (>=2023.0.0,<2024.0.0)", "robotpy-photonvision (>=2023.1.2,<2024.0.0)", "robotpy-playingwithfusion (>=2023.0.0,<2024.0.0)", "robotpy-rev (>=2023.1.1,<2024.0.0)", "robotpy-wpilib-utilities (==2023.0.0)", "robotpy-wpimath (==2023.2.1.1)", "robotpy-wpiutil (==2023.2.1.1)", "wpilib (==2023.2.1.1)"]
 apriltag = ["numpy", "robotpy-apriltag (==2023.2.1.1)", "robotpy-opencv"]
 commands2 = ["robotpy-commands-v2 (==2023.2.1.1)"]
 cscore = ["numpy", "robotpy-cscore (==2023.2.1.1)", "robotpy-opencv"]
 ctre = ["robotpy-ctre (>=2023.0.0,<2024.0.0)"]
 navx = ["robotpy-navx (>=2023.0.1,<2024.0.0)"]
+pathplannerlib = ["robotpy-pathplannerlib (>=2023.0.0,<2024.0.0)"]
 photonvision = ["robotpy-photonvision (>=2023.1.2,<2024.0.0)"]
 playingwithfusion = ["robotpy-playingwithfusion (>=2023.0.0,<2024.0.0)"]
 rev = ["robotpy-rev (>=2023.1.1,<2024.0.0)"]
@@ -1047,14 +1048,14 @@ wpilib = ">=2023.1.1.0,<2024.0.0"
 
 [[package]]
 name = "robotpy-toolkit-7407"
-version = "0.5.49.10"
+version = "0.5.49.12"
 description = "FRC Wired Boars Team 7407's Toolkit for usage with RobotPy"
 category = "main"
 optional = false
 python-versions = ">3.9,<3.12"
 files = [
-    {file = "robotpy_toolkit_7407-0.5.49.10-py3-none-any.whl", hash = "sha256:c994f8e380bab0b9fb95c870834638524d6c215308fc05d9bd2c1754e1640781"},
-    {file = "robotpy_toolkit_7407-0.5.49.10.tar.gz", hash = "sha256:5520eafd9381d2f40438990d5b4c5c654b02dae8e724770dd8c1ea3ff1999fd2"},
+    {file = "robotpy_toolkit_7407-0.5.49.12-py3-none-any.whl", hash = "sha256:1d1f20cf1282592126d74c05207beef984fabd426f6a7c72e21ad69f879971e6"},
+    {file = "robotpy_toolkit_7407-0.5.49.12.tar.gz", hash = "sha256:81c6ed9ebd77f6c74688860d87415ca06f1ce3bf4e3a202ca7e2b8d12d24de15"},
 ]
 
 [package.dependencies]

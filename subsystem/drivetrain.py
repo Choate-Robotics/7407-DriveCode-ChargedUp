@@ -43,16 +43,11 @@ class SparkMaxSwerveNode(SwerveNode):
         self.m_move.init()
         self.m_turn.init()
         self.start_dist = (
-            self.m_move.get_sensor_position() / constants.drivetrain_move_gear_ratio
+                self.m_move.get_sensor_position() / constants.drivetrain_move_gear_ratio
         )
 
     def zero(self):
         current_pos_rad = math.radians(self.encoder.getAbsolutePosition())
-        zeroed_pos_rad = self.absolute_encoder_zeroed_pos
-        new_pos_rad = zeroed_pos_rad - current_pos_rad
-        print("Current pos degrees: ", math.degrees(current_pos_rad))
-        print("Zeroed pos rad: ", math.degrees(zeroed_pos_rad))
-        print("New pos degrees: ", math.degrees(new_pos_rad))
 
         self.m_turn.set_sensor_position(
             current_pos_rad * constants.drivetrain_turn_gear_ratio / (2 * math.pi)
@@ -64,6 +59,7 @@ class SparkMaxSwerveNode(SwerveNode):
 
     # reposition the wheels
     def set_motor_angle(self, pos: radians):
+        print("I AM BEING SET TO: ", math.degrees(pos))
         if self.turn_reversed:
             pos *= -1
         self.m_turn.set_target_position(
@@ -88,9 +84,7 @@ class SparkMaxSwerveNode(SwerveNode):
         return self.m_move.get_sensor_velocity() / constants.drivetrain_move_gear_ratio
 
     def get_drive_motor_traveled_distance(self) -> meters:
-        return (
-            self.m_move.get_sensor_position() / constants.drivetrain_move_gear_ratio
-        ) - self.start_dist
+        return (self.m_move.get_sensor_position() / constants.drivetrain_move_gear_ratio) - self.start_dist
 
     def get_turn_motor_angle(self) -> radians:
         return self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio
