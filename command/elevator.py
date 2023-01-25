@@ -49,3 +49,22 @@ class ZeroArm(SubsystemCommand[Elevator]):
 
     def end(self):
         pass
+
+class SetRotation(SubsystemCommand[Elevator]):
+    def __init__(self, subsystem: T, rotations):
+        super().__init__(subsystem)
+        self.rotations = rotations
+    def initialize(self):
+        self.subsystem.disable_brake()
+        self.rotation = self.subsystem.get_rotation()
+        self.target = self.rotation + self.target
+        self.subsystem.set_rotation(self.rotations)
+    
+    def execute(self):
+        pass
+
+    def isFinished(self):
+        return self.subsystem.get_rotation() == self.target
+
+    def end(self, interrupted):
+        self.subsystem.set_rotation(self.rotation)
