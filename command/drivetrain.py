@@ -2,6 +2,7 @@ import math
 
 from robotpy_toolkit_7407.command import SubsystemCommand
 
+import constants
 from subsystem import Drivetrain
 
 
@@ -75,7 +76,7 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         ...
 
     def zero_success(self):
-        threshold = 0.02
+        threshold = 0.05
 
         success = True
 
@@ -110,13 +111,15 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         return self.zero_success()
 
     def end(self, interrupted: bool) -> None:
-        # for node in [
-        #     self.subsystem.n_00,
-        #     self.subsystem.n_01,
-        #     self.subsystem.n_10,
-        #     self.subsystem.n_11,
-        # ]:
-        #     node.m_turn.set_sensor_position(0)
-        #     node.set_motor_angle(0)
+        for node in [
+            self.subsystem.n_00,
+            self.subsystem.n_01,
+            self.subsystem.n_10,
+            self.subsystem.n_11,
+        ]:
+            node.m_turn.set_sensor_position(-constants.drivetrain_turn_gear_ratio / 4)
+            node.set_motor_angle(-math.pi / 2)
+
+        print("Set back to zero")
 
         ...

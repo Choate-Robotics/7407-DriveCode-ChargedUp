@@ -1,4 +1,7 @@
+import math
+
 import commands2
+import ctre
 import wpilib
 from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
 from robotpy_toolkit_7407.sensors.limelight import Limelight, LimelightController
@@ -30,37 +33,19 @@ class _Robot(wpilib.TimedRobot):
         Robot.drivetrain.init()
 
         SmartDashboard.init()
-        # Sensors.pv_controller = PV_Cameras()
+        Sensors.pv_controller = PV_Cameras()
 
-        # Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
+        Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
 
         # self.start_limelight_pose = Sensors.limelight_controller.get_estimated_robot_pose()[0].toPose2d()
         # self.start_robot_pose = Sensors.odometry.get_robot_pose()
 
     def robotPeriodic(self):
+        SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
+
+
         commands2.CommandScheduler.getInstance().run()
-        # limelight_bot_pose = Sensors.limelight_controller.get_estimated_robot_pose()
-        # pv_bot_pose = Sensors.pv_controller.get_estimated_robot_pose()
-        # current_robot_pose = Sensors.odometry.update()
-        # SmartDashboard.putString("ODOMETRY POSE", str(current_robot_pose))
-        # SmartDashboard.putString(
-        #     "DRIVETRAIN POSE", str(Robot.drivetrain.odometry.getPose())
-        # )
 
-        # print("Wheel Position: ", Robot.drivetrain.n_00.m_turn.get_sensor_position())
-        # print(
-        #     "Absolute Position: ", Robot.drivetrain.n_00.encoder.getAbsolutePosition()
-        # )
-
-    def teleopInit(self):
-        commands2.CommandScheduler.getInstance().schedule(
-            command.DrivetrainZero(Robot.drivetrain).andThen(
-                command.DriveSwerveCustom(Robot.drivetrain)
-            )
-        )
-        pass
-
-    def teleopPeriodic(self):
         SmartDashboard.putString(
             "N00", str(Robot.drivetrain.n_00.encoder.getAbsolutePosition())
         )
@@ -75,17 +60,28 @@ class _Robot(wpilib.TimedRobot):
         )
 
         SmartDashboard.putString(
-            "N00_m", str(Robot.drivetrain.n_00.get_turn_motor_angle())
+            "N00_m", str(math.degrees(Robot.drivetrain.n_00.get_turn_motor_angle()))
         )
         SmartDashboard.putString(
-            "N01_m", str(Robot.drivetrain.n_01.get_turn_motor_angle())
+            "N01_m", str(math.degrees(Robot.drivetrain.n_01.get_turn_motor_angle()))
         )
         SmartDashboard.putString(
-            "N10_m", str(Robot.drivetrain.n_10.get_turn_motor_angle())
+            "N10_m", str(math.degrees(Robot.drivetrain.n_10.get_turn_motor_angle()))
         )
         SmartDashboard.putString(
-            "N11_m", str(Robot.drivetrain.n_11.get_turn_motor_angle())
+            "N11_m", str(math.degrees(Robot.drivetrain.n_11.get_turn_motor_angle()))
         )
+
+    def teleopInit(self):
+        commands2.CommandScheduler.getInstance().schedule(
+            command.DrivetrainZero(Robot.drivetrain).andThen(
+                command.DriveSwerveCustom(Robot.drivetrain)
+            )
+        )
+        pass
+
+    def teleopPeriodic(self):
+        pass
 
     def autonomousInit(self):
         pass

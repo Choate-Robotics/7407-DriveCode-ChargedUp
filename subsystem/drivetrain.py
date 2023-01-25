@@ -72,7 +72,7 @@ class SparkMaxSwerveNode(SwerveNode):
         )
 
     def get_current_motor_angle(self) -> radians:
-        return self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio
+        return (self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio) * 2 * math.pi
 
     # rotate the wheel so the robot moves
     def set_motor_velocity(self, vel: meters_per_second):
@@ -87,7 +87,7 @@ class SparkMaxSwerveNode(SwerveNode):
         return (self.m_move.get_sensor_position() / constants.drivetrain_move_gear_ratio) - self.start_dist
 
     def get_turn_motor_angle(self) -> radians:
-        return self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio
+        return (self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio) * 2 * math.pi
 
 
 class Drivetrain(SwerveDrivetrain):
@@ -97,13 +97,13 @@ class Drivetrain(SwerveDrivetrain):
         CANCoder(24),
         absolute_encoder_zeroed_pos=math.radians(354.023),
     )
-    n_01 = SparkMaxSwerveNode(
+    n_10 = SparkMaxSwerveNode(
         SparkMax(3, config=MOVE_CONFIG),
         SparkMax(4, config=TURN_CONFIG),
         CANCoder(21),
         absolute_encoder_zeroed_pos=math.radians(42.539),
     )
-    n_10 = SparkMaxSwerveNode(
+    n_01 = SparkMaxSwerveNode(
         SparkMax(14, config=MOVE_CONFIG),
         SparkMax(13, config=TURN_CONFIG),
         CANCoder(23),
@@ -116,7 +116,7 @@ class Drivetrain(SwerveDrivetrain):
         absolute_encoder_zeroed_pos=math.radians(48.603),
     )
 
-    gyro = PigeonIMUGyro_Wrapper(0)
+    gyro = PigeonIMUGyro_Wrapper(20)
     axis_dx = Keymap.Drivetrain.DRIVE_X_AXIS
     axis_dy = Keymap.Drivetrain.DRIVE_Y_AXIS
     axis_rotation = Keymap.Drivetrain.DRIVE_ROTATION_AXIS
