@@ -1,3 +1,5 @@
+import logging
+
 from robotpy_toolkit_7407.command import SubsystemCommand
 
 from subsystem import Drivetrain
@@ -21,6 +23,7 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
         pass
 
     def execute(self) -> None:
+
         dx, dy, d_theta = (
             self.subsystem.axis_dx.value,
             self.subsystem.axis_dy.value,
@@ -105,7 +108,11 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         self.zero()
 
     def isFinished(self) -> bool:
-        return self.zero_success()
+        # self.subsystem.gyro.reset_angle()
+        # return self.zero_success()
+        return False
 
     def end(self, interrupted: bool) -> None:
+        # for i in [self.subsystem.n_00, self.subsystem.n_01, self.subsystem.n_10, self.subsystem.n_11]:
+        #     i.m_turn.set_sensor_position(0)
         ...

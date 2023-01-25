@@ -12,4 +12,6 @@ class ClawCommand(SubsystemCommand[Claw]):
         pass
 
     def execute(self) -> None:
-        pass
+        self.subsystem.init()
+        self.subsystem.zero()
+        
