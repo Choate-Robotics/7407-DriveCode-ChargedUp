@@ -1,26 +1,21 @@
 import math
-
-from wpimath.geometry import Pose2d
-from ctre import CANCoder
-import rev
-from robotpy_toolkit_7407.motors.rev_motors import SparkMax, SparkMaxConfig
-from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
-
 from dataclasses import dataclass
 
-import constants
-from robotpy_toolkit_7407.subsystem_templates.drivetrain import SwerveNode, SwerveDrivetrain, SwerveGyro
-from oi.keymap import Keymap
-
+import rev
+from ctre import CANCoder
+from robotpy_toolkit_7407.motors.rev_motors import SparkMax, SparkMaxConfig
+from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
+from robotpy_toolkit_7407.subsystem_templates.drivetrain import SwerveNode, SwerveDrivetrain
 from robotpy_toolkit_7407.utils.units import (
-    deg,
     meters,
     meters_per_second,
-    rad,
     radians,
     radians_per_second,
-    s,
 )
+from wpimath.geometry import Pose2d
+
+import constants
+from oi.keymap import Keymap
 
 TURN_CONFIG = SparkMaxConfig(
     0.2, 0, 0.003, 0.00015, (-0.5, 0.5), rev.CANSparkMax.IdleMode.kBrake
@@ -35,7 +30,7 @@ class SparkMaxSwerveNode(SwerveNode):
     m_move: SparkMax
     m_turn: SparkMax
     encoder: CANCoder
-    absolute_encoder_zeroed_pos: float = 0  # Radians
+    absolute_encoder_zeroed_pos: radians = 0
     drive_reversed: bool = False
     turn_reversed: bool = False
     start_dist: float = 0
@@ -46,7 +41,6 @@ class SparkMaxSwerveNode(SwerveNode):
         self.m_turn.init()
         self.start_dist = self.m_move.get_sensor_position() / constants.drivetrain_move_gear_ratio
 
-    # make the turn motor set their sensor 0 to current horizontal thingy
     def zero(self):
         current_pos_rad = math.radians(self.encoder.getAbsolutePosition())
         zeroed_pos_rad = self.absolute_encoder_zeroed_pos
@@ -82,10 +76,10 @@ class SparkMaxSwerveNode(SwerveNode):
     def get_motor_velocity(self) -> radians_per_second:
         return self.m_move.get_sensor_velocity() / constants.drivetrain_move_gear_ratio
 
-    def get_drive_motor_traveled_distance(self) -> float:  # in meters
+    def get_drive_motor_traveled_distance(self) -> meters:
         return (self.m_move.get_sensor_position() / constants.drivetrain_move_gear_ratio) - self.start_dist
 
-    def get_turn_motor_angle(self) -> float:  # Radians
+    def get_turn_motor_angle(self) -> radians:
         return self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio
 
 
