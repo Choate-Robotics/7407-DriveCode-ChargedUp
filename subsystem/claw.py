@@ -1,31 +1,24 @@
 import math
-from robotpy_toolkit_7407 import Subsystem
-from robotpy_toolkit_7407.motors.rev_motors import SparkMax, SparkMaxConfig
-from robotpy_toolkit_7407.sensors.limit_switches.limit_switch import LimitSwitch
-from robotpy_toolkit_7407.subsystem_templates.drivetrain import SwerveDrivetrain
-from robotpy_toolkit_7407.pneumatics.pistons.double_solenoid import DoubleSolenoidPiston
-import config
-import ctre
 import constants
 import wpilib
+from robotpy_toolkit_7407 import Subsystem
+from robotpy_toolkit_7407.motors.rev_motors import SparkMax
+from robotpy_toolkit_7407.pneumatics.pistons import SingleSolenoidPiston
 
 class Claw(Subsystem):
-
-    claw_motor: SparkMax = SparkMax(config.claw_motor_extend_id)
-    claw_close_piston: DoubleSolenoidPiston = DoubleSolenoidPiston(1, wpilib.PneumaticsModuleType.REVPH, 4, 5)
-    claw_motor_initialized: bool = False
-
-    def __init__(self, claw_motor, claw_close_piston):
+    
+    def __init__(self, claw_motor: SparkMax):
         """
         Constructor 
 
         Args:
-            claw_motor (SparkMax): The motor that controls the claw
-            claw_close_piston (DoubleSolenoidPiston): The piston that opens/closes the claw
+            claw_motor (SparkMax): The motor that controls the claw. Pass with the correct
+            can_id and turn/drive config. 
         """
         self.claw_motor = claw_motor
-        self.claw_close_piston = claw_close_piston
+        self.claw_close_piston: SingleSolenoidPiston = SingleSolenoidPiston(1, wpilib.PneumaticsModuleType.REVPH, 4)
         self.claw_motor_initialized: bool = False
+        self.is_claw_compressed: bool = False
 
     def init(self):
         self.claw_motor.init()

@@ -8,10 +8,15 @@ class ClawCommand(SubsystemCommand[Claw]):
         super().__init__(subsystem)
         self.subsystem = subsystem
 
-    def initialize(self) -> None:
-        pass
+    def initialize(self) -> None:   
+        self.subsystem.zero()
 
     def execute(self) -> None:
-        self.subsystem.init()
-        self.subsystem.zero()
+        self.isFinished()
+
+    def isFinished(self) -> bool:
+        return round(self.subsystem.get_angle()) == 0
+    
+    def end(self, interrupted: bool) -> None:
+        pass
         

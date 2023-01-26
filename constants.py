@@ -1,30 +1,20 @@
-
-
 import math
 
 from robotpy_toolkit_7407.motors.rev_motors import (
     rev_sensor_accel_unit,
     rev_sensor_unit,
-    rev_sensor_vel_unit
+    rev_sensor_vel_unit,
 )
-
-from wpimath.geometry import (
-    Pose3d,
-    Rotation3d,
-    Transform3d,
-)
-
 from robotpy_toolkit_7407.utils.units import deg, ft, hour, inch, m, mile, rad, rev, s
+from wpimath.geometry import Pose3d, Rotation3d, Transform3d
 
 period = 0.03
 
 # --- DRIVETRAIN ---
 # drivetrain_turn_gear_ratio = ((8.16 * 4096)/(2*math.pi) * rev_sensor_unit / rad).asNumber()
 
-drivetrain_turn_gear_ratio = 80.4848
-drivetrain_move_gear_ratio = ((544318 * rev_sensor_unit) / (511 * inch)).asNumber(
-    rad / m
-)
+drivetrain_turn_gear_ratio = 21.45
+drivetrain_move_gear_ratio = ((544318 * rev_sensor_unit) / (511 * inch)).asNumber(rad / m)
 
 track_width = (24.2 * inch).asNumber(m)
 
@@ -98,13 +88,8 @@ kApriltagPositionDict = {
 }
 
 kCameras = {
-    "Global_Shutter_Camera": Transform3d(
-        Pose3d(),
-        Pose3d(0, 0, 0, Rotation3d())
-    )
+    "Global_Shutter_Camera": Transform3d(Pose3d(), Pose3d(0, 0, 0, Rotation3d()))
 }
-
-# --- CLAW ---
 
 # Dummy data
 claw_gear_ratio = 1
