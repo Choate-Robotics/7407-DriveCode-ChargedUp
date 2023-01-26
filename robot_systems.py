@@ -4,7 +4,7 @@ import wpilib
 
 
 class Robot:
-    pass
+    Elevator = subsystem.Elevator()
 
 
 class Pneumatics:
