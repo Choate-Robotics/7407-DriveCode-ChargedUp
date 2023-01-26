@@ -7,7 +7,7 @@ import constants
 from robot_systems import Robot
 from subsystem import Elevator
 
-class SetPositionForward(SubsystemCommand[Elevator]):
+class SetArmPositionRobot(SubsystemCommand[Elevator]):
 
     def __init__(self, subsystem: T, target: Pose3d):
         super().__init__(subsystem)
@@ -24,11 +24,12 @@ class SetPositionForward(SubsystemCommand[Elevator]):
     def initialize(self):
         #add from pose of robot the height to get arm height
         self.subsystem.disable_brake()
-        self.subsystem.set_length(self.length)
-        self.subsystem.set_rotation(self.angle)
+        if not self.subsystem.set_length(self.length):
+            print("Reached Boundry Limits")
+        if not self.subsystem.set_rotation(self.angle):
+            print("Reached Soft Limits")
     def execute(self):
         self.update_pose()
-
 
     def isFinished(self):
         return self.subsystem.is_at_position(self.position)
@@ -53,33 +54,34 @@ class pauseMovement(SubsystemCommand[Elevator]):
     def end(self, interrupted: bool) -> None:
         self.subsystem.disable_brake()
 
-class SetPositionInverse(SubsystemCommand[Elevator]):
+class SetArmPositionField(SubsystemCommand[Elevator]):
 
     def __init__(self, subsystem: T, target: Pose3d):
         super().__init__(subsystem)
         self.target = target
 
     def initialize(self):
-        #get pose of robot
+        pass
+
+    def execute(self):
         self.robot_pose: Pose2d
         Robot.claw_rotation = 0
         self.rotation = Rotation3d(0, Robot.claw_rotation, self.robot_pose.rotation)
-        self.position = Pose3d(self.robot_pose.X, self.robot_pose.Y, constants.arm_height, self.rotation)
+        self.position = Pose3d(self.robot_pose.translation(), self.rotation)
         #add from pose of robot the height to get arm height
         self.slope = (self.target.Y - self.position.Y) / (self.target.X - self.position.X)
         self.length = abs(self.slope)
         
-        #LETS TALK TO WANG ABOUT THIS
-
-    def execute(self):
+        if not self.subsystem.set_length(self.length):
+            print("Reached Boundry Limits")
+        if not self.subsystem.set_rotation(self.angle):
+            print("Reached Soft Limits")
+        self.subsystem.update_pose()
+    def isFinished(self):
         pass
 
-
-    def isFinished(self):
-        return self.subsystem.is_at_position(self.position)
-
     def end(self, interrupted):
-        self.subsystem.set_position(self.position)
+        self.subsystem.stop()
 
 class ZeroArm(SubsystemCommand[Elevator]):
     def __init__(self, subsystem: T):
@@ -111,10 +113,28 @@ class SetRotation(SubsystemCommand[Elevator]):
         self.subsystem.set_rotation(self.rotations)
     
     def execute(self):
-        pass
+        self.subsystem.update_pose()
 
     def isFinished(self):
         return self.subsystem.get_rotation() == self.target
 
     def end(self, interrupted):
         self.subsystem.set_rotation(self.rotation)
+
+class SetLength(SubsystemCommand[Elevator]):
+    def __init__(self, subsystem: T, length):
+        super().__init__(subsystem, length)
+        self.length = length
+    
+    def initialize(self) -> None:
+        self.subsystem.set_length(self.length)
+    
+    def execute(self) -> None:
+        self.subsystem.update_pose()
+    
+    def isFinished(self) -> bool:
+        return self.subsystem.is_at_length(self.length)
+    
+    def end(self, interrupted: bool) -> None:
+        if interrupted:
+            self.subsystem.stop()

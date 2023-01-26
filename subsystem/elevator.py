@@ -15,16 +15,16 @@ from wpimath import Pose3d
 class Elevator(Subsystem):  # elevator class
     motor_extend: SparkMax = SparkMax(
         config.elevator_motor_extend_id)  # motor that extends the arm
-    right_rotation_motor: SparkMax = SparkMax(
-        config.elevator_right_rotation_motor_id, inverted=True)  # motor that rotates the arm
-    left_rotation_motor: SparkMax = SparkMax(
-        config.elevator_left_rotation_motor_id, inverted=False)  # motor that rotates the arm
+    secondary_rotation_motor: SparkMax = SparkMax(
+        config.elevator_secondary_rotation_motor_id, inverted=True)  # motor that rotates the arm
+    main_rotation_motor: SparkMax = SparkMax(
+        config.elevator_main_rotation_motor_id, inverted=False)  # motor that rotates the arm
     brake: wpilib.Solenoid = wpilib.Solenoid(
         1, wpilib.PneumaticsModuleType.REVPH, config.elevator_brake_id)  # brake that holds the arm in place
     initialized: bool = False
-    elevator_bottom_sensor = rev.CANSparkMax(config.elevator_left_rotation_motor_id, rev.MotorType.kBrushless).getReverseLimitSwitch(rev.SparkMaxLimitSwitch.Type.kNormallyOpen)
-    elevator_top_sensor = rev.CANSparkMax(config.elevator_left_rotation_motor_id, rev.MotorType.kBrushless).getForwardLimitSwitch(rev.SparkMaxLimitSwitch.Type.kNormallyOpen)
-    turn_sensor = rev.CANSparkMax(config.elevator_left_rotation_motor_id, rev.MotorType.kBrushless).getAnalog()  # senses the rotation of the elevator
+    elevator_bottom_sensor = rev.CANSparkMax(config.elevator_main_rotation_motor_id, rev.MotorType.kBrushless).getReverseLimitSwitch(rev.SparkMaxLimitSwitch.Type.kNormallyOpen)
+    elevator_top_sensor = rev.CANSparkMax(config.elevator_main_rotation_motor_id, rev.MotorType.kBrushless).getForwardLimitSwitch(rev.SparkMaxLimitSwitch.Type.kNormallyOpen)
+    turn_sensor = rev.CANSparkMax(config.elevator_main_rotation_motor_id, rev.MotorType.kBrushless).getAnalog()  # senses the rotation of the elevator
     brake_enabled: bool = False
     pose = Pose3d(0, 0, constants.pivot_point_height, 0, 0, 0)
     elevator_length: float
@@ -59,18 +59,22 @@ class Elevator(Subsystem):  # elevator class
         else:
             return False
 
-    def init(self):  # initializing motors
+    def init(self):  # initializing motors                                                                                                  
         self.motor_extend.init()
-        self.right_rotation_motor.init()
-        self.left_rotation_motor.init()
-        self.right_rotation_motor.follow(
-            config.elevator_left_rotation_motor_id, True)
+        self.secondary_rotation_motor.init()
+        self.main_rotation_motor.init()
+        self.secondary_rotation_motor.follow(
+            config.elevator_main_rotation_motor_id, True)
         self.enable_brake()
 
     def stop(self):
         self.motor_extend.set_raw_output(0)
-        self.left_rotation_motor.set_raw_output(0)
+        self.main_rotation_motor.set_raw_output(0)
 
+    def hard_stop(self):
+        self.stop()
+        self.enable_brake()
+    
     def boundary_box(self, radians: float):
 
         if self.extension_overide:
@@ -145,7 +149,7 @@ class Elevator(Subsystem):  # elevator class
     def set_rotation(self, radians: float):  # set arm rotation
         # if the rotation is within the soft limits, set the rotation to the given degree
         if self.soft_limits(radians):
-            self.left_rotation_motor.set_target_position(
+            self.main_rotation_motor.set_target_position(
                 radians * constants.elevator_rotation_gear_ratio)
             # returns True
             return True
@@ -156,7 +160,7 @@ class Elevator(Subsystem):  # elevator class
             else: step = 1
             for i in range(radians, 0, step):
                 if self.soft_limits(i):
-                    self.left_rotation_motor.set_target_position(
+                    self.main_rotation_motor.set_target_position(
                         i * constants.elevator_rotation_gear_ratio)
                     # returns the closest soft limit
                     return i
@@ -165,7 +169,7 @@ class Elevator(Subsystem):  # elevator class
         return self.motor_extend.get_sensor_position() / constants.elevator_extend_gear_ratio
 
     def get_rotation(self):  # returns arm rotation
-        return self.left_rotation_motor.get_sensor_position() / constants.elevator_rotation_gear_ratio
+        return self.main_rotation_motor.get_sensor_position() / constants.elevator_rotation_gear_ratio
 
     def zero_elevator(self):  # brings elevator to zero position (no extension, no rotation)
         self.set_length(self.get_length()-0.005)
