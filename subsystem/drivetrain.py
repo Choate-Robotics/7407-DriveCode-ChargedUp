@@ -42,9 +42,7 @@ class SparkMaxSwerveNode(SwerveNode):
         super().init()
         self.m_move.init()
         self.m_turn.init()
-        self.start_dist = (
-                self.m_move.get_sensor_position() / constants.drivetrain_move_gear_ratio
-        )
+        self.start_dist = self.m_move.get_sensor_position() * (-1 if self.drive_reversed else 1)
 
     def zero(self):
         current_pos_rad = math.radians(self.encoder.getAbsolutePosition())
@@ -84,32 +82,37 @@ class SparkMaxSwerveNode(SwerveNode):
         return self.m_move.get_sensor_velocity() / constants.drivetrain_move_gear_ratio
 
     def get_drive_motor_traveled_distance(self) -> meters:
-        return (self.m_move.get_sensor_position() / constants.drivetrain_move_gear_ratio) - self.start_dist
+        sensor_position = self.m_move.get_sensor_position()
+        if self.drive_reversed:
+            sensor_position *= -1
+
+        return (sensor_position - self.start_dist) / constants.drivetrain_move_gear_ratio_as_rotations_per_meter
 
     def get_turn_motor_angle(self) -> radians:
         return (self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio) * 2 * math.pi
 
 
 class Drivetrain(SwerveDrivetrain):
-    n_00 = SparkMaxSwerveNode(
+    n_front_left = SparkMaxSwerveNode(
         SparkMax(16, config=MOVE_CONFIG),
         SparkMax(15, config=TURN_CONFIG),
         CANCoder(24),
-        absolute_encoder_zeroed_pos=math.radians(354.023),
+        absolute_encoder_zeroed_pos=math.radians(354.023 - 180),  # 354.023, Testing diff
+        drive_reversed=True
     )
-    n_10 = SparkMaxSwerveNode(
-        SparkMax(3, config=MOVE_CONFIG),
-        SparkMax(4, config=TURN_CONFIG),
-        CANCoder(21),
-        absolute_encoder_zeroed_pos=math.radians(42.539),
-    )
-    n_01 = SparkMaxSwerveNode(
+    n_front_right = SparkMaxSwerveNode(
         SparkMax(14, config=MOVE_CONFIG),
         SparkMax(13, config=TURN_CONFIG),
         CANCoder(23),
         absolute_encoder_zeroed_pos=math.radians(13.535),
     )
-    n_11 = SparkMaxSwerveNode(
+    n_back_left = SparkMaxSwerveNode(
+        SparkMax(3, config=MOVE_CONFIG),
+        SparkMax(4, config=TURN_CONFIG),
+        CANCoder(21),
+        absolute_encoder_zeroed_pos=math.radians(42.539),
+    )
+    n_back_right = SparkMaxSwerveNode(
         SparkMax(5, config=MOVE_CONFIG),
         SparkMax(6, config=TURN_CONFIG),
         CANCoder(22),

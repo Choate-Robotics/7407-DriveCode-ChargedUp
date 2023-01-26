@@ -535,14 +535,14 @@ testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
 name = "pre-commit"
-version = "3.0.0"
+version = "3.0.1"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pre_commit-3.0.0-py2.py3-none-any.whl", hash = "sha256:6af0a0b4137c0903794632f77b7223c4af0373f5cd3337056d2dab32aa3a5caf"},
-    {file = "pre_commit-3.0.0.tar.gz", hash = "sha256:de265f74325f0c3ff1a727a974449315ea9b11975cf6b02c11f26e50acfa48f1"},
+    {file = "pre_commit-3.0.1-py2.py3-none-any.whl", hash = "sha256:61ecb75e0e99939cc30c79181c0394545657855e9172c42ff98ebecb0e02fcb7"},
+    {file = "pre_commit-3.0.1.tar.gz", hash = "sha256:3a3f9229e8c19a626a7f91be25b3c8c135e52de1a678da98eb015c0d0baea7a5"},
 ]
 
 [package.dependencies]
@@ -1048,14 +1048,14 @@ wpilib = ">=2023.1.1.0,<2024.0.0"
 
 [[package]]
 name = "robotpy-toolkit-7407"
-version = "0.5.49.12"
+version = "0.5.49.14"
 description = "FRC Wired Boars Team 7407's Toolkit for usage with RobotPy"
 category = "main"
 optional = false
 python-versions = ">3.9,<3.12"
 files = [
-    {file = "robotpy_toolkit_7407-0.5.49.12-py3-none-any.whl", hash = "sha256:1d1f20cf1282592126d74c05207beef984fabd426f6a7c72e21ad69f879971e6"},
-    {file = "robotpy_toolkit_7407-0.5.49.12.tar.gz", hash = "sha256:81c6ed9ebd77f6c74688860d87415ca06f1ce3bf4e3a202ca7e2b8d12d24de15"},
+    {file = "robotpy_toolkit_7407-0.5.49.14-py3-none-any.whl", hash = "sha256:1064b750ba6ebd1d4508b064a0811667723a9c5cace203c6a9f78b76c15a8723"},
+    {file = "robotpy_toolkit_7407-0.5.49.14.tar.gz", hash = "sha256:ed137527cd52787c8c9792cd0e470fb8464018232fe2262114472182fc171bbe"},
 ]
 
 [package.dependencies]
@@ -1264,4 +1264,4 @@ robotpy-wpiutil = ">=2023.2.1,<2023.3.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">3.9,<3.12"
-content-hash = "4a9e4f368709bca1a823f2879db3896ae183403fd5f5dcce520cd6de99983f71"
+content-hash = "31b8107e44acbec4f5dd633beaf2f8bb12df05528af1d739847e7046d50dd852"

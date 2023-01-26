@@ -55,10 +55,10 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
             )
 
     def end(self, interrupted: bool) -> None:
-        self.subsystem.n_00.set(0, 0)
-        self.subsystem.n_01.set(0, 0)
-        self.subsystem.n_10.set(0, 0)
-        self.subsystem.n_11.set(0, 0)
+        self.subsystem.n_front_left.set(0, 0)
+        self.subsystem.n_front_right.set(0, 0)
+        self.subsystem.n_back_left.set(0, 0)
+        self.subsystem.n_back_right.set(0, 0)
 
     def isFinished(self) -> bool:
         return False
@@ -76,15 +76,15 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         ...
 
     def zero_success(self):
-        threshold = 0.05
+        threshold = 0.07
 
         success = True
 
         for i in [
-            self.subsystem.n_00,
-            self.subsystem.n_01,
-            self.subsystem.n_10,
-            self.subsystem.n_11,
+            self.subsystem.n_front_left,
+            self.subsystem.n_front_right,
+            self.subsystem.n_back_left,
+            self.subsystem.n_back_right,
         ]:
             if not (
                 abs(
@@ -98,10 +98,10 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         return success
 
     def initialize(self) -> None:
-        self.subsystem.n_00.zero()
-        self.subsystem.n_01.zero()
-        self.subsystem.n_10.zero()
-        self.subsystem.n_11.zero()
+        self.subsystem.n_front_left.zero()
+        self.subsystem.n_front_right.zero()
+        self.subsystem.n_back_left.zero()
+        self.subsystem.n_back_right.zero()
 
     def execute(self) -> None:
         ...
@@ -112,14 +112,13 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
 
     def end(self, interrupted: bool) -> None:
         for node in [
-            self.subsystem.n_00,
-            self.subsystem.n_01,
-            self.subsystem.n_10,
-            self.subsystem.n_11,
+            self.subsystem.n_front_left,
+            self.subsystem.n_front_right,
+            self.subsystem.n_back_left,
+            self.subsystem.n_back_right,
         ]:
             node.m_turn.set_sensor_position(-constants.drivetrain_turn_gear_ratio / 4)
             node.set_motor_angle(-math.pi / 2)
 
         print("Set back to zero")
-
         ...

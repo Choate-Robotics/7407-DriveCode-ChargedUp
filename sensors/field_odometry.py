@@ -58,10 +58,10 @@ class FieldOdometry:
 
         self.drivetrain.odometry.update(
             Rotation2d(self.drivetrain.gyro.get_robot_heading()),
-            self.drivetrain.n_00.get_node_position(),
-            self.drivetrain.n_01.get_node_position(),
-            self.drivetrain.n_10.get_node_position(),
-            self.drivetrain.n_11.get_node_position()
+            self.drivetrain.n_front_left.get_node_position(),
+            self.drivetrain.n_front_right.get_node_position(),
+            self.drivetrain.n_back_left.get_node_position(),
+            self.drivetrain.n_back_right.get_node_position()
         )
 
         self.robot_pose = Pose2d(
