@@ -5,6 +5,8 @@ from robotpy_toolkit_7407.sensors.limelight import LimelightController, Limeligh
 
 class Robot:
     drivetrain = subsystem.Drivetrain()
+    intake = subsystem.Intake()
+    
     pass
 
 
