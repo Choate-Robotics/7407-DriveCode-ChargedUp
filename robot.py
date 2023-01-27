@@ -45,7 +45,9 @@ class _Robot(wpilib.TimedRobot):
         # self.start_robot_pose = Sensors.odometry.get_robot_pose()
 
     def robotPeriodic(self):
+        Sensors.odometry.update()
         SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
+        SmartDashboard.putString("FDOM", str(Sensors.odometry.get_robot_pose()))
 
         commands2.CommandScheduler.getInstance().run()
 
@@ -133,14 +135,6 @@ class _Robot(wpilib.TimedRobot):
                 command.DriveSwerveCustom(Robot.drivetrain)
             )
         )
-
-        # Robot.drivetrain.n_front_left.zero()
-        # Robot.drivetrain.n_front_right.zero()
-        # Robot.drivetrain.n_back_left.zero()
-        # Robot.drivetrain.n_back_right.zero()
-        # commands2.CommandScheduler.getInstance().schedule(
-        #     command.DriveSwerveCustom(Robot.drivetrain)
-        # )
 
     def teleopPeriodic(self):
         pass

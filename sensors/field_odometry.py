@@ -94,10 +94,7 @@ class FieldOdometry:
                     self.drivetrain.odometry.resetPosition(
                         self.robot_pose.rotation(),
                         weighted_pose,
-                        self.drivetrain.swerve_positions[0],
-                        self.drivetrain.swerve_positions[1],
-                        self.drivetrain.swerve_positions[2],
-                        self.drivetrain.swerve_positions[3]
+                        *self.drivetrain.node_positions
                     )
 
                     self.robot_pose = Pose2d(
