@@ -63,41 +63,87 @@ class _Robot(wpilib.TimedRobot):
         )
 
         SmartDashboard.putString(
-            "N00_m", str(math.degrees(Robot.drivetrain.n_front_left.get_turn_motor_angle()))
+            "N00_m",
+            str(math.degrees(Robot.drivetrain.n_front_left.get_turn_motor_angle())),
         )
         SmartDashboard.putString(
-            "N01_m", str(math.degrees(Robot.drivetrain.n_front_right.get_turn_motor_angle()))
+            "N01_m",
+            str(math.degrees(Robot.drivetrain.n_front_right.get_turn_motor_angle())),
         )
         SmartDashboard.putString(
-            "N10_m", str(math.degrees(Robot.drivetrain.n_back_left.get_turn_motor_angle()))
+            "N10_m",
+            str(math.degrees(Robot.drivetrain.n_back_left.get_turn_motor_angle())),
         )
         SmartDashboard.putString(
-            "N11_m", str(math.degrees(Robot.drivetrain.n_back_right.get_turn_motor_angle()))
+            "N11_m",
+            str(math.degrees(Robot.drivetrain.n_back_right.get_turn_motor_angle())),
         )
 
         SmartDashboard.putString(
-            "N00_drive", str(math.degrees(Robot.drivetrain.n_front_left.m_move.get_sensor_position()))
+            "N00_drive",
+            str(
+                math.degrees(Robot.drivetrain.n_front_left.m_move.get_sensor_position())
+            ),
         )
         SmartDashboard.putString(
-            "N01_drive", str(math.degrees(Robot.drivetrain.n_front_right.m_move.get_sensor_position()))
+            "N01_drive",
+            str(
+                math.degrees(
+                    Robot.drivetrain.n_front_right.m_move.get_sensor_position()
+                )
+            ),
         )
         SmartDashboard.putString(
-            "N10_drive", str(math.degrees(Robot.drivetrain.n_back_left.m_move.get_sensor_position()))
+            "N10_drive",
+            str(
+                math.degrees(Robot.drivetrain.n_back_left.m_move.get_sensor_position())
+            ),
         )
         SmartDashboard.putString(
-            "N11_drive", str(math.degrees(Robot.drivetrain.n_back_right.m_move.get_sensor_position()))
+            "N11_drive",
+            str(
+                math.degrees(Robot.drivetrain.n_back_right.m_move.get_sensor_position())
+            ),
         )
 
-        SmartDashboard.putNumber("n_front_left: ", Robot.drivetrain.n_front_left.m_move.get_sensor_position() * (-1 if Robot.drivetrain.n_front_left.drive_reversed else 1) - Robot.drivetrain.n_front_left.start_dist)
-        SmartDashboard.putNumber("n_front_right: ", Robot.drivetrain.n_front_right.m_move.get_sensor_position() * (-1 if Robot.drivetrain.n_front_right.drive_reversed else 1) - Robot.drivetrain.n_front_right.start_dist)
-        SmartDashboard.putNumber("n_back_left: ", Robot.drivetrain.n_back_left.m_move.get_sensor_position() * (-1 if Robot.drivetrain.n_back_left.drive_reversed else 1) - Robot.drivetrain.n_back_left.start_dist)
-        SmartDashboard.putNumber("n_back_right: ", Robot.drivetrain.n_back_right.m_move.get_sensor_position() * (-1 if Robot.drivetrain.n_back_right.drive_reversed else 1) - Robot.drivetrain.n_back_right.start_dist)
+        SmartDashboard.putNumber(
+            "n_front_left: ",
+            Robot.drivetrain.n_front_left.m_move.get_sensor_position()
+            * (-1 if Robot.drivetrain.n_front_left.drive_reversed else 1)
+            - Robot.drivetrain.n_front_left.start_dist,
+        )
+        SmartDashboard.putNumber(
+            "n_front_right: ",
+            Robot.drivetrain.n_front_right.m_move.get_sensor_position()
+            * (-1 if Robot.drivetrain.n_front_right.drive_reversed else 1)
+            - Robot.drivetrain.n_front_right.start_dist,
+        )
+        SmartDashboard.putNumber(
+            "n_back_left: ",
+            Robot.drivetrain.n_back_left.m_move.get_sensor_position()
+            * (-1 if Robot.drivetrain.n_back_left.drive_reversed else 1)
+            - Robot.drivetrain.n_back_left.start_dist,
+        )
+        SmartDashboard.putNumber(
+            "n_back_right: ",
+            Robot.drivetrain.n_back_right.m_move.get_sensor_position()
+            * (-1 if Robot.drivetrain.n_back_right.drive_reversed else 1)
+            - Robot.drivetrain.n_back_right.start_dist,
+        )
 
     def teleopInit(self):
+        # commands2.CommandScheduler.getInstance().schedule(
+        #     command.DrivetrainZero(Robot.drivetrain).andThen(
+        #         command.DriveSwerveCustom(Robot.drivetrain)
+        #     )
+        # )
+
+        Robot.drivetrain.n_front_left.zero()
+        Robot.drivetrain.n_front_right.zero()
+        Robot.drivetrain.n_back_left.zero()
+        Robot.drivetrain.n_back_right.zero()
         commands2.CommandScheduler.getInstance().schedule(
-            command.DrivetrainZero(Robot.drivetrain).andThen(
-                command.DriveSwerveCustom(Robot.drivetrain)
-            )
+            command.DriveSwerveCustom(Robot.drivetrain)
         )
         pass
 
