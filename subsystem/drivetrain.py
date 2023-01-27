@@ -36,26 +36,21 @@ class SparkMaxSwerveNode(SwerveNode):
     absolute_encoder_zeroed_pos: radians = 0
     drive_reversed: bool = False
     turn_reversed: bool = False
-    start_dist: float = 0
 
     def init(self):
         super().init()
         self.m_move.init()
         self.m_turn.init()
-        self.start_dist = self.m_move.get_sensor_position() * (
-            -1 if self.drive_reversed else 1
-        )
 
     def zero(self):
         current_pos_rad = (
-            math.radians(self.encoder.getAbsolutePosition())
-            - self.absolute_encoder_zeroed_pos
+                math.radians(self.encoder.getAbsolutePosition())
+                - self.absolute_encoder_zeroed_pos
         )
 
         self.m_turn.set_sensor_position(
             current_pos_rad * constants.drivetrain_turn_gear_ratio / (2 * math.pi)
         )
-        # self.set_motor_angle(self.absolute_encoder_zeroed_pos)
 
     def raw_output(self, power):
         self.m_move.set_raw_output(power)
@@ -76,9 +71,9 @@ class SparkMaxSwerveNode(SwerveNode):
 
     def get_current_motor_angle(self) -> radians:
         return (
-            (self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio)
-            * 2
-            * math.pi
+                (self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio)
+                * 2
+                * math.pi
         )
 
     # rotate the wheel so the robot moves
@@ -95,15 +90,13 @@ class SparkMaxSwerveNode(SwerveNode):
         if self.drive_reversed:
             sensor_position *= -1
 
-        return (
-            sensor_position - self.start_dist
-        ) / constants.drivetrain_move_gear_ratio_as_rotations_per_meter
+        return sensor_position / constants.drivetrain_move_gear_ratio_as_rotations_per_meter
 
     def get_turn_motor_angle(self) -> radians:
         return (
-            (self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio)
-            * 2
-            * math.pi
+                (self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio)
+                * 2
+                * math.pi
         )
 
 

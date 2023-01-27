@@ -1,3 +1,4 @@
+import logging
 import math
 
 from robotpy_toolkit_7407.command import SubsystemCommand
@@ -72,31 +73,6 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         super().__init__(subsystem)
         self.subsystem = subsystem
 
-    def zero(self):
-        ...
-
-    def zero_success(self):
-        threshold = 0.07
-
-        success = True
-
-        for i in [
-            self.subsystem.n_front_left,
-            self.subsystem.n_front_right,
-            self.subsystem.n_back_left,
-            self.subsystem.n_back_right,
-        ]:
-            if not (
-                abs(
-                    math.radians(i.encoder.getAbsolutePosition())
-                    - i.absolute_encoder_zeroed_pos
-                )
-                < threshold
-            ):
-                success = False
-
-        return success
-
     def initialize(self) -> None:
         self.subsystem.n_front_left.zero()
         self.subsystem.n_front_right.zero()
@@ -107,18 +83,16 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         ...
 
     def isFinished(self) -> bool:
-        # self.subsystem.gyro.reset_angle()
-        return self.zero_success()
+        ...
+        return True
 
     def end(self, interrupted: bool) -> None:
-        for node in [
-            self.subsystem.n_front_left,
-            self.subsystem.n_front_right,
-            self.subsystem.n_back_left,
-            self.subsystem.n_back_right,
-        ]:
-            node.m_turn.set_sensor_position(-constants.drivetrain_turn_gear_ratio / 4)
-            node.set_motor_angle(-math.pi / 2)
+        self.subsystem.gyro.reset_angle()
 
-        print("Set back to zero")
+        self.subsystem.n_front_left.m_move.set_sensor_position(0)
+        self.subsystem.n_front_right.m_move.set_sensor_position(0)
+        self.subsystem.n_back_left.m_move.set_sensor_position(0)
+        self.subsystem.n_back_right.m_move.set_sensor_position(0)
+
+        logging.info("Successfully rezeroed swerve pods.", "[drivetrain_rezero_command]")
         ...

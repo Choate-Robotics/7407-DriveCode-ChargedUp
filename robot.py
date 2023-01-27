@@ -110,25 +110,21 @@ class _Robot(wpilib.TimedRobot):
             "n_front_left: ",
             Robot.drivetrain.n_front_left.m_move.get_sensor_position()
             * (-1 if Robot.drivetrain.n_front_left.drive_reversed else 1)
-            - Robot.drivetrain.n_front_left.start_dist,
         )
         SmartDashboard.putNumber(
             "n_front_right: ",
             Robot.drivetrain.n_front_right.m_move.get_sensor_position()
             * (-1 if Robot.drivetrain.n_front_right.drive_reversed else 1)
-            - Robot.drivetrain.n_front_right.start_dist,
         )
         SmartDashboard.putNumber(
             "n_back_left: ",
             Robot.drivetrain.n_back_left.m_move.get_sensor_position()
             * (-1 if Robot.drivetrain.n_back_left.drive_reversed else 1)
-            - Robot.drivetrain.n_back_left.start_dist,
         )
         SmartDashboard.putNumber(
             "n_back_right: ",
             Robot.drivetrain.n_back_right.m_move.get_sensor_position()
             * (-1 if Robot.drivetrain.n_back_right.drive_reversed else 1)
-            - Robot.drivetrain.n_back_right.start_dist,
         )
 
     def teleopInit(self):
@@ -145,7 +141,6 @@ class _Robot(wpilib.TimedRobot):
         commands2.CommandScheduler.getInstance().schedule(
             command.DriveSwerveCustom(Robot.drivetrain)
         )
-        pass
 
     def teleopPeriodic(self):
         pass
