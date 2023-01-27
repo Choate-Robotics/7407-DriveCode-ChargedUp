@@ -1,10 +1,12 @@
 import subsystem
-import sensors
-import wpilib
+from sensors import FieldOdometry, PV_Cameras
+from robotpy_toolkit_7407.sensors.limelight import LimelightController, Limelight
 
 
 class Robot:
     Elevator = subsystem.Elevator()
+    drivetrain = subsystem.Drivetrain()
+    #pass
 
 
 class Pneumatics:
@@ -16,4 +18,7 @@ class Pneumatics:
 
 
 class Sensors:
-    pass
+    odometry: FieldOdometry
+    limelight_front: Limelight
+    limelight_controller: LimelightController
+    # pv_controller: PV_Cameras

@@ -8,3 +8,4 @@ elevator_brake_id = 3
 #converted to radians in subsystems/elevator.py
 elevator_max_rotation = math.radians(135)
 elevator_min_rotation = math.radians(-135)
+kRobotVisionPoseWeight = .1
