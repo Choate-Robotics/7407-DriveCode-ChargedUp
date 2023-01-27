@@ -109,38 +109,38 @@ class _Robot(wpilib.TimedRobot):
         SmartDashboard.putNumber(
             "n_front_left: ",
             Robot.drivetrain.n_front_left.m_move.get_sensor_position()
-            * (-1 if Robot.drivetrain.n_front_left.drive_reversed else 1)
+            * (-1 if Robot.drivetrain.n_front_left.drive_reversed else 1),
         )
         SmartDashboard.putNumber(
             "n_front_right: ",
             Robot.drivetrain.n_front_right.m_move.get_sensor_position()
-            * (-1 if Robot.drivetrain.n_front_right.drive_reversed else 1)
+            * (-1 if Robot.drivetrain.n_front_right.drive_reversed else 1),
         )
         SmartDashboard.putNumber(
             "n_back_left: ",
             Robot.drivetrain.n_back_left.m_move.get_sensor_position()
-            * (-1 if Robot.drivetrain.n_back_left.drive_reversed else 1)
+            * (-1 if Robot.drivetrain.n_back_left.drive_reversed else 1),
         )
         SmartDashboard.putNumber(
             "n_back_right: ",
             Robot.drivetrain.n_back_right.m_move.get_sensor_position()
-            * (-1 if Robot.drivetrain.n_back_right.drive_reversed else 1)
+            * (-1 if Robot.drivetrain.n_back_right.drive_reversed else 1),
         )
 
     def teleopInit(self):
-        # commands2.CommandScheduler.getInstance().schedule(
-        #     command.DrivetrainZero(Robot.drivetrain).andThen(
-        #         command.DriveSwerveCustom(Robot.drivetrain)
-        #     )
-        # )
-
-        Robot.drivetrain.n_front_left.zero()
-        Robot.drivetrain.n_front_right.zero()
-        Robot.drivetrain.n_back_left.zero()
-        Robot.drivetrain.n_back_right.zero()
         commands2.CommandScheduler.getInstance().schedule(
-            command.DriveSwerveCustom(Robot.drivetrain)
+            command.DrivetrainZero(Robot.drivetrain).andThen(
+                command.DriveSwerveCustom(Robot.drivetrain)
+            )
         )
+
+        # Robot.drivetrain.n_front_left.zero()
+        # Robot.drivetrain.n_front_right.zero()
+        # Robot.drivetrain.n_back_left.zero()
+        # Robot.drivetrain.n_back_right.zero()
+        # commands2.CommandScheduler.getInstance().schedule(
+        #     command.DriveSwerveCustom(Robot.drivetrain)
+        # )
 
     def teleopPeriodic(self):
         pass

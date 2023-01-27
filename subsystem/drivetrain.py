@@ -44,13 +44,14 @@ class SparkMaxSwerveNode(SwerveNode):
 
     def zero(self):
         current_pos_rad = (
-                math.radians(self.encoder.getAbsolutePosition())
-                - self.absolute_encoder_zeroed_pos
+            math.radians(self.encoder.getAbsolutePosition())
+            - self.absolute_encoder_zeroed_pos
         )
 
         self.m_turn.set_sensor_position(
             current_pos_rad * constants.drivetrain_turn_gear_ratio / (2 * math.pi)
         )
+        self.set_motor_angle(current_pos_rad)
 
     def raw_output(self, power):
         self.m_move.set_raw_output(power)
@@ -71,9 +72,9 @@ class SparkMaxSwerveNode(SwerveNode):
 
     def get_current_motor_angle(self) -> radians:
         return (
-                (self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio)
-                * 2
-                * math.pi
+            (self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio)
+            * 2
+            * math.pi
         )
 
     # rotate the wheel so the robot moves
@@ -90,13 +91,16 @@ class SparkMaxSwerveNode(SwerveNode):
         if self.drive_reversed:
             sensor_position *= -1
 
-        return sensor_position / constants.drivetrain_move_gear_ratio_as_rotations_per_meter
+        return (
+            sensor_position
+            / constants.drivetrain_move_gear_ratio_as_rotations_per_meter
+        )
 
     def get_turn_motor_angle(self) -> radians:
         return (
-                (self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio)
-                * 2
-                * math.pi
+            (self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio)
+            * 2
+            * math.pi
         )
 
 
