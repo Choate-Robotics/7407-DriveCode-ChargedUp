@@ -1,4 +1,5 @@
 import math
+import config
 import constants
 import wpilib
 from robotpy_toolkit_7407 import Subsystem
@@ -18,7 +19,7 @@ class Claw(Subsystem):
         self.claw_motor = claw_motor
         self.claw_close_piston: SingleSolenoidPiston = SingleSolenoidPiston(1, wpilib.PneumaticsModuleType.REVPH, 4)
         self.claw_motor_initialized: bool = False
-        self.is_claw_compressed: bool = False
+        self.claw_compressed: bool = False
 
     def init(self):
         self.claw_motor.init()
@@ -59,10 +60,10 @@ class Claw(Subsystem):
     def open_claw(self):
         # Set distance forward (closes claw)
         self.claw_close_piston.extend()
-        self.set_claw_ouput(constants.claw_motor_speed)
-        self.is_claw_compressed = True
+        self.set_claw_ouput(config.claw_motor_speed)
+        self.claw_compressed = True
 
     def close_claw(self):
         self.claw_close_piston.retract()
         self.set_claw_ouput(0)
-        self.is_claw_compressed = False
+        self.claw_compressed = False

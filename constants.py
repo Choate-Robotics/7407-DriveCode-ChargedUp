@@ -93,4 +93,3 @@ kCameras = {
 
 # Dummy data
 claw_gear_ratio = 1
-claw_motor_speed = 0.1 
