@@ -90,6 +90,3 @@ kApriltagPositionDict = {
 kCameras = {
     "Global_Shutter_Camera": Transform3d(Pose3d(), Pose3d(0, 0, 0, Rotation3d()))
 }
-
-# Intake
-intake_speed = 0

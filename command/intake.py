@@ -11,8 +11,11 @@ class IntakeEnable(SubsystemCommand[Intake]):
         super().__init__(subsystem)
         self.subsystem = subsystem
     
-    def execute(self):
+    def initialize(self):
         Robot.intake.intake_enable()
+
+    def execute(self):
+        pass
     
     def isFinished(self) -> bool:
         return False
@@ -25,8 +28,11 @@ class IntakeDisable(SubsystemCommand[Intake]):
         super().__init__(subsystem)
         self.subsystem = subsystem
     
-    def execute(self):
+    def initialize(self):
         Robot.intake.intake_disable()
+    
+    def execute(self):
+        pass
     
     def isFinished(self) -> bool:
         return False
