@@ -1,5 +1,5 @@
 from wpimath.geometry import Pose3d, Rotation3d
-
+from math import radians
 def inches_to_meters(inches: float) -> float:
     return inches * 0.0254
 
@@ -17,15 +17,16 @@ pivot_point_height = inches_to_meters(17)
 elevator_rotation_gear_ratio: float = 202.14 # to one
 elevator_extend_gear_ratio: float = 6.33 # to one
 #elevator zeroing constants
-elevator_initial_roatation = 0
-elevator_initial_height = 0
+elevator_initial_roatation = radians(0)
+elevator_initial_length = inches_to_meters(0)
 
 #general claw rotations
 claw_horizontal_rotation: Rotation3d = Rotation3d(0, 90, 0)
-claw_cone_intake_rotation: Rotation3d = Rotation3d(0, 100, 0)
+claw_cone_intake_rotation: Rotation3d = Rotation3d(0, 30, 0)
 claw_transport_rotation: Rotation3d = Rotation3d(0, 0, 0)
 claw_cube_intake_rotation: Rotation3d = Rotation3d(0, 50, 0)
-
+claw_cone_peg_rotation: Rotation3d = Rotation3d(0, 90, 0)
+claw_cube_platform_rotation: Rotation3d = Rotation3d(0, 90, 0)
 
 #Robot arm positions
 cube_intake_arm_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_intake_rotation)
@@ -37,9 +38,12 @@ bottom_cone_intake_arm_pose: Pose3d = Pose3d(0, 0, 0, claw_horizontal_rotation)
 top_cone_intake_arm_pose: Pose3d = Pose3d(0, 0, 0, claw_horizontal_rotation)
 
 #Apriltag peg positions (Relative to the apriltag)
-left_high_peg_pose: Pose3d = Pose3d(0, 0, 0, 0, 0, 0)
-left_mid_peg_pose: Pose3d = Pose3d(0, 0, 0, 0, 0, 0)
-left_low_peg_pose: Pose3d = Pose3d(0, 0, 0, 0, 0, 0)
-right_high_peg_pose: Pose3d = Pose3d(0, 0, 0, 0, 0, 0)
-right_mid_peg_pose: Pose3d = Pose3d(0, 0, 0, 0, 0, 0)
-right_low_peg_pose: Pose3d = Pose3d(0, 0, 0, 0, 0, 0)
+left_high_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
+left_mid_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
+left_low_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
+right_high_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
+right_mid_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
+right_low_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
+center_low_platform_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)
+center_mid_platform_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)
+center_high_platform_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)

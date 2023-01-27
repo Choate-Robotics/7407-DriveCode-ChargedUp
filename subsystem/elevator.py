@@ -7,7 +7,7 @@ from robotpy_toolkit_7407.sensors.limit_switches.limit_switch import LimitSwitch
 import math
 import constants
 import config
-from wpimath import Pose3d
+from wpimath.geometry import Pose3d
 # importing packages
 
 #TODO: check conversions
@@ -22,8 +22,8 @@ class Elevator(Subsystem):  # elevator class
     brake: wpilib.Solenoid = wpilib.Solenoid(
         1, wpilib.PneumaticsModuleType.REVPH, config.elevator_brake_id)  # brake that holds the arm in place
     initialized: bool = False
-    elevator_bottom_sensor = rev.CANSparkMax(config.elevator_main_rotation_motor_id, rev.MotorType.kBrushless).getReverseLimitSwitch(rev.SparkMaxLimitSwitch.Type.kNormallyOpen)
-    elevator_top_sensor = rev.CANSparkMax(config.elevator_main_rotation_motor_id, rev.MotorType.kBrushless).getForwardLimitSwitch(rev.SparkMaxLimitSwitch.Type.kNormallyOpen)
+    elevator_bottom_sensor = rev.CANSparkMax(config.elevator_main_rotation_motor_id, rev.CANSparkMax.MotorType.kBrushless).getReverseLimitSwitch(rev.SparkMaxLimitSwitch.Type.kNormallyOpen)
+    elevator_top_sensor = rev.CANSparkMax(config.elevator_main_rotation_motor_id, rev.CANSparkMax.MotorType.kBrushless).getForwardLimitSwitch(rev.SparkMaxLimitSwitch.Type.kNormallyOpen)
     turn_sensor = rev.CANSparkMax(config.elevator_main_rotation_motor_id, rev.MotorType.kBrushless).getAnalog()  # senses the rotation of the elevator
     brake_enabled: bool = False
     pose = Pose3d(0, 0, constants.pivot_point_height, 0, 0, 0)
@@ -81,7 +81,7 @@ class Elevator(Subsystem):  # elevator class
             return 1
         else:
 
-            degree = abs(radians)
+            angle = abs(radians)
 
             def get_length_ratio(angle, adjacent):
                 # Gets the length of the angle using cosine
@@ -108,19 +108,19 @@ class Elevator(Subsystem):  # elevator class
             bottom_box_angle = math.acos(
                 bottom_box_height/constants.max_elevator_height)
 
-            # if the degree is within the minimun range of each of these boundry sides
+            # if the angle is within the minimun range of each of these boundry sides
 
             # assuming the top is zero...
 
-            # if the degree is within the max_elevator_extension and facing the top
-            if degree < top_box_angle:
-                return get_length_ratio(degree, top_box_angle)
-            # if the degree is within the max_elevator_extension and facing the sides
-            elif (degree) > side_box_angle and degree < side_box_angle+(90 - side_box_angle):
-                return get_length_ratio(90 - degree, side_box_angle)
-            # if the degree is within the max_elevator_extension and facing the bottom
-            elif (degree) > bottom_box_angle:
-                return get_length_ratio(180 - degree, bottom_box_angle)
+            # if the angle is within the max_elevator_extension and facing the top
+            if angle < top_box_angle:
+                return get_length_ratio(angle, top_box_angle)
+            # if the angle is within the max_elevator_extension and facing the sides
+            elif (angle) > side_box_angle and angle < side_box_angle+(90 - side_box_angle):
+                return get_length_ratio(90 - angle, side_box_angle)
+            # if the angle is within the max_elevator_extension and facing the bottom
+            elif (angle) > bottom_box_angle:
+                return get_length_ratio(180 - angle, bottom_box_angle)
 
     def set_length(self, length: meters):  # set arm extension
         if self.boundary_box(length) > self.elevator_length:
@@ -140,14 +140,14 @@ class Elevator(Subsystem):  # elevator class
                     return i
 
     def soft_limits(self, radians: float):
-        # returns if the degree is within the soft limits
+        # returns if the angle is within the soft limits
         if self.rotation_overide:
             return True
         else:
-            return radians < math.radians(config.elevator_max_rotation) and radians > math.radians(config.elevator_min_rotation)
+            return radians < config.elevator_max_rotation and radians > config.elevator_min_rotation
 
     def set_rotation(self, radians: float):  # set arm rotation
-        # if the rotation is within the soft limits, set the rotation to the given degree
+        # if the rotation is within the soft limits, set the rotation to the given angle
         if self.soft_limits(radians):
             self.main_rotation_motor.set_target_position(
                 radians * constants.elevator_rotation_gear_ratio)
@@ -170,13 +170,20 @@ class Elevator(Subsystem):  # elevator class
 
     def get_rotation(self):  # returns arm rotation
         return self.main_rotation_motor.get_sensor_position() / constants.elevator_rotation_gear_ratio
+    
+    def get_rotation_abs(self):
+        return self.turn_sensor.get_position()
 
-    def zero_elevator(self):  # brings elevator to zero position (no extension, no rotation)
+    def zero_elevator_length(self):  # brings elevator to zero position (no extension, no rotation)
         self.set_length(self.get_length()-0.005)
         self.set_rotation(self.get_rotation()-0.005)
 
+    def zero_elevator_rotation(self):
+        self.set_rotation(self.turn_sensor.get_position(0))
+
+
     def extend_max_elevator(self):
-        self.set_length(config.elevator_max_height)
+        self.set_length(config.elevator_max_height_ratio * constants.max_elevator_height)
 
     def update_pose(self):
         # updates the pose of the arm using the encoder values and rotation of the elevator

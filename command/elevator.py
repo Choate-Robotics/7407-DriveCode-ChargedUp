@@ -71,6 +71,9 @@ class SetArmPositionField(SubsystemCommand[Elevator]):
         #add from pose of robot the height to get arm height
         self.slope = (self.target.Y - self.position.Y) / (self.target.X - self.position.X)
         self.length = abs(self.slope)
+        self.x_distance = self.target.X - self.position.X
+        self.y_distance = self.target.Y - self.position.Y
+        self.angle = math.radians(90) - (math.atan2(self.y_distance, self.x_distance))
         
         if not self.subsystem.set_length(self.length):
             print("Reached Boundry Limits")
@@ -91,9 +94,9 @@ class ZeroArm(SubsystemCommand[Elevator]):
         self.subsystem.disable_brake()
         # self.subsystem.motor_extend.set_target_position(constants.elevator_initial_height)
         # self.subsystem.left_rotation_motor.set_target_position(constants.elevator_initial_roatation)
-    
+        self.subsystem.zero_elevator_rotation()
     def execute(self):
-        self.subsystem.zero_elevator()
+        self.subsystem.zero_elevator_length()
 
     def isFinished(self):
         return self.extend_sensor.get_value() == False and self.turn_sensor.get_value() == 0
@@ -138,3 +141,12 @@ class SetLength(SubsystemCommand[Elevator]):
     def end(self, interrupted: bool) -> None:
         if interrupted:
             self.subsystem.stop()
+            
+class printArmPose(SubsystemCommand[Elevator]):
+    def initialize(self) -> None:
+        pass
+    def execute(self) -> None:
+        print(self.subsystem.get_pose())
+        self.subsystem.update_pose()
+        
+        
