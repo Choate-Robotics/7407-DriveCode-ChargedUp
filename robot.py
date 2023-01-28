@@ -1,14 +1,10 @@
 import math
 
 import commands2
-import ctre
 import wpilib
-from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
-from robotpy_toolkit_7407.sensors.limelight import Limelight, LimelightController
 from wpilib import SmartDashboard
 
 import command
-import constants
 from oi.OI import OI
 from robot_systems import Robot, Sensors
 from sensors import FieldOdometry, PV_Cameras
@@ -48,6 +44,34 @@ class _Robot(wpilib.TimedRobot):
         Sensors.odometry.update()
         SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
         SmartDashboard.putString("FDOM", str(Sensors.odometry.get_robot_pose()))
+        SmartDashboard.putString(
+            "EDOM", str(Robot.drivetrain.odometry_estimator.getEstimatedPosition())
+        )
+        try:
+            SmartDashboard.putString(
+                "PHOTON", str(Sensors.pv_controller.get_estimated_robot_pose())
+            )
+        except Exception:
+            pass
+
+        pose = Sensors.odometry.get_robot_pose()
+        pv_pose = Sensors.pv_controller.get_estimated_robot_pose()
+
+        SmartDashboard.putNumberArray(
+            "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]
+        )
+
+        try:
+            SmartDashboard.putNumberArray(
+                "RobotPoseAdvantage",
+                [
+                    pv_pose[0].toPose2d().X(),
+                    pv_pose[0].toPose2d().Y(),
+                    pv_pose[0].rotation().toRotation2d().radians(),
+                ],
+            )
+        except Exception:
+            pass
 
         commands2.CommandScheduler.getInstance().run()
 

@@ -1,13 +1,14 @@
 import time
 
 from robotpy_toolkit_7407.sensors.odometry import VisionEstimator
+from wpimath.geometry import Pose2d, Pose3d, Rotation2d, Translation2d
 
 from subsystem import Drivetrain
-from wpimath.geometry import Pose2d, Rotation2d, Translation2d, Pose3d
 
 
-def weighted_pose_average(robot_pose: Pose2d, vision_pose: Pose3d, robot_weight: float,
-                          vision_weight: float) -> Pose2d:
+def weighted_pose_average(
+    robot_pose: Pose2d, vision_pose: Pose3d, robot_weight: float, vision_weight: float
+) -> Pose2d:
     """
     Returns a weighted average of two poses.
     :param robot_pose: Pose of the robot.
@@ -26,11 +27,19 @@ def weighted_pose_average(robot_pose: Pose2d, vision_pose: Pose3d, robot_weight:
 
     return Pose2d(
         Translation2d(
-            (robot_pose.translation().X() * robot_weight + vision_pose.translation().X() * vision_weight),
-            (robot_pose.translation().Y() * robot_weight + vision_pose.translation().Y() * vision_weight)
+            (
+                robot_pose.translation().X() * robot_weight
+                + vision_pose.translation().X() * vision_weight
+            ),
+            (
+                robot_pose.translation().Y() * robot_weight
+                + vision_pose.translation().Y() * vision_weight
+            ),
         ),
         Rotation2d(
-            robot_pose.rotation().radians() * robot_weight + vision_pose.rotation().radians() * vision_weight)
+            robot_pose.rotation().radians() * robot_weight
+            + vision_pose.rotation().radians() * vision_weight
+        ),
     )
 
 
@@ -44,11 +53,13 @@ class FieldOdometry:
         self.robot_pose: Pose2d | None = self.drivetrain.odometry.getPose()
 
         self.last_update_time = None
-        self.min_update_wait_time = .05  # seconds to wait before checking for pose update
+        self.min_update_wait_time = (
+            0.05  # seconds to wait before checking for pose update
+        )
 
         self.vision_estimator = vision_estimator
 
-        self.vision_estimator_pose_weight = .1
+        self.vision_estimator_pose_weight = 0.1
         self.robot_pose_weight = 1 - self.vision_estimator_pose_weight
 
     def update(self) -> Pose2d:
@@ -56,23 +67,34 @@ class FieldOdometry:
         Updates the robot's pose relative to the field. This should be called periodically.
         """
 
-        self.drivetrain.odometry.update(
-            Rotation2d(self.drivetrain.gyro.get_robot_heading()),
+        self.drivetrain.node_positions = (
             self.drivetrain.n_front_left.get_node_position(),
             self.drivetrain.n_front_right.get_node_position(),
             self.drivetrain.n_back_left.get_node_position(),
-            self.drivetrain.n_back_right.get_node_position()
+            self.drivetrain.n_back_right.get_node_position(),
+        )
+
+        self.drivetrain.odometry.update(
+            Rotation2d(self.drivetrain.gyro.get_robot_heading()),
+            *self.drivetrain.node_positions
+        )
+
+        self.drivetrain.odometry_estimator.update(
+            Rotation2d(self.drivetrain.gyro.get_robot_heading()),
+            self.drivetrain.node_positions,
         )
 
         self.robot_pose = Pose2d(
             self.drivetrain.odometry.getPose().translation(),
-            Rotation2d(self.drivetrain.gyro.get_robot_heading())
+            self.drivetrain.odometry.getPose().rotation(),
         )
 
         vision_robot_pose_list: list[Pose3d] | None = None
 
         current_time = time.time()
-        if self.last_update_time is None or (current_time - self.last_update_time >= self.min_update_wait_time):
+        if self.last_update_time is None or (
+            current_time - self.last_update_time >= self.min_update_wait_time
+        ):
             vision_robot_pose_list = self.vision_estimator.get_estimated_robot_pose()
 
         if vision_robot_pose_list:
@@ -81,14 +103,15 @@ class FieldOdometry:
                     vision_time = vision_robot_pose[1]
                     vision_robot_pose = vision_robot_pose[0]
 
-                    self.drivetrain.odometry_estimator.addVisionMeasurement(vision_robot_pose.toPose2d(),
-                                                                            vision_time)
+                    self.drivetrain.odometry_estimator.addVisionMeasurement(
+                        vision_robot_pose.toPose2d(), vision_time
+                    )
 
                     weighted_pose = weighted_pose_average(
                         self.robot_pose,
                         vision_robot_pose,
                         self.robot_pose_weight,
-                        self.vision_estimator_pose_weight
+                        self.vision_estimator_pose_weight,
                     )
 
                     self.drivetrain.odometry.resetPosition(
@@ -99,7 +122,7 @@ class FieldOdometry:
 
                     self.robot_pose = Pose2d(
                         self.drivetrain.odometry.getPose().translation(),
-                        Rotation2d(self.drivetrain.gyro.get_robot_heading())
+                        self.drivetrain.odometry.getPose().rotation(),
                     )
 
                     self.last_update_time = current_time

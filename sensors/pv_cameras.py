@@ -1,18 +1,18 @@
-import math
-
-from networktables import NetworkTables
-import constants
-from wpilib import Timer
-from robotpy_toolkit_7407.utils.units import m, deg, ft, inch, rad, radians, meters
 from photonvision import PhotonCamera
 from robotpy_toolkit_7407.sensors.odometry import VisionEstimator
+from wpilib import SmartDashboard, Timer
+
+import constants
 
 
 class PV_Cameras(VisionEstimator):
     def __init__(self):
         super().__init__()
         self.cameras = [
-            (PhotonCamera(cameraName=camera_name), constants.kCameras[camera_name])  # (camera_object, camera_tranform)
+            (
+                PhotonCamera(cameraName=camera_name),
+                constants.kCameras[camera_name],
+            )  # (camera_object, camera_tranform)
             for camera_name in constants.kCameras
         ]
 
@@ -30,10 +30,19 @@ class PV_Cameras(VisionEstimator):
                 ]
 
             if cameraToTargets != 0:  # If we have any targets
+                for tag_id, point in cameraToTargets:
+                    SmartDashboard.putString(
+                        "OrigCamPose",
+                        str(constants.kApriltagPositionDict[tag_id] + point.inverse()),
+                    )
+
                 derivedRobotPoses += [
-                    (constants.kApriltagPositionDict[tag_id]
-                     + point.inverse()
-                     + camera[1].inverse(), Timer.getFPGATimestamp())
+                    (
+                        constants.kApriltagPositionDict[tag_id]
+                        + point.inverse()
+                        + camera[1].inverse(),
+                        Timer.getFPGATimestamp(),
+                    )
                     for tag_id, point in cameraToTargets
                 ]
 
