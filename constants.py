@@ -17,18 +17,42 @@ drivetrain_turn_gear_ratio = 80.4848
 #TODO: convert from inches to meters
 #robot constants
 robot_length = inches_to_meters(29)
+#boundry dimension constants
 horizontal_boundary = inches_to_meters(48)
 vertical_boundary = inches_to_meters(78)
+
+#boundry buffer constants
+bottom_boundry_buffer_gap = inches_to_meters(1)
+top_boundry_buffer_gap = inches_to_meters(0)
+side_boundry_buffer_gap = inches_to_meters(0)
+
+#shoulder constants
+shoulder_max_rotation = math.radians(135)
+shoulder_min_rotation = math.radians(135)
+shoulder_intake_up_max_rotation = math.radians(90)
+
+#shoulder buffer constants
+shoulder_min_buffer_rotation = math.radians(1)
+shoulder_max_buffer_rotation = math.radians(1)
+
+#elevator constants
 min_elevator_height = inches_to_meters(30)
 elevator_pivot_offset = inches_to_meters(-3.5)
 max_elevator_height = inches_to_meters(59.5)
 pivot_point_height = inches_to_meters(17)
+
+
+elevator_max_rotation = math.radians(135)
+elevator_min_rotation = math.radians(-135)
+
 #elevator gear ratios
 elevator_rotation_gear_ratio: float = 202.14 # to one
 elevator_extend_gear_ratio: float = 6.33 # to one
 #elevator zeroing constants
 elevator_initial_roatation = radians(0)
 elevator_initial_length = inches_to_meters(0)
+
+
 
 #general claw rotations
 claw_horizontal_rotation: Rotation3d = Rotation3d(0, 90, 0)

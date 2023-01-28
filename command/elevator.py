@@ -4,7 +4,7 @@ from robotpy_toolkit_7407.utils.units import inch, meters, rev
 from wpimath.geometry import Pose3d, Translation3d, Pose2d, Rotation3d
 import math
 import constants
-from robot_systems import Robot
+from robot_systems import Robot, Sensors
 from subsystem import Elevator
 
 class SetArmPositionRobot(SubsystemCommand[Elevator]):
@@ -64,9 +64,9 @@ class SetArmPositionField(SubsystemCommand[Elevator]):
         pass
 
     def execute(self):
-        self.robot_pose: Pose2d
+        self.robot_pose: Pose2d = Sensors.odometry.get_robot_pose()
         Robot.claw_rotation = 0
-        self.rotation = Rotation3d(0, Robot.claw_rotation, self.robot_pose.rotation)
+        self.rotation = Rotation3d(0, Robot.claw.get_rotation, self.robot_pose.rotation)
         self.position = Pose3d(self.robot_pose.translation(), self.rotation)
         #add from pose of robot the height to get arm height
         self.slope = (self.target.Y - self.position.Y) / (self.target.X - self.position.X)
@@ -149,4 +149,20 @@ class printArmPose(SubsystemCommand[Elevator]):
         print(self.subsystem.get_pose())
         self.subsystem.update_pose()
         
+class armAssistedRobotStabalizer(SubsystemCommand[Elevator]):
+    
+    def __init__(self, subsystem: T):
+        super().__init__(subsystem)
+    
+    def initialize(self) -> None:
+        pass
+    def execute(self) -> None:
+        self.gyro = Robot.drivetrain.gyro.get_rotation()
         
+        
+        
+    def isFinished(self) -> bool:
+        pass
+    def end(self, interrupted: bool) -> None:
+        pass
+    

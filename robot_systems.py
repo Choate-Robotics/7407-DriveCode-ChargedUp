@@ -1,3 +1,4 @@
+import wpilib
 import subsystem
 from sensors import FieldOdometry, PV_Cameras
 from robotpy_toolkit_7407.sensors.limelight import LimelightController, Limelight
