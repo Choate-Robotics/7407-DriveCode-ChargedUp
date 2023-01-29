@@ -55,7 +55,7 @@ class _Robot(wpilib.TimedRobot):
         except Exception:
             pass
 
-        pose = Sensors.odometry.get_robot_pose()
+        pose = Robot.drivetrain.odometry_estimator.getEstimatedPosition()
         pv_pose = Sensors.pv_controller.get_estimated_robot_pose()
 
         SmartDashboard.putNumberArray(
@@ -64,11 +64,11 @@ class _Robot(wpilib.TimedRobot):
 
         try:
             SmartDashboard.putNumberArray(
-                "RobotPoseAdvantage",
+                "PVPoseAdvantage",
                 [
-                    pv_pose[0].toPose2d().X(),
-                    pv_pose[0].toPose2d().Y(),
-                    pv_pose[0].rotation().toRotation2d().radians(),
+                    pv_pose[0][0].toPose2d().X(),
+                    pv_pose[0][0].toPose2d().Y(),
+                    pv_pose[0][0].rotation().toRotation2d().radians(),
                 ],
             )
         except Exception:
@@ -155,8 +155,7 @@ class _Robot(wpilib.TimedRobot):
         )
 
         SmartDashboard.putNumber(
-            "gyro_angle: ",
-            math.degrees(Robot.drivetrain.gyro.get_robot_heading())
+            "gyro_angle: ", math.degrees(Robot.drivetrain.gyro.get_robot_heading())
         )
 
     def teleopInit(self):

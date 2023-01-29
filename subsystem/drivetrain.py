@@ -146,4 +146,6 @@ class Drivetrain(SwerveDrivetrain):
 
     def logger_periodic(self):
         logging.info(f"GYRO: {math.degrees(self.gyro.get_robot_heading())}")
-        logging.info(f"ODOM: {self.odometry_estimator.getEstimatedPosition().rotation().degrees()}")
+        logging.info(
+            f"ODOM: {self.odometry_estimator.getEstimatedPosition().rotation().degrees()}"
+        )

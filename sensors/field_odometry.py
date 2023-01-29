@@ -75,8 +75,7 @@ class FieldOdometry:
         )
 
         self.drivetrain.odometry.update(
-            self.drivetrain.get_heading(),
-            *self.drivetrain.node_positions
+            self.drivetrain.get_heading(), *self.drivetrain.node_positions
         )
 
         self.drivetrain.odometry_estimator.update(
