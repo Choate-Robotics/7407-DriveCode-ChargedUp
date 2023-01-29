@@ -31,9 +31,11 @@ class PV_Cameras(VisionEstimator):
 
             if cameraToTargets != 0:  # If we have any targets
                 for tag_id, point in cameraToTargets:
-                    SmartDashboard.putString(
+                    SmartDashboard.putNumberArray(
                         "OrigCamPose",
-                        str(constants.kApriltagPositionDict[tag_id] + point.inverse()),
+                        [(constants.kApriltagPositionDict[tag_id] + point.inverse()).toPose2d().X(),
+                        (constants.kApriltagPositionDict[tag_id] + point.inverse()).toPose2d().Y(),
+                        (constants.kApriltagPositionDict[tag_id] + point.inverse()).toPose2d().rotation().radians()]
                     )
 
                 derivedRobotPoses += [

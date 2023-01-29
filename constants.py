@@ -88,7 +88,7 @@ kApriltagPositionDict = {
 kCameras = {
     "Global_Shutter_Camera": [
         Transform3d(
-            Pose3d(), Pose3d(0.7366 / 2, 0, 0, Rotation3d(0, 0, math.radians(0)))
+            Pose3d(), Pose3d(-0.7366 / 2, 0, 0, Rotation3d(0, 0, math.radians(180)))
         )
     ]
 }

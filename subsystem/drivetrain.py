@@ -145,7 +145,10 @@ class Drivetrain(SwerveDrivetrain):
     gyro_offset = math.radians(0)
 
     def logger_periodic(self):
-        logging.info(f"GYRO: {math.degrees(self.gyro.get_robot_heading())}")
+        # logging.info(f"GYRO: {math.degrees(self.gyro.get_robot_heading())}")
+        # logging.info(
+        #     f"ODOM: {self.odometry_estimator.getEstimatedPosition().rotation().degrees()}"
+        # )
         logging.info(
-            f"ODOM: {self.odometry_estimator.getEstimatedPosition().rotation().degrees()}"
+            f"ODOM_DIST: {self.odometry_estimator.getEstimatedPosition().translation().distanceFeet(constants.kApriltagPositionDict[8].toPose2d().translation())}"
         )
