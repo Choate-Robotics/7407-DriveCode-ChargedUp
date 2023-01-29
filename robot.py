@@ -41,6 +41,7 @@ class _Robot(wpilib.TimedRobot):
         # self.start_robot_pose = Sensors.odometry.get_robot_pose()
 
     def robotPeriodic(self):
+        Robot.drivetrain.logger_periodic()
         Sensors.odometry.update()
         SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
         SmartDashboard.putString("FDOM", str(Sensors.odometry.get_robot_pose()))
@@ -151,6 +152,11 @@ class _Robot(wpilib.TimedRobot):
             "n_back_right: ",
             Robot.drivetrain.n_back_right.m_move.get_sensor_position()
             * (-1 if Robot.drivetrain.n_back_right.drive_reversed else 1),
+        )
+
+        SmartDashboard.putNumber(
+            "gyro_angle: ",
+            math.degrees(Robot.drivetrain.gyro.get_robot_heading())
         )
 
     def teleopInit(self):

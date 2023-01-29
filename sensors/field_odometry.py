@@ -75,12 +75,12 @@ class FieldOdometry:
         )
 
         self.drivetrain.odometry.update(
-            Rotation2d(self.drivetrain.gyro.get_robot_heading()),
+            self.drivetrain.get_heading(),
             *self.drivetrain.node_positions
         )
 
         self.drivetrain.odometry_estimator.update(
-            Rotation2d(self.drivetrain.gyro.get_robot_heading()),
+            self.drivetrain.get_heading(),
             self.drivetrain.node_positions,
         )
 

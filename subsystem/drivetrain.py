@@ -1,3 +1,4 @@
+import logging
 import math
 from dataclasses import dataclass
 
@@ -58,7 +59,6 @@ class SparkMaxSwerveNode(SwerveNode):
 
     # reposition the wheels
     def set_motor_angle(self, pos: radians):
-        print("I AM BEING SET TO: ", math.degrees(pos))
         if self.turn_reversed:
             pos *= -1
         self.m_turn.set_target_position(
@@ -87,7 +87,7 @@ class SparkMaxSwerveNode(SwerveNode):
         return self.m_move.get_sensor_velocity() / constants.drivetrain_move_gear_ratio
 
     def get_drive_motor_traveled_distance(self) -> meters:
-        sensor_position = self.m_move.get_sensor_position()
+        sensor_position = -1 * self.m_move.get_sensor_position()  # TEST
         if self.drive_reversed:
             sensor_position *= -1
 
@@ -140,4 +140,10 @@ class Drivetrain(SwerveDrivetrain):
     max_angular_vel: radians_per_second = constants.drivetrain_max_angular_vel
     deadzone_velocity: meters_per_second = 0.01
     deadzone_angular_velocity: radians_per_second = math.radians(5)
-    start_pose: Pose2d = Pose2d(0, 0, 0)
+    start_pose: Pose2d = Pose2d(0, 0, math.radians(270))
+    gyro_start_angle = 270
+    gyro_offset = math.radians(0)
+
+    def logger_periodic(self):
+        logging.info(f"GYRO: {math.degrees(self.gyro.get_robot_heading())}")
+        logging.info(f"ODOM: {self.odometry_estimator.getEstimatedPosition().rotation().degrees()}")
