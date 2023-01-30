@@ -1,8 +1,8 @@
-import math
+import logging
 
 from robotpy_toolkit_7407.command import SubsystemCommand
 
-import constants
+import config
 from subsystem import Drivetrain
 
 
@@ -26,8 +26,8 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
     def execute(self) -> None:
 
         dx, dy, d_theta = (
-            self.subsystem.axis_dx.value,
-            self.subsystem.axis_dy.value,
+            self.subsystem.axis_dx.value * (-1 if config.red_team else 1),
+            self.subsystem.axis_dy.value * (-1 if config.red_team else 1),
             -self.subsystem.axis_rotation.value,
         )
 
@@ -55,10 +55,10 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
             )
 
     def end(self, interrupted: bool) -> None:
-        self.subsystem.n_00.set(0, 0)
-        self.subsystem.n_01.set(0, 0)
-        self.subsystem.n_10.set(0, 0)
-        self.subsystem.n_11.set(0, 0)
+        self.subsystem.n_front_left.set(0, 0)
+        self.subsystem.n_front_right.set(0, 0)
+        self.subsystem.n_back_left.set(0, 0)
+        self.subsystem.n_back_right.set(0, 0)
 
     def isFinished(self) -> bool:
         return False
@@ -72,54 +72,26 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         super().__init__(subsystem)
         self.subsystem = subsystem
 
-    def zero(self):
-        ...
-
-    def zero_success(self):
-        threshold = 0.05
-
-        success = True
-
-        for i in [
-            self.subsystem.n_00,
-            self.subsystem.n_01,
-            self.subsystem.n_10,
-            self.subsystem.n_11,
-        ]:
-            if not (
-                abs(
-                    math.radians(i.encoder.getAbsolutePosition())
-                    - i.absolute_encoder_zeroed_pos
-                )
-                < threshold
-            ):
-                success = False
-
-        return success
-
     def initialize(self) -> None:
-        self.subsystem.n_00.zero()
-        self.subsystem.n_01.zero()
-        self.subsystem.n_10.zero()
-        self.subsystem.n_11.zero()
+        self.subsystem.n_front_left.zero()
+        self.subsystem.n_front_right.zero()
+        self.subsystem.n_back_left.zero()
+        self.subsystem.n_back_right.zero()
 
     def execute(self) -> None:
         ...
 
     def isFinished(self) -> bool:
-        # self.subsystem.gyro.reset_angle()
-        return self.zero_success()
+        ...
+        return True
 
     def end(self, interrupted: bool) -> None:
-        for node in [
-            self.subsystem.n_00,
-            self.subsystem.n_01,
-            self.subsystem.n_10,
-            self.subsystem.n_11,
-        ]:
-            node.m_turn.set_sensor_position(-constants.drivetrain_turn_gear_ratio / 4)
-            node.set_motor_angle(-math.pi / 2)
+        self.subsystem.n_front_left.m_move.set_sensor_position(0)
+        self.subsystem.n_front_right.m_move.set_sensor_position(0)
+        self.subsystem.n_back_left.m_move.set_sensor_position(0)
+        self.subsystem.n_back_right.m_move.set_sensor_position(0)
 
-        print("Set back to zero")
-
+        logging.info(
+            "Successfully rezeroed swerve pods."
+        )
         ...
