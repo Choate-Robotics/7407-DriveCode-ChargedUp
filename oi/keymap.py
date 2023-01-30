@@ -28,11 +28,17 @@ class Keymap:
         DRIVER_CENTRIC_REVERSED = DefaultButton(Controllers.DRIVER, controllerDRIVER.RB)
     
     class Elevator:
-        ELEVATOR_SWING = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.R_JOY[5])
-        ELEVATOR_EXTEND =JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.L_JOY[1])
+        ELEVATOR_SWING = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.R_JOY[4])
+        ELEVATOR_EXTEND =JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.R_JOY[5])
         REZERO_ARM = DefaultButton(Controllers.OPERATOR, controllerOPERATOR.A)
     
     class Intake:
-        WRIST_Y = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR)
-        WRIST_OPEN = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR)
-        INTAKE = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR)
+        AUTO_GRAB = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.RT) #I'm not sure if we want this, but just in case I added it here
+        WRIST_Y = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.DP) #d-pad doesn't exist in the toolkit but I think it makes sense
+        # WRIST_Y = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.L_JOY[1]) # Use if not using above
+        CLAW_TOGGLE = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.LB)
+        INTAKE = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.B)
+    
+    class Climb: #I will move these to other classes, I'm just not yet sure where they go.
+        AUTO_BALANCE = JoystickAxis(Controllers.OPERATOR, controllerDRIVER)
+        FORKLIFT = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR)
