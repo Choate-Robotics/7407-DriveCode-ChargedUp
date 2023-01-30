@@ -21,9 +21,18 @@ class Keymap:
         DRIVE_ROTATION_AXIS = JoystickAxis(
             Controllers.DRIVER, controllerDRIVER.R_JOY[0]
         )
-        DRIVE_Y2_AXIS = JoystickAxis(Controllers.DRIVER, controllerDRIVER.R_JOY[1])
         RESET_GYRO = DefaultButton(Controllers.DRIVER, controllerDRIVER.A)
         REZERO_MOTORS = DefaultButton(Controllers.DRIVER, controllerDRIVER.B)
         AIM_SWERVE = DefaultButton(Controllers.DRIVER, controllerDRIVER.RT)
         DRIVER_CENTRIC = DefaultButton(Controllers.DRIVER, controllerDRIVER.LB)
         DRIVER_CENTRIC_REVERSED = DefaultButton(Controllers.DRIVER, controllerDRIVER.RB)
+    
+    class Elevator:
+        ELEVATOR_SWING = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.R_JOY[5])
+        ELEVATOR_EXTEND =JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.L_JOY[1])
+        REZERO_ARM = DefaultButton(Controllers.OPERATOR, controllerOPERATOR.A)
+    
+    class Intake:
+        WRIST_Y = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR)
+        WRIST_OPEN = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR)
+        INTAKE = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR)
