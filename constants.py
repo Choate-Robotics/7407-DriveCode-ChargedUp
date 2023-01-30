@@ -14,74 +14,117 @@ from robotpy_toolkit_7407.utils.units import deg, ft, hour, inch, m, mile, rad, 
 from wpimath.geometry import Pose3d, Rotation3d, Transform3d
 
 drivetrain_turn_gear_ratio = 80.4848
-#TODO: convert from inches to meters
+
 #robot constants
-robot_length = inches_to_meters(29)
+robot_length = inches_to_meters(29) #the length of the robot
+
 #boundry dimension constants
-horizontal_boundary = inches_to_meters(48)
-vertical_boundary = inches_to_meters(78)
+#--------------------------------------------------------------
+horizontal_boundary = inches_to_meters(48) #the horizontal boundry is the distance from the pivot point (center of robot) to the robots maximun extension limit in the x direction (one side of the robot)
+vertical_boundary = inches_to_meters(78) #the vertical boundry is the distance from the floor to the robots maximun extension limit in the y direction 
+#--------------------------------------------------------------
 
 #boundry buffer constants
-bottom_boundry_buffer_gap = inches_to_meters(1)
-top_boundry_buffer_gap = inches_to_meters(0)
-side_boundry_buffer_gap = inches_to_meters(0)
+#--------------------------------------------------------------
+bottom_boundry_buffer_gap = inches_to_meters(1) #the buffer in between the bottom boundry
+top_boundry_buffer_gap = inches_to_meters(0) #the buffer in between the top boundry
+side_boundry_buffer_gap = inches_to_meters(0) #the buffer in between the side boundries
+#--------------------------------------------------------------
 
 #shoulder constants
-shoulder_max_rotation = math.radians(135)
-shoulder_min_rotation = math.radians(135)
-shoulder_intake_up_max_rotation = math.radians(90)
+#--------------------------------------------------------------
+shoulder_max_rotation = math.radians(135) #the maximum rotation of the shoulder
+shoulder_min_rotation = math.radians(135) #the minimum rotation of the shoulder
+shoulder_intake_up_max_rotation = math.radians(90) #the maximum rotation of the shoulder when the intake is up
+#--------------------------------------------------------------
 
 #shoulder buffer constants
-shoulder_min_buffer_rotation = math.radians(1)
-shoulder_max_buffer_rotation = math.radians(1)
+#--------------------------------------------------------------
+shoulder_min_buffer_rotation = math.radians(1) #the buffer in between the minimun rotation
+shoulder_max_buffer_rotation = math.radians(1) #the buffer in between the maximum rotation
+#--------------------------------------------------------------
 
 #elevator constants
-min_elevator_height = inches_to_meters(30)
-elevator_pivot_offset = inches_to_meters(-3.5)
-max_elevator_height = inches_to_meters(59.5)
-pivot_point_height = inches_to_meters(17)
+#--------------------------------------------------------------
+min_elevator_height = inches_to_meters(30) #the minimum height of the elevator
+elevator_pivot_offset = inches_to_meters(-2.5) #offset from the pivot point to the center of the elevator
+max_elevator_height = inches_to_meters(59.5) #the maximum height of the elevator
+pivot_point_height = inches_to_meters(17) #the height of the pivot point
+#--------------------------------------------------------------
 
+#DONT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING/CALL SEBASTIAN PLUNKETT
+#--------------------------------------------------------------
+elevator_zero_length: float = (min_elevator_height / 2) + (-elevator_pivot_offset) 
+#gets the length of the elevator above the pivot point using the offset and the min height
+#--------------------------------------------------------------
 
-elevator_max_rotation = math.radians(135)
-elevator_min_rotation = math.radians(-135)
+#claw constants
+#--------------------------------------------------------------
+claw_height = inches_to_meters(10) #the height of the claw
+claw_width = inches_to_meters(3) #the width of the claw
+claw_length_open = inches_to_meters(14) #the length of the claw when it is open
+claw_length_close = inches_to_meters(7) #the length of the claw when it is closed
+#--------------------------------------------------------------
+
 
 #elevator gear ratios
+#--------------------------------------------------------------
 elevator_rotation_gear_ratio: float = 202.14 # to one
 elevator_extend_gear_ratio: float = 6.33 # to one
-#elevator zeroing constants
-elevator_initial_roatation = radians(0)
-elevator_initial_length = inches_to_meters(0)
+stabalizer_magnitude: float = 2 #the magnitude of the rotation of the arm based on the tip of the robot
+#--------------------------------------------------------------
 
+#elevator zeroing constants
+#--------------------------------------------------------------
+elevator_initial_roatation = radians(0) #the initial rotation of the elevator that it will zero too
+elevator_initial_length = inches_to_meters(0) #the initial length of the elevator that it will zero too
+#--------------------------------------------------------------
 
 
 #general claw rotations
+#--------------------------------------------------------------
+claw_initial_rotation: Rotation3d = Rotation3d(0, 0, 0)
 claw_horizontal_rotation: Rotation3d = Rotation3d(0, 90, 0)
 claw_cone_intake_rotation: Rotation3d = Rotation3d(0, 30, 0)
 claw_transport_rotation: Rotation3d = Rotation3d(0, 0, 0)
-claw_cube_intake_rotation: Rotation3d = Rotation3d(0, 50, 0)
+claw_cube_intake_rotation: Rotation3d = Rotation3d(0, 90, 0)
 claw_cone_peg_rotation: Rotation3d = Rotation3d(0, 90, 0)
 claw_cube_platform_rotation: Rotation3d = Rotation3d(0, 90, 0)
+#--------------------------------------------------------------
 
 #Robot arm positions
+#--------------------------------------------------------------
+zero_pose: Pose3d = Pose3d(0, 0, pivot_point_height + elevator_zero_length, claw_initial_rotation)
 cube_intake_arm_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_intake_rotation)
 arm_transport_pose: Pose3d = Pose3d(0, 0, 0, claw_transport_rotation)
 cone_top_intake_arm_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_intake_rotation)
+#--------------------------------------------------------------
 
 #Field intake positions (Relative to the field)
+#--------------------------------------------------------------
 bottom_cone_intake_arm_pose: Pose3d = Pose3d(0, 0, 0, claw_horizontal_rotation)
 top_cone_intake_arm_pose: Pose3d = Pose3d(0, 0, 0, claw_horizontal_rotation)
+#--------------------------------------------------------------
 
-#Apriltag peg positions (Relative to the apriltag)
+#Apriltag positions (Relative to the apriltag)
+#--------------------------------------------------------------
+## CONE PEGS ##
 left_high_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
 left_mid_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
 left_low_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
 right_high_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
 right_mid_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
 right_low_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
+
+## CUBE PLATFORMS ##
 center_low_platform_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)
 center_mid_platform_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)
 center_high_platform_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)
 
+## LOADING STATION ##
+double_loading_station_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)
+single_loading_station_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)
+#--------------------------------------------------------------
 
 period = 0.03
 

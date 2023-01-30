@@ -2,6 +2,7 @@ from commands2 import InstantCommand, ParallelCommandGroup, ConditionalCommand, 
 from robotpy_toolkit_7407.command import SubsystemCommand, T
 from robotpy_toolkit_7407.utils.units import inch, meters, rev
 from wpimath.geometry import Pose3d, Translation3d, Pose2d, Rotation3d
+from wpilib import SmartDashboard
 import math
 import constants
 from robot_systems import Robot, Sensors
@@ -39,7 +40,7 @@ class SetArmPositionRobot(SubsystemCommand[Elevator]):
             self.subsystem.stop()
         self.subsystem.enable_brake()
 
-class pauseMovement(SubsystemCommand[Elevator]):
+class PauseMovement(SubsystemCommand[Elevator]):
 
     def initialize(self) -> None:
         self.position = self.subsystem.get_pose()
@@ -55,13 +56,25 @@ class pauseMovement(SubsystemCommand[Elevator]):
         self.subsystem.disable_brake()
 
 class SetArmPositionField(SubsystemCommand[Elevator]):
+    """
+    Sets the arm to a position in the field or relative to the april tag id
 
-    def __init__(self, subsystem: T, target: Pose3d):
+    if no april tag id is given, the position is relative to the field
+
+    Args:
+        SubsystemCommand (Elevator): Elevator Subsystem
+        Target (Pose3d): Target Position in the field or relative to the april tag id
+        april_tag_id (int, optional): April Tag ID. Defaults to None.
+    """
+    def __init__(self, subsystem: T, target: Pose3d, april_tag_id: int = None):
         super().__init__(subsystem)
-        self.target = target
-
+        self.target: Pose3d = target
+        self.april_tag_id = april_tag_id
+        
     def initialize(self):
-        pass
+        if self.april_tag_id is not None:
+            self.tag = constants.kApriltagPositionDict[self.april_tag_id]
+            self.target.transformBy(self.tag)
 
     def execute(self):
         self.robot_pose: Pose2d = Sensors.odometry.get_robot_pose()
@@ -99,21 +112,19 @@ class ZeroArm(SubsystemCommand[Elevator]):
         self.subsystem.zero_elevator_length()
 
     def isFinished(self):
-        return self.extend_sensor.get_value() == False and self.turn_sensor.get_value() == 0
+        return self.extend_sensor.get_value() == False and self.turn_sensor.get_position() == 0
 
     def end(self, interrupted):
         self.subsystem.enable_brake
         self.subsystem.zero_pose()
 
 class SetRotation(SubsystemCommand[Elevator]):
-    def __init__(self, subsystem: T, rotations):
+    def __init__(self, subsystem: T, rotation):
         super().__init__(subsystem)
-        self.rotations = rotations
+        self.rotation = rotation
     def initialize(self):
         self.subsystem.disable_brake()
-        self.rotation = self.subsystem.get_rotation()
-        self.target = self.rotation + self.target
-        self.subsystem.set_rotation(self.rotations)
+        self.subsystem.set_rotation(self.rotation)
     
     def execute(self):
         self.subsystem.update_pose()
@@ -142,27 +153,44 @@ class SetLength(SubsystemCommand[Elevator]):
         if interrupted:
             self.subsystem.stop()
             
-class printArmPose(SubsystemCommand[Elevator]):
+class PrintArmPoseTerminal(SubsystemCommand[Elevator]):
     def initialize(self) -> None:
         pass
     def execute(self) -> None:
         print(self.subsystem.get_pose())
         self.subsystem.update_pose()
-        
-class armAssistedRobotStabalizer(SubsystemCommand[Elevator]):
-    
-    def __init__(self, subsystem: T):
-        super().__init__(subsystem)
-    
-    def initialize(self) -> None:
-        pass
-    def execute(self) -> None:
-        self.gyro = Robot.drivetrain.gyro.get_rotation()
-        
-        
-        
     def isFinished(self) -> bool:
         pass
     def end(self, interrupted: bool) -> None:
         pass
     
+class PrintArmPoseDashboard(SubsystemCommand[Elevator]):
+    def initialize(self) -> None:
+        pass
+    def execute(self) -> None:
+        SmartDashboard.putData("Arm Pose", self.subsystem.get_pose())
+        self.subsystem.update_pose()
+    def isFinished(self) -> bool:
+        pass
+    def end(self, interrupted: bool) -> None:
+        pass
+    
+class ArmAssistedRobotStabalizer(SubsystemCommand[Elevator]):
+    
+    def __init__(self, subsystem: T):
+        super().__init__(subsystem)
+    
+    def initialize(self) -> None:
+        self.subsystem.disable_brake()
+    def execute(self) -> None:
+        self.gyro_roll: float
+        self.elevator_rotation: float = self.gyro_roll * constants.stabalizer_magnitude
+        self.subsystem.set_rotation(self.elevator_rotation)
+    def isFinished(self) -> bool:
+        pass
+    def end(self, interrupted: bool) -> None:
+        if not interrupted:
+            self.subsystem.enable_brake()
+    
+
+
