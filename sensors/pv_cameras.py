@@ -33,9 +33,18 @@ class PV_Cameras(VisionEstimator):
                 for tag_id, point in cameraToTargets:
                     SmartDashboard.putNumberArray(
                         "OrigCamPose",
-                        [(constants.kApriltagPositionDict[tag_id] + point.inverse()).toPose2d().X(),
-                        (constants.kApriltagPositionDict[tag_id] + point.inverse()).toPose2d().Y(),
-                        (constants.kApriltagPositionDict[tag_id] + point.inverse()).toPose2d().rotation().radians()]
+                        [
+                            (constants.kApriltagPositionDict[tag_id] + point.inverse())
+                            .toPose2d()
+                            .X(),
+                            (constants.kApriltagPositionDict[tag_id] + point.inverse())
+                            .toPose2d()
+                            .Y(),
+                            (constants.kApriltagPositionDict[tag_id] + point.inverse())
+                            .toPose2d()
+                            .rotation()
+                            .radians(),
+                        ],
                     )
 
                 derivedRobotPoses += [

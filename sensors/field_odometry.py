@@ -1,3 +1,4 @@
+import math
 import time
 
 from robotpy_toolkit_7407.sensors.odometry import VisionEstimator
@@ -102,22 +103,29 @@ class FieldOdometry:
                     vision_time = vision_robot_pose[1]
                     vision_robot_pose = vision_robot_pose[0]
 
-                    self.drivetrain.odometry_estimator.addVisionMeasurement(
-                        vision_robot_pose.toPose2d(), vision_time
-                    )
+                    angle_diff = math.degrees(vision_robot_pose.toPose2d().rotation().radians() - self.drivetrain.gyro.get_robot_heading()) % 360
+                    angle_diff_rev = 360 - angle_diff
+                    print(angle_diff)
+                    print(angle_diff_rev)
 
-                    weighted_pose = weighted_pose_average(
-                        self.robot_pose,
-                        vision_robot_pose,
-                        self.robot_pose_weight,
-                        self.vision_estimator_pose_weight,
-                    )
+                    if (2 > angle_diff > -2) or (2 > angle_diff_rev > -2):
 
-                    self.drivetrain.odometry.resetPosition(
-                        self.robot_pose.rotation(),
-                        weighted_pose,
-                        *self.drivetrain.node_positions
-                    )
+                        self.drivetrain.odometry_estimator.addVisionMeasurement(
+                            vision_robot_pose.toPose2d(), vision_time
+                        )
+
+                        weighted_pose = weighted_pose_average(
+                            self.robot_pose,
+                            vision_robot_pose,
+                            self.robot_pose_weight,
+                            self.vision_estimator_pose_weight,
+                        )
+
+                        self.drivetrain.odometry.resetPosition(
+                            self.drivetrain.get_heading(),
+                            weighted_pose,
+                            *self.drivetrain.node_positions
+                        )
 
                     self.robot_pose = Pose2d(
                         self.drivetrain.odometry.getPose().translation(),

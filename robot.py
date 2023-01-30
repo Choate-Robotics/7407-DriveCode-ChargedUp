@@ -9,6 +9,8 @@ from oi.OI import OI
 from robot_systems import Robot, Sensors
 from sensors import FieldOdometry, PV_Cameras
 
+from autonomous import routine
+
 
 class _Robot(wpilib.TimedRobot):
     def __init__(self):
@@ -52,14 +54,22 @@ class _Robot(wpilib.TimedRobot):
             SmartDashboard.putString(
                 "PHOTON", str(Sensors.pv_controller.get_estimated_robot_pose())
             )
+            SmartDashboard.putString(
+                "PHOTON ANGLE", str(Sensors.pv_controller.get_estimated_robot_pose()[0][0].rotation().toRotation2d().degrees())
+            )
         except Exception:
             pass
 
         pose = Robot.drivetrain.odometry_estimator.getEstimatedPosition()
+        pose2 = Sensors.odometry.get_robot_pose()
         pv_pose = Sensors.pv_controller.get_estimated_robot_pose()
 
         SmartDashboard.putNumberArray(
             "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]
+        )
+
+        SmartDashboard.putNumberArray(
+            "RobotPoseOrig", [pose2.X(), pose2.Y(), pose2.rotation().radians()]
         )
 
         try:
@@ -169,6 +179,7 @@ class _Robot(wpilib.TimedRobot):
         pass
 
     def autonomousInit(self):
+        routine.run()
         pass
 
     def autonomousPeriodic(self):

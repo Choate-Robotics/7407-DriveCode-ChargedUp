@@ -92,6 +92,6 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         self.subsystem.n_back_right.m_move.set_sensor_position(0)
 
         logging.info(
-            "Successfully rezeroed swerve pods.", "[drivetrain_rezero_command]"
+            "Successfully rezeroed swerve pods."
         )
         ...

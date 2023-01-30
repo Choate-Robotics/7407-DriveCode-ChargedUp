@@ -45,8 +45,8 @@ class SparkMaxSwerveNode(SwerveNode):
 
     def zero(self):
         current_pos_rad = (
-            math.radians(self.encoder.getAbsolutePosition())
-            - self.absolute_encoder_zeroed_pos
+                math.radians(self.encoder.getAbsolutePosition())
+                - self.absolute_encoder_zeroed_pos
         )
 
         self.m_turn.set_sensor_position(
@@ -72,9 +72,9 @@ class SparkMaxSwerveNode(SwerveNode):
 
     def get_current_motor_angle(self) -> radians:
         return (
-            (self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio)
-            * 2
-            * math.pi
+                (self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio)
+                * 2
+                * math.pi
         )
 
     # rotate the wheel so the robot moves
@@ -92,15 +92,15 @@ class SparkMaxSwerveNode(SwerveNode):
             sensor_position *= -1
 
         return (
-            sensor_position
-            / constants.drivetrain_move_gear_ratio_as_rotations_per_meter
+                sensor_position
+                / constants.drivetrain_move_gear_ratio_as_rotations_per_meter
         )
 
     def get_turn_motor_angle(self) -> radians:
         return (
-            (self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio)
-            * 2
-            * math.pi
+                (self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio)
+                * 2
+                * math.pi
         )
 
 
@@ -140,15 +140,13 @@ class Drivetrain(SwerveDrivetrain):
     max_angular_vel: radians_per_second = constants.drivetrain_max_angular_vel
     deadzone_velocity: meters_per_second = 0.01
     deadzone_angular_velocity: radians_per_second = math.radians(5)
-    start_pose: Pose2d = Pose2d(0, 0, math.radians(270))
-    gyro_start_angle = 270
+    start_angle = 0
+    start_pose: Pose2d = Pose2d(.0254*(40.45 + 17.625) + constants.track_width/2, .0254*42.19, math.radians(start_angle))  # meters(40.45 + 17.625) + constants.track/2
+    gyro_start_angle = start_angle
     gyro_offset = math.radians(0)
 
     def logger_periodic(self):
-        # logging.info(f"GYRO: {math.degrees(self.gyro.get_robot_heading())}")
         # logging.info(
-        #     f"ODOM: {self.odometry_estimator.getEstimatedPosition().rotation().degrees()}"
+        #     f"ODOM_DIST: {self.odometry_estimator.getEstimatedPosition().translation().distanceFeet(constants.kApriltagPositionDict[8].toPose2d().translation())}"
         # )
-        logging.info(
-            f"ODOM_DIST: {self.odometry_estimator.getEstimatedPosition().translation().distanceFeet(constants.kApriltagPositionDict[8].toPose2d().translation())}"
-        )
+        pass
