@@ -40,7 +40,13 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
         self.omega = self.theta_diff / self.duration
         self.finished = False
 
+        self.mod = 0
+
     def execute(self) -> None:
+        if self.mod % 5 == 0:
+            print(self.subsystem.odometry.getPose())
+        self.mod += 1
+
         self.t = time.perf_counter() - self.start_time
         if self.t > self.duration:
             self.t = self.duration
@@ -59,6 +65,7 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
         self.subsystem.set_driver_centric((vx, vy), speeds.omega)
 
     def end(self, interrupted: bool) -> None:
+        print("ENDED")
         self.subsystem.set_driver_centric((0, 0), 0)
 
     def isFinished(self) -> bool:

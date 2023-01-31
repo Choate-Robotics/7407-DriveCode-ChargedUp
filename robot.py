@@ -180,7 +180,6 @@ class _Robot(wpilib.TimedRobot):
 
     def autonomousInit(self):
         routine.run()
-        pass
 
     def autonomousPeriodic(self):
         pass

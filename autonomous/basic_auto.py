@@ -10,8 +10,8 @@ from wpimath.trajectory import TrajectoryParameterizer
 import math
 
 start_pose = Pose2d(0, 0, math.radians(0))
-end_pose = Pose2d(1, 0, math.radians(0))
-trajectory_config = TrajectoryConfig(3, 1)
+end_pose = Pose2d(2, 0, math.radians(0))
+trajectory_config = TrajectoryConfig(7, 30)
 trajectory_config.setStartVelocity(0)
 trajectory_config.setEndVelocity(0)
 

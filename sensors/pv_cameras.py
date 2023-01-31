@@ -12,7 +12,7 @@ class PV_Cameras(VisionEstimator):
             (
                 PhotonCamera(cameraName=camera_name),
                 constants.kCameras[camera_name][0],
-            )  # (camera_object, camera_tranform)
+            )
             for camera_name in constants.kCameras
         ]
 
