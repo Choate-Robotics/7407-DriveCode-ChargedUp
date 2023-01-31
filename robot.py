@@ -5,6 +5,7 @@ import wpilib
 from wpilib import SmartDashboard
 
 import command
+import constants
 from oi.OI import OI
 from robot_systems import Robot, Sensors
 from sensors import FieldOdometry, PV_Cameras
@@ -55,7 +56,13 @@ class _Robot(wpilib.TimedRobot):
                 "PHOTON", str(Sensors.pv_controller.get_estimated_robot_pose())
             )
             SmartDashboard.putString(
-                "PHOTON ANGLE", str(Sensors.pv_controller.get_estimated_robot_pose()[0][0].rotation().toRotation2d().degrees())
+                "PHOTON ANGLE",
+                str(
+                    Sensors.pv_controller.get_estimated_robot_pose()[0][0]
+                    .rotation()
+                    .toRotation2d()
+                    .degrees()
+                ),
             )
         except Exception:
             pass
@@ -144,35 +151,12 @@ class _Robot(wpilib.TimedRobot):
         )
 
         SmartDashboard.putNumber(
-            "n_front_left: ",
-            Robot.drivetrain.n_front_left.m_move.get_sensor_position()
-            * (-1 if Robot.drivetrain.n_front_left.drive_reversed else 1),
-        )
-        SmartDashboard.putNumber(
-            "n_front_right: ",
-            Robot.drivetrain.n_front_right.m_move.get_sensor_position()
-            * (-1 if Robot.drivetrain.n_front_right.drive_reversed else 1),
-        )
-        SmartDashboard.putNumber(
-            "n_back_left: ",
-            Robot.drivetrain.n_back_left.m_move.get_sensor_position()
-            * (-1 if Robot.drivetrain.n_back_left.drive_reversed else 1),
-        )
-        SmartDashboard.putNumber(
-            "n_back_right: ",
-            Robot.drivetrain.n_back_right.m_move.get_sensor_position()
-            * (-1 if Robot.drivetrain.n_back_right.drive_reversed else 1),
-        )
-
-        SmartDashboard.putNumber(
             "gyro_angle: ", math.degrees(Robot.drivetrain.gyro.get_robot_heading())
         )
 
     def teleopInit(self):
         commands2.CommandScheduler.getInstance().schedule(
-            command.DrivetrainZero(Robot.drivetrain).andThen(
-                command.DriveSwerveCustom(Robot.drivetrain)
-            )
+            command.DriveSwerveCustom(Robot.drivetrain)
         )
 
     def teleopPeriodic(self):
@@ -193,4 +177,3 @@ class _Robot(wpilib.TimedRobot):
 
 if __name__ == "__main__":
     wpilib.run(_Robot)
-    # Robot.robotInit(Robot())

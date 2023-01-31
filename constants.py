@@ -14,9 +14,12 @@ period = 0.03
 
 drivetrain_turn_gear_ratio = 21.45
 drivetrain_move_gear_ratio_as_rotations_per_meter = 20.64
+
 drivetrain_move_gear_ratio = (
-    ((20.64 * 4096) / 2 * math.pi) * rev_sensor_unit / rad
-).asNumber()
+    20.64 * 60  # Maybe divide by math.2pi
+)
+
+print(drivetrain_move_gear_ratio)
 
 
 # track_width = (24.2 * inch).asNumber(m)

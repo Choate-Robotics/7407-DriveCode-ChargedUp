@@ -5,21 +5,17 @@ from robot_systems import Robot
 import constants
 from commands2 import SequentialCommandGroup
 from autonomous.auto_routine import AutoRoutine
-from wpimath.trajectory import TrajectoryParameterizer
 
 import math
 
 start_pose = Pose2d(0, 0, math.radians(0))
 end_pose = Pose2d(2, 0, math.radians(0))
-trajectory_config = TrajectoryConfig(7, 30)
+trajectory_config = TrajectoryConfig(2, 5)
 trajectory_config.setStartVelocity(0)
 trajectory_config.setEndVelocity(0)
 
 trajectory = TrajectoryGenerator.generateTrajectory(
-    start=start_pose,
-    interiorWaypoints=[],
-    end=end_pose,
-    config=trajectory_config
+    start=start_pose, interiorWaypoints=[], end=end_pose, config=trajectory_config
 )
 
 path = FollowPathCustom(
@@ -30,9 +26,7 @@ path = FollowPathCustom(
 )
 
 auto = SequentialCommandGroup(
-    path
+    path,
 )
 
-routine = AutoRoutine(start_pose, auto, Robot.drivetrain)
-
-
+routine = AutoRoutine(start_pose, auto)

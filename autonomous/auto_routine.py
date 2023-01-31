@@ -1,41 +1,38 @@
+import logging
 from dataclasses import dataclass
-from subsystem.drivetrain import Drivetrain
 
 import commands2
 from commands2 import CommandBase
 from wpimath.geometry import Pose2d
 
 from robot_systems import Robot
-import command
 
 
 @dataclass
 class AutoRoutine:
     initial_robot_pose: Pose2d
     command: CommandBase
-    subsystem: Drivetrain = Robot.drivetrain
+
+    def log(self):
+        logging.info(Robot.drivetrain.odometry.getPose())
 
     def run(self):
-        self.subsystem.n_front_left.zero()
-        self.subsystem.n_front_right.zero()
-        self.subsystem.n_back_left.zero()
-        self.subsystem.n_back_right.zero()
-
-        self.subsystem.node_positions = (
-            self.subsystem.n_front_left.get_node_position(),
-            self.subsystem.n_front_right.get_node_position(),
-            self.subsystem.n_back_left.get_node_position(),
-            self.subsystem.n_back_right.get_node_position(),
+        """
+        Runs the autonomous routine
+        """
+        Robot.drivetrain.node_positions = (
+            Robot.drivetrain.n_front_left.get_node_position(),
+            Robot.drivetrain.n_front_right.get_node_position(),
+            Robot.drivetrain.n_back_left.get_node_position(),
+            Robot.drivetrain.n_back_right.get_node_position()
         )
 
-        self.subsystem.gyro.reset_angle(self.initial_robot_pose.rotation().degrees())
-
-        self.subsystem.odometry.resetPosition(
-            self.initial_robot_pose.rotation(),
+        Robot.drivetrain.odometry.resetPosition(
+            Robot.drivetrain.get_heading(),
             self.initial_robot_pose,
-            *self.subsystem.node_positions
+            *Robot.drivetrain.node_positions
         )
 
-        print(self.subsystem.odometry.getPose())
-        commands2.CommandScheduler.getInstance().schedule(self.command)
-        print(self.subsystem.odometry.getPose())
+        commands2.CommandScheduler.getInstance().schedule(
+            self.command
+        )

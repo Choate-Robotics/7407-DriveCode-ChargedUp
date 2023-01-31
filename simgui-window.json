@@ -1,13 +1,13 @@
 {
   "MainWindow": {
     "GLOBAL": {
-      "height": "1016",
+      "height": "1044",
       "maximized": "0",
       "style": "0",
       "userScale": "2",
-      "width": "958",
-      "xpos": "791",
-      "ypos": "64"
+      "width": "478",
+      "xpos": "481",
+      "ypos": "35"
     }
   },
   "Window": {
@@ -19,7 +19,7 @@
     "###Joysticks": {
       "Collapsed": "0",
       "Pos": "439,598",
-      "Size": "796,73"
+      "Size": "472,73"
     },
     "###NetworkTables": {
       "Collapsed": "0",
