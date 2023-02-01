@@ -9,8 +9,8 @@ from autonomous.auto_routine import AutoRoutine
 import math
 
 start_pose = Pose2d(0, 0, math.radians(0))
-end_pose = Pose2d(2, 0, math.radians(0))
-trajectory_config = TrajectoryConfig(2, 5)
+end_pose = Pose2d(1, 0, math.radians(0))
+trajectory_config = TrajectoryConfig(10, 20)
 trajectory_config.setStartVelocity(0)
 trajectory_config.setEndVelocity(0)
 

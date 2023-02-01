@@ -3,7 +3,6 @@ Constant values
 """
 import math
 
-from robotpy_toolkit_7407.motors.rev_motors import rev_sensor_unit
 from robotpy_toolkit_7407.utils.units import hour, m, mile, rad, rev, s
 from wpimath.geometry import Pose3d, Rotation3d, Transform3d
 
@@ -15,9 +14,7 @@ period = 0.03
 drivetrain_turn_gear_ratio = 21.45
 drivetrain_move_gear_ratio_as_rotations_per_meter = 20.64
 
-drivetrain_move_gear_ratio = (
-    20.64 * 60  # Maybe divide by math.2pi
-)
+drivetrain_move_gear_ratio = 20.64 * 60  # Maybe divide by math.2pi
 
 print(drivetrain_move_gear_ratio)
 
@@ -27,7 +24,7 @@ track_width = 0.60325
 robot_length = 0.7366
 
 # TODO Maybe change these
-drivetrain_max_vel = (10 * mile / hour).asNumber(m / s)
+drivetrain_max_vel = (30 * mile / hour).asNumber(m / s)  # 10
 drivetrain_target_max_vel = (7 * mile / hour).asNumber(m / s)
 drivetrain_max_angular_vel = (2 * rev / s).asNumber(rad / s)
 drivetrain_max_climb_vel = (2 * mile / hour).asNumber(m / s)

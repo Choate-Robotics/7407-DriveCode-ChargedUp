@@ -8,13 +8,23 @@ from wpimath.geometry import Pose2d
 from robot_systems import Robot
 
 
+def auto_log():
+    logging.info(Robot.drivetrain.odometry.getPose())
+
+
 @dataclass
 class AutoRoutine:
+    """
+    Base auto-routine class.
+
+    :param initial_robot_pose: Initial robot pose.
+    :type initial_robot_pose: Pose2d
+    :param command: Command to run.
+    :type command: CommandBase
+    """
+
     initial_robot_pose: Pose2d
     command: CommandBase
-
-    def log(self):
-        logging.info(Robot.drivetrain.odometry.getPose())
 
     def run(self):
         """
@@ -24,7 +34,7 @@ class AutoRoutine:
             Robot.drivetrain.n_front_left.get_node_position(),
             Robot.drivetrain.n_front_right.get_node_position(),
             Robot.drivetrain.n_back_left.get_node_position(),
-            Robot.drivetrain.n_back_right.get_node_position()
+            Robot.drivetrain.n_back_right.get_node_position(),
         )
 
         Robot.drivetrain.odometry.resetPosition(
@@ -33,6 +43,6 @@ class AutoRoutine:
             *Robot.drivetrain.node_positions
         )
 
-        commands2.CommandScheduler.getInstance().schedule(
-            self.command
-        )
+        print(Robot.drivetrain.odometry.getPose())
+        commands2.CommandScheduler.getInstance().schedule(self.command)
+        print(Robot.drivetrain.odometry.getPose())
