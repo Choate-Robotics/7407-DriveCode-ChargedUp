@@ -2,7 +2,6 @@ import time
 
 from robotpy_toolkit_7407.command import SubsystemCommand
 from robotpy_toolkit_7407.subsystem_templates.drivetrain import SwerveDrivetrain
-from robotpy_toolkit_7407.utils import logger
 from robotpy_toolkit_7407.utils.math import bounded_angle_diff, rotate_vector
 from robotpy_toolkit_7407.utils.units import radians
 from wpimath.controller import (
@@ -25,12 +24,12 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
         super().__init__(subsystem)
         self.trajectory = trajectory
         self.controller = HolonomicDriveController(
-            PIDController(1, 0, 0, period),
-            PIDController(1, 0, 0, period),
-            ProfiledPIDControllerRadians(
+            PIDController(8, 4, 2, period),  # 1, 0, 0
+            PIDController(8, 4, 2, period),  # 1, 0, 0
+            ProfiledPIDControllerRadians(  # 4, 0, 0
+                8,
                 4,
-                0,
-                0,
+                2,
                 TrapezoidProfileRadians.Constraints(
                     subsystem.max_angular_vel, subsystem.max_angular_vel / 0.01
                 ),
@@ -53,13 +52,7 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
         self.omega = self.theta_diff / self.duration
         self.finished = False
 
-        self.mod = 0
-
     def execute(self) -> None:
-        if self.mod % 5 == 0:
-            print(self.subsystem.odometry.getPose())
-        self.mod += 1
-
         self.t = time.perf_counter() - self.start_time
         if self.t > self.duration:
             self.t = self.duration
@@ -76,7 +69,7 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
 
         print(f"vx: {vx}, vy: {vy}, omega: {speeds.omega}")
 
-        self.subsystem.set_driver_centric((-vx, vy), speeds.omega)
+        self.subsystem.set_driver_centric((-vx, -vy), speeds.omega)
 
     def end(self, interrupted: bool) -> None:
         print("ENDED")
@@ -121,7 +114,6 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
         self.finished = False
 
     def initialize(self) -> None:
-        logger.info(f"rotating")
         self.start_time = time.perf_counter()
         self.theta_i = self.subsystem.odometry.getPose().rotation().radians()
         self.theta_diff = bounded_angle_diff(self.theta_i, self.theta_f)

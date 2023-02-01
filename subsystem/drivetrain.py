@@ -57,7 +57,6 @@ class SparkMaxSwerveNode(SwerveNode):
     def raw_output(self, power):
         self.m_move.set_raw_output(power)
 
-    # reposition the wheels
     def set_motor_angle(self, pos: radians):
         self.m_turn.set_target_position(
             (pos / (2 * math.pi)) * constants.drivetrain_turn_gear_ratio
@@ -75,10 +74,7 @@ class SparkMaxSwerveNode(SwerveNode):
             * math.pi
         )
 
-    # rotate the wheel so the robot moves
     def set_motor_velocity(self, vel: meters_per_second):
-        # Need to convert meters per second to rotations per second
-        # So just multiply meters per second by gear ratio? but that doesn't work
         self.m_move.set_target_velocity(vel * constants.drivetrain_move_gear_ratio)
 
     def get_motor_velocity(self) -> radians_per_second:

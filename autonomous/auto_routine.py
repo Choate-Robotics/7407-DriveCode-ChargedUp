@@ -43,6 +43,4 @@ class AutoRoutine:
             *Robot.drivetrain.node_positions
         )
 
-        print(Robot.drivetrain.odometry.getPose())
         commands2.CommandScheduler.getInstance().schedule(self.command)
-        print(Robot.drivetrain.odometry.getPose())

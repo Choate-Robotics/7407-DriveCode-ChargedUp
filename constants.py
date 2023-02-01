@@ -18,7 +18,6 @@ drivetrain_move_gear_ratio = 20.64 * 60  # Maybe divide by math.2pi
 
 print(drivetrain_move_gear_ratio)
 
-
 # track_width = (24.2 * inch).asNumber(m)
 track_width = 0.60325
 robot_length = 0.7366
