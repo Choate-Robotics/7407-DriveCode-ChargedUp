@@ -19,9 +19,15 @@ def curve(x):
 class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
     driver_centric = True
     driver_centric_reversed = False
+    gravitate = False
 
     def initialize(self) -> None:
-        pass
+         self.pid_controller = ProfiledPIDControllerRadians(
+            AIM_kP, AIM_kI, AIM_kD,
+            TrapezoidProfileRadians.Constraints(
+                AIM_max_angular_vel, AIM_max_angular_accel
+            ), constants.period
+        )
 
     def execute(self) -> None:
 
@@ -30,6 +36,11 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
             self.subsystem.axis_dy.value * (-1 if config.red_team else 1),
             -self.subsystem.axis_rotation.value,
         )
+
+
+        if DriveSwerveCustom.gravitate:
+
+
 
         if abs(d_theta) < 0.15:
             d_theta = 0
@@ -53,6 +64,9 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
             self.subsystem.set_robot_centric(
                 (dx, dy), d_theta * self.subsystem.max_angular_vel
             )
+
+
+    
 
     def end(self, interrupted: bool) -> None:
         self.subsystem.n_front_left.set(0, 0)
