@@ -14,7 +14,7 @@ period = 0.03
 drivetrain_turn_gear_ratio = 21.45
 drivetrain_move_gear_ratio_as_rotations_per_meter = 20.64
 
-drivetrain_move_gear_ratio = 20.64 * 60  # Maybe divide by math.2pi
+drivetrain_move_gear_ratio = 20.64 * 60  # 20.64
 
 print(drivetrain_move_gear_ratio)
 

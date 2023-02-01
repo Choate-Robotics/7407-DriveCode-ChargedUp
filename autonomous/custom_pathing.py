@@ -24,12 +24,12 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
         super().__init__(subsystem)
         self.trajectory = trajectory
         self.controller = HolonomicDriveController(
-            PIDController(8, 4, 2, period),  # 1, 0, 0
-            PIDController(8, 4, 2, period),  # 1, 0, 0
+            PIDController(1, 0, 0, period),  # 1, 0, 0
+            PIDController(1, 0, 0, period),  # 1, 0, 0
             ProfiledPIDControllerRadians(  # 4, 0, 0
-                8,
                 4,
-                2,
+                0,
+                0,
                 TrapezoidProfileRadians.Constraints(
                     subsystem.max_angular_vel, subsystem.max_angular_vel / 0.01
                 ),
