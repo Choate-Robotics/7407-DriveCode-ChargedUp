@@ -1,9 +1,21 @@
 import logging
 
 from robotpy_toolkit_7407.command import SubsystemCommand
-
+from robotpy_toolkit_7407.subsystem_templates.drivetrain import SwerveDrivetrain
+from robotpy_toolkit_7407.utils.math import bounded_angle_diff, rotate_vector
 import config
 from subsystem import Drivetrain
+# from robotpy_toolkit_7407.utils.units import radians
+from wpimath.controller import (
+    HolonomicDriveController,
+    PIDController,
+    ProfiledPIDControllerRadians,
+)
+from wpimath.geometry import Pose2d
+from wpimath.geometry import Rotation2d
+from wpimath.trajectory import Trajectory, TrapezoidProfileRadians
+
+
 
 
 def curve_abs(x):
@@ -19,6 +31,34 @@ def curve(x):
 class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
     driver_centric = True
     driver_centric_reversed = False
+    gravitate = False
+    def __init__(
+        self,
+        subsystem: Drivetrain,
+        pose_f: Pose2d,
+        period: float = 0.02,
+    ):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+        self.controller = HolonomicDriveController(
+            PIDController(1, 0, 0, period),
+            PIDController(1, 0, 0, period),
+            ProfiledPIDControllerRadians(
+                4,
+                0,
+                0,
+                TrapezoidProfileRadians.Constraints(
+                    self.subsystem.max_angular_vel, self.subsystem.max_angular_vel / 0.01
+                ),
+                period,
+            ),
+        )
+        self.start_time = 0
+        self.pose_f = pose_f
+        self.theta_i: float | None = None
+        self.theta_diff: float | None = None
+        self.omega: float | None = None
+        self.finished: bool = False
 
     def initialize(self) -> None:
         pass
@@ -30,6 +70,11 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
             self.subsystem.axis_dy.value * (-1 if config.red_team else 1),
             -self.subsystem.axis_rotation.value,
         )
+
+        if self.gravitate:
+            speeds = self.controller.calculate(self.subsystem.odometry.getPose(), self.pose_f)#, Rotation2d(goal_theta))
+            dx,dy = rotate_vector(speeds.vx, speeds.vy, self.subsystem.odometry.getPose().rotation().radians())
+        
 
         if abs(d_theta) < 0.15:
             d_theta = 0
