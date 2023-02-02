@@ -4,7 +4,7 @@ import constants
 import wpilib
 from robotpy_toolkit_7407 import Subsystem
 from robotpy_toolkit_7407.motors.rev_motors import SparkMax
-from robotpy_toolkit_7407.pneumatics.pistons import SingleSolenoidPiston
+from robotpy_toolkit_7407.pneumatics.pistons import DoubleSolenoidPiston
 
 class Claw(Subsystem):
     
@@ -17,7 +17,7 @@ class Claw(Subsystem):
             can_id and turn/drive config. 
         """
         self.claw_motor = claw_motor
-        self.claw_close_piston: SingleSolenoidPiston = SingleSolenoidPiston(1, wpilib.PneumaticsModuleType.REVPH, 4)
+        self.claw_close_piston: DoubleSolenoidPiston = DoubleSolenoidPiston(1, wpilib.PneumaticsModuleType.REVPH, 4)
         self.claw_motor_initialized: bool = False
         self.claw_compressed: bool = False
 
