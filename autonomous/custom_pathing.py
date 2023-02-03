@@ -4,6 +4,7 @@ from robotpy_toolkit_7407.command import SubsystemCommand
 from robotpy_toolkit_7407.subsystem_templates.drivetrain import SwerveDrivetrain
 from robotpy_toolkit_7407.utils.math import bounded_angle_diff, rotate_vector
 from robotpy_toolkit_7407.utils.units import radians
+from wpimath._controls._controls.trajectory import Trajectory
 from wpimath.controller import (
     HolonomicDriveController,
     PIDController,
@@ -28,18 +29,18 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
     """
 
     def __init__(
-            self,
-            subsystem: SwerveDrivetrain,
-            trajectory: CustomTrajectory,
-            period: float = 0.02,
+        self,
+        subsystem: SwerveDrivetrain,
+        trajectory: CustomTrajectory,
+        period: float = 0.02,
     ):
         super().__init__(subsystem)
-        self.trajectory = trajectory.trajectory
+        self.trajectory: Trajectory = trajectory.trajectory
         self.controller = HolonomicDriveController(
-            PIDController(1, 0, 0, period),  # 1, 0, 0
-            PIDController(1, 0, 0, period),  # 1, 0, 0
-            ProfiledPIDControllerRadians(  # 4, 0, 0
-                4,
+            PIDController(1, 0, 0, period),
+            PIDController(1, 0, 0, period),
+            ProfiledPIDControllerRadians(
+                7,
                 0,
                 0,
                 TrapezoidProfileRadians.Constraints(
@@ -95,11 +96,11 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
 
 class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
     def __init__(
-            self,
-            subsystem: SwerveDrivetrain,
-            theta_f: radians,
-            duration: float = 0.5,
-            period: float = 0.02,
+        self,
+        subsystem: SwerveDrivetrain,
+        theta_f: radians,
+        duration: float = 0.5,
+        period: float = 0.02,
     ):
         super().__init__(subsystem)
         self.controller = HolonomicDriveController(

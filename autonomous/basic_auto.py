@@ -16,8 +16,8 @@ trajectory_1 = CustomTrajectory(
         # Translation2d(.3, .3),
         # Translation2d(.4, .4),
     ],
-    end_pose=Pose2d(.5, .5, math.radians(90)),
-    max_velocity=.5,
+    end_pose=Pose2d(0.5, 0.5, math.radians(90)),
+    max_velocity=0.5,
     max_accel=1,
     start_velocity=0,
     end_velocity=0,
@@ -30,14 +30,14 @@ path_1 = FollowPathCustom(
 )
 
 trajectory_2 = CustomTrajectory(
-    start_pose=Pose2d(.5, .5, math.radians(90)),
+    start_pose=Pose2d(0.5, 0.5, math.radians(90)),
     waypoints=[
         # Translation2d(.4, .4),
         # Translation2d(.3, .3),
         # Translation2d(.2, .2),
     ],
     end_pose=Pose2d(0, 0, math.radians(0)),
-    max_velocity=.5,
+    max_velocity=0.5,
     max_accel=1,
     start_velocity=0,
     end_velocity=0,

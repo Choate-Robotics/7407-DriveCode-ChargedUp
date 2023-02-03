@@ -22,15 +22,16 @@ class CustomTrajectory:
     :type end_velocity: float (meters per second)
     """
 
-    def __init__(self,
-                 start_pose: Pose2d,
-                 waypoints: list[Translation2d],
-                 end_pose: Pose2d,
-                 max_velocity: float,
-                 max_accel: float,
-                 start_velocity: float = 0,
-                 end_velocity: float = 0,
-                 ):
+    def __init__(
+        self,
+        start_pose: Pose2d,
+        waypoints: list[Translation2d],
+        end_pose: Pose2d,
+        max_velocity: float,
+        max_accel: float,
+        start_velocity: float = 0,
+        end_velocity: float = 0,
+    ):
         self.start_pose = start_pose
         self.waypoints = waypoints
         self.end_pose = end_pose
@@ -50,5 +51,5 @@ class CustomTrajectory:
             start=self.start_pose,
             interiorWaypoints=self.waypoints,
             end=self.end_pose,
-            config=config
+            config=config,
         )
