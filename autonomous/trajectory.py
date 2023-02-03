@@ -1,5 +1,7 @@
 import os
 import json
+import tempfile
+from wpimath.trajectory import TrajectoryUtil
 
 auto_folder_path = "./autonomous/routines/"
 
@@ -25,3 +27,16 @@ def combine_trajectory_json(routines):
 
         with open(auto_folder_path + routine + "/auto_routine.json", "w") as auto_routine:
             json.dump(output, auto_routine, indent=4)
+
+def get_trajectories(routine):
+    trajectories = {}
+
+    with open("./autonomous/routines/" + routine + "/auto_routine.json", "r") as file:
+        auto_routine = json.load(file)
+    
+    for key, value in auto_routine.items():
+        with tempfile.NamedTemporaryFile(mode='w', delete=False) as temp:
+            temp.write(json.dumps(value))
+            trajectories[key] = TrajectoryUtil.fromPathweaverJson(temp.name)
+
+    return trajectories
