@@ -1,4 +1,3 @@
-import wpilib
 import constants
 import config
 from robotpy_toolkit_7407 import Subsystem
@@ -18,7 +17,7 @@ class Climber(Subsystem):
     l_piston: DoubleSolenoidPiston
     r_piston: DoubleSolenoidPiston
     
-    climber_deployed: bool
+    climber_active: bool
 
     def init(self):
         super().init()
@@ -28,13 +27,13 @@ class Climber(Subsystem):
         self.l_piston = DoubleSolenoidPiston(config.l_piston_module, config.l_piston_forwardChannel, config.l_piston_reverseChannel)
         self.r_piston = DoubleSolenoidPiston(config.r_piston_module, config.r_piston_forwardChannel, config.r_piston_reverseChannel)
 
-        self.climber_deployed = False
+        self.climber_active = False
 
-    def climber_active(self):
+    def climber_deploy(self):
         self.l_piston.extend
-        climber_deployed = True
+        climber_active = True
     
     def climber_disable(self):
         self.r_piston.retract
-        climber_deployed = False
+        climber_active = False
     

@@ -6,6 +6,7 @@ from sensors import FieldOdometry, PV_Cameras
 
 class Robot:
     drivetrain = subsystem.Drivetrain()
+    climber =  subsystem.Climber()
     pass
 
 
