@@ -5,6 +5,7 @@ from wpimath.trajectory import TrajectoryUtil
 
 auto_folder_path = "./autonomous/routines/"
 
+# combines trajectory files into one auto_routine.json file
 def combine_trajectory_json(routines):
     for routine in routines:
         output = {}
@@ -28,6 +29,7 @@ def combine_trajectory_json(routines):
         with open(auto_folder_path + routine + "/auto_routine.json", "w") as auto_routine:
             json.dump(output, auto_routine, indent=4)
 
+# converts json to trajectories
 def get_trajectories(routine):
     trajectories = {}
 
