@@ -18,6 +18,7 @@ class Climber(Subsystem):
     l_piston: DoubleSolenoidPiston
     r_piston: DoubleSolenoidPiston
     
+    climber_deployed: bool
 
     def init(self):
         super().init()
@@ -27,4 +28,13 @@ class Climber(Subsystem):
         self.l_piston = DoubleSolenoidPiston(config.l_piston_module, config.l_piston_forwardChannel, config.l_piston_reverseChannel)
         self.r_piston = DoubleSolenoidPiston(config.r_piston_module, config.r_piston_forwardChannel, config.r_piston_reverseChannel)
 
+        self.climber_deployed = False
+
+    def climber_active(self):
+        self.l_piston.extend
+        climber_deployed = True
+    
+    def climber_disable(self):
+        self.r_piston.retract
+        climber_deployed = False
     
