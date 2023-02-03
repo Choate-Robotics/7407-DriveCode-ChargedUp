@@ -3,7 +3,7 @@ import json
 
 auto_folder_path = "./autonomous/routines/"
 
-def generate_routine(routines):
+def combine_trajectory_json(routines):
     for routine in routines:
         output = {}
         folder_path = os.path.join(auto_folder_path, routine)
