@@ -1,49 +1,52 @@
 import json
 import os
-import tempfile
+import math
+from wpimath.geometry import Pose2d, Translation2d
+from wpimath.trajectory import TrajectoryConfig, TrajectoryGenerator
+from autonomous.utils.trajectory import CustomTrajectory
 
-from wpimath.trajectory import TrajectoryUtil
+def generate_trajectories(max_velocity: float, max_accel: float):
+    folder_path = os.path.dirname((os.path.relpath(__file__))) + "/trajectories"
 
-auto_folder_path = "./autonomous/routines/"
+    trajectories = os.listdir(folder_path)
 
+    output_trajectories = []
 
-# combines trajectory files into one auto_routine.json file
-def combine_trajectory_json(routines):
-    for routine in routines:
-        output = {}
-        folder_path = os.path.join(auto_folder_path, routine)
+    for trajectory in trajectories:
+        file_path = os.path.join(folder_path, trajectory)
 
-        path_number = 1
+        with open(file_path, "r") as file:
+            file_contents = file.read()
 
-        for file in os.listdir(folder_path):
-            # ignore auto_routine.json when finding trajectories
-            if file == "auto_routine.json":
-                continue
+        waypoints = json.loads(file_contents)["waypoints"]
 
-            file_path = os.path.join(folder_path, file)
+        start = waypoints[0]
+        end = waypoints[len(waypoints) - 1]
 
-            with open(file_path, "r") as json_file:
-                path = json.load(json_file)
-                output["trajectory_" + str(path_number)] = path
+        start_pose = Pose2d(
+            start["anchorPoint"]["x"], 
+            start["anchorPoint"]["y"], 
+            math.radians(start["holonomicAngle"])
+        )
 
-            path_number += 1
+        end_pose = Pose2d(
+            end["anchorPoint"]["x"], 
+            end["anchorPoint"]["y"], 
+            math.radians(end["holonomicAngle"])
+        )
 
-        with open(
-            auto_folder_path + routine + "/auto_routine.json", "w"
-        ) as auto_routine:
-            json.dump(output, auto_routine, indent=4)
+        interior_waypoints = []
 
+        for waypoint in waypoints[1:-1]:
+            coord = waypoint["anchorPoint"]
+            interior_waypoints.append(Translation2d(coord["x"], coord["y"]))
 
-# converts json to trajectories
-def get_trajectories(routine):
-    trajectories = {}
-
-    with open("./autonomous/routines/" + routine + "/auto_routine.json", "r") as file:
-        auto_routine = json.load(file)
-
-    for key, value in auto_routine.items():
-        with tempfile.NamedTemporaryFile(mode="w", delete=False) as temp:
-            temp.write(json.dumps(value))
-            trajectories[key] = TrajectoryUtil.fromPathweaverJson(temp.name)
-
-    return trajectories
+        output_trajectories.append(CustomTrajectory(
+            start_pose,
+            interior_waypoints,
+            end_pose,
+            max_velocity,
+            max_accel
+        ))
+    
+    return output_trajectories

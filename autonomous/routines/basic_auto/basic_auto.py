@@ -6,35 +6,6 @@ from wpimath.geometry import Pose2d
 import constants
 from autonomous.auto_routine import AutoRoutine
 from autonomous.utils.custom_pathing import FollowPathCustom
-from autonomous.utils.path_planner import combine_trajectory_json, get_trajectories
+from autonomous.utils.path_planner import generate_trajectories
 from robot_systems import Robot
 
-# combines all trajectories in each routine into one auto_routine.json file
-routines = ["routine_1", "routine_2"]
-combine_trajectory_json(routines)
-
-# assuming this file is for routine_1, store all trajectories in a dict
-trajectories = get_trajectories("routine_1")
-
-path_1 = FollowPathCustom(
-    Robot.drivetrain,
-    trajectories["trajectory_1"],
-    constants.period,
-)
-
-path_2 = FollowPathCustom(
-    Robot.drivetrain,
-    trajectories["trajectory_2"],
-    constants.period,
-)
-
-auto = SequentialCommandGroup(
-    InstantCommand(lambda: print(Robot.drivetrain.odometry.getPose())),
-    path_1,
-    InstantCommand(lambda: print(Robot.drivetrain.odometry.getPose())),
-    WaitCommand(2),
-    path_2,
-    InstantCommand(lambda: print(Robot.drivetrain.odometry.getPose())),
-)
-
-routine = AutoRoutine(Pose2d(0, 0, math.radians(0)), auto)
