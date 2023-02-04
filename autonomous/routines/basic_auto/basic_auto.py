@@ -1,17 +1,13 @@
 import math
-import json
-import tempfile
 
 from commands2 import SequentialCommandGroup, InstantCommand, WaitCommand
-from wpimath.geometry import Pose2d, Translation2d
-from wpimath.trajectory import TrajectoryGenerator, TrajectoryConfig, TrajectoryUtil
+from wpimath.geometry import Pose2d
 
 import constants
 from autonomous.auto_routine import AutoRoutine
-from autonomous.custom_pathing import FollowPathCustom
+from autonomous.utils.custom_pathing import FollowPathCustom
+from autonomous.utils.path_planner import combine_trajectory_json, get_trajectories
 from robot_systems import Robot
-
-from autonomous.trajectory import combine_trajectory_json, get_trajectories
 
 # combines all trajectories in each routine into one auto_routine.json file
 routines = ["routine_1", "routine_2"]
@@ -23,14 +19,12 @@ trajectories = get_trajectories("routine_1")
 path_1 = FollowPathCustom(
     Robot.drivetrain,
     trajectories["trajectory_1"],
-    math.radians(0),
     constants.period,
 )
 
 path_2 = FollowPathCustom(
     Robot.drivetrain,
     trajectories["trajectory_2"],
-    math.radians(0),
     constants.period,
 )
 
