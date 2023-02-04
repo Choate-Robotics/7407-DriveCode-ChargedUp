@@ -31,8 +31,7 @@ path_2 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
         start_pose=Pose2d(1, 0, math.radians(90)),
-        waypoints=[
-        ],
+        waypoints=[],
         end_pose=Pose2d(1, 1, math.radians(180)),
         max_velocity=1,
         max_accel=2,
@@ -46,8 +45,7 @@ path_3 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
         start_pose=Pose2d(1, 1, math.radians(180)),
-        waypoints=[
-        ],
+        waypoints=[],
         end_pose=Pose2d(0, 1, math.radians(270)),
         max_velocity=1,
         max_accel=2,
@@ -61,8 +59,7 @@ path_4 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
         start_pose=Pose2d(0, 1, math.radians(270)),
-        waypoints=[
-        ],
+        waypoints=[],
         end_pose=Pose2d(0, 0, math.radians(0)),
         max_velocity=1,
         max_accel=2,
@@ -76,8 +73,7 @@ path_5 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
         start_pose=Pose2d(0, 0, math.radians(0)),
-        waypoints=[
-        ],
+        waypoints=[],
         end_pose=Pose2d(0, 1, math.radians(0)),
         max_velocity=1,
         max_accel=2,
@@ -91,8 +87,7 @@ path_6 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
         start_pose=Pose2d(0, 1, math.radians(0)),
-        waypoints=[
-        ],
+        waypoints=[],
         end_pose=Pose2d(1, 1, math.radians(270)),
         max_velocity=1,
         max_accel=2,
@@ -106,8 +101,7 @@ path_7 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
         start_pose=Pose2d(1, 1, math.radians(270)),
-        waypoints=[
-        ],
+        waypoints=[],
         end_pose=Pose2d(1, 0, math.radians(180)),
         max_velocity=1,
         max_accel=2,
@@ -121,8 +115,7 @@ path_8 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
         start_pose=Pose2d(1, 0, math.radians(180)),
-        waypoints=[
-        ],
+        waypoints=[],
         end_pose=Pose2d(0, 0, math.radians(90)),
         max_velocity=1,
         max_accel=2,
@@ -134,21 +127,21 @@ path_8 = FollowPathCustom(
 
 auto = SequentialCommandGroup(
     path_1,
-    WaitCommand(.1),
+    WaitCommand(0.1),
     path_2,
-    WaitCommand(.1),
+    WaitCommand(0.1),
     path_3,
-    WaitCommand(.1),
+    WaitCommand(0.1),
     path_4,
-    WaitCommand(.1),
+    WaitCommand(0.1),
     path_5,
-    WaitCommand(.1),
+    WaitCommand(0.1),
     path_6,
-    WaitCommand(.1),
+    WaitCommand(0.1),
     path_7,
-    WaitCommand(.1),
+    WaitCommand(0.1),
     path_8,
-    WaitCommand(.1),
+    WaitCommand(0.1),
     RotateInPlace(
         subsystem=Robot.drivetrain,
         period=constants.period,

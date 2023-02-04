@@ -7,7 +7,7 @@ from subsystem import Drivetrain
 
 
 def curve_abs(x):
-    return x ** 2.4
+    return x**2.4
 
 
 def curve(x):
@@ -91,7 +91,5 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         self.subsystem.n_back_left.m_move.set_sensor_position(0)
         self.subsystem.n_back_right.m_move.set_sensor_position(0)
 
-        logging.info(
-            "Successfully rezeroed swerve pods."
-        )
+        logging.info("Successfully rezeroed swerve pods.")
         ...

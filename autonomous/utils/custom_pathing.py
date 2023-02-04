@@ -29,10 +29,10 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
     """
 
     def __init__(
-            self,
-            subsystem: SwerveDrivetrain,
-            trajectory: CustomTrajectory,
-            period: float = 0.02,
+        self,
+        subsystem: SwerveDrivetrain,
+        trajectory: CustomTrajectory,
+        period: float = 0.02,
     ):
         super().__init__(subsystem)
         self.trajectory: Trajectory = trajectory.trajectory
@@ -42,7 +42,7 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
             ProfiledPIDControllerRadians(
                 7.3,  # 7.3
                 0,
-                .005,  # .005
+                0.005,  # .005
                 TrapezoidProfileRadians.Constraints(
                     subsystem.max_angular_vel, subsystem.max_angular_vel / 0.001  # .001
                 ),
@@ -87,7 +87,9 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
     def end(self, interrupted: bool) -> None:
         self.subsystem.set_driver_centric((0, 0), 0)
         SmartDashboard.putString("POSE", str(self.subsystem.odometry.getPose()))
-        SmartDashboard.putString("POSD", str(self.subsystem.odometry.getPose().rotation().degrees()))
+        SmartDashboard.putString(
+            "POSD", str(self.subsystem.odometry.getPose().rotation().degrees())
+        )
 
     def isFinished(self) -> bool:
         return self.finished
@@ -98,11 +100,11 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
 
 class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
     def __init__(
-            self,
-            subsystem: SwerveDrivetrain,
-            theta_f: radians,
-            duration: float = 0.5,
-            period: float = 0.02,
+        self,
+        subsystem: SwerveDrivetrain,
+        theta_f: radians,
+        duration: float = 0.5,
+        period: float = 0.02,
     ):
         super().__init__(subsystem)
         self.controller = HolonomicDriveController(
