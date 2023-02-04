@@ -7,7 +7,7 @@ from subsystem import Drivetrain
 
 
 def curve_abs(x):
-    return x**2.4
+    return x ** 2.4
 
 
 def curve(x):

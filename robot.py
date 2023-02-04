@@ -5,12 +5,10 @@ import wpilib
 from wpilib import SmartDashboard
 
 import command
-import constants
+from autonomous import routine
 from oi.OI import OI
 from robot_systems import Robot, Sensors
-from sensors import FieldOdometry, PV_Cameras
-
-from autonomous import routine
+from sensors import FieldOdometry
 
 
 class _Robot(wpilib.TimedRobot):
@@ -30,15 +28,11 @@ class _Robot(wpilib.TimedRobot):
         # Sensors.limelight_controller = LimelightController([Sensors.limelight_front])
 
         Robot.drivetrain.init()
-        # Robot.drivetrain.n_front_left.m_move.set_sensor_position(0)
-        # Robot.drivetrain.n_front_right.m_move.set_sensor_position(0)
-        # Robot.drivetrain.n_back_left.m_move.set_sensor_position(0)
-        # Robot.drivetrain.n_back_right.m_move.set_sensor_position(0)
 
         SmartDashboard.init()
-        Sensors.pv_controller = PV_Cameras()
+        # Sensors.pv_controller = PV_Cameras()
 
-        Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
+        Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
 
         # self.start_limelight_pose = Sensors.limelight_controller.get_estimated_robot_pose()[0].toPose2d()
         # self.start_robot_pose = Sensors.odometry.get_robot_pose()
@@ -69,7 +63,6 @@ class _Robot(wpilib.TimedRobot):
 
         pose = Robot.drivetrain.odometry_estimator.getEstimatedPosition()
         pose2 = Sensors.odometry.get_robot_pose()
-        pv_pose = Sensors.pv_controller.get_estimated_robot_pose()
 
         SmartDashboard.putNumberArray(
             "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]
@@ -80,6 +73,7 @@ class _Robot(wpilib.TimedRobot):
         )
 
         try:
+            pv_pose = Sensors.pv_controller.get_estimated_robot_pose()
             SmartDashboard.putNumberArray(
                 "PVPoseAdvantage",
                 [

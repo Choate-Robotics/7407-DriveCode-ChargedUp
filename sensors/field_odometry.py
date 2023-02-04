@@ -8,7 +8,7 @@ from subsystem import Drivetrain
 
 
 def weighted_pose_average(
-    robot_pose: Pose2d, vision_pose: Pose3d, robot_weight: float, vision_weight: float
+        robot_pose: Pose2d, vision_pose: Pose3d, robot_weight: float, vision_weight: float
 ) -> Pose2d:
     """
     Returns a weighted average of two poses.
@@ -29,12 +29,12 @@ def weighted_pose_average(
     return Pose2d(
         Translation2d(
             (
-                robot_pose.translation().X() * robot_weight
-                + vision_pose.translation().X() * vision_weight
+                    robot_pose.translation().X() * robot_weight
+                    + vision_pose.translation().X() * vision_weight
             ),
             (
-                robot_pose.translation().Y() * robot_weight
-                + vision_pose.translation().Y() * vision_weight
+                    robot_pose.translation().Y() * robot_weight
+                    + vision_pose.translation().Y() * vision_weight
             ),
         ),
         Rotation2d(
@@ -49,7 +49,7 @@ class FieldOdometry:
     Keeps track of robot position relative to field using a vision estimator (e.g. limelight, photon-vision)
     """
 
-    def __init__(self, drivetrain: Drivetrain, vision_estimator: VisionEstimator):
+    def __init__(self, drivetrain: Drivetrain, vision_estimator: VisionEstimator | None):
         self.drivetrain = drivetrain
         self.robot_pose: Pose2d | None = self.drivetrain.odometry.getPose()
 
@@ -59,7 +59,6 @@ class FieldOdometry:
         )
 
         self.vision_estimator = vision_estimator
-
         self.vision_estimator_pose_weight = 0.1
         self.robot_pose_weight = 1 - self.vision_estimator_pose_weight
 
@@ -93,9 +92,9 @@ class FieldOdometry:
 
         current_time = time.time()
         if self.last_update_time is None or (
-            current_time - self.last_update_time >= self.min_update_wait_time
+                current_time - self.last_update_time >= self.min_update_wait_time
         ):
-            vision_robot_pose_list = self.vision_estimator.get_estimated_robot_pose()
+            vision_robot_pose_list = self.vision_estimator.get_estimated_robot_pose() if self.vision_estimator else None
 
         if vision_robot_pose_list:
             for vision_robot_pose in vision_robot_pose_list:
@@ -104,11 +103,11 @@ class FieldOdometry:
                     vision_robot_pose = vision_robot_pose[0]
 
                     angle_diff = (
-                        math.degrees(
-                            vision_robot_pose.toPose2d().rotation().radians()
-                            - self.drivetrain.gyro.get_robot_heading()
-                        )
-                        % 360
+                            math.degrees(
+                                vision_robot_pose.toPose2d().rotation().radians()
+                                - self.drivetrain.gyro.get_robot_heading()
+                            )
+                            % 360
                     )
                     angle_diff_rev = 360 - angle_diff
                     print(angle_diff)

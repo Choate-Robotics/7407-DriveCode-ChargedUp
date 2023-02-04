@@ -22,8 +22,8 @@ robot_length = 0.7366
 
 # TODO Maybe change these
 drivetrain_max_vel = (3 * mile / hour).asNumber(m / s)  # 10
-drivetrain_target_max_vel = (7 * mile / hour).asNumber(m / s)
-drivetrain_max_angular_vel = (1 * rev / s).asNumber(rad / s)
+drivetrain_target_max_vel = (3 * mile / hour).asNumber(m / s)  # 7
+drivetrain_max_angular_vel = (1.5 * rev / s).asNumber(rad / s)  # 4
 drivetrain_max_climb_vel = (2 * mile / hour).asNumber(m / s)
 
 kCentimetersPerInch = 2.54
