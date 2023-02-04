@@ -144,8 +144,10 @@ auto = SequentialCommandGroup(
     WaitCommand(0.1),
     RotateInPlace(
         subsystem=Robot.drivetrain,
-        period=constants.period,
         theta_f=math.radians(0),
+        period=constants.period,
+        threshold=math.radians(0.6),
+        max_angular_vel=math.radians(90),
     ),
 )
 
