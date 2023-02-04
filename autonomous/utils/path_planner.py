@@ -1,12 +1,12 @@
 import json
 import os
+import inspect
 import math
 from wpimath.geometry import Pose2d, Translation2d
-from wpimath.trajectory import TrajectoryConfig, TrajectoryGenerator
 from autonomous.utils.trajectory import CustomTrajectory
 
 def generate_trajectories(max_velocity: float, max_accel: float):
-    folder_path = os.path.dirname((os.path.relpath(__file__))) + "/trajectories"
+    folder_path = os.path.dirname(inspect.stack()[1].filename) + "/trajectories"
 
     trajectories = os.listdir(folder_path)
 
