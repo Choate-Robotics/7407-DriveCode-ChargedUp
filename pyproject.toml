@@ -5,8 +5,8 @@ description = "Team 7407 Wired Boars ChargedUp Robot Code"
 authors = ["Sidharth Rao <sidharthmrao@gmail.com>"]
 
 [tool.poetry.dependencies]
-python=">3.9,<3.12"
-robotpy-toolkit-7407 = "^0.5.51.2"
+python = ">3.9,<3.12"
+robotpy-toolkit-7407 = "^2023.1.1.0"
 pre-commit = "^3.0.0"
 black = "^22.12.0"
 isort = "^5.11.4"

@@ -1,12 +1,12 @@
+from logging import Logger
 from unittest.mock import MagicMock
+
 import pytest
+from robotpy_toolkit_7407.sensors.limelight import LimelightController, Limelight
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d
 
 from sensors import FieldOdometry
 from subsystem.drivetrain import Drivetrain
-from robotpy_toolkit_7407.sensors.limelight import LimelightController, Limelight
-
-from logging import Logger
 
 LOGGING = Logger("FIELD_ODOMETRY_TESTS")
 
@@ -20,8 +20,7 @@ def field_odometry() -> FieldOdometry:
     """
     mock_drivetrain: Drivetrain = MagicMock()
     mock_drivetrain.odometry.getPose.return_value = Pose2d(
-        Translation2d(0, 0),
-        Rotation2d(1)
+        Translation2d(0, 0), Rotation2d(1)
     )
     mock_drivetrain.gyro.get_robot_heading.return_value = 0
     mock_drivetrain.odometry_estimator.addVisionMeasurement.return_value = None
@@ -52,5 +51,5 @@ def test_field_odometry_update(field_odometry: FieldOdometry):
 
 
 def test_field_odometry_get_robot_pose(field_odometry: FieldOdometry):
-    LOGGING.warning(f"\n{field_odometry.get_robot_pose()}")
-    assert field_odometry.get_robot_pose() is not None
+    LOGGING.warning(f"\n{field_odometry.getPose()}")
+    assert field_odometry.getPose() is not None

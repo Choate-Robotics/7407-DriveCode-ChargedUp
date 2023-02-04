@@ -41,7 +41,7 @@ class _Robot(wpilib.TimedRobot):
         Robot.drivetrain.logger_periodic()
         Sensors.odometry.update()
         SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
-        SmartDashboard.putString("FDOM", str(Sensors.odometry.get_robot_pose()))
+        SmartDashboard.putString("FDOM", str(Sensors.odometry.getPose()))
         SmartDashboard.putString(
             "EDOM", str(Robot.drivetrain.odometry_estimator.getEstimatedPosition())
         )
@@ -62,7 +62,7 @@ class _Robot(wpilib.TimedRobot):
             pass
 
         pose = Robot.drivetrain.odometry_estimator.getEstimatedPosition()
-        pose2 = Sensors.odometry.get_robot_pose()
+        pose2 = Sensors.odometry.getPose()
 
         SmartDashboard.putNumberArray(
             "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]

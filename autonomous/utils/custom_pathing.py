@@ -15,6 +15,7 @@ from wpimath.geometry import Rotation2d, Pose2d
 from wpimath.trajectory import TrapezoidProfileRadians, Trajectory
 
 from autonomous.utils.trajectory import CustomTrajectory
+from robot_systems import Sensors
 
 
 class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
@@ -62,7 +63,7 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
 
     def initialize(self) -> None:
         self.start_time = time.perf_counter()
-        self.theta_i = self.subsystem.odometry.getPose().rotation().radians()
+        self.theta_i = Sensors.odometry.getPose().rotation().radians()
         self.theta_f = self.end_pose.rotation().radians()
         self.theta_diff = bounded_angle_diff(self.theta_i, self.theta_f)
         self.omega = self.theta_diff / self.duration
@@ -76,11 +77,11 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
         goal = self.trajectory.sample(self.t)
         goal_theta = self.theta_i + self.omega * self.t
         speeds = self.controller.calculate(
-            self.subsystem.odometry.getPose(), goal, Rotation2d(goal_theta)
+            Sensors.odometry.getPose(), goal, Rotation2d(goal_theta)
         )
 
         vx, vy = rotate_vector(
-            speeds.vx, speeds.vy, self.subsystem.odometry.getPose().rotation().radians()
+            speeds.vx, speeds.vy, Sensors.odometry.getPose().rotation().radians()
         )
 
         self.subsystem.set_driver_centric((-vx, -vy), speeds.omega)
@@ -89,7 +90,7 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
         self.subsystem.set_driver_centric((0, 0), 0)
         SmartDashboard.putString("POSE", str(self.subsystem.odometry.getPose()))
         SmartDashboard.putString(
-            "POSD", str(self.subsystem.odometry.getPose().rotation().degrees())
+            "POSD", str(Sensors.odometry.getPose().rotation().degrees())
         )
 
     def isFinished(self) -> bool:
@@ -109,8 +110,6 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
     :type theta_f: radians
     :param threshold: The angle threshold for the controller, defaults to .1
     :type threshold: radians, optional
-    :param duration: The duration of the rotation, defaults to 0.5
-    :type duration: seconds, optional
     :param period: The period of the controller, defaults to 0.02
     :type period: seconds, optional
     """
@@ -147,11 +146,11 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
         self.theta_diff: float | None = None
 
     def initialize(self) -> None:
-        self.theta_i = self.subsystem.odometry.getPose().rotation().radians()
+        self.theta_i = Sensors.odometry.getPose().rotation().radians()
         self.theta_diff = bounded_angle_diff(self.theta_i, self.theta_f)
 
     def execute(self) -> None:
-        goal = self.subsystem.odometry.getPose()
+        goal = Sensors.odometry.getPose()
         speeds = self.controller.calculate(goal, goal, 0, Rotation2d(self.theta_f))
         self.subsystem.set_driver_centric((0, 0), speeds.omega)
 
@@ -160,7 +159,7 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
 
     def isFinished(self) -> bool:
         return (
-            abs(self.subsystem.odometry.getPose().rotation().radians() - self.theta_f)
+            abs(Sensors.odometry.getPose().rotation().radians() - self.theta_f)
             < self.threshold
         )
 
