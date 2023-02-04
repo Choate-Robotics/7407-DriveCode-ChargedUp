@@ -58,6 +58,11 @@ elevator_zero_length: float = (min_elevator_height / 2) + (-elevator_pivot_offse
 #gets the length of the elevator above the pivot point using the offset and the min height
 #--------------------------------------------------------------
 
+#arm pose accuracy
+#--------------------------------------------------------------
+arm_pose_accuracy: float = 0.01; #the accuracy of the arm pose
+#--------------------------------------------------------------
+
 #claw constants
 #--------------------------------------------------------------
 claw_height = inches_to_meters(10) #the height of the claw
