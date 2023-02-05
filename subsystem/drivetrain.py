@@ -1,4 +1,3 @@
-import logging
 import math
 from dataclasses import dataclass
 
@@ -141,7 +140,11 @@ class Drivetrain(SwerveDrivetrain):
     deadzone_velocity: meters_per_second = 0.01
     deadzone_angular_velocity: radians_per_second = math.radians(5)
     start_angle = 0
-    start_pose: Pose2d = Pose2d(.0254*(40.45 + 17.625) + constants.track_width/2, .0254*42.19, math.radians(start_angle))  # meters(40.45 + 17.625) + constants.track/2
+    start_pose: Pose2d = Pose2d(
+        0.0254 * (40.45 + 17.625) + constants.track_width / 2,
+        0.0254 * 42.19,
+        math.radians(start_angle),
+    )  # meters(40.45 + 17.625) + constants.track/2
     gyro_start_angle = start_angle
     gyro_offset = math.radians(0)
 
