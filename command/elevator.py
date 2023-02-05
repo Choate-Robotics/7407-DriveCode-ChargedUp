@@ -1,4 +1,4 @@
-from commands2 import InstantCommand, ParallelCommandGroup, ConditionalCommand, SequentialCommandGroup, WaitCommand
+from commands2 import InstantCommand, ParallelCommandGroup, ConditionalCommand, SequentialCommandGroup, WaitCommand, SubsystemBase
 from robotpy_toolkit_7407.command import SubsystemCommand, T
 from robotpy_toolkit_7407.utils.units import inch, meters, rev
 from wpimath.geometry import Pose3d, Translation3d, Pose2d, Rotation3d
@@ -131,8 +131,9 @@ class SetArmPositionField(SubsystemCommand[Elevator]):
 
 
 class ZeroArm(SubsystemCommand[Elevator]):
-    def __init__(self, subsystem: T):
+    def __init__(self, subsystem: Elevator):
         super().__init__(subsystem)
+        self.subsystem = subsystem
 
     def initialize(self):
         self.subsystem.disable_brake()
@@ -141,11 +142,13 @@ class ZeroArm(SubsystemCommand[Elevator]):
         self.subsystem.zero_elevator_rotation()
 
     def execute(self):
+        #pass
         self.subsystem.zero_elevator_length()
 
     def isFinished(self):
-        return self.extend_sensor.get_value() == False and self.turn_sensor.get_position() == 0
-
+        return self.subsystem.elevator_bottom_sensor == False and self.subsystem.main_rotation_motor.get_sensor_position() == 0
+        # return self.subsystem.main_rotation_motor.get_sensor_position() == 0
+    
     def end(self, interrupted):
         if not interrupted:
             self.subsystem.enable_brake()

@@ -74,14 +74,14 @@ claw_length_close = inches_to_meters(7) #the length of the claw when it is close
 
 #elevator gear ratios
 #--------------------------------------------------------------
-elevator_rotation_gear_ratio: float = 202.14 # to one
+elevator_rotation_gear_ratio: float = 67.38 # to one
 elevator_extend_gear_ratio: float = 6.33 # to one
 stabalizer_magnitude: float = 2 #the magnitude of the rotation of the arm based on the tip of the robot
 #--------------------------------------------------------------
 
 #elevator zeroing constants
 #--------------------------------------------------------------
-elevator_initial_roatation = radians(0) #the initial rotation of the elevator that it will zero too
+elevator_initial_roatation = 0 #the initial rotation of the elevator that it will zero too
 elevator_initial_length = inches_to_meters(0) #the initial length of the elevator that it will zero too
 #--------------------------------------------------------------
 
@@ -99,7 +99,7 @@ claw_cube_platform_rotation: Rotation3d = Rotation3d(0, 90, 0)
 
 #Robot arm positions
 #--------------------------------------------------------------
-zero_pose: Pose3d = Pose3d(0, 0, pivot_point_height + elevator_zero_length, claw_initial_rotation)
+zero_pose: Pose3d = Pose3d(0, 0, elevator_zero_length, claw_initial_rotation)
 cube_intake_arm_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_intake_rotation)
 arm_transport_pose: Pose3d = Pose3d(0, 0, 0, claw_transport_rotation)
 cone_top_intake_arm_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_intake_rotation)
