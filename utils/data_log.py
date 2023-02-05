@@ -7,9 +7,9 @@ import robotpy_toolkit_7407.utils.logger as lg
 
 class Logger:
     def __init__(
-            self,
-            debug: bool = False,
-            filename: str = f"custom_logs/custom_logging_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log",
+        self,
+        debug: bool = False,
+        filename: str = f"custom_logs/custom_logging_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log",
     ):
         self.filename: str = filename
         self.logfile = None
@@ -25,7 +25,8 @@ class Logger:
         line_no = str(frame.f_lineno)
 
         self.logfile.write(
-            f"[{str(datetime.datetime.now() - self.start_time) + ']'} [{file_name + ':' + line_no + ']' : <19} [{system + ']'  : <15} ~ {message  : <20}\n")
+            f"[{str(datetime.datetime.now() - self.start_time) + ']'} [{file_name + ':' + line_no + ']' : <19} [{system + ']'  : <15} ~ {message  : <20}\n"
+        )
         self.logfile.close()
 
         lg.info(message, system, frame)
@@ -39,7 +40,8 @@ class Logger:
             line_no = str(frame.f_lineno)
 
             self.logfile.write(
-                f"[{str(datetime.datetime.now() - self.start_time) + ']'} [{file_name + ':' + line_no + ']' : <19} [{system + ']'  : <15} ~ {message  : <20}\n")
+                f"[{str(datetime.datetime.now() - self.start_time) + ']'} [{file_name + ':' + line_no + ']' : <19} [{system + ']'  : <15} ~ {message  : <20}\n"
+            )
             self.logfile.close()
 
             lg.info(message, system, frame)
