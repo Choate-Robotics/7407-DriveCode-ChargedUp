@@ -5,11 +5,20 @@ import rev
 from ctre import CANCoder
 from robotpy_toolkit_7407.motors.rev_motors import SparkMax, SparkMaxConfig
 from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
-from robotpy_toolkit_7407.subsystem_templates.drivetrain import SwerveNode, SwerveDrivetrain
+from robotpy_toolkit_7407.subsystem_templates.drivetrain import (
+    SwerveDrivetrain,
+    SwerveNode,
+)
+from robotpy_toolkit_7407.utils.units import (
+    meters,
+    meters_per_second,
+    radians,
+    radians_per_second,
+)
 from wpimath.geometry import Pose2d
-from oi.keymap import Keymap
 
-from units.SI import *
+import constants
+from oi.keymap import Keymap
 
 TURN_CONFIG = SparkMaxConfig(
     0.2, 0, 0.003, 0.00015, (-0.5, 0.5), rev.CANSparkMax.IdleMode.kBrake
@@ -27,96 +36,101 @@ class SparkMaxSwerveNode(SwerveNode):
     absolute_encoder_zeroed_pos: radians = 0
     drive_reversed: bool = False
     turn_reversed: bool = False
-    start_dist: meters = 0
 
     def init(self):
         super().init()
         self.m_move.init()
         self.m_turn.init()
-        self.start_dist: meters = self.m_move.get_sensor_position() * drive_motor_encoder_units__to__meters
 
     def zero(self):
-        current_pos_rad: radians = math.radians(self.encoder.getAbsolutePosition())
-        zeroed_pos_rad: radians = self.absolute_encoder_zeroed_pos
-        new_pos_rad: radians = current_pos_rad - zeroed_pos_rad
+        current_pos_rad = (
+                math.radians(self.encoder.getAbsolutePosition())
+                - self.absolute_encoder_zeroed_pos
+        )
 
-        new_pos_rotations: rotation_motor_encoder_units = new_pos_rad * radians_to_rotations * swerve_pod_rotations__to__rotation_motor_encoder_units
+        self.m_turn.set_sensor_position(
+            current_pos_rad * constants.drivetrain_turn_gear_ratio / (2 * math.pi)
+        )
+        self.set_motor_angle(current_pos_rad)
 
-        self.m_turn.set_sensor_position(new_pos_rotations)
-
-    def raw_output(self, power: float):
+    def raw_output(self, power):
         self.m_move.set_raw_output(power)
 
     # reposition the wheels
     def set_motor_angle(self, pos: radians):
         if self.turn_reversed:
             pos *= -1
-
-        target_position: rotation_motor_encoder_units = pos * radians_to_rotations * swerve_pod_rotations__to__rotation_motor_encoder_units
-
         self.m_turn.set_target_position(
-            target_position
+            (pos / (2 * math.pi)) * constants.drivetrain_turn_gear_ratio
         )
 
     def direct_set_motor_angle(self, pos: radians):
-        target_position: rotation_motor_encoder_units = pos * radians_to_rotations * swerve_pod_rotations__to__rotation_motor_encoder_units
-
         self.m_turn.set_target_position(
-            target_position
+            (pos / (2 * math.pi)) * constants.drivetrain_turn_gear_ratio
         )
 
     def get_current_motor_angle(self) -> radians:
-        current_motor_angle_radians: radians = self.m_turn.get_sensor_position() * rotation_motor_encoder_units__to__swerve_pod_rotations * rotations_to_radians
-        return current_motor_angle_radians
+        return (
+                (self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio)
+                * 2
+                * math.pi
+        )
 
+    # rotate the wheel so the robot moves
     def set_motor_velocity(self, vel: meters_per_second):
         if self.drive_reversed:
             vel *= -1
-
-        target_velocity: drive_motor_encoder_units = vel * meters__to__drive_motor_encoder_units
-        self.m_move.set_target_velocity(target_velocity)
+        self.m_move.set_target_velocity(vel * constants.drivetrain_move_gear_ratio)
 
     def get_motor_velocity(self) -> radians_per_second:
-        sensor_velocity: radians_per_second = self.m_move.get_sensor_velocity() * rotation_motor_encoder_units__to__swerve_pod_rotations * rotations_to_radians
-        return sensor_velocity
+        return self.m_move.get_sensor_velocity() / constants.drivetrain_move_gear_ratio
 
     def get_drive_motor_traveled_distance(self) -> meters:
-        drive_motor_traveled_distance: meters = (
-                                                        self.m_move.get_sensor_position() * drive_motor_encoder_units__to__meters) - self.start_dist
-        return drive_motor_traveled_distance
+        sensor_position = -1 * self.m_move.get_sensor_position()  # TEST
+        if self.drive_reversed:
+            sensor_position *= -1
+
+        return (
+                sensor_position
+                / constants.drivetrain_move_gear_ratio_as_rotations_per_meter
+        )
 
     def get_turn_motor_angle(self) -> radians:
-        turn_motor_angle: radians = self.m_turn.get_sensor_position() * rotation_motor_encoder_units__to__swerve_pod_rotations * rotations_to_radians
-        return turn_motor_angle
+        return (
+                (self.m_turn.get_sensor_position() / constants.drivetrain_turn_gear_ratio)
+                * 2
+                * math.pi
+        )
 
 
 class Drivetrain(SwerveDrivetrain):
-    n_00 = SparkMaxSwerveNode(
+    n_front_left = SparkMaxSwerveNode(
         SparkMax(16, config=MOVE_CONFIG),
         SparkMax(15, config=TURN_CONFIG),
         CANCoder(24),
-        absolute_encoder_zeroed_pos=354.023
+        absolute_encoder_zeroed_pos=math.radians(354.023 - 180 + 270),  # +90
+        drive_reversed=True,
     )
-    n_01 = SparkMaxSwerveNode(
-        SparkMax(3, config=MOVE_CONFIG),
-        SparkMax(4, config=TURN_CONFIG),
-        CANCoder(21),
-        absolute_encoder_zeroed_pos=42.539
-    )
-    n_10 = SparkMaxSwerveNode(
+    n_front_right = SparkMaxSwerveNode(
         SparkMax(14, config=MOVE_CONFIG),
         SparkMax(13, config=TURN_CONFIG),
         CANCoder(23),
-        absolute_encoder_zeroed_pos=13.535
+        absolute_encoder_zeroed_pos=math.radians(13.535 + 270),
     )
-    n_11 = SparkMaxSwerveNode(
+    n_back_left = SparkMaxSwerveNode(
+        SparkMax(3, config=MOVE_CONFIG),
+        SparkMax(4, config=TURN_CONFIG),
+        CANCoder(21),
+        absolute_encoder_zeroed_pos=math.radians(42.539 + 270),
+    )
+    n_back_right = SparkMaxSwerveNode(
         SparkMax(5, config=MOVE_CONFIG),
         SparkMax(6, config=TURN_CONFIG),
         CANCoder(22),
-        absolute_encoder_zeroed_pos=48.603
+        absolute_encoder_zeroed_pos=math.radians(48.603 + 270),
     )
 
-    gyro = PigeonIMUGyro_Wrapper(0)
+    gyro = PigeonIMUGyro_Wrapper(20)
     axis_dx = Keymap.Drivetrain.DRIVE_X_AXIS
     axis_dy = Keymap.Drivetrain.DRIVE_Y_AXIS
     axis_rotation = Keymap.Drivetrain.DRIVE_ROTATION_AXIS
@@ -125,4 +139,17 @@ class Drivetrain(SwerveDrivetrain):
     max_angular_vel: radians_per_second = constants.drivetrain_max_angular_vel
     deadzone_velocity: meters_per_second = 0.01
     deadzone_angular_velocity: radians_per_second = math.radians(5)
-    start_pose: Pose2d = Pose2d(0, 0, 0)
+    start_angle = 0
+    start_pose: Pose2d = Pose2d(
+        0.0254 * (40.45 + 17.625) + constants.track_width / 2,
+        0.0254 * 42.19,
+        math.radians(start_angle),
+    )  # meters(40.45 + 17.625) + constants.track/2
+    gyro_start_angle = start_angle
+    gyro_offset = math.radians(0)
+
+    def logger_periodic(self):
+        # logging.info(
+        #     f"ODOM_DIST: {self.odometry_estimator.getEstimatedPosition().translation().distanceFeet(constants.kApriltagPositionDict[8].toPose2d().translation())}"
+        # )
+        pass
