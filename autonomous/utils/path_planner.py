@@ -10,9 +10,11 @@ def generate_trajectories(configs: dict):
 
     trajectories = os.listdir(folder_path)
 
-    output_trajectories = []
+    output_trajectories = {}
 
     for trajectory in trajectories:
+        trajectory_name = trajectory.split(".")[0]
+
         file_path = os.path.join(folder_path, trajectory)
 
         with open(file_path, "r") as file:
@@ -41,12 +43,14 @@ def generate_trajectories(configs: dict):
             coord = waypoint["anchorPoint"]
             interior_waypoints.append(Translation2d(coord["x"], coord["y"]))
 
-        output_trajectories.append(CustomTrajectory(
+        output_trajectories[trajectory_name] = CustomTrajectory(
             start_pose,
             interior_waypoints,
             end_pose,
-            configs[trajectory.split(".")[0]][0], # max vel
-            configs[trajectory.split(".")[0]][1] # max accel
-        ))
+            configs[trajectory_name]["max_vel"],
+            configs[trajectory_name]["max_accel"],
+            configs[trajectory_name]["start_vel"],
+            configs[trajectory_name]["end_vel"],
+        )
         
     return output_trajectories
