@@ -188,12 +188,12 @@ class _Robot(wpilib.TimedRobot):
         #commands2.InstantCommand(command.DrivetrainZero(Robot.drivetrain))
         #commands2.InstantCommand(command.ZeroArm(Robot.Elevator))
         #SmartDashboard.putData("pose", Robot.Elevator.get_pose())
-        Robot.Elevator.zero_elevator_rotation()
-        # commands2.CommandScheduler.getInstance().schedule(
-        #     command.DrivetrainZero(Robot.drivetrain).andThen(
-        #         command.DriveSwerveCustom(Robot.drivetrain)
-        #     )
-        # )
+        #Robot.Elevator.zero_elevator_rotation()
+        commands2.CommandScheduler.getInstance().schedule(
+            command.DrivetrainZero(Robot.drivetrain).andThen(
+                command.DriveSwerveCustom(Robot.drivetrain)
+            )
+        )
         commands2.CommandScheduler.getInstance().schedule(command.ZeroArm(Robot.Elevator))
         #commands2.CommandScheduler.getInstance().schedule(command.ArmPose(Robot.Elevator))
 

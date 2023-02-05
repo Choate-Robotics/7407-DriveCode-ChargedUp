@@ -46,7 +46,7 @@ class Elevator(Subsystem):  # elevator class
         self.elevator_top_sensor = None
         self.elevator_bottom_sensor = None
 
-    def enable_brake(self):
+    def enable_brake(self) -> bool:
         """enables the brake"""
         if self.brake_override:
             return False
@@ -55,7 +55,7 @@ class Elevator(Subsystem):  # elevator class
             self.brake.set(self.brake.Value.kForward)
             return True
 
-    def disable_brake(self):
+    def disable_brake(self) -> bool:
         """disables the brake"""
         if self.brake_override:
             return False
@@ -64,31 +64,31 @@ class Elevator(Subsystem):  # elevator class
             self.brake.set(self.brake.Value.kReverse)
             return True
 
-    def enable_brake_override(self):
+    def enable_brake_override(self) -> None:
         """enables the brake override"""
         self.brake_override = True
 
-    def disable_brake_override(self):
+    def disable_brake_override(self) -> None:
         """disables the brake override"""
         self.brake_override = False
 
-    def enable_rotation_override(self):
+    def enable_rotation_override(self) -> None:
         """enables the rotation override"""
         self.rotation_override = True
 
-    def disable_rotation_override(self):
+    def disable_rotation_override(self) -> None:
         """disables the rotation override"""
         self.rotation_override = False
 
-    def get_pose(self):
+    def get_pose(self) -> Pose3d:
         """Gets the pose of the arm"""
         return self.pose
 
-    def set_pose(self, pose: Pose3d):
+    def set_pose(self, pose: Pose3d) -> None:
         """sets the pose of the arm"""
         self.pose = pose
 
-    def is_at_position(self, position: Pose3d):  # NEED TO EDIT THIS TO USE MOTOR ANGLE AND POSITIONS INSTEAD OF POSE!!
+    def is_at_position(self, position: Pose3d) -> bool:  # NEED TO EDIT THIS TO USE MOTOR ANGLE AND POSITIONS INSTEAD OF POSE!!
         """checks if the arm is at the desired position"""
         return position.__eq__(self.pose)
 
@@ -135,12 +135,12 @@ class Elevator(Subsystem):  # elevator class
 
         self.enable_brake()
 
-    def stop(self):
+    def stop(self) -> None:
         """stops the elevator"""
         self.motor_extend.set_raw_output(0)
         self.main_rotation_motor.set_raw_output(0)
 
-    def hard_stop(self):
+    def hard_stop(self) -> None:
         """stops the elevator and enables the brake"""
         self.stop()
         self.enable_brake()
@@ -208,7 +208,7 @@ class Elevator(Subsystem):  # elevator class
             else:
                 return 1
 
-    def set_length(self, meters):  # set arm extension
+    def set_length(self, meters) -> None:  # set arm extension
         """Sets the length of the elevator to the given meters, returns true if the elevator is at the given meters, float of the meters the elevator is at if it is not at the given meters"""
         length_ratio = self.boundary_box(self.abs_encoder.getPosition() * (2 * math.pi))
         meters=min(length_ratio * constants.max_elevator_height, meters)
@@ -216,7 +216,7 @@ class Elevator(Subsystem):  # elevator class
                            / constants.max_elevator_height
         self.motor_extend.set_target_position(length)
 
-    def shoulder_rotation_limits(self, radians: float):
+    def shoulder_rotation_limits(self, radians: float) -> bool:
         """Returns if the given radians are within the soft limits of the shoulder"""
         # returns if the angle is within the soft limits
         if self.rotation_override:
@@ -243,28 +243,28 @@ class Elevator(Subsystem):  # elevator class
             set(y)
             return y
 
-    def get_length(self):  # returns arm extension
+    def get_length(self) -> float:  # returns arm extension
         """Gets the length of the elevator in meters"""
         return (self.motor_extend.get_sensor_position() / constants.elevator_extend_gear_ratio) * constants.max_elevator_height
 
-    def get_rotation(self):  # returns arm rotation in radians
+    def get_rotation(self) -> float:  # returns arm rotation in radians
         """Gets the rotation of the shoulder in radians"""
         return (self.main_rotation_motor.get_sensor_position() * constants.elevator_rotation_gear_ratio) * (2 * math.pi)
 
-    def get_rotation_radians_abs(self):
+    def get_rotation_radians_abs(self) -> float:
         """Gets the rotation of the shoulder in rotations from the absolute encoder"""
         return self.abs_encoder_to_rad(self.abs_encoder.getPosition())
 
-    def get_rotation_abs(self):
+    def get_rotation_abs(self) -> float:
         """Gets the rotation of the shoulder in rotations from the absolute encoder"""
         return self.abs_encoder.getPosition()
 
     # brings elevator to zero position (no extension, no rotation)
-    def zero_elevator_length(self):
+    def zero_elevator_length(self) -> None:
         """Sets the elevator to the zero position (no rotation)"""
         self.motor_extend.set_target_position(self.motor_extend.get_sensor_position() - 0.005)
 
-    def zero_elevator_rotation(self):
+    def zero_elevator_rotation(self) -> None:
         """Sets the shoulder to the zero position (no extension)"""
         self.main_rotation_motor.set_sensor_position(0)
         # print(self.main_rotation_motor.get_sensor_position())
@@ -285,12 +285,12 @@ class Elevator(Subsystem):  # elevator class
         # run the motor to the zero position
         self.main_rotation_motor.set_target_position(0)
 
-    def extend_max_elevator(self):
+    def extend_max_elevator(self) -> None:
         """Sets the elevator to the max position (no rotation)"""
         self.set_length(self.boundary_box(self.get_rotation()) *
                         constants.max_elevator_height)
 
-    def update_pose(self):
+    def update_pose(self) -> None:
         """Updates the pose of the arm using the encoder values and rotation of the elevator"""
         # updates the pose of the arm using the encoder values and rotation of the elevator
         angle = self.get_rotation()

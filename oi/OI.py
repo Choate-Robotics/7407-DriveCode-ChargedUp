@@ -1,5 +1,5 @@
 from robotpy_toolkit_7407.utils import logger
-from keymap import Keymap
+from oi.keymap import Keymap
 import command
 import constants
 from robot_systems import Robot
