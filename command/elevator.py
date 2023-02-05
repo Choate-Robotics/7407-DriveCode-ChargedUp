@@ -1,9 +1,10 @@
-from commands2 import InstantCommand, ParallelCommandGroup, ConditionalCommand, SequentialCommandGroup, WaitCommand, SubsystemBase
 from robotpy_toolkit_7407.command import SubsystemCommand, T
-from robotpy_toolkit_7407.utils.units import inch, meters, rev
-from wpimath.geometry import Pose3d, Translation3d, Pose2d, Rotation3d
-from wpilib import SmartDashboard
 import math
+
+from robotpy_toolkit_7407.command import SubsystemCommand, T
+from wpilib import SmartDashboard
+from wpimath.geometry import Pose3d, Pose2d, Rotation3d
+
 import constants
 from robot_systems import Robot, Sensors
 from subsystem import Elevator
@@ -142,13 +143,13 @@ class ZeroArm(SubsystemCommand[Elevator]):
         self.subsystem.zero_elevator_rotation()
 
     def execute(self):
-        #pass
+        # pass
         self.subsystem.zero_elevator_length()
 
     def isFinished(self):
         return self.subsystem.elevator_bottom_sensor == False and self.subsystem.main_rotation_motor.get_sensor_position() == 0
         # return self.subsystem.main_rotation_motor.get_sensor_position() == 0
-    
+
     def end(self, interrupted):
         if not interrupted:
             self.subsystem.enable_brake()
@@ -235,7 +236,7 @@ class ArmAssistedRobotStabalizer(SubsystemCommand[Elevator]):
 
     def execute(self) -> None:
         self.gyro_roll: float
-        self.elevator_rotation: float = self.gyro_roll * constants.stabalizer_magnitude
+        self.elevator_rotation: float = self.gyro_roll * constants.stabilizer_magnitude
         self.subsystem.set_rotation(self.elevator_rotation)
 
     def isFinished(self) -> bool:
