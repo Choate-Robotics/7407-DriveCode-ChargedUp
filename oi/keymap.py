@@ -27,3 +27,9 @@ class Keymap:
         AIM_SWERVE = DefaultButton(Controllers.DRIVER, controllerDRIVER.RT)
         DRIVER_CENTRIC = DefaultButton(Controllers.DRIVER, controllerDRIVER.LB)
         DRIVER_CENTRIC_REVERSED = DefaultButton(Controllers.DRIVER, controllerDRIVER.RB)
+        
+    class Arm:
+        ELEVATOR_ROTATION_AXIS = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.L_JOY[0])
+        ELEVATOR_EXTENSION_AXIS = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.L_JOY[1])
+        REZERO_ELEVATOR = DefaultButton(Controllers.OPERATOR, controllerOPERATOR.A)
+        

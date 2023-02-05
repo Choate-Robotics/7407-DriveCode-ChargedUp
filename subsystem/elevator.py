@@ -90,12 +90,7 @@ class Elevator(Subsystem):  # elevator class
 
     def is_at_position(self, position: Pose3d):  # NEED TO EDIT THIS TO USE MOTOR ANGLE AND POSITIONS INSTEAD OF POSE!!
         """checks if the arm is at the desired position"""
-        return (self.get_pose() < Pose3d(position.X - constants.arm_pose_accuracy),
-                position.Y - constants.arm_pose_accuracy,
-                position.Rotation - constants.arm_pose_accuracy) and (
-                   self.get_pose() > Pose3d(position.X + constants.arm_pose_accuracy),
-                   position.Y + constants.arm_pose_accuracy,
-                   position.Rotation + constants.arm_pose_accuracy)
+        return position.__eq__(self.pose)
 
     def shoulder_angle_to_motor_rotations(self, angle: float):
         """returns the scale of angle in radians to the shoulder motor rotations
@@ -161,6 +156,10 @@ class Elevator(Subsystem):  # elevator class
 
             def get_length_ratio(theta, adjacent):
                 # Gets the length of the angle using cosine
+                if theta == 0:
+                    v = adjacent / constants.max_elevator_height
+                    return 1 if v > 1 else v
+                
                 max_length = adjacent / math.cos(theta)
                 # if the length of the angle is greater than the max_elevator_height, return one
                 # else give a percentage of the height of the current line and the max_elevator_height
@@ -202,30 +201,20 @@ class Elevator(Subsystem):  # elevator class
                 return get_length_ratio(angle, top_vertical_boundary_from_pivot)
             # if the angle is between the top boundry max angle and the bottom boundry max angle, return the length ratio of the angle and the horizontal boundry
             elif (angle > top_boundary_max_angle and angle < bottom_boundary_max_angle):
-                return get_length_ratio(90 - angle, horizontal_boundary_length_from_pivot)
+                return get_length_ratio(math.radians(90) - angle, horizontal_boundary_length_from_pivot)
             # if the angle is greater than the bottom boundry max angle, return the length ratio of the angle and the bottom boundry
             elif (angle > bottom_boundary_max_angle):
-                return get_length_ratio(180 - angle, bottom_vertical_boundary_from_pivot)
+                return get_length_ratio(math.radians(180) - angle, bottom_vertical_boundary_from_pivot)
             else:
                 return 1
 
     def set_length(self, meters):  # set arm extension
         """Sets the length of the elevator to the given meters, returns true if the elevator is at the given meters, float of the meters the elevator is at if it is not at the given meters"""
-
-        def set(length):
-            start_length = (self.motor_extend.get_sensor_position() * constants.elevator_extend_gear_ratio) \
+        length_ratio = self.boundary_box(self.abs_encoder.getPosition() * (2 * math.pi))
+        meters=min(length_ratio * constants.max_elevator_height, meters)
+        length = (self.motor_extend.get_sensor_position() * constants.elevator_extend_gear_ratio) \
                            / constants.max_elevator_height
-            fin_length = (length / constants.max_elevator_height) * constants.elevator_extend_gear_ratio
-            delta_length = fin_length - start_length
-            self.motor_extend.set_target_position(delta_length)
-
-        length_ratio = self.boundary_box(self.abs_encoder * (2 * math.pi))
-        if length_ratio * constants.max_elevator_height > meters:
-            set(meters)
-            return True
-        else:
-            set(length_ratio * constants.max_elevator_height)
-            return length_ratio * constants.max_elevator_height
+        self.motor_extend.set_target_position(length)
 
     def shoulder_rotation_limits(self, radians: float):
         """Returns if the given radians are within the soft limits of the shoulder"""
@@ -233,10 +222,7 @@ class Elevator(Subsystem):  # elevator class
         if self.rotation_override:
             return True
         else:
-            if self.intake_up:
-                return constants.shoulder_intake_up_max_rotation > radians > -constants.shoulder_min_rotation
-            else:
-                return constants.shoulder_max_rotation > radians > -constants.shoulder_min_rotation
+            return radians <= constants.shoulder_max_rotation and radians >= -constants.shoulder_min_rotation
 
     def set_rotation(self, radians: float):  # set arm rotation
         """Sets the rotation of the shoulder to the given radians, returns true if the shoulder is at the given radians, float of the radians the shoulder is at if it is not at the given radians"""
@@ -250,25 +236,16 @@ class Elevator(Subsystem):  # elevator class
             set(radians)
             return True
         else:
-            if self.intake_up:
-                if radians > 0:
-                    y = constants.shoulder_intake_up_max_rotation
-                else:
-                    y = -constants.shoulder_min_rotation
-                set(y)
-                return y
+            if radians > 0:
+                y = constants.shoulder_max_rotation
             else:
-                if radians > 0:
-                    y = constants.shoulder_max_rotation
-                else:
-                    y = -constants.shoulder_min_rotation
-                set(y)
-                return y
+                y = -constants.shoulder_min_rotation
+            set(y)
+            return y
 
     def get_length(self):  # returns arm extension
         """Gets the length of the elevator in meters"""
-        return (self.motor_extend.get_sensor_position() * constants.elevator_extend_gear_ratio) \
-               / constants.max_elevator_height
+        return (self.motor_extend.get_sensor_position() / constants.elevator_extend_gear_ratio) * constants.max_elevator_height
 
     def get_rotation(self):  # returns arm rotation in radians
         """Gets the rotation of the shoulder in radians"""
@@ -285,7 +262,7 @@ class Elevator(Subsystem):  # elevator class
     # brings elevator to zero position (no extension, no rotation)
     def zero_elevator_length(self):
         """Sets the elevator to the zero position (no rotation)"""
-        self.set_length(self.get_length() - 0.005)
+        self.motor_extend.set_target_position(self.motor_extend.get_sensor_position() - 0.005)
 
     def zero_elevator_rotation(self):
         """Sets the shoulder to the zero position (no extension)"""

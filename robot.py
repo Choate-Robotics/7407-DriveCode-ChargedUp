@@ -52,12 +52,11 @@ class _Robot(wpilib.TimedRobot):
         # self.start_robot_pose = Sensors.odometry.get_robot_pose()
 
     def robotPeriodic(self):
-        pass
         # Sensors.odometry.update()
         # SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
         # SmartDashboard.putString("FDOM", str(Sensors.odometry.get_robot_pose()))
 
-        # commands2.CommandScheduler.getInstance().run()
+        commands2.CommandScheduler.getInstance().run()
         # # botpose = self.limelight.get_bot_pose(round_to=2)
         # # if botpose:
         # #     print(botpose)
@@ -148,13 +147,7 @@ class _Robot(wpilib.TimedRobot):
         #commands2.InstantCommand(command.DrivetrainZero(Robot.drivetrain))
         #commands2.InstantCommand(command.ZeroArm(Robot.Elevator))
         #SmartDashboard.putData("pose", Robot.Elevator.get_pose())
-        print("ABS: " + str(Robot.Elevator.get_rotation_radians_abs()))
-        print("ENC: " + str(Robot.Elevator.main_rotation_motor.get_sensor_position()))
-        print("motor: " + str(Robot.Elevator.main_rotation_motor._motor.get()))
         Robot.Elevator.zero_elevator_rotation()
-        print("ABS: " + str(Robot.Elevator.get_rotation_radians_abs()))
-        print("ENC: " + str(Robot.Elevator.main_rotation_motor.get_sensor_position()))
-        print("motor: " + str(Robot.Elevator.main_rotation_motor._motor.get()))
         # commands2.CommandScheduler.getInstance().schedule(
         #     command.DrivetrainZero(Robot.drivetrain).andThen(
         #         command.DriveSwerveCustom(Robot.drivetrain)
