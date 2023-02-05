@@ -1,15 +1,10 @@
-import logging
 from dataclasses import dataclass
 
 import commands2
 from commands2 import CommandBase
 from wpimath.geometry import Pose2d
 
-from robot_systems import Robot, Sensors
-
-
-def auto_log():
-    logging.info(Sensors.odometry.getPose())
+from robot_systems import Robot
 
 
 @dataclass
@@ -31,5 +26,7 @@ class AutoRoutine:
         Runs the autonomous routine
         """
 
+        Robot.drivetrain.gyro.reset_angle(self.initial_robot_pose.rotation().degrees())
         Robot.drivetrain.reset_odometry(self.initial_robot_pose)
+
         commands2.CommandScheduler.getInstance().schedule(self.command)

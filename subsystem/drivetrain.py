@@ -139,7 +139,7 @@ class Drivetrain(SwerveDrivetrain):
         0.0254 * (40.45 + 17.625) + constants.track_width / 2,
         0.0254 * 42.19,
         math.radians(start_angle),
-    )  # meters(40.45 + 17.625) + constants.track/2
+    )
     gyro_start_angle = start_angle
     gyro_offset = math.radians(0)
 

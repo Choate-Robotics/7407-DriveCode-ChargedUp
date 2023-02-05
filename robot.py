@@ -9,6 +9,7 @@ from autonomous import routine
 from oi.OI import OI
 from robot_systems import Robot, Sensors
 from sensors import FieldOdometry
+from utils import logger
 
 
 class _Robot(wpilib.TimedRobot):
@@ -16,7 +17,7 @@ class _Robot(wpilib.TimedRobot):
         super().__init__()
 
     def robotInit(self):
-        # Initialize Operator Interface
+        # Initialize Operator Interface'
         OI.init()
         OI.map_controls()
         period = 0.03
@@ -149,6 +150,7 @@ class _Robot(wpilib.TimedRobot):
         )
 
     def teleopInit(self):
+        logger.debug("TELEOP", "Teleop Initialized")
         commands2.CommandScheduler.getInstance().schedule(
             command.DriveSwerveCustom(Robot.drivetrain)
         )
