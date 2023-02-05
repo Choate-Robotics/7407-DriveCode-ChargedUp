@@ -7,3 +7,6 @@ elevator_disable_brake_id = 4
 #converted to radians in subsystems/elevator.py
 
 kRobotVisionPoseWeight = .1
+kRobotVisionPoseWeight = 0.1
+
+red_team = True

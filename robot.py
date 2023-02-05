@@ -1,7 +1,6 @@
 import math
 
 import commands2
-import ctre
 import wpilib
 from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
 from robotpy_toolkit_7407.sensors.limelight import Limelight
@@ -11,10 +10,11 @@ from robotpy_toolkit_7407.sensors.limelight import Limelight, LimelightControlle
 from wpilib import SmartDashboard
 
 import command
-import constants
 from oi.OI import OI
 from robot_systems import Robot, Sensors
 from sensors import FieldOdometry, PV_Cameras
+
+from autonomous import routine
 
 
 class _Robot(wpilib.TimedRobot):
@@ -52,9 +52,46 @@ class _Robot(wpilib.TimedRobot):
         # self.start_robot_pose = Sensors.odometry.get_robot_pose()
 
     def robotPeriodic(self):
-        # Sensors.odometry.update()
-        # SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
-        # SmartDashboard.putString("FDOM", str(Sensors.odometry.get_robot_pose()))
+        Robot.drivetrain.logger_periodic()
+        Sensors.odometry.update()
+        SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
+        SmartDashboard.putString("FDOM", str(Sensors.odometry.get_robot_pose()))
+        SmartDashboard.putString(
+            "EDOM", str(Robot.drivetrain.odometry_estimator.getEstimatedPosition())
+        )
+        try:
+            SmartDashboard.putString(
+                "PHOTON", str(Sensors.pv_controller.get_estimated_robot_pose())
+            )
+            SmartDashboard.putString(
+                "PHOTON ANGLE", str(Sensors.pv_controller.get_estimated_robot_pose()[0][0].rotation().toRotation2d().degrees())
+            )
+        except Exception:
+            pass
+
+        pose = Robot.drivetrain.odometry_estimator.getEstimatedPosition()
+        pose2 = Sensors.odometry.get_robot_pose()
+        pv_pose = Sensors.pv_controller.get_estimated_robot_pose()
+
+        SmartDashboard.putNumberArray(
+            "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]
+        )
+
+        SmartDashboard.putNumberArray(
+            "RobotPoseOrig", [pose2.X(), pose2.Y(), pose2.rotation().radians()]
+        )
+
+        try:
+            SmartDashboard.putNumberArray(
+                "PVPoseAdvantage",
+                [
+                    pv_pose[0][0].toPose2d().X(),
+                    pv_pose[0][0].toPose2d().Y(),
+                    pv_pose[0][0].rotation().toRotation2d().radians(),
+                ],
+            )
+        except Exception:
+            pass
 
         commands2.CommandScheduler.getInstance().run()
         # # botpose = self.limelight.get_bot_pose(round_to=2)
@@ -142,6 +179,10 @@ class _Robot(wpilib.TimedRobot):
         #     * (-1 if Robot.drivetrain.n_back_right.drive_reversed else 1),
         # )
 
+        SmartDashboard.putNumber(
+            "gyro_angle: ", math.degrees(Robot.drivetrain.gyro.get_robot_heading())
+        )
+
     def teleopInit(self):
         #Robot.Elevator.main_rotation_motor.set_sensor_position(0)
         #commands2.InstantCommand(command.DrivetrainZero(Robot.drivetrain))
@@ -163,6 +204,7 @@ class _Robot(wpilib.TimedRobot):
         #Robot.Elevator.main_rotation_motor.set_raw_output(.2)
 
     def autonomousInit(self):
+        routine.run()
         pass
 
     def autonomousPeriodic(self):

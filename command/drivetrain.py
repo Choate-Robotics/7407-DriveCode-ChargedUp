@@ -1,9 +1,8 @@
 import logging
-import math
 
 from robotpy_toolkit_7407.command import SubsystemCommand
 
-import constants
+import config
 from subsystem import Drivetrain
 
 
@@ -27,8 +26,8 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
     def execute(self) -> None:
 
         dx, dy, d_theta = (
-            self.subsystem.axis_dx.value,
-            self.subsystem.axis_dy.value,
+            self.subsystem.axis_dx.value * (-1 if config.red_team else 1),
+            self.subsystem.axis_dy.value * (-1 if config.red_team else 1),
             -self.subsystem.axis_rotation.value,
         )
 
@@ -87,14 +86,12 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         return True
 
     def end(self, interrupted: bool) -> None:
-        self.subsystem.gyro.reset_angle()
-
         self.subsystem.n_front_left.m_move.set_sensor_position(0)
         self.subsystem.n_front_right.m_move.set_sensor_position(0)
         self.subsystem.n_back_left.m_move.set_sensor_position(0)
         self.subsystem.n_back_right.m_move.set_sensor_position(0)
 
         logging.info(
-            "Successfully rezeroed swerve pods.", "[drivetrain_rezero_command]"
+            "Successfully rezeroed swerve pods."
         )
         ...
