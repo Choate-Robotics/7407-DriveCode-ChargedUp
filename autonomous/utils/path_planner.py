@@ -5,7 +5,7 @@ import math
 from wpimath.geometry import Pose2d, Translation2d
 from autonomous.utils.trajectory import CustomTrajectory
 
-def generate_trajectories(max_velocity: float, max_accel: float):
+def generate_trajectories(configs: dict):
     folder_path = os.path.dirname(inspect.stack()[1].filename) + "/trajectories"
 
     trajectories = os.listdir(folder_path)
@@ -45,8 +45,8 @@ def generate_trajectories(max_velocity: float, max_accel: float):
             start_pose,
             interior_waypoints,
             end_pose,
-            max_velocity,
-            max_accel
+            configs[trajectory.split(".")[0]][0], # max vel
+            configs[trajectory.split(".")[0]][1] # max accel
         ))
-    
+        
     return output_trajectories

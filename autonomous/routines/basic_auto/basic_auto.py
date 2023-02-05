@@ -9,7 +9,11 @@ from autonomous.utils.custom_pathing import FollowPathCustom
 from autonomous.utils.path_planner import generate_trajectories
 from robot_systems import Robot
 
-trajectories = generate_trajectories(1, 2)
+configs = {
+    "trajectory_1": (1, 2)
+}
+
+trajectories = generate_trajectories(configs)
 
 path_1 = FollowPathCustom(
     subsystem=Robot.drivetrain,
