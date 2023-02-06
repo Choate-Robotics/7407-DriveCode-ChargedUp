@@ -23,20 +23,12 @@ class _Robot(wpilib.TimedRobot):
         period = 0.03
         commands2.CommandScheduler.getInstance().setPeriod(period)
 
-        # Sensors.limelight_front = Limelight(
-        #     cam_height=0, cam_angle=0, robot_ip="10.74.07.2"
-        # )
-        # Sensors.limelight_controller = LimelightController([Sensors.limelight_front])
-
         Robot.drivetrain.init()
 
         SmartDashboard.init()
         # Sensors.pv_controller = PV_Cameras()
 
         Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
-
-        # self.start_limelight_pose = Sensors.limelight_controller.get_estimated_robot_pose()[0].toPose2d()
-        # self.start_robot_pose = Sensors.odometry.get_robot_pose()
 
     def robotPeriodic(self):
         Robot.drivetrain.logger_periodic()

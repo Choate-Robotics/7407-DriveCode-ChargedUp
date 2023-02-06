@@ -34,13 +34,13 @@ class PV_Cameras(VisionEstimator):
                     SmartDashboard.putNumberArray(
                         "OrigCamPose",
                         [
-                            (constants.kApriltagPositionDict[tag_id] + point.inverse())
+                            (constants.ApriltagPositionDict[tag_id] + point.inverse())
                             .toPose2d()
                             .X(),
-                            (constants.kApriltagPositionDict[tag_id] + point.inverse())
+                            (constants.ApriltagPositionDict[tag_id] + point.inverse())
                             .toPose2d()
                             .Y(),
-                            (constants.kApriltagPositionDict[tag_id] + point.inverse())
+                            (constants.ApriltagPositionDict[tag_id] + point.inverse())
                             .toPose2d()
                             .rotation()
                             .radians(),
@@ -49,7 +49,7 @@ class PV_Cameras(VisionEstimator):
 
                 derivedRobotPoses += [
                     (
-                        constants.kApriltagPositionDict[tag_id]
+                        constants.ApriltagPositionDict[tag_id]
                         + point.inverse()
                         + camera[1].inverse(),
                         Timer.getFPGATimestamp(),

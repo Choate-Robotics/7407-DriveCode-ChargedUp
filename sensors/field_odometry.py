@@ -5,6 +5,7 @@ from robotpy_toolkit_7407.sensors.odometry import VisionEstimator
 from wpimath.geometry import Pose2d, Pose3d, Rotation2d, Translation2d
 
 from subsystem import Drivetrain
+from units.SI import seconds
 
 
 def weighted_pose_average(
@@ -52,16 +53,16 @@ class FieldOdometry:
     def __init__(
         self, drivetrain: Drivetrain, vision_estimator: VisionEstimator | None
     ):
-        self.drivetrain = drivetrain
+        self.drivetrain: Drivetrain = drivetrain
 
-        self.last_update_time = None
-        self.min_update_wait_time = (
-            0.05  # seconds to wait before checking for pose update
+        self.last_update_time: seconds | None = None
+        self.min_update_wait_time: seconds = (
+            0.05  # time to wait before checking for pose update
         )
 
-        self.vision_estimator = vision_estimator
-        self.vision_estimator_pose_weight = 0.1
-        self.robot_pose_weight = 1 - self.vision_estimator_pose_weight
+        self.vision_estimator: VisionEstimator = vision_estimator
+        self.vision_estimator_pose_weight: float = 0.1
+        self.robot_pose_weight: float = 1 - self.vision_estimator_pose_weight
 
     def update(self) -> Pose2d:
         """

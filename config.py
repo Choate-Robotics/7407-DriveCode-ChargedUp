@@ -1,1 +1,1 @@
-red_team = False
+red_team: bool = False

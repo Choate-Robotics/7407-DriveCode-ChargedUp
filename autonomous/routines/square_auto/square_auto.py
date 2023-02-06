@@ -8,13 +8,14 @@ from autonomous.auto_routine import AutoRoutine
 from autonomous.utils.custom_pathing import FollowPathCustom, RotateInPlace
 from autonomous.utils.trajectory import CustomTrajectory
 from robot_systems import Robot
+from units.SI import meters_per_second, meters_per_second_squared, meters
 from utils import logger
 
-max_vel = 1
-max_accel = 2
+max_vel: meters_per_second = 1
+max_accel: meters_per_second_squared = 2
 
-field_length = 2.896 - constants.robot_length
-field_width = 2.629 - constants.robot_length
+field_length: meters = 2.896 - constants.robot_length
+field_width: meters = 2.629 - constants.robot_length
 
 path_1 = FollowPathCustom(
     subsystem=Robot.drivetrain,
