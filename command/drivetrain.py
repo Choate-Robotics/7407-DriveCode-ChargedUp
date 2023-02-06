@@ -40,19 +40,17 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
 
         dx *= self.subsystem.max_vel
         dy *= -self.subsystem.max_vel
+        d_theta *= self.subsystem.max_angular_vel
 
         if DriveSwerveCustom.driver_centric:
             self.subsystem.set_driver_centric(
-                (-dy, dx), d_theta * self.subsystem.max_angular_vel
-            )
+                (-dy, dx), d_theta)
         elif DriveSwerveCustom.driver_centric_reversed:
             self.subsystem.set_driver_centric(
-                (dy, -dx), d_theta * self.subsystem.max_angular_vel
-            )
+                (dy, -dx), d_theta)
         else:
             self.subsystem.set_robot_centric(
-                (dx, dy), d_theta * self.subsystem.max_angular_vel
-            )
+                (dx, dy), d_theta)
 
     def end(self, interrupted: bool) -> None:
         self.subsystem.n_front_left.set(0, 0)
@@ -82,7 +80,6 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         ...
 
     def isFinished(self) -> bool:
-        ...
         return True
 
     def end(self, interrupted: bool) -> None:
@@ -94,4 +91,4 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         logging.info(
             "Successfully rezeroed swerve pods."
         )
-        ...
+
