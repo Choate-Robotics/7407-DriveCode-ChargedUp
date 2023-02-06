@@ -4,6 +4,7 @@ SI units for use in typing and conversion.
 
 # Distance
 import math
+from typing import Type
 
 meters = float
 meters_to_inches = 39.3701
@@ -70,26 +71,26 @@ days_to_minutes = days_to_seconds * seconds_to_minutes
 days_to_hours = days_to_seconds * seconds_to_hours
 
 # Velocity
-meters_per_second = float
-meters_per_second_squared = float
+meters_per_second: Type[float] = float
+meters_per_second_squared: Type[float] = float
 
-radians_per_second = float
-radians_per_second__to__degrees_per_second = radians_to_degrees
-radians_per_second__to__rotations_per_second = radians_to_rotations
+radians_per_second: Type[float] = float
+radians_per_second__to__degrees_per_second: float = radians_to_degrees
+radians_per_second__to__rotations_per_second: float = radians_to_rotations
 
-degrees_per_second = float
-degrees_per_second__to__radians_per_second = degrees_to_radians
-degrees_per_second__to__rotations_per_second = degrees_to_rotations
+degrees_per_second: Type[float] = float
+degrees_per_second__to__radians_per_second: float = degrees_to_radians
+degrees_per_second__to__rotations_per_second: float = degrees_to_rotations
 
-rotations_per_second = float
-rotations_per_second__to__radians_per_second = rotations_to_radians
-rotations_per_second__to__degrees_per_second = rotations_to_degrees
+rotations_per_second: Type[float] = float
+rotations_per_second__to__radians_per_second: float = rotations_to_radians
+rotations_per_second__to__degrees_per_second: int = rotations_to_degrees
 
-rotations_per_minute = float
-rotations_per_minute_per_meter = float
+rotations_per_minute: Type[float] = float
+rotations_per_minute_per_meter: Type[float] = float
 
-miles_per_hour = float
-miles_per_hour_to_meters_per_second = miles_to_meters * hours_to_seconds
+miles_per_hour: Type[float] = float
+miles_per_hour_to_meters_per_second: float = miles_to_meters * hours_to_seconds
 
 # rotation_motor_encoder_units = float
 # rotation_motor_encoder_units__to__swerve_pod_rotations = 1 / constants.drivetrain_turn_gear_ratio
