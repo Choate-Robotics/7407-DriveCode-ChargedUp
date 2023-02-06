@@ -142,13 +142,3 @@ class Drivetrain(SwerveDrivetrain):
     )
     gyro_start_angle = start_angle
     gyro_offset = math.radians(0)
-
-    def logger_periodic(self):
-        """
-        This function is run periodically for information on the drivetrain subsystem
-        """
-        # logging.info(
-        #     f"ODOM_DIST: {self.odometry_estimator.getEstimatedPosition().translation()\
-        #     .distanceFeet(constants.kApriltagPositionDict[8].toPose2d().translation())}"
-        # )
-        pass
