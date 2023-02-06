@@ -7,21 +7,20 @@ from robotpy_toolkit_7407.motors.rev_motors import SparkMax, SparkMaxConfig
 from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
 from robotpy_toolkit_7407.subsystem_templates.drivetrain import (
     SwerveDrivetrain,
-    SwerveNode,
     SwerveGyro,
+    SwerveNode,
 )
 from wpimath.geometry import Pose2d
 
 import constants
 from oi.keymap import Keymap
 from units.SI import (
-    radians,
-    radians_to_rotations,
-    meters_per_second,
-    radians_per_second,
     meters,
+    meters_per_second,
+    radians,
+    radians_per_second,
+    radians_to_rotations,
     rotations_to_radians,
-    degrees,
 )
 
 TURN_CONFIG = SparkMaxConfig(
@@ -131,11 +130,11 @@ class Drivetrain(SwerveDrivetrain):
     max_angular_vel: radians_per_second = constants.drivetrain_max_angular_vel
     deadzone_velocity: meters_per_second = 0.01
     deadzone_angular_velocity: radians_per_second = math.radians(5)
-    start_angle: degrees = 0
+    start_angle: radians = 0
     start_pose: Pose2d = Pose2d(
         0.0254 * (40.45 + 17.625) + constants.track_width / 2,
         0.0254 * 42.19,
         math.radians(start_angle),
     )
-    gyro_start_angle: degrees = start_angle
+    gyro_start_angle: radians = start_angle
     gyro_offset: radians = math.radians(0)
