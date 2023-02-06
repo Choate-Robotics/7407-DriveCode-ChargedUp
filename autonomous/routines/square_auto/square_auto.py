@@ -1,6 +1,6 @@
 import math
 
-from commands2 import SequentialCommandGroup, InstantCommand
+from commands2 import InstantCommand, SequentialCommandGroup
 from wpimath.geometry import Pose2d
 
 import constants
@@ -8,7 +8,7 @@ from autonomous.auto_routine import AutoRoutine
 from autonomous.utils.custom_pathing import FollowPathCustom, RotateInPlace
 from autonomous.utils.trajectory import CustomTrajectory
 from robot_systems import Robot
-from units.SI import meters_per_second, meters_per_second_squared, meters
+from units.SI import meters, meters_per_second, meters_per_second_squared
 from utils import logger
 
 max_vel: meters_per_second = 1
@@ -164,4 +164,4 @@ auto = SequentialCommandGroup(
     ),
 )
 
-routine = AutoRoutine(Pose2d(0, 0, math.radians(270)), auto)
+routine = AutoRoutine(Pose2d(0, 0, math.radians(90)), auto)

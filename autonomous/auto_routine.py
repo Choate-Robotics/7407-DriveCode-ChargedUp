@@ -26,7 +26,7 @@ class AutoRoutine:
         Runs the autonomous routine
         """
 
-        Robot.drivetrain.gyro.reset_angle(self.initial_robot_pose.rotation().degrees())
+        Robot.drivetrain.gyro.reset_angle(self.initial_robot_pose.rotation().radians())
         Robot.drivetrain.reset_odometry(self.initial_robot_pose)
 
         commands2.CommandScheduler.getInstance().schedule(self.command)
