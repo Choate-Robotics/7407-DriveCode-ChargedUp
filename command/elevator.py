@@ -41,6 +41,10 @@ class SetArmPositionRobot(SubsystemCommand[Elevator]):
         # gets the angle
         self.angle = math.radians(
             90) - (math.atan2(self.y_distance, self.x_distance))
+        
+    def __init__(self, subsystem: T, length: float, angle: float):
+        self.angle = angle
+        self.length = length
 
     def initialize(self):
         # add from pose of robot the height to get arm height
@@ -60,6 +64,7 @@ class SetArmPositionRobot(SubsystemCommand[Elevator]):
         if not interrupted:
             self.subsystem.enable_brake()
             self.subsystem.stop()
+
 
 
 class PauseMovement(SubsystemCommand[Elevator]):

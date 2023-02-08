@@ -32,4 +32,5 @@ class Keymap:
         ELEVATOR_ROTATION_AXIS = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.L_JOY[0])
         ELEVATOR_EXTENSION_AXIS = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.L_JOY[1])
         REZERO_ELEVATOR = DefaultButton(Controllers.OPERATOR, controllerOPERATOR.A)
-        
+        EXTEND_ELEVATOR_MAX = DefaultButton(Controllers.OPERATOR, controllerOPERATOR.B)
+        RETRACT_ELEVATOR_MIN = DefaultButton(Controllers.OPERATOR, controllerOPERATOR.X)

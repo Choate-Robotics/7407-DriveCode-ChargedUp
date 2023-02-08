@@ -32,9 +32,8 @@ class Elevator(Subsystem):  # elevator class
         config.elevator_secondary_rotation_motor_id, inverted=True, config=SHOLDER_CONFIG)  # motor that rotates the arm
     main_rotation_motor: SparkMax = SparkMax(
         config.elevator_main_rotation_motor_id, inverted=True, config=SHOLDER_CONFIG)  # motor that rotates the arm
-    brake: wpilib.DoubleSolenoid = wpilib.DoubleSolenoid(
-        1, wpilib.PneumaticsModuleType.REVPH, config.elevator_enable_brake_id,
-        config.elevator_disable_brake_id)  # brake that holds the arm in place
+    brake: wpilib.DoubleSolenoid = wpilib.solenoid(
+        1, wpilib.PneumaticsModuleType.REVPH, config.elevator_brake_id)  # brake that holds the arm in place
     wrist: SparkMax = SparkMax(18, config= WRIST_CONFIG)
     claw: SparkMax = SparkMax(12)
     initialized: bool = False
