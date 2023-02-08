@@ -44,54 +44,54 @@ class _Robot(wpilib.TimedRobot):
         # Robot.drivetrain.n_back_right.m_move.set_sensor_position(0)
 
         SmartDashboard.init()
-        Sensors.pv_controller = PV_Cameras()
+        #Sensors.pv_controller = PV_Cameras()
 
-        Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
+        #Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
 
         # self.start_limelight_pose = Sensors.limelight_controller.get_estimated_robot_pose()[0].toPose2d()
         # self.start_robot_pose = Sensors.odometry.get_robot_pose()
 
     def robotPeriodic(self):
-        Robot.drivetrain.logger_periodic()
-        Sensors.odometry.update()
-        SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
-        SmartDashboard.putString("FDOM", str(Sensors.odometry.get_robot_pose()))
-        SmartDashboard.putString(
-            "EDOM", str(Robot.drivetrain.odometry_estimator.getEstimatedPosition())
-        )
-        try:
-            SmartDashboard.putString(
-                "PHOTON", str(Sensors.pv_controller.get_estimated_robot_pose())
-            )
-            SmartDashboard.putString(
-                "PHOTON ANGLE", str(Sensors.pv_controller.get_estimated_robot_pose()[0][0].rotation().toRotation2d().degrees())
-            )
-        except Exception:
-            pass
+        # Robot.drivetrain.logger_periodic()
+        # Sensors.odometry.update()
+        # SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
+        # SmartDashboard.putString("FDOM", str(Sensors.odometry.get_robot_pose()))
+        # SmartDashboard.putString(
+        #     "EDOM", str(Robot.drivetrain.odometry_estimator.getEstimatedPosition())
+        # )
+        # try:
+        #     SmartDashboard.putString(
+        #         "PHOTON", str(Sensors.pv_controller.get_estimated_robot_pose())
+        #     )
+        #     SmartDashboard.putString(
+        #         "PHOTON ANGLE", str(Sensors.pv_controller.get_estimated_robot_pose()[0][0].rotation().toRotation2d().degrees())
+        #     )
+        # except Exception:
+        #     pass
 
-        pose = Robot.drivetrain.odometry_estimator.getEstimatedPosition()
-        pose2 = Sensors.odometry.get_robot_pose()
-        pv_pose = Sensors.pv_controller.get_estimated_robot_pose()
+        # pose = Robot.drivetrain.odometry_estimator.getEstimatedPosition()
+        # pose2 = Sensors.odometry.get_robot_pose()
+        # pv_pose = Sensors.pv_controller.get_estimated_robot_pose()
 
-        SmartDashboard.putNumberArray(
-            "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]
-        )
+        # SmartDashboard.putNumberArray(
+        #     "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]
+        # )
 
-        SmartDashboard.putNumberArray(
-            "RobotPoseOrig", [pose2.X(), pose2.Y(), pose2.rotation().radians()]
-        )
+        # SmartDashboard.putNumberArray(
+        #     "RobotPoseOrig", [pose2.X(), pose2.Y(), pose2.rotation().radians()]
+        # )
 
-        try:
-            SmartDashboard.putNumberArray(
-                "PVPoseAdvantage",
-                [
-                    pv_pose[0][0].toPose2d().X(),
-                    pv_pose[0][0].toPose2d().Y(),
-                    pv_pose[0][0].rotation().toRotation2d().radians(),
-                ],
-            )
-        except Exception:
-            pass
+        # try:
+        #     SmartDashboard.putNumberArray(
+        #         "PVPoseAdvantage",
+        #         [
+        #             pv_pose[0][0].toPose2d().X(),
+        #             pv_pose[0][0].toPose2d().Y(),
+        #             pv_pose[0][0].rotation().toRotation2d().radians(),
+        #         ],
+        #     )
+        # except Exception:
+        #     pass
 
         commands2.CommandScheduler.getInstance().run()
         # # botpose = self.limelight.get_bot_pose(round_to=2)
@@ -184,21 +184,30 @@ class _Robot(wpilib.TimedRobot):
         )
 
     def teleopInit(self):
+        Robot.Elevator.disable_extension = True
+        Robot.Elevator.motor_extend.set_sensor_position(0)
         #Robot.Elevator.main_rotation_motor.set_sensor_position(0)
         #commands2.InstantCommand(command.DrivetrainZero(Robot.drivetrain))
         #commands2.InstantCommand(command.ZeroArm(Robot.Elevator))
         #SmartDashboard.putData("pose", Robot.Elevator.get_pose())
         #Robot.Elevator.zero_elevator_rotation()
-        commands2.CommandScheduler.getInstance().schedule(
-            command.DrivetrainZero(Robot.drivetrain).andThen(
-                command.DriveSwerveCustom(Robot.drivetrain)
-            )
-        )
-        commands2.CommandScheduler.getInstance().schedule(command.ZeroArm(Robot.Elevator))
+        # commands2.CommandScheduler.getInstance().schedule(
+        #     command.DrivetrainZero(Robot.drivetrain).andThen(
+        #         command.DriveSwerveCustom(Robot.drivetrain)
+        #     )
+        # )
+        commands2.CommandScheduler.getInstance().schedule(command.ZeroArm(Robot.Elevator).andThen(command.manualMovement(Robot.Elevator)))
+        # Robot.Elevator.wrist.set_sensor_position(0)
+        # Robot.Elevator.wrist.set_target_position(0)
+        #Robot.Elevator.claw.set_raw_output(.2)
         #commands2.CommandScheduler.getInstance().schedule(command.ArmPose(Robot.Elevator))
 
 
     def teleopPeriodic(self):
+        #print(Robot.Elevator.main_rotation_motor.get_sensor_position())
+        #print(Robot.Elevator.motor_extend.get_sensor_position())
+        print(Robot.Elevator.get_pose())
+        #print(Robot.Elevator.wrist.get_sensor_position())
         pass
         
         #Robot.Elevator.main_rotation_motor.set_raw_output(.2)

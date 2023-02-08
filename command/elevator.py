@@ -8,6 +8,7 @@ from wpimath.geometry import Pose3d, Pose2d, Rotation3d
 import constants
 from robot_systems import Robot, Sensors
 from subsystem import Elevator
+from oi.keymap import Keymap
 
 
 class ArmPose(SubsystemCommand[Elevator]):
@@ -147,13 +148,14 @@ class ZeroArm(SubsystemCommand[Elevator]):
         self.subsystem.zero_elevator_length()
 
     def isFinished(self):
-        return self.subsystem.elevator_bottom_sensor == False and self.subsystem.main_rotation_motor.get_sensor_position() == 0
-        # return self.subsystem.main_rotation_motor.get_sensor_position() == 0
+        #return self.subsystem.elevator_bottom_sensor == False and self.subsystem.main_rotation_motor.get_sensor_position() == 0
+        return self.subsystem.main_rotation_motor.get_sensor_position() < .15
 
     def end(self, interrupted):
         if not interrupted:
             self.subsystem.enable_brake()
             self.subsystem.stop()
+        self.subsystem.set_pose(constants.zero_pose)
 
 
 class SetAngle(SubsystemCommand[Elevator]):
@@ -210,7 +212,28 @@ class PrintArmPoseTerminal(SubsystemCommand[Elevator]):
     def end(self, interrupted: bool) -> None:
         pass
 
-
+class manualMovement(SubsystemCommand[Elevator]):
+    def __init__(self, subsystem: Elevator):
+        super().__init__(subsystem)
+    
+    def initialize(self) -> None:
+        pass
+    
+    def execute(self) -> None:
+        rotate: float
+        if abs(Keymap.Arm.ELEVATOR_ROTATION_AXIS.value) < .05:
+            rotate = 0
+        else:
+            rotate = Keymap.Arm.ELEVATOR_ROTATION_AXIS.value
+        self.subsystem.set_rotation(rotate * (2 * math.pi))
+        self.subsystem.update_pose()
+        #print(Keymap.Arm.ELEVATOR_ROTATION_AXIS.value)
+    def isFinished(self) -> bool:
+        return False
+    
+    def end(self, interrupted: bool):
+        pass
+    
 class PrintArmPoseDashboard(SubsystemCommand[Elevator]):
     def initialize(self) -> None:
         pass
