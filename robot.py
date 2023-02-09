@@ -31,39 +31,25 @@ class _Robot(wpilib.TimedRobot):
         Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
 
     def robotPeriodic(self):
-        Robot.drivetrain.logger_periodic()
         Sensors.odometry.update()
-        SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
-        SmartDashboard.putString("FDOM", str(Sensors.odometry.getPose()))
-        SmartDashboard.putString(
-            "EDOM", str(Robot.drivetrain.odometry_estimator.getEstimatedPosition())
-        )
+
         try:
-            SmartDashboard.putString(
-                "PHOTON", str(Sensors.pv_controller.get_estimated_robot_pose())
-            )
-            SmartDashboard.putString(
-                "PHOTON ANGLE",
-                str(
-                    Sensors.pv_controller.get_estimated_robot_pose()[0][0]
-                    .rotation()
-                    .toRotation2d()
-                    .degrees()
-                ),
+            pose = Robot.drivetrain.odometry_estimator.getEstimatedPosition()
+
+            SmartDashboard.putNumberArray(
+                "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]
             )
         except Exception:
             pass
 
-        pose = Robot.drivetrain.odometry_estimator.getEstimatedPosition()
-        pose2 = Sensors.odometry.getPose()
+        try:
+            pose2 = Sensors.odometry.getPose()
 
-        SmartDashboard.putNumberArray(
-            "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]
-        )
-
-        SmartDashboard.putNumberArray(
-            "RobotPoseOrig", [pose2.X(), pose2.Y(), pose2.rotation().radians()]
-        )
+            SmartDashboard.putNumberArray(
+                "RobotPoseOrig", [pose2.X(), pose2.Y(), pose2.rotation().radians()]
+            )
+        except Exception:
+            pass
 
         try:
             pv_pose = Sensors.pv_controller.get_estimated_robot_pose()
@@ -78,68 +64,11 @@ class _Robot(wpilib.TimedRobot):
         except Exception:
             pass
 
-        commands2.CommandScheduler.getInstance().run()
-
-        SmartDashboard.putString(
-            "N00", str(Robot.drivetrain.n_front_left.encoder.getAbsolutePosition())
-        )
-        SmartDashboard.putString(
-            "N01", str(Robot.drivetrain.n_front_right.encoder.getAbsolutePosition())
-        )
-        SmartDashboard.putString(
-            "N10", str(Robot.drivetrain.n_back_left.encoder.getAbsolutePosition())
-        )
-        SmartDashboard.putString(
-            "N11", str(Robot.drivetrain.n_back_right.encoder.getAbsolutePosition())
-        )
-
-        SmartDashboard.putString(
-            "N00_m",
-            str(math.degrees(Robot.drivetrain.n_front_left.get_turn_motor_angle())),
-        )
-        SmartDashboard.putString(
-            "N01_m",
-            str(math.degrees(Robot.drivetrain.n_front_right.get_turn_motor_angle())),
-        )
-        SmartDashboard.putString(
-            "N10_m",
-            str(math.degrees(Robot.drivetrain.n_back_left.get_turn_motor_angle())),
-        )
-        SmartDashboard.putString(
-            "N11_m",
-            str(math.degrees(Robot.drivetrain.n_back_right.get_turn_motor_angle())),
-        )
-
-        SmartDashboard.putString(
-            "N00_drive",
-            str(
-                math.degrees(Robot.drivetrain.n_front_left.m_move.get_sensor_position())
-            ),
-        )
-        SmartDashboard.putString(
-            "N01_drive",
-            str(
-                math.degrees(
-                    Robot.drivetrain.n_front_right.m_move.get_sensor_position()
-                )
-            ),
-        )
-        SmartDashboard.putString(
-            "N10_drive",
-            str(
-                math.degrees(Robot.drivetrain.n_back_left.m_move.get_sensor_position())
-            ),
-        )
-        SmartDashboard.putString(
-            "N11_drive",
-            str(
-                math.degrees(Robot.drivetrain.n_back_right.m_move.get_sensor_position())
-            ),
-        )
-
         SmartDashboard.putNumber(
             "gyro_angle: ", math.degrees(Robot.drivetrain.gyro.get_robot_heading())
         )
+
+        commands2.CommandScheduler.getInstance().run()
 
     def teleopInit(self):
         logger.debug("TELEOP", "Teleop Initialized")
