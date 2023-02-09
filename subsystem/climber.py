@@ -22,6 +22,7 @@ class Climber(Subsystem):
     
     climber_active: bool
     absolute_encoder_zeroed_pos: float
+    pivot_threshold: float
 
 
     def init(self):
@@ -35,7 +36,8 @@ class Climber(Subsystem):
         self.encoder = CANCoder(config.climber_encoder_id)
 
         self.climber_active = False
-        absolute_encoder_zeroed_pos = config.climber_motor_zero_pos
+        self.absolute_encoder_zeroed_pos = config.climber_motor_zero_pos
+        self.pivot_threshold = constants.climber_pivot_threshold
 
     def climber_deploy(self):
         self.l_piston.extend()
@@ -62,12 +64,5 @@ class Climber(Subsystem):
             (pos / (2 * math.pi)) * constants.climber_motor_gear_ratio
         )
     
-    def pivot(self):
-        target_pos_rad = (
-                math.radians(self.encoder.getAbsolutePosition())
-                - self.absolute_encoder_pivot_pos
-        )
-        self.climber_motor.set_sensor_position(
-            target_pos_rad * constants.climber_motor_gear_ratio / (2 * math.pi)
-        )
-        self.set_motor_angle(target_pos_rad)
+    def get_angle(self):
+        return self.climber_motor.get_sensor_position()
