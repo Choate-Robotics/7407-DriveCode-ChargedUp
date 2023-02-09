@@ -148,14 +148,14 @@ class ZeroArm(SubsystemCommand[Arm]):
         # self.subsystem.left_rotation_motor.set_target_position(constants.elevator_initial_roatation)
         self.subsystem.zero_elevator_rotation()
         self.subsystem.zero_wrist()
-        
+        self.subsystem.motor_extend.set_sensor_position(0)
     def execute(self):
         # pass
         self.subsystem.zero_elevator_length()
 
     def isFinished(self):
         #return self.subsystem.elevator_bottom_sensor == False and self.subsystem.main_rotation_motor.get_sensor_position() == 0
-        return round(self.subsystem.main_rotation_motor.get_sensor_position()) == 0 and round(self.subsystem.wrist.get_sensor_position()) == 0 
+        return round(self.subsystem.main_rotation_motor.get_sensor_position(), 2) == 0 and round(self.subsystem.wrist.get_sensor_position(), 2) == 0 
 
     def end(self, interrupted):
         if not interrupted:
@@ -213,7 +213,7 @@ class PrintArmPoseTerminal(SubsystemCommand[Arm]):
         self.subsystem.update_pose()
 
     def isFinished(self) -> bool:
-        pass
+        return True
 
     def end(self, interrupted: bool) -> None:
         pass
@@ -229,17 +229,22 @@ class manualMovement(SubsystemCommand[Arm]):
     
     def execute(self) -> None:
         rotate: float
-        if abs(Keymap.Arm.ELEVATOR_ROTATION_AXIS.value) < .05:
+        if abs(Keymap.Arm.ELEVATOR_ROTATION_AXIS.value) < .03:
             rotate = 0
         else:
             rotate += Keymap.Arm.ELEVATOR_ROTATION_AXIS.value
         self.subsystem.set_rotation(rotate * (2 * math.pi))
-        crotate: float
-        if abs(Keymap.Arm.CLAW_ROTATION_AXIS.value) < .05:
-            crotate = 0
+        claw_rotate: float
+        if abs(Keymap.Arm.CLAW_ROTATION_AXIS.value) < .03:
+            claw_rotate = 0
         else:
-            crotate += Keymap.Arm.CLAW_ROTATION_AXIS.value
-        self.subsystem.set_angle_wrist(crotate * (2 * math.pi))
+            claw_rotate += Keymap.Arm.CLAW_ROTATION_AXIS.value
+        self.subsystem.set_angle_wrist(claw_rotate * (2 * math.pi))
+        if abs(Keymap.Arm.ELEVATOR_EXTENSION_AXIS.value) < .03:
+            extend = 0
+        else:
+            extend += Keymap.Arm.ELEVATOR_EXTENSION_AXIS.value
+        self.subsystem.set_length(extend / constants.max_elevator_height)
         self.subsystem.update_pose()
         #print(Keymap.Arm.ELEVATOR_ROTATION_AXIS.value)
     def isFinished(self) -> bool:
@@ -277,7 +282,7 @@ class ArmAssistedRobotStabalizer(SubsystemCommand[Arm]):
         self.subsystem.set_rotation(self.elevator_rotation)
 
     def isFinished(self) -> bool:
-        pass
+        return True
 
     def end(self, interrupted: bool) -> None:
         if not interrupted:
@@ -295,7 +300,7 @@ class HardStop(SubsystemCommand[Arm]):
         self.subsystem.stop()
 
     def isFinished(self) -> bool:
-        pass
+        return True
 
     def end(self, interrupted: bool) -> None:
         if not interrupted:
