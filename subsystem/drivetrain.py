@@ -4,7 +4,6 @@ from dataclasses import dataclass
 import rev
 from ctre import CANCoder
 from robotpy_toolkit_7407.motors.rev_motors import SparkMax, SparkMaxConfig
-from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
 from robotpy_toolkit_7407.subsystem_templates.drivetrain import (
     SwerveDrivetrain,
     SwerveGyro,
@@ -14,6 +13,7 @@ from wpimath.geometry import Pose2d
 
 import constants
 from oi.keymap import Keymap
+from robot_systems import Sensors
 from units.SI import (
     meters,
     meters_per_second,
@@ -121,7 +121,7 @@ class Drivetrain(SwerveDrivetrain):
         absolute_encoder_zeroed_pos=math.radians(48.603 + 270),
     )
 
-    gyro: SwerveGyro = PigeonIMUGyro_Wrapper(20)
+    gyro: SwerveGyro = Sensors.gyro
     axis_dx = Keymap.Drivetrain.DRIVE_X_AXIS
     axis_dy = Keymap.Drivetrain.DRIVE_Y_AXIS
     axis_rotation = Keymap.Drivetrain.DRIVE_ROTATION_AXIS

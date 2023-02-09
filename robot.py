@@ -2,6 +2,7 @@ import math
 
 import commands2
 import wpilib
+from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
 from wpilib import SmartDashboard
 
 import command
@@ -29,6 +30,7 @@ class _Robot(wpilib.TimedRobot):
         # Sensors.pv_controller = PV_Cameras()
 
         Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
+        Sensors.gyro = PigeonIMUGyro_Wrapper(20)
 
     def robotPeriodic(self):
         Sensors.odometry.update()
