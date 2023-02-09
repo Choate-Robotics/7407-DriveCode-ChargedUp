@@ -37,25 +37,26 @@ class Climber(Subsystem):
 
         self.climber_active = False
         self.absolute_encoder_zeroed_pos = config.climber_motor_zero_pos
-        self.pivot_threshold = constants.climber_pivot_threshold
+        self.pivot_threshold = config.climber_pivot_threshold
+        self.pivot_speed = config.climber_pivot_speed
 
     def climber_deploy(self):
         self.l_piston.extend()
-        climber_active = True
+        self.climber_active = True
     
     def climber_disable(self):
         self.r_piston.retract()
-        climber_active = False
+        self.climber_active = False
 
 
     def zero(self):
-        target_pos_rad = (
+        current_pos_rad = (
                 math.radians(self.encoder.getAbsolutePosition())
                 - self.absolute_encoder_zeroed_pos
         )
 
         self.climber_motor.set_sensor_position(
-            target_pos_rad * constants.climber_motor_gear_ratio / (2 * math.pi)
+            current_pos_rad * constants.climber_motor_gear_ratio / (2 * math.pi)
         )
         self.set_motor_angle(0)
 

@@ -92,3 +92,8 @@ kCameras = {
         )
     ]
 }
+
+
+# Climber:
+
+climber_motor_gear_ratio = 0.0

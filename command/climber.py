@@ -50,13 +50,12 @@ class ClimberPivot(SubsystemCommand[Climber]):
         self.subsystem = subsystem
     
     def initialize(self):
-        self.turn_reversed = Robot.climber.pivot_threshold < Robot.climber.get_angle()
+        # self.turn_reversed = Robot.climber.pivot_threshold < Robot.climber.get_angle()
+        Robot.climber.climber_motor.set_raw_output(Robot.climber.pivot_speed)
 
     def execute(self):
-        if self.turn_reversed:
-            Robot.climber.climber_motor.set_raw_output(-0.05)
-        else:
-            Robot.climber.climber_motor.set_raw_output(0.05)
+        pass
+
     def isFinished(self) -> bool:
         return abs(Robot.climber.get_angle() - Robot.climber.pivot_threshold) <= 0.1
     
