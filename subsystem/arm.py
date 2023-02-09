@@ -17,7 +17,7 @@ SHOLDER_CONFIG = SparkMaxConfig(
     0.1, 0, 0.003, 0.0002, (-0.25, 0.25), idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 ELEVATOR_CONFIG = SparkMaxConfig(
-    0.00005, 0, 0.0004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    0.5, 0, 0.0004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 
 WRIST_CONFIG = SparkMaxConfig(
@@ -25,27 +25,31 @@ WRIST_CONFIG = SparkMaxConfig(
 )
 
 
-class Elevator(Subsystem):  # elevator class
+class Arm(Subsystem):  # elevator class
     motor_extend: SparkMax = SparkMax(
         config.elevator_motor_extend_id, config=ELEVATOR_CONFIG)  # motor that extends the arm
     secondary_rotation_motor: SparkMax = SparkMax(
         config.elevator_secondary_rotation_motor_id, inverted=True, config=SHOLDER_CONFIG)  # motor that rotates the arm
     main_rotation_motor: SparkMax = SparkMax(
         config.elevator_main_rotation_motor_id, inverted=True, config=SHOLDER_CONFIG)  # motor that rotates the arm
-    brake: wpilib.DoubleSolenoid = wpilib.solenoid(
+    brake: wpilib.Solenoid = wpilib.Solenoid(
         1, wpilib.PneumaticsModuleType.REVPH, config.elevator_brake_id)  # brake that holds the arm in place
-    wrist: SparkMax = SparkMax(18, config= WRIST_CONFIG)
-    claw: SparkMax = SparkMax(12)
+    wrist: SparkMax = SparkMax(18, inverted=True, config=WRIST_CONFIG)
     initialized: bool = False
     brake_enabled: bool = False
-    pose: Pose3d
-    # elevator_length                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               h: float # the length of the elevator in meters
+    pose: Pose3d    
     rotation_override: bool = False  # if true, the rotation limits will be ignored
     extension_override: bool = False  # if true, the extension limits will be ignored
     brake_override: bool = False  # if true, the brake will not be enabled or disabled
     disable_extension: bool = False
     disable_rotation: bool = False
     intake_up: bool = True
+    claw_motor: SparkMax = SparkMax(12)
+    claw_grabber: wpilib.DoubleSolenoid = wpilib.DoubleSolenoid(
+        1, wpilib.PneumaticsModuleType.REVPH, 4, 5)
+    claw_motor_initialized: bool = False
+    claw_compressed: bool = False
+    claw_open: bool = False
 
     def __init__(self):
         super().__init__()
@@ -54,13 +58,79 @@ class Elevator(Subsystem):  # elevator class
         self.elevator_bottom_sensor = None
         self.pose = None
 
+    def set_angle_wrist(self, pos: float):
+        """
+        Set the angle of the claw
+
+        Args:
+            pos (float): Angle in radians (0, 2pi)
+        """
+        self.wrist.set_target_position(
+            # 80 rotations per 360 degrees
+            (pos / (math.pi * 2)) * constants.wrist_gear_ratio
+        )
+
+    def get_angle_wrist(self):
+        # Return through bore encode value
+        return self.wrist.get_sensor_position() / constants.wrist_gear_ratio
+
+    def zero_wrist(self):
+        """Sets the shoulder to the zero position (no extension)"""
+        self.wrist.set_sensor_position(0)
+        # print(self.main_rotation_motor.get_sensor_position())
+        # get Absolute encoder position
+        abs_encoder_position: float = self.wrist_abs.getPosition()
+        # print("INTERN ABS:" + str(abs_encoder_position))
+        # calculate the difference between the current position and the zero position
+        if abs_encoder_position > .5:
+            abs_encoder_position = -(1 - abs_encoder_position)
+        encoder_difference: float = abs_encoder_position - 0
+        # print("INTERN ENC: " + str(encoder_difference))
+        # convert absolute position ratio to motor rotations and gearbox ratio
+        motor_position: float = encoder_difference * \
+            constants.wrist_gear_ratio
+        # print("ELEVATOR RATIO: " + str(constants.elevator_rotation_gear_ratio))
+        # print( "MOTOR POSITION W/GEAR RATIO:" + str(motor_position))
+        # set motor position to the difference
+        self.wrist.set_sensor_position(motor_position)
+        # run the motor to the zero position
+        self.wrist.set_target_position(0)
+
+    # def set claw motor output (speed)
+    def set_claw_output(self, speed: float):
+        """
+        Set the output of the claw motor
+
+        Args:
+            output (float): Speed from -1 to 1
+        """
+        self.claw_motor.set_raw_output(speed)
+        self.raw_output = speed
+
+    def open_claw(self):
+        self.claw_grabber.set(wpilib.DoubleSolenoid.Value.kForward)
+        self.claw_open = True
+
+    def close_claw(self):
+        self.claw_grabber.set(wpilib.DoubleSolenoid.Value.kReverse)
+        self.claw_open = False
+
+    def engage_claw(self):
+        # Set distance forward (closes claw)
+        self.open_claw()
+        self.set_claw_output(config.claw_motor_speed)
+
+    def disengage_claw(self):
+        self.close_claw()
+        self.set_claw_output(0)
+
     def enable_brake(self) -> bool:
         """enables the brake"""
         if self.brake_override:
             return False
         else:
             self.brake_enabled = True
-            self.brake.set(self.brake.Value.kForward)
+            self.brake.set(True)
             return True
 
     def disable_brake(self) -> bool:
@@ -69,7 +139,7 @@ class Elevator(Subsystem):  # elevator class
             return False
         else:
             self.brake_enabled = False
-            self.brake.set(self.brake.Value.kReverse)
+            self.brake.set(False)
             return True
 
     def enable_brake_override(self) -> None:
@@ -96,7 +166,7 @@ class Elevator(Subsystem):  # elevator class
         """sets the pose of the arm"""
         self.pose = pose
 
-    def is_at_position(self, position: Pose3d) -> bool:  # NEED TO EDIT THIS TO USE MOTOR ANGLE AND POSITIONS INSTEAD OF POSE!!
+    def is_at_position(self, position: Pose3d) -> bool:
         """checks if the arm is at the desired position"""
         return position.__eq__(self.pose)
 
@@ -110,6 +180,17 @@ class Elevator(Subsystem):  # elevator class
             float: a float of the rotations
         """
         return (angle * constants.elevator_rotation_gear_ratio) / (2 * math.pi)
+    
+    def wrist_angle_to_motor_rotations(self, radians: float):
+        """returns the scale of angle in radians to the shoulder motor rotations
+
+        Args:
+            angle (float): the angle in radians
+
+        Returns:
+            float: a float of the rotations
+        """
+        return (radians / (2 * math.pi)) * constants.wrist_gear_ratio
 
     def abs_encoder_to_rad(self, encoder_value: float):
         """converts the encoder value to radians"""
@@ -118,6 +199,8 @@ class Elevator(Subsystem):  # elevator class
     def init(self):  # initializing motors
         """initializes the motors"""
         self.motor_extend.init()
+        self.claw_motor.init()
+        self.claw_motor_initialized = True
         self.secondary_rotation_motor.init()
         self.main_rotation_motor.init()
         self.elevator_bottom_sensor = self.motor_extend.motor.getReverseLimitSwitch(
@@ -129,22 +212,16 @@ class Elevator(Subsystem):  # elevator class
         self.secondary_rotation_motor.motor.follow(
             self.main_rotation_motor.motor, True)
         self.wrist.init()
-        self.claw.init()
-        self.wrist_abs = self.wrist.motor.getAbsoluteEncoder(rev._rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle)
-        
-        # if not self.intake_up:
-        #     self.main_rotation_motor._motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward, self.angle_to_shoulder_rotations(constants.shoulder_max_rotation) )
-        #     self.main_rotation_motor._motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kReverse, self.angle_to_shoulder_rotations(constants.shoulder_min_rotation) )
-        # else:
-        #     self.main_rotation_motor._motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward, self.angle_to_shoulder_rotations(constants.shoulder_intake_up_max_rotation) )
-        #     self.main_rotation_motor._motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kReverse, self.angle_to_shoulder_rotations(constants.shoulder_min_rotation) )
+        self.wrist_abs = self.wrist.motor.getAbsoluteEncoder(
+            rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle)
         self.main_rotation_motor.motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward,
-                                                     self.shoulder_angle_to_motor_rotations(
-                                                         constants.shoulder_max_rotation))
+                                                    self.shoulder_angle_to_motor_rotations(
+                                                        constants.shoulder_max_rotation))
         self.main_rotation_motor.motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kReverse,
-                                                     self.shoulder_angle_to_motor_rotations(
-                                                         constants.shoulder_min_rotation))
-
+                                                    self.shoulder_angle_to_motor_rotations(
+                                                        constants.shoulder_min_rotation))
+        self.wrist.motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward, 25)
+        self.wrist.motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kReverse, -25)
         self.enable_brake()
 
     def stop(self) -> None:
@@ -171,7 +248,7 @@ class Elevator(Subsystem):  # elevator class
                 if theta == 0:
                     v = adjacent / constants.max_elevator_height
                     return 1 if v > 1 else v
-                
+
                 max_length = adjacent / math.cos(theta)
                 # if the length of the angle is greater than the max_elevator_height, return one
                 # else give a percentage of the height of the current line and the max_elevator_height
@@ -184,14 +261,17 @@ class Elevator(Subsystem):  # elevator class
                     return res  # where is the hype at
 
             # Finds the length of each the dimensions for the boundary box using the constants
-            top_vertical_boundary_from_pivot = constants.vertical_boundary - constants.pivot_point_height - constants.top_boundary_buffer_gap  # positive z
-            bottom_vertical_boundary_from_pivot = constants.pivot_point_height - constants.bottom_boundary_buffer_gap  # negative z
+            top_vertical_boundary_from_pivot = constants.vertical_boundary - \
+                constants.pivot_point_height - constants.top_boundary_buffer_gap  # positive z
+            bottom_vertical_boundary_from_pivot = constants.pivot_point_height - \
+                constants.bottom_boundary_buffer_gap  # negative z
             horizontal_boundary_length_from_pivot = 0.5 * (
                 constants.robot_length) + constants.horizontal_boundary - constants.side_boundary_buffer_gap  # positive x
 
             # the max angle of the boundary dimsensions
             # the top boundry max angle is the angle of the top boundry and horizontal boundry length from the pivot point
-            top_boundary_max_angle = math.atan2(top_vertical_boundary_from_pivot, horizontal_boundary_length_from_pivot)
+            top_boundary_max_angle = math.atan2(
+                top_vertical_boundary_from_pivot, horizontal_boundary_length_from_pivot)
             # the bottom boundry max angle is the angle of the bottom boundry and horizontal boundry length from the pivot point
             bottom_boundary_max_angle = math.atan2(bottom_vertical_boundary_from_pivot,
                                                    horizontal_boundary_length_from_pivot) + math.radians(90)
@@ -223,10 +303,11 @@ class Elevator(Subsystem):  # elevator class
     def set_length(self, meters) -> None:  # set arm extension
         """Sets the length of the elevator to the given meters, returns true if the elevator is at the given meters, float of the meters the elevator is at if it is not at the given meters"""
         if not self.disable_extension:
-            length_ratio = self.boundary_box(self.abs_encoder.getPosition() * (2 * math.pi))
-            meters=min(length_ratio * constants.max_elevator_height, meters)
+            length_ratio = self.boundary_box(
+                self.abs_encoder.getPosition() * (2 * math.pi))
+            meters = min(length_ratio * constants.max_elevator_height, meters)
             length = (self.motor_extend.get_sensor_position() * constants.elevator_extend_gear_ratio) \
-                            / constants.max_elevator_height
+                / constants.max_elevator_height
             self.motor_extend.set_target_position(length)
 
     def shoulder_rotation_limits(self, radians: float) -> bool:
@@ -239,19 +320,20 @@ class Elevator(Subsystem):  # elevator class
 
     def set_rotation(self, radians: float):  # set arm rotation
         """Sets the rotation of the shoulder to the given radians, returns true if the shoulder is at the given radians, float of the radians the shoulder is at if it is not at the given radians"""
-        #print("RADIANS: " + str(radians))
+        # print("RADIANS: " + str(radians))
         def set(radians: float):
-            rotations = (radians / (2 * math.pi)) * constants.elevator_rotation_gear_ratio
+            rotations = (radians / (2 * math.pi)) * \
+                constants.elevator_rotation_gear_ratio
             self.main_rotation_motor.set_target_position(rotations)
 
         # if the rotation is within the soft limits, set the rotation to the given angle
         if not self.disable_rotation:
             if self.shoulder_rotation_limits(radians):
-                #print("In LIMITS")
+                # print("In LIMITS")
                 set(radians)
                 return True
             else:
-                #print("NOT IN LIMITS")
+                # print("NOT IN LIMITS")
                 if radians > 0:
                     y = constants.shoulder_max_rotation
                 else:
@@ -278,7 +360,8 @@ class Elevator(Subsystem):  # elevator class
     # brings elevator to zero position (no extension, no rotation)
     def zero_elevator_length(self) -> None:
         """Sets the elevator to the zero position (no rotation)"""
-        self.motor_extend.set_target_position(self.motor_extend.get_sensor_position() - 0.005)
+        self.motor_extend.set_target_position(
+            self.motor_extend.get_sensor_position() - 0.005)
 
     def zero_elevator_rotation(self) -> None:
         """Sets the shoulder to the zero position (no extension)"""
@@ -290,10 +373,12 @@ class Elevator(Subsystem):  # elevator class
         # calculate the difference between the current position and the zero position
         if abs_encoder_position > .5:
             abs_encoder_position = -(1 - abs_encoder_position)
-        encoder_difference: float = abs_encoder_position - constants.elevator_initial_rotation
+        encoder_difference: float = abs_encoder_position - \
+            constants.elevator_initial_rotation
         # print("INTERN ENC: " + str(encoder_difference))
         # convert absolute position ratio to motor rotations and gearbox ratio
-        motor_position: float = encoder_difference * constants.elevator_rotation_gear_ratio
+        motor_position: float = encoder_difference * \
+            constants.elevator_rotation_gear_ratio
         # print("ELEVATOR RATIO: " + str(constants.elevator_rotation_gear_ratio))
         # print( "MOTOR POSITION W/GEAR RATIO:" + str(motor_position))
         # set motor position to the difference
@@ -319,4 +404,5 @@ class Elevator(Subsystem):  # elevator class
         else:
             x = 0
             z = length
-        self.pose = Pose3d(x, 0, z + constants.pivot_point_height, Rotation3d(0, 0, 0))
+        self.pose = Pose3d(
+            x, 0, z + constants.pivot_point_height, Rotation3d(0, 0, 0))

@@ -37,7 +37,7 @@ class _Robot(wpilib.TimedRobot):
         # Sensors.limelight_controller = LimelightController([Sensors.limelight_front])
 
         Robot.drivetrain.init()
-        Robot.Elevator.init()
+        Robot.Arm.init()
         # Robot.drivetrain.n_front_left.m_move.set_sensor_position(0)
         # Robot.drivetrain.n_front_right.m_move.set_sensor_position(0)
         # Robot.drivetrain.n_back_left.m_move.set_sensor_position(0)
@@ -184,8 +184,8 @@ class _Robot(wpilib.TimedRobot):
         )
 
     def teleopInit(self):
-        Robot.Elevator.disable_extension = True
-        Robot.Elevator.motor_extend.set_sensor_position(0)
+        #Robot.Arm.disable_extension = True
+        #Robot.Arm.motor_extend.set_sensor_position(0)
         #Robot.Elevator.main_rotation_motor.set_sensor_position(0)
         #commands2.InstantCommand(command.DrivetrainZero(Robot.drivetrain))
         #commands2.InstantCommand(command.ZeroArm(Robot.Elevator))
@@ -196,7 +196,7 @@ class _Robot(wpilib.TimedRobot):
         #         command.DriveSwerveCustom(Robot.drivetrain)
         #     )
         # )
-        commands2.CommandScheduler.getInstance().schedule(command.ZeroArm(Robot.Elevator).andThen(command.manualMovement(Robot.Elevator)))
+        commands2.CommandScheduler.getInstance().schedule(command.ZeroArm(Robot.Arm).andThen(command.CubeIntake(Robot.Arm)))
         # Robot.Elevator.wrist.set_sensor_position(0)
         # Robot.Elevator.wrist.set_target_position(0)
         #Robot.Elevator.claw.set_raw_output(.2)
@@ -206,7 +206,7 @@ class _Robot(wpilib.TimedRobot):
     def teleopPeriodic(self):
         #print(Robot.Elevator.main_rotation_motor.get_sensor_position())
         #print(Robot.Elevator.motor_extend.get_sensor_position())
-        print(Robot.Elevator.get_pose())
+        print(Robot.Arm.motor_extend.get_sensor_position())
         #print(Robot.Elevator.wrist.get_sensor_position())
         pass
         

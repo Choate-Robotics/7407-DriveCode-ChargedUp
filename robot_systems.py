@@ -5,11 +5,8 @@ import subsystem
 from sensors import FieldOdometry, PV_Cameras
 
 
-MOVE_CONFIG = SparkMaxConfig(
-    0.00005, 0, 0.0004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
-)
 class Robot:
-    Elevator = subsystem.Elevator()
+    Arm = subsystem.Arm()
     drivetrain = subsystem.Drivetrain()
     #pass
 

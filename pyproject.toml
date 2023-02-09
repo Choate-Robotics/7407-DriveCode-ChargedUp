@@ -2,7 +2,7 @@
 name = "7407-DRIVECODE-ChargedUp"
 version = "0.1.0"
 description = "Team 7407 Wired Boars ChargedUp Robot Code"
-authors = ["Sidharth Rao <sidharthmrao@gmail.com>"]
+authors = ["Sidharth Rao <sidharthmrao@gmail.com>", "Sebastian Plunkett <gamebot60000@gmail.com>"]
 
 [tool.poetry.dependencies]
 python=">3.9,<3.12"

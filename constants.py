@@ -29,7 +29,7 @@ side_boundary_buffer_gap = 0 * kInchesToMeters  # the buffer in between the side
 
 # shoulder constants
 # --------------------------------------------------------------
-shoulder_max_rotation = math.radians(90)  # the maximum rotation of the shoulder
+shoulder_max_rotation = math.radians(80)  # the maximum rotation of the shoulder
 shoulder_min_rotation = math.radians(110)  # the minimum rotation of the shoulder
 shoulder_intake_up_max_rotation = math.radians(90)  # the maximum rotation of the shoulder when the intake is up
 # --------------------------------------------------------------
@@ -72,8 +72,16 @@ claw_length_close = 8 * kInchesToMeters  # the length of the claw when it is clo
 # --------------------------------------------------------------
 elevator_rotation_gear_ratio: float = 67.38  # to one
 elevator_extend_gear_ratio: float = 24 #6.33  # to one
+wrist_gear_ratio: float = 100  # to one
 # 24 rotations to max extension
 stabilizer_magnitude: float = 2  # the magnitude of the rotation of the arm based on the tip of the robot
+# --------------------------------------------------------------
+
+
+# Wrist soft mount
+# --------------------------------------------------------------
+wrist_max_rotation = math.radians(1)  # the maximum rotation of the wrist
+wrist_min_rotation = math.radians(1)  # the minimum rotation of the wrist
 # --------------------------------------------------------------
 
 # elevator zeroing constants

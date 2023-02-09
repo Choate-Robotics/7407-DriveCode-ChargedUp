@@ -7,11 +7,11 @@ from wpimath.geometry import Pose3d, Pose2d, Rotation3d
 
 import constants
 from robot_systems import Robot, Sensors
-from subsystem import Elevator
+from subsystem import Arm
 from oi.keymap import Keymap
 
 
-class ArmPose(SubsystemCommand[Elevator]):
+class ArmPose(SubsystemCommand[Arm]):
     def initialize(self) -> None:
         pass
 
@@ -25,7 +25,7 @@ class ArmPose(SubsystemCommand[Elevator]):
         pass
 
 
-class SetArmPositionRobot(SubsystemCommand[Elevator]):
+class SetArmPositionRobot(SubsystemCommand[Arm]):
 
     def __init__(self, subsystem: T, target: Pose3d):
         super().__init__(subsystem)
@@ -67,7 +67,7 @@ class SetArmPositionRobot(SubsystemCommand[Elevator]):
 
 
 
-class PauseMovement(SubsystemCommand[Elevator]):
+class PauseMovement(SubsystemCommand[Arm]):
 
     def initialize(self) -> None:
         self.position = self.subsystem.get_pose()
@@ -85,7 +85,7 @@ class PauseMovement(SubsystemCommand[Elevator]):
             self.subsystem.stop()
 
 
-class SetArmPositionField(SubsystemCommand[Elevator]):
+class SetArmPositionField(SubsystemCommand[Arm]):
     """
     Sets the arm to a position in the field or relative to the april tag id
 
@@ -137,8 +137,8 @@ class SetArmPositionField(SubsystemCommand[Elevator]):
             self.subsystem.stop()
 
 
-class ZeroArm(SubsystemCommand[Elevator]):
-    def __init__(self, subsystem: Elevator):
+class ZeroArm(SubsystemCommand[Arm]):
+    def __init__(self, subsystem: Arm):
         super().__init__(subsystem)
         self.subsystem = subsystem
 
@@ -147,14 +147,15 @@ class ZeroArm(SubsystemCommand[Elevator]):
         # self.subsystem.motor_extend.set_target_position(constants.elevator_initial_height)
         # self.subsystem.left_rotation_motor.set_target_position(constants.elevator_initial_roatation)
         self.subsystem.zero_elevator_rotation()
-
+        self.subsystem.zero_wrist()
+        
     def execute(self):
         # pass
         self.subsystem.zero_elevator_length()
 
     def isFinished(self):
         #return self.subsystem.elevator_bottom_sensor == False and self.subsystem.main_rotation_motor.get_sensor_position() == 0
-        return self.subsystem.main_rotation_motor.get_sensor_position() < .15
+        return round(self.subsystem.main_rotation_motor.get_sensor_position()) == 0 and round(self.subsystem.wrist.get_sensor_position()) == 0 
 
     def end(self, interrupted):
         if not interrupted:
@@ -163,7 +164,7 @@ class ZeroArm(SubsystemCommand[Elevator]):
         self.subsystem.set_pose(constants.zero_pose)
 
 
-class SetAngle(SubsystemCommand[Elevator]):
+class SetAngle(SubsystemCommand[Arm]):
     def __init__(self, subsystem: T, radians):
         super().__init__(subsystem)
         self.radians = radians
@@ -184,7 +185,7 @@ class SetAngle(SubsystemCommand[Elevator]):
             self.subsystem.stop()
 
 
-class SetLength(SubsystemCommand[Elevator]):
+class SetLength(SubsystemCommand[Arm]):
     def __init__(self, subsystem: T, length):
         super().__init__(subsystem, length)
         self.length = length
@@ -203,7 +204,7 @@ class SetLength(SubsystemCommand[Elevator]):
             self.subsystem.stop()
 
 
-class PrintArmPoseTerminal(SubsystemCommand[Elevator]):
+class PrintArmPoseTerminal(SubsystemCommand[Arm]):
     def initialize(self) -> None:
         pass
 
@@ -217,11 +218,13 @@ class PrintArmPoseTerminal(SubsystemCommand[Elevator]):
     def end(self, interrupted: bool) -> None:
         pass
 
-class manualMovement(SubsystemCommand[Elevator]):
-    def __init__(self, subsystem: Elevator):
+class manualMovement(SubsystemCommand[Arm]):
+    def __init__(self, subsystem: Arm):
         super().__init__(subsystem)
     
     def initialize(self) -> None:
+        # self.subsystem.motor_extend.set_sensor_position(-22)
+        # self.subsystem.motor_extend.set_target_position(0)
         pass
     
     def execute(self) -> None:
@@ -229,8 +232,14 @@ class manualMovement(SubsystemCommand[Elevator]):
         if abs(Keymap.Arm.ELEVATOR_ROTATION_AXIS.value) < .05:
             rotate = 0
         else:
-            rotate = Keymap.Arm.ELEVATOR_ROTATION_AXIS.value
+            rotate += Keymap.Arm.ELEVATOR_ROTATION_AXIS.value
         self.subsystem.set_rotation(rotate * (2 * math.pi))
+        crotate: float
+        if abs(Keymap.Arm.CLAW_ROTATION_AXIS.value) < .05:
+            crotate = 0
+        else:
+            crotate += Keymap.Arm.CLAW_ROTATION_AXIS.value
+        self.subsystem.set_angle_wrist(crotate * (2 * math.pi))
         self.subsystem.update_pose()
         #print(Keymap.Arm.ELEVATOR_ROTATION_AXIS.value)
     def isFinished(self) -> bool:
@@ -239,7 +248,7 @@ class manualMovement(SubsystemCommand[Elevator]):
     def end(self, interrupted: bool):
         pass
     
-class PrintArmPoseDashboard(SubsystemCommand[Elevator]):
+class PrintArmPoseDashboard(SubsystemCommand[Arm]):
     def initialize(self) -> None:
         pass
 
@@ -254,7 +263,7 @@ class PrintArmPoseDashboard(SubsystemCommand[Elevator]):
         pass
 
 
-class ArmAssistedRobotStabalizer(SubsystemCommand[Elevator]):
+class ArmAssistedRobotStabalizer(SubsystemCommand[Arm]):
 
     def __init__(self, subsystem: T):
         super().__init__(subsystem)
@@ -276,7 +285,7 @@ class ArmAssistedRobotStabalizer(SubsystemCommand[Elevator]):
             self.subsystem.stop()
 
 
-class HardStop(SubsystemCommand[Elevator]):
+class HardStop(SubsystemCommand[Arm]):
 
     def initialize(self) -> None:
         self.position = self.subsystem.get_pose()
@@ -292,3 +301,50 @@ class HardStop(SubsystemCommand[Elevator]):
         if not interrupted:
             self.subsystem.enable_brake()
             self.subsystem.stop()
+            
+class EngageClaw(SubsystemCommand[Arm]):
+
+    def initialize(self) -> None:
+        self.subsystem.engage_claw()
+
+    def execute(self) -> None:
+        pass
+
+    def isFinished(self) -> bool:
+        return True
+
+    def end(self, interrupted: bool) -> None:
+        pass
+    
+
+class DisengageClaw(SubsystemCommand[Arm]):
+
+    def initialize(self) -> None:
+        self.subsystem.disengage_claw()
+
+    def execute(self) -> None:
+        pass
+
+    def isFinished(self) -> bool:
+        return True
+
+    def end(self, interrupted: bool) -> None:
+        pass
+    
+    
+class CubeIntake(SubsystemCommand[Arm]):
+
+    def initialize(self) -> None:
+        self.subsystem.set_rotation(math.radians(90))
+        self.subsystem.set_angle_wrist(math.radians(90))
+        self.subsystem.engage_claw()
+    def execute(self) -> None:
+        pass
+
+    def isFinished(self) -> bool:
+        return False
+
+    def end(self, interrupted: bool) -> None:
+        self.subsystem.set_rotation(math.radians(0))
+        self.subsystem.set_angle_wrist(math.radians(0))
+

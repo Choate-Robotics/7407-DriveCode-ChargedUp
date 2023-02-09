@@ -16,6 +16,8 @@ class OI:
     def map_controls():
         logger.info("Mapping controls...")
         
-    Keymap.Arm.REZERO_ELEVATOR.whenPressed(command.ZeroArm())
+        #Keymap.Arm.REZERO_ELEVATOR.whenPressed(command.ZeroArm())
+        
+        #Keymap.Arm.ENGAGE_CLAW().whileHeld(command.EngageClaw()).whenReleased(command.DisengageClaw())
 
     
