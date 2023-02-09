@@ -1,3 +1,1 @@
-kRobotVisionPoseWeight = 0.1
-
-red_team = True
+red_team: bool = False
