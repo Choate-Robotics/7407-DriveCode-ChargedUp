@@ -10,7 +10,7 @@ logger.info("Hi, I'm OI!")
 class OI:
     @staticmethod
     def init() -> None:
-        logger.info("Initializing OI...")
+        pass
 
     @staticmethod
     def map_controls():
