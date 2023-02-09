@@ -20,20 +20,20 @@ class IrSensor():
 
     def __init__(self, port):
         """:param port: Analog port number"""
-        self.distance = wpilib.AnalogInput(port)
+        self.distance_sensor = wpilib.AnalogInput(port)
 
     def getDistance(self):
         """
-        :returns: distance in centimeters. The output is 
+        :returns: distance in METERS. The output is 
         constrained to be between 1.75 and 13.125 cm.
         """
 
         # Don't allow zero/negative values
-        v = max(self.distance.getVoltage(), 0.00001)
+        v = max(self.distance_sensor.getVoltage(), 0.00001)
         d = 12.84 * math.pow(v, -0.9824)
 
         # Constrain output
-        return max(min(d, 13.125), 1.75)
+        return max(min(d, 13.125), 1.75) * 100
 
     def getVoltage(self):
-        return max(self.distance.getVoltage(), 0.00001)
+        return max(self.distance_sensor.getVoltage(), 0.00001)
