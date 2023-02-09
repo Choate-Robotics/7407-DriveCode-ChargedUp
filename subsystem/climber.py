@@ -18,10 +18,8 @@ class Climber(Subsystem):
     climber_motor: SparkMax
     l_piston: DoubleSolenoidPiston
     r_piston: DoubleSolenoidPiston
-    encoder: CANCoder
     
     climber_active: bool
-    absolute_encoder_zeroed_pos: float
     pivot_threshold: float
 
 
@@ -33,10 +31,7 @@ class Climber(Subsystem):
         self.l_piston = DoubleSolenoidPiston(config.l_piston_module, config.l_piston_forwardChannel, config.l_piston_reverseChannel)
         self.r_piston = DoubleSolenoidPiston(config.r_piston_module, config.r_piston_forwardChannel, config.r_piston_reverseChannel)
 
-        self.encoder = CANCoder(config.climber_encoder_id)
-
         self.climber_active = False
-        self.absolute_encoder_zeroed_pos = config.climber_motor_zero_pos
         self.pivot_threshold = config.climber_pivot_threshold
         self.pivot_speed = config.climber_pivot_speed
 
@@ -50,15 +45,16 @@ class Climber(Subsystem):
 
 
     def zero(self):
-        current_pos_rad = (
-                math.radians(self.encoder.getAbsolutePosition())
-                - self.absolute_encoder_zeroed_pos
-        )
+        # current_pos_rad = (
+        #         math.radians(self.encoder.getAbsolutePosition())
+        #         - self.absolute_encoder_zeroed_pos
+        # )
 
-        self.climber_motor.set_sensor_position(
-            current_pos_rad * constants.climber_motor_gear_ratio / (2 * math.pi)
-        )
-        self.set_motor_angle(0)
+        # self.climber_motor.set_sensor_position(
+        #     current_pos_rad * constants.climber_motor_gear_ratio / (2 * math.pi)
+        # )
+        # self.set_motor_angle(0)
+        self.climber_motor.set_sensor_position(0)
 
     def set_motor_angle(self, pos: radians):
         self.climber_motor.set_target_position(

@@ -4,7 +4,7 @@ from robotpy_toolkit_7407.command import SubsystemCommand
 import config
 import constants
 from subsystem import Climber
-from robot_systems import Robot
+from robot_systems import Robot, Sensors
 
 
 class ClimberZero(SubsystemCommand[Climber]):
@@ -26,6 +26,9 @@ class ClimberZero(SubsystemCommand[Climber]):
         pass
 
 
+'''
+    TODO: Determine if we even need this command
+'''
 class ClimberEnable(SubsystemCommand[Climber]):
     def __init__(self, subsystem: Climber):
         super().__init__(subsystem)
@@ -57,26 +60,26 @@ class ClimberPivot(SubsystemCommand[Climber]):
         pass
 
     def isFinished(self) -> bool:
-        return abs(Robot.climber.get_angle() - Robot.climber.pivot_threshold) <= 0.1
+        return Sensors.gyro
     
     def end(self, interrupted=False):
         Robot.climber.climber_motor.set_raw_output(0)
 
 
 
-class ClimberDisable(SubsystemCommand[Climber]):
-    def __init__(self, subsystem: Climber):
-        super().__init__(subsystem)
-        self.subsystem = subsystem
+# class ClimberDisable(SubsystemCommand[Climber]):
+#     def __init__(self, subsystem: Climber):
+#         super().__init__(subsystem)
+#         self.subsystem = subsystem
     
-    def initialize(self):
-        Robot.climber.climber_disable()
+#     def initialize(self):
+#         Robot.climber.climber_disable()
     
-    def execute(self):
-        pass
+#     def execute(self):
+#         pass
     
-    def isFinished(self) -> bool:
-        return False
+#     def isFinished(self) -> bool:
+#         return False
     
-    def end(self, interrupted=False):
-        pass
+#     def end(self, interrupted=False):
+#         pass
