@@ -39,7 +39,7 @@ class _Robot(wpilib.TimedRobot):
         # self.start_robot_pose = Sensors.odometry.get_robot_pose()
 
     def robotPeriodic(self):
-        Robot.drivetrain.logger_periodic()
+        # Robot.drivetrain.logger_periodic()
         Sensors.odometry.update()
         SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
         SmartDashboard.putString("FDOM", str(Sensors.odometry.getPose()))

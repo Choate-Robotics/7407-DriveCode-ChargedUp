@@ -4,7 +4,7 @@ SI units for use in typing and conversion.
 
 # Distance
 import math
-import config
+
 import constants
 
 meters = float
@@ -73,6 +73,7 @@ days_to_hours = days_to_seconds * seconds_to_hours
 
 # Velocity
 meters_per_second = float
+meters_per_second_squared = float
 
 radians_per_second = float
 radians_per_second__to__degrees_per_second = radians_to_degrees
@@ -87,10 +88,14 @@ rotations_per_second__to__radians_per_second = rotations_to_radians
 rotations_per_second__to__degrees_per_second = rotations_to_degrees
 
 rotation_motor_encoder_units = float
-rotation_motor_encoder_units__to__swerve_pod_rotations = 1 / constants.drivetrain_turn_gear_ratio
+rotation_motor_encoder_units__to__swerve_pod_rotations = (
+    1 / constants.drivetrain_turn_gear_ratio
+)
 
 swerve_pod_rotations = float
-swerve_pod_rotations__to__rotation_motor_encoder_units = 1 / rotation_motor_encoder_units__to__swerve_pod_rotations
+swerve_pod_rotations__to__rotation_motor_encoder_units = (
+    1 / rotation_motor_encoder_units__to__swerve_pod_rotations
+)
 
 drive_motor_encoder_units = float
 drive_motor_encoder_units__to__meters = 1 / constants.drivetrain_move_gear_ratio
