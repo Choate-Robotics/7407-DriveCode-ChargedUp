@@ -34,6 +34,7 @@ class _Robot(wpilib.TimedRobot):
         # Sensors.pv_controller = PV_Cameras()
 
         Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
+        Sensors.gyro = Robot.drivetrain.gyro
 
         # self.start_limelight_pose = Sensors.limelight_controller.get_estimated_robot_pose()[0].toPose2d()
         # self.start_robot_pose = Sensors.odometry.get_robot_pose()
