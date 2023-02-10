@@ -19,6 +19,7 @@ from wpimath.geometry import Pose2d
 
 import constants
 from oi.keymap import Keymap
+from units.SI import degrees
 
 TURN_CONFIG = SparkMaxConfig(
     0.2, 0, 0.003, 0.00015, (-0.5, 0.5), rev.CANSparkMax.IdleMode.kBrake
@@ -134,21 +135,11 @@ class Drivetrain(SwerveDrivetrain):
     max_angular_vel: radians_per_second = constants.drivetrain_max_angular_vel
     deadzone_velocity: meters_per_second = 0.01
     deadzone_angular_velocity: radians_per_second = math.radians(5)
-    start_angle = 0
+    start_angle: degrees = 0
     start_pose: Pose2d = Pose2d(
         0.0254 * (40.45 + 17.625) + constants.track_width / 2,
         0.0254 * 42.19,
         math.radians(start_angle),
-    )  # meters(40.45 + 17.625) + constants.track/2
-    gyro_start_angle = start_angle
-    gyro_offset = math.radians(0)
-
-    def logger_periodic(self):
-        """
-        This function is run periodically for information on the drivetrain subsystem
-        """
-        # logging.info(
-        #     f"ODOM_DIST: {self.odometry_estimator.getEstimatedPosition().translation()\
-        #     .distanceFeet(constants.kApriltagPositionDict[8].toPose2d().translation())}"
-        # )
-        pass
+    )
+    gyro_start_angle: radians = math.radians(start_angle)
+    gyro_offset: radians = math.radians(0)

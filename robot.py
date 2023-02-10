@@ -9,6 +9,7 @@ from autonomous import routine
 from oi.OI import OI
 from robot_systems import Robot, Sensors
 from sensors import FieldOdometry
+from utils import logger
 
 
 class _Robot(wpilib.TimedRobot):
@@ -16,7 +17,7 @@ class _Robot(wpilib.TimedRobot):
         super().__init__()
 
     def robotInit(self):
-        # Initialize Operator Interface
+        # Initialize Operator Interface'
         OI.init()
         OI.map_controls()
         period = 0.03
@@ -33,15 +34,16 @@ class _Robot(wpilib.TimedRobot):
         # Sensors.pv_controller = PV_Cameras()
 
         Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
+        Sensors.gyro = Robot.drivetrain.gyro
 
         # self.start_limelight_pose = Sensors.limelight_controller.get_estimated_robot_pose()[0].toPose2d()
         # self.start_robot_pose = Sensors.odometry.get_robot_pose()
 
     def robotPeriodic(self):
-        Robot.drivetrain.logger_periodic()
+        # Robot.drivetrain.logger_periodic()
         Sensors.odometry.update()
         SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
-        SmartDashboard.putString("FDOM", str(Sensors.odometry.get_robot_pose()))
+        SmartDashboard.putString("FDOM", str(Sensors.odometry.getPose()))
         SmartDashboard.putString(
             "EDOM", str(Robot.drivetrain.odometry_estimator.getEstimatedPosition())
         )
@@ -62,7 +64,7 @@ class _Robot(wpilib.TimedRobot):
             pass
 
         pose = Robot.drivetrain.odometry_estimator.getEstimatedPosition()
-        pose2 = Sensors.odometry.get_robot_pose()
+        pose2 = Sensors.odometry.getPose()
 
         SmartDashboard.putNumberArray(
             "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]
@@ -149,6 +151,7 @@ class _Robot(wpilib.TimedRobot):
         )
 
     def teleopInit(self):
+        logger.debug("TELEOP", "Teleop Initialized")
         commands2.CommandScheduler.getInstance().schedule(
             command.DriveSwerveCustom(Robot.drivetrain)
         )

@@ -1,3 +1,4 @@
+import math
 import time
 
 from robotpy_toolkit_7407.command import SubsystemCommand
@@ -14,6 +15,7 @@ from wpimath.geometry import Rotation2d, Pose2d
 from wpimath.trajectory import TrapezoidProfileRadians, Trajectory
 
 from autonomous.utils.trajectory import CustomTrajectory
+from robot_systems import Sensors
 
 
 class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
@@ -61,7 +63,7 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
 
     def initialize(self) -> None:
         self.start_time = time.perf_counter()
-        self.theta_i = self.subsystem.odometry.getPose().rotation().radians()
+        self.theta_i = Sensors.odometry.getPose().rotation().radians()
         self.theta_f = self.end_pose.rotation().radians()
         self.theta_diff = bounded_angle_diff(self.theta_i, self.theta_f)
         self.omega = self.theta_diff / self.duration
@@ -75,11 +77,11 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
         goal = self.trajectory.sample(self.t)
         goal_theta = self.theta_i + self.omega * self.t
         speeds = self.controller.calculate(
-            self.subsystem.odometry.getPose(), goal, Rotation2d(goal_theta)
+            Sensors.odometry.getPose(), goal, Rotation2d(goal_theta)
         )
 
         vx, vy = rotate_vector(
-            speeds.vx, speeds.vy, self.subsystem.odometry.getPose().rotation().radians()
+            speeds.vx, speeds.vy, Sensors.odometry.getPose().rotation().radians()
         )
 
         self.subsystem.set_driver_centric((-vx, -vy), speeds.omega)
@@ -88,7 +90,7 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
         self.subsystem.set_driver_centric((0, 0), 0)
         SmartDashboard.putString("POSE", str(self.subsystem.odometry.getPose()))
         SmartDashboard.putString(
-            "POSD", str(self.subsystem.odometry.getPose().rotation().degrees())
+            "POSD", str(Sensors.odometry.getPose().rotation().degrees())
         )
 
     def isFinished(self) -> bool:
@@ -99,58 +101,67 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
 
 
 class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
+    """
+    Rotates the robot in place.
+
+    :param subsystem: The subsystem to run this command on
+    :type subsystem: SwerveDrivetrain
+    :param theta_f: The final angle in radians
+    :type theta_f: radians
+    :param threshold: The angle threshold for the controller, defaults to .1
+    :type threshold: radians, optional
+    :param period: The period of the controller, defaults to 0.02
+    :type period: seconds, optional
+    """
+
     def __init__(
         self,
         subsystem: SwerveDrivetrain,
         theta_f: radians,
-        duration: float = 0.5,
+        threshold: float = math.radians(1),
+        max_angular_vel: float | None = None,
         period: float = 0.02,
     ):
         super().__init__(subsystem)
+
+        max_angular_vel = max_angular_vel or subsystem.max_angular_vel
+
         self.controller = HolonomicDriveController(
-            PIDController(2, 0, 0, period),
-            PIDController(2, 0, 0, period),
+            PIDController(1, 0, 0, period),
+            PIDController(1, 0, 0, period),
             ProfiledPIDControllerRadians(
                 4,
                 0,
                 0,
                 TrapezoidProfileRadians.Constraints(
-                    subsystem.max_angular_vel, subsystem.max_angular_vel / 0.01
+                    max_angular_vel, max_angular_vel / 0.001
                 ),
                 period,
             ),
         )
-        self.start_time = 0
-        self.t = 0
-        self.duration = duration
         self.theta_f = theta_f
+        self.threshold = threshold
+
         self.theta_i: float | None = None
         self.theta_diff: float | None = None
-        self.omega: float | None = None
-        self.finished = False
 
     def initialize(self) -> None:
-        self.start_time = time.perf_counter()
-        self.theta_i = self.subsystem.odometry.getPose().rotation().radians()
+        self.theta_i = Sensors.odometry.getPose().rotation().radians()
         self.theta_diff = bounded_angle_diff(self.theta_i, self.theta_f)
-        self.omega = self.theta_diff / self.duration
-        self.finished = False
 
     def execute(self) -> None:
-        self.t = time.perf_counter() - self.start_time
-        if self.t > self.duration:
-            self.t = self.duration
-            self.finished = True
-        goal = self.subsystem.odometry.getPose()
-        goal_theta = self.theta_i + self.omega * self.t
-        speeds = self.controller.calculate(goal, goal, 0, Rotation2d(goal_theta))
+        goal = Sensors.odometry.getPose()
+        speeds = self.controller.calculate(goal, goal, 0, Rotation2d(self.theta_f))
         self.subsystem.set_driver_centric((0, 0), speeds.omega)
 
     def end(self, interrupted: bool) -> None:
         self.subsystem.set_driver_centric((0, 0), 0)
 
     def isFinished(self) -> bool:
-        return self.finished
+        return (
+            abs(Sensors.odometry.getPose().rotation().radians() - self.theta_f)
+            < self.threshold
+        )
 
     def runsWhenDisabled(self) -> bool:
         return False

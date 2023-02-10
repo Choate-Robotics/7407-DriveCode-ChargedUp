@@ -1,3 +1,10 @@
+# CUSTOM
+simgui-ds.json
+simgui-window.json
+simgui.json
+.pytest_cache
+*.pyc
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,4 +1,4 @@
-from robotpy_toolkit_7407.sensors.limelight import Limelight, LimelightController
+from robotpy_toolkit_7407.subsystem_templates.drivetrain import SwerveGyro
 
 import subsystem
 from sensors import FieldOdometry, PV_Cameras
@@ -15,6 +15,5 @@ class Pneumatics:
 
 class Sensors:
     odometry: FieldOdometry
-    limelight_front: Limelight
-    limelight_controller: LimelightController
     pv_controller: PV_Cameras
+    gyro: SwerveGyro
