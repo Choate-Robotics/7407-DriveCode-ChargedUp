@@ -32,7 +32,7 @@ kCentimetersPerMeter = 100
 
 kMetersPerInch = kCentimetersPerInch / kCentimetersPerMeter
 
-kApriltagPositionDict = {
+ApriltagPositionDict = {
     1: Pose3d(
         (kMetersPerInch * 610.77),
         (kMetersPerInch * 42.19),
