@@ -34,7 +34,6 @@ class PV_Cameras(VisionEstimator):
     def get_estimated_robot_pose(self) -> list[tuple[Transform3d, float]]:
         """
         Gets the estimated robot pose from the cameras with FPGA Timestamp
-
         :return: A list of tuples of the form (pose, timestamp)
         :rtype: list[tuple[Transform3d, float]]
         """
