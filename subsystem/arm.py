@@ -8,20 +8,28 @@ from robotpy_toolkit_7407.motors.rev_motors import SparkMax, SparkMaxConfig
 from wpimath.geometry import Pose3d, Rotation3d
 import config
 import constants
+from wpimath import trajectory, controller
 
 # importing packages
 
 SHOULDER_CONFIG = SparkMaxConfig(
-    0.1, 0, 0.003, 0.0002, (-0.3, 0.3), idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    0.1, 0, 0.003, 0.0002, (-0.25, 0.25), idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 ELEVATOR_CONFIG = SparkMaxConfig(
-    0.5, 0, 0.0004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    1, 0, 0.0004, 0.00017, (-1, 1), idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 
 
 WRIST_CONFIG = SparkMaxConfig(
-    0.005, 0, 0.04, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    0.05, 0, 0.004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
+
+shoulder_constraints = trajectory.TrapezoidProfile.Constraints(2, 0.25)
+
+shoulder_pid = controller.ProfiledPIDController(0.1, 0, .003, shoulder_constraints)
+
+shoulder_pid.calculate()
+
 
 
 class Arm(Subsystem):  # elevator class
@@ -30,16 +38,16 @@ class Arm(Subsystem):  # elevator class
         config.elevator_motor_extend_id, config=ELEVATOR_CONFIG)  # motor that extends the arm
     # Shoulder Motors
     secondary_rotation_motor: SparkMax = SparkMax(
-        config.elevator_secondary_rotation_motor_id, inverted=True, config=SHOLDER_CONFIG)  # motor that rotates the arm
+        config.elevator_secondary_rotation_motor_id, inverted=True, config=SHOULDER_CONFIG)  # motor that rotates the arm
     main_rotation_motor: SparkMax = SparkMax(
         config.elevator_main_rotation_motor_id, inverted=True, config=SHOULDER_CONFIG)  # motor that rotates the arm
-    main_rotation_motor.__pid_controller.setSmartMotionMaxAccel(2 * constants.elevator_rotation_gear_ratio, 0)
+    #main_rotation_motor.__pid_controller.setSmartMotionMaxAccel(2 * constants.elevator_rotation_gear_ratio, 0)
     # Brake
     brake: wpilib.Solenoid = wpilib.Solenoid(
         1, wpilib.PneumaticsModuleType.REVPH, config.elevator_brake_id)  # brake that holds the arm in place
     # Wrist and Claw 
     wrist: SparkMax = SparkMax(18, inverted=True, config=WRIST_CONFIG)
-    claw_motor: SparkMax = SparkMax(12, inverted=True)
+    claw_motor: SparkMax = SparkMax(12, inverted=False)
     claw_grabber: wpilib.DoubleSolenoid = wpilib.DoubleSolenoid(
         1, wpilib.PneumaticsModuleType.REVPH, 4, 5)
     initialized: bool = False
@@ -62,29 +70,6 @@ class Arm(Subsystem):  # elevator class
         self.elevator_bottom_sensor = None
         self.pose = None
 
-    def init(self):  # initializing motors
-        """initializes the motors"""
-        self.motor_extend.init()
-        self.claw_motor.init()
-        self.claw_motor_initialized = True
-        self.secondary_rotation_motor.init()
-        self.main_rotation_motor.init()
-        self.elevator_bottom_sensor = self.motor_extend.motor.getReverseLimitSwitch(
-            rev.SparkMaxLimitSwitch.Type.kNormallyOpen)
-        self.elevator_top_sensor = self.motor_extend.motor.getForwardLimitSwitch(
-            rev.SparkMaxLimitSwitch.Type.kNormallyOpen)
-        self.abs_encoder = self.secondary_rotation_motor.motor.getAbsoluteEncoder(
-            rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle)
-        self.secondary_rotation_motor.motor.follow(
-            self.main_rotation_motor.motor, True)
-        self.wrist.init()
-        self.wrist_abs = self.wrist.motor.getAbsoluteEncoder(
-            rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle)
-        self.main_rotation_motor.motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward, self.shoulder_angle_to_motor_rotations(constants.shoulder_max_rotation))
-        self.main_rotation_motor.motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kReverse, self.shoulder_angle_to_motor_rotations(constants.shoulder_min_rotation))
-        self.wrist.motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward, self.wrist_angle_to_motor_rotations(constants.wrist_max_rotation))
-        self.wrist.motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kReverse, -self.wrist_angle_to_motor_rotations(constants.wrist_min_rotation))
-        self.enable_brake()
 
     def set_angle_wrist(self, pos: float):
         """
@@ -145,7 +130,7 @@ class Arm(Subsystem):  # elevator class
     def engage_claw(self):
         # Set distance forward (closes claw)
         self.open_claw()
-        self.set_claw_output(config.claw_motor_speed)
+        self.set_claw_output(constants.claw_motor_speed)
 
     def disengage_claw(self):
         self.close_claw()
@@ -222,6 +207,31 @@ class Arm(Subsystem):  # elevator class
             float: a float of the rotations
         """
         return (radians / (2 * math.pi)) * constants.wrist_gear_ratio
+
+    def init(self):  # initializing motors
+        """initializes the motors"""
+        self.motor_extend.init()
+        self.claw_motor.init()
+        self.distance_sensor = self.claw_motor.motor.getAnalog()
+        self.claw_motor_initialized = True
+        self.secondary_rotation_motor.init()
+        self.main_rotation_motor.init()
+        self.elevator_bottom_sensor = self.motor_extend.motor.getReverseLimitSwitch(
+            rev.SparkMaxLimitSwitch.Type.kNormallyOpen)
+        self.elevator_top_sensor = self.motor_extend.motor.getForwardLimitSwitch(
+            rev.SparkMaxLimitSwitch.Type.kNormallyOpen)
+        self.abs_encoder = self.secondary_rotation_motor.motor.getAbsoluteEncoder(
+            rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle)
+        self.secondary_rotation_motor.motor.follow(
+            self.main_rotation_motor.motor, True)
+        self.wrist.init()
+        self.wrist_abs = self.wrist.motor.getAbsoluteEncoder(
+            rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle)
+        self.main_rotation_motor.motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward, self.shoulder_angle_to_motor_rotations(constants.shoulder_max_rotation))
+        self.main_rotation_motor.motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kReverse, self.shoulder_angle_to_motor_rotations(constants.shoulder_min_rotation))
+        self.wrist.motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward, self.wrist_angle_to_motor_rotations(constants.wrist_max_rotation))
+        self.wrist.motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kReverse, -self.wrist_angle_to_motor_rotations(constants.wrist_min_rotation))
+        self.enable_brake()
 
     def abs_encoder_to_rad(self, encoder_value: float):
         """converts the encoder value to radians"""
@@ -307,11 +317,15 @@ class Arm(Subsystem):  # elevator class
 
     def set_length(self, meters) -> None:  # set arm extension
         """Sets the length of the elevator to the given meters, returns true if the elevator is at the given meters, float of the meters the elevator is at if it is not at the given meters"""
+        print(meters)
         if not self.disable_extension:
             length_ratio = self.boundary_box(
-                self.abs_encoder.getPosition() * (2 * math.pi))
-            meters = min(length_ratio * constants.max_elevator_height, meters)
-            length = meters * constants.elevator_length_per_rotation
+                self.get_rotation())
+            #lol = min(length_ratio * constants.max_elevator_height, meters)
+            lol = meters
+            print(lol)
+            length = lol * ( 1/constants.elevator_length_per_rotation)
+            print(length)
             self.motor_extend.set_target_position(length)
 
     def shoulder_rotation_limits(self, radians: float) -> bool:
@@ -347,7 +361,8 @@ class Arm(Subsystem):  # elevator class
 
     def get_length(self) -> float:  # returns arm extension
         """Gets the length of the elevator in meters"""
-        return (self.motor_extend.get_sensor_position() * constants.elevator_extend_gear_ratio * constants.max_elevator_height) + constants.elevator_zero_length
+        return (self.motor_extend.get_sensor_position() / ( 1/constants.elevator_length_per_rotation))
+        #return (self.motor_extend.get_sensor_position() * constants.elevator_extend_gear_ratio * constants.max_elevator_height_delta) + constants.elevator_zero_length
 
     def get_rotation(self) -> float:  # returns arm rotation in radians
         """Gets the rotation of the shoulder in radians"""
@@ -391,8 +406,8 @@ class Arm(Subsystem):  # elevator class
 
     def extend_max_elevator(self) -> None:
         """Sets the elevator to the max position (no rotation)"""
-        self.set_length(self.boundary_box(self.get_rotation()) *
-                        constants.max_elevator_height)
+        print("EXTEND MAX")
+        self.set_length(constants.max_elevator_height_delta)
 
     def update_pose(self) -> None:
         """Updates the pose of the arm using the encoder values and rotation of the elevator"""
