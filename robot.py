@@ -2,11 +2,6 @@ import math
 
 import commands2
 import wpilib
-from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
-from robotpy_toolkit_7407.sensors.limelight import Limelight
-from oi.OI import OI
-from robot_systems import Pneumatics, Sensors, Robot
-from robotpy_toolkit_7407.sensors.limelight import Limelight, LimelightController
 from wpilib import SmartDashboard
 
 from oi.keymap import Keymap
@@ -35,73 +30,132 @@ class _Robot(wpilib.TimedRobot):
         #self.gyro = PigeonIMUGyro_Wrapper(10)
         # Target is .46272 meters above ground
 
-        #Robot.drivetrain.init()
-        #Sensors.gyro.init()
-        # Robot.drivetrain.n_front_left.m_move.set_sensor_position(0)
-        # Robot.drivetrain.n_front_right.m_move.set_sensor_position(0)
-        # Robot.drivetrain.n_back_left.m_move.set_sensor_position(0)
-        # Robot.drivetrain.n_back_right.m_move.set_sensor_position(0)
+        # Sensors.limelight_front = Limelight(
+        #     cam_height=0, cam_angle=0, robot_ip="10.74.07.2"
+        # )
+        # Sensors.limelight_controller = LimelightController([Sensors.limelight_front])
+
+        Robot.drivetrain.init()
 
         #SmartDashboard.init()
         #Sensors.pv_controller = PV_Cameras()
 
-        #Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
+        Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
+        Sensors.gyro = Robot.drivetrain.gyro
 
         # self.start_limelight_pose = Sensors.limelight_controller.get_estimated_robot_pose()[0].toPose2d()
         # self.start_robot_pose = Sensors.odometry.get_robot_pose()
 
     def robotPeriodic(self):
+        # Robot.drivetrain.logger_periodic()
+        Sensors.odometry.update()
+        SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
+        SmartDashboard.putString("FDOM", str(Sensors.odometry.getPose()))
+        SmartDashboard.putString(
+            "EDOM", str(Robot.drivetrain.odometry_estimator.getEstimatedPosition())
+        )
+        try:
+            SmartDashboard.putString(
+                "PHOTON", str(Sensors.pv_controller.get_estimated_robot_pose())
+            )
+            SmartDashboard.putString(
+                "PHOTON ANGLE",
+                str(
+                    Sensors.pv_controller.get_estimated_robot_pose()[0][0]
+                    .rotation()
+                    .toRotation2d()
+                    .degrees()
+                ),
+            )
+        except Exception:
+            pass
+
+        pose = Robot.drivetrain.odometry_estimator.getEstimatedPosition()
+        pose2 = Sensors.odometry.getPose()
+
+        SmartDashboard.putNumberArray(
+            "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]
+        )
+
+        SmartDashboard.putNumberArray(
+            "RobotPoseOrig", [pose2.X(), pose2.Y(), pose2.rotation().radians()]
+        )
+
+        try:
+            pv_pose = Sensors.pv_controller.get_estimated_robot_pose()
+            SmartDashboard.putNumberArray(
+                "PVPoseAdvantage",
+                [
+                    pv_pose[0][0].toPose2d().X(),
+                    pv_pose[0][0].toPose2d().Y(),
+                    pv_pose[0][0].rotation().toRotation2d().radians(),
+                ],
+            )
+        except Exception:
+            pass
 
         commands2.CommandScheduler.getInstance().run()
 
+        SmartDashboard.putString(
+            "N00", str(Robot.drivetrain.n_front_left.encoder.getAbsolutePosition())
+        )
+        SmartDashboard.putString(
+            "N01", str(Robot.drivetrain.n_front_right.encoder.getAbsolutePosition())
+        )
+        SmartDashboard.putString(
+            "N10", str(Robot.drivetrain.n_back_left.encoder.getAbsolutePosition())
+        )
+        SmartDashboard.putString(
+            "N11", str(Robot.drivetrain.n_back_right.encoder.getAbsolutePosition())
+        )
 
+        SmartDashboard.putString(
+            "N00_m",
+            str(math.degrees(Robot.drivetrain.n_front_left.get_turn_motor_angle())),
+        )
+        SmartDashboard.putString(
+            "N01_m",
+            str(math.degrees(Robot.drivetrain.n_front_right.get_turn_motor_angle())),
+        )
+        SmartDashboard.putString(
+            "N10_m",
+            str(math.degrees(Robot.drivetrain.n_back_left.get_turn_motor_angle())),
+        )
+        SmartDashboard.putString(
+            "N11_m",
+            str(math.degrees(Robot.drivetrain.n_back_right.get_turn_motor_angle())),
+        )
 
-        #SmartDashboard.init()
-        # Sensors.pv_controller = PV_Cameras()
+        SmartDashboard.putString(
+            "N00_drive",
+            str(
+                math.degrees(Robot.drivetrain.n_front_left.m_move.get_sensor_position())
+            ),
+        )
+        SmartDashboard.putString(
+            "N01_drive",
+            str(
+                math.degrees(
+                    Robot.drivetrain.n_front_right.m_move.get_sensor_position()
+                )
+            ),
+        )
+        SmartDashboard.putString(
+            "N10_drive",
+            str(
+                math.degrees(Robot.drivetrain.n_back_left.m_move.get_sensor_position())
+            ),
+        )
+        SmartDashboard.putString(
+            "N11_drive",
+            str(
+                math.degrees(Robot.drivetrain.n_back_right.m_move.get_sensor_position())
+            ),
+        )
 
-        # Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
-        # Sensors.gyro = PigeonIMUGyro_Wrapper(20)
-
-    def robotPeriodic(self):
-        pass
-        # Sensors.odometry.update()
-
-        # try:
-        #     pose = Robot.drivetrain.odometry_estimator.getEstimatedPosition()
-
-        #     SmartDashboard.putNumberArray(
-        #         "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]
-        #     )
-        # except Exception:
-        #     pass
-
-        # try:
-        #     pose2 = Sensors.odometry.getPose()
-
-        #     SmartDashboard.putNumberArray(
-        #         "RobotPoseOrig", [pose2.X(), pose2.Y(), pose2.rotation().radians()]
-        #     )
-        # except Exception:
-        #     pass
-
-        # try:
-        #     pv_pose = Sensors.pv_controller.get_estimated_robot_pose()
-        #     SmartDashboard.putNumberArray(
-        #         "PVPoseAdvantage",
-        #         [
-        #             pv_pose[0][0].toPose2d().X(),
-        #             pv_pose[0][0].toPose2d().Y(),
-        #             pv_pose[0][0].rotation().toRotation2d().radians(),
-        #         ],
-        #     )
-        # except Exception:
-        #     pass
-
-        # SmartDashboard.putNumber(
-        #     "gyro_angle: ", math.degrees(Robot.drivetrain.gyro.get_robot_heading())
-        # )
-
-        #commands2.CommandScheduler.getInstance().run()
+        SmartDashboard.putNumber(
+            "gyro_angle: ", math.degrees(Robot.drivetrain.gyro.get_robot_heading())
+        )
 
     def teleopInit(self):
         pass

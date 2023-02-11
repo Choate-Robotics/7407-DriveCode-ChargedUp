@@ -91,14 +91,3 @@ rotations_per_minute_per_meter: Type[float] = float
 
 miles_per_hour: Type[float] = float
 miles_per_hour_to_meters_per_second: float = miles_to_meters * hours_to_seconds
-
-# rotation_motor_encoder_units = float
-# rotation_motor_encoder_units__to__swerve_pod_rotations = 1 / constants.drivetrain_turn_gear_ratio
-#
-# swerve_pod_rotations = float
-# swerve_pod_rotations__to__rotation_motor_encoder_units = 1 / rotation_motor_encoder_units__to__swerve_pod_rotations
-#
-# drive_motor_encoder_units = float
-# drive_motor_encoder_units__to__meters = 1 / constants.drivetrain_move_gear_ratio
-#
-# meters__to__drive_motor_encoder_units = 1 / drive_motor_encoder_units__to__meters
