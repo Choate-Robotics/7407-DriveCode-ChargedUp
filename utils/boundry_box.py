@@ -1,7 +1,7 @@
 import math
 import constants
 
-def boundary_box(self, angle: float) -> float:  # TESTED
+def boundary_box(self, angle: float) -> float:  # RE_RUNNING DOES NOT WORK
     """returns a float of the percentage of the max elevator height allowed at the given angle (limited by the robot extension limits)"""
     if self.extension_override:
         # if the extension override is enabled, return 1, which will maximize the max elevator height
@@ -13,18 +13,18 @@ def boundary_box(self, angle: float) -> float:  # TESTED
         def get_length_ratio(theta, adjacent):
             # Gets the length of the angle using cosine
             if theta == 0:
-                v = adjacent / constants.max_elevator_height
+                v = adjacent - 17.5 / constants.max_elevator_height_delta
                 return 1 if v > 1 else v
 
-            max_length = adjacent / math.cos(theta)
+            max_length = (adjacent / math.cos(theta)) - 17.5
             # if the length of the angle is greater than the max_elevator_height, return one
             # else give a percentage of the height of the current line and the max_elevator_height
             # protects against any irregular numbers higher than the max elevator height by always
             # defaulting to 1
-            if abs(max_length) > constants.max_elevator_height:
+            if abs(max_length) > constants.max_elevator_height_delta:
                 return 1
             else:
-                res = abs(max_length / constants.max_elevator_height)
+                res = abs(max_length / constants.max_elevator_height_delta)
                 return res  # where is the hype at
 
         # Finds the length of each the dimensions for the boundary box using the constants

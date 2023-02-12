@@ -20,7 +20,7 @@ class Keymap:
         DRIVE_Y_AXIS = JoystickAxis(Controllers.DRIVER, controllerDRIVER.L_JOY[1])
         DRIVE_ROTATION_AXIS = JoystickAxis(
             Controllers.DRIVER, controllerDRIVER.R_JOY[0]
-        )
+        ) 
         DRIVE_Y2_AXIS = JoystickAxis(Controllers.DRIVER, controllerDRIVER.R_JOY[1])
         RESET_GYRO = DefaultButton(Controllers.DRIVER, controllerDRIVER.A)
         REZERO_MOTORS = DefaultButton(Controllers.DRIVER, controllerDRIVER.B)

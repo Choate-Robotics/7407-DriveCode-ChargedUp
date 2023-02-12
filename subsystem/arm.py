@@ -13,22 +13,16 @@ from wpimath import trajectory, controller
 # importing packages
 
 SHOULDER_CONFIG = SparkMaxConfig(
-    0.1, 0, 0.003, 0.0002, (-0.25, 0.25), idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    0.1, 0, 0.003, 0.0002, (-0.3, 0.3), idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 ELEVATOR_CONFIG = SparkMaxConfig(
-    1, 0, 0.0004, 0.00017, (-1, 1), idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    1, 0, 0.004, 0.00017, (-.5, .5), idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 
 
 WRIST_CONFIG = SparkMaxConfig(
     0.05, 0, 0.004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
-
-shoulder_constraints = trajectory.TrapezoidProfile.Constraints(2, 0.25)
-
-shoulder_pid = controller.ProfiledPIDController(0.1, 0, .003, shoulder_constraints)
-
-shoulder_pid.calculate()
 
 
 
@@ -62,6 +56,7 @@ class Arm(Subsystem):  # elevator class
     claw_motor_initialized: bool = False
     claw_compressed: bool = False
     claw_open: bool = False
+    
 
     def __init__(self):
         super().__init__()
@@ -232,6 +227,7 @@ class Arm(Subsystem):  # elevator class
         self.wrist.motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward, self.wrist_angle_to_motor_rotations(constants.wrist_max_rotation))
         self.wrist.motor.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kReverse, -self.wrist_angle_to_motor_rotations(constants.wrist_min_rotation))
         self.enable_brake()
+        #self.rotation_PID.setSmartMotionMaxVelocity(constants.shoulder_max_velocity)
 
     def abs_encoder_to_rad(self, encoder_value: float):
         """converts the encoder value to radians"""
@@ -327,6 +323,8 @@ class Arm(Subsystem):  # elevator class
             length = lol * ( 1/constants.elevator_length_per_rotation)
             print(length)
             self.motor_extend.set_target_position(length)
+            #self.main_rotation_motor.__pid_controller\
+               # .setSmartMotionMaxAccel(constants.shoulder_max_acceleration - (self.get_length() * (constants.shoulder_max_acceleration - constants.shoulder_min_acceleration)))
 
     def shoulder_rotation_limits(self, radians: float) -> bool:
         """Returns if the given radians are within the soft limits of the shoulder"""
@@ -418,3 +416,4 @@ class Arm(Subsystem):  # elevator class
         print("POSE LENGTH: " + str(length))
         self.length = length
         self.angle = angle
+        

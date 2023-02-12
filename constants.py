@@ -87,6 +87,9 @@ elevator_length_per_rotation: float = 1.736 * kInchesToMeters  # the length of t
 wrist_gear_ratio: float = 100  # to one
 # 24 rotations to max extension
 stabilizer_magnitude: float = 2  # the magnitude of the rotation of the arm based on the tip of the robot
+shoulder_max_velocity: float = 25 * elevator_rotation_gear_ratio #RPM 
+shoulder_max_acceleration: float = 25 * elevator_rotation_gear_ratio # RPM / S
+shoulder_min_acceleration: float = 5 * elevator_extend_gear_ratio # RPM / S
 # --------------------------------------------------------------
 
 
@@ -102,7 +105,7 @@ elevator_initial_rotation = 0  # the initial rotation of the elevator that it wi
 elevator_initial_length = 0 * kInchesToMeters  # the initial length of the elevator that it will zero too
 # --------------------------------------------------------------
 
-claw_motor_speed: float = .4
+claw_motor_speed: float = 1
 
 # general claw rotations
 # --------------------------------------------------------------
@@ -164,10 +167,10 @@ track_width = 0.60325
 robot_length = 0.7366
 
 # TODO Maybe change these
-drivetrain_max_vel = (3 * mile / hour).asNumber(m / s)  # 10
+drivetrain_max_vel = (20 * mile / hour).asNumber(m / s)  # 10
 drivetrain_target_max_vel = (3 * mile / hour).asNumber(m / s)  # 7
-drivetrain_max_angular_vel = (1.5 * rev / s).asNumber(rad / s)  # 4
-drivetrain_max_climb_vel = (2 * mile / hour).asNumber(m / s)
+drivetrain_max_angular_vel = (5 * rev / s).asNumber(rad / s)  # 4
+drivetrain_max_climb_vel = (5 * mile / hour).asNumber(m / s)
 
 kCentimetersPerInch = 2.54
 

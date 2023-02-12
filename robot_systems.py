@@ -13,7 +13,7 @@ class Robot:
 
 
 class Pneumatics:
-    compressor = wpilib.Compressor(1, wpilib.PneumaticsModuleType.REVPH)
+    compressor = wpilib.Compressor(31, wpilib.PneumaticsModuleType.REVPH)
 
     @classmethod
     def get_compressor(cls):
