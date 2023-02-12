@@ -236,3 +236,6 @@ kCameras = {
         )
     ]
 }
+
+# Dummy data
+claw_gear_ratio = 1
