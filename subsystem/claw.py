@@ -1,14 +1,23 @@
 import math
+import rev
 import config
 import constants
 import wpilib
 from robotpy_toolkit_7407 import Subsystem
 from robotpy_toolkit_7407.motors.rev_motors import SparkMax
 from robotpy_toolkit_7407.pneumatics.pistons import DoubleSolenoidPiston
+from robotpy_toolkit_7407.motors.rev_motors import SparkMax, SparkMaxConfig
+from sensors import IR_Sensor
+
+MOVE_CONFIG = SparkMaxConfig(
+    0.00005, 0, 0.0004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
+)
 
 class Claw(Subsystem):
+
+    claw_motor: SparkMax = SparkMax(can_id=1, config=MOVE_CONFIG)
     
-    def __init__(self, claw_motor: SparkMax):
+    def __init__(self):
         """
         Constructor 
 
@@ -16,10 +25,11 @@ class Claw(Subsystem):
             claw_motor (SparkMax): The motor that controls the claw. Pass with the correct
             can_id and turn/drive config. 
         """
-        self.claw_motor = claw_motor
         self.claw_close_piston: DoubleSolenoidPiston = DoubleSolenoidPiston(1, wpilib.PneumaticsModuleType.REVPH, 4)
         self.claw_motor_initialized: bool = False
         self.claw_compressed: bool = False
+        # 0 is port
+        self.ir_sensor = IR_Sensor(0)
 
     def init(self):
         self.claw_motor.init()
@@ -61,9 +71,9 @@ class Claw(Subsystem):
         # Set distance forward (closes claw)
         self.claw_close_piston.extend()
         self.set_claw_ouput(config.claw_motor_speed)
-        self.claw_compressed = True
+        self.claw_compressed = self.ir_sensor.isDetected()
 
     def close_claw(self):
         self.claw_close_piston.retract()
         self.set_claw_ouput(0)
-        self.claw_compressed = False
+        self.claw_compressed = self.ir_sensor.isDetected()

@@ -2,10 +2,11 @@ import commands2
 import wpilib
 from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
 from robotpy_toolkit_7407.sensors.limelight import Limelight
+from sensors import IR_Sensor
 from oi.OI import OI
 from wpilib import SmartDashboard
 import command
-from robot_systems import Robot
+from robot_systems import Robot, Sensors
 
 class _Robot(wpilib.TimedRobot):
     def __init__(self):
@@ -25,6 +26,8 @@ class _Robot(wpilib.TimedRobot):
 
         # self.limelight = Limelight(cam_height=0, cam_angle=0, robot_ip="10.74.07.2")
         # SmartDashboard.init()
+
+        Sensors.IR_Sensor = IR_Sensor(0)
 
     def robotPeriodic(self):
         commands2.CommandScheduler.getInstance().run()
