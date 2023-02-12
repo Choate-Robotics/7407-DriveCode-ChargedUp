@@ -7,8 +7,10 @@ from wpilib import SmartDashboard
 import command
 from autonomous import routine
 from oi.OI import OI
-from robot_systems import Pneumatics, Robot, Sensors
+from robot_systems import Pneumatics
+from robot_systems import Robot, Sensors
 from sensors import FieldOdometry
+from sensors import IR_Sensor
 from utils import logger
 
 
@@ -30,6 +32,8 @@ class _Robot(wpilib.TimedRobot):
 
         Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
         Sensors.gyro = Robot.drivetrain.gyro
+
+        Sensors.IR_Sensor = IR_Sensor(0)
 
     def robotPeriodic(self):
         Sensors.odometry.update()
@@ -110,3 +114,4 @@ class _Robot(wpilib.TimedRobot):
 
 if __name__ == "__main__":
     wpilib.run(_Robot)
+    # Robot.robotInit(Robot())
