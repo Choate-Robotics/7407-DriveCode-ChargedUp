@@ -8,6 +8,7 @@ from oi.keymap import Keymap
 from robot_systems import Sensors
 from subsystem import Arm
 from units.SI import meters, radians
+from robot_systems import Robot
 
 
 class ZeroArm(SubsystemCommand[Arm]):
