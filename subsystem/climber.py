@@ -45,15 +45,6 @@ class Climber(Subsystem):
 
 
     def zero(self):
-        # current_pos_rad = (
-        #         math.radians(self.encoder.getAbsolutePosition())
-        #         - self.absolute_encoder_zeroed_pos
-        # )
-
-        # self.climber_motor.set_sensor_position(
-        #     current_pos_rad * constants.climber_motor_gear_ratio / (2 * math.pi)
-        # )
-        # self.set_motor_angle(0)
         self.climber_motor.set_sensor_position(0)
 
     def set_motor_angle(self, pos: radians):

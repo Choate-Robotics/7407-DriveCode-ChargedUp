@@ -28,7 +28,7 @@ class ClimberZero(SubsystemCommand[Climber]):
 
 
 '''
-    TODO: Determine if we even need this command
+    TODO: Determine if we even need this command, or directly using the subsystem method instead 
 '''
 class ClimberEnable(SubsystemCommand[Climber]):
     def __init__(self, subsystem: Climber):
@@ -67,21 +67,3 @@ class ClimberPivot(SubsystemCommand[Climber]):
         Robot.climber.climber_motor.set_raw_output(0)
         Robot.climber.climber_motor.brake.set(True)
 
-
-
-# class ClimberDisable(SubsystemCommand[Climber]):
-#     def __init__(self, subsystem: Climber):
-#         super().__init__(subsystem)
-#         self.subsystem = subsystem
-    
-#     def initialize(self):
-#         Robot.climber.climber_disable()
-    
-#     def execute(self):
-#         pass
-    
-#     def isFinished(self) -> bool:
-#         return False
-    
-#     def end(self, interrupted=False):
-#         pass
