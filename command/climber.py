@@ -61,7 +61,7 @@ class ClimberPivot(SubsystemCommand[Climber]):
         pass
 
     def isFinished(self) -> bool:
-        return Sensors.gyro.get_robot_pitch() >= Robot.climber.pivot_threshold/180*math.pi
+        return Sensors.gyro.get_robot_pitch() >= Robot.climber.pivot_threshold
     
     def end(self, interrupted=False):
         Robot.climber.climber_motor.set_raw_output(0)
