@@ -19,41 +19,57 @@ from units.SI import (
 
 drivetrain_turn_gear_ratio = 80.4848
 
-kInchesToMeters = .0254
+kInchesToMeters = 0.0254
 
 # robot constants
 robot_length = 29 * kInchesToMeters  # the length of the robot
 
 # boundary dimension constants
 # --------------------------------------------------------------
-horizontal_boundary = 28 * kInchesToMeters  # the horizontal boundry is the distance from the pivot point (center of robot) to the robots maximun extension limit in the x direction (one side of the robot)
-vertical_boundary = 78 * kInchesToMeters  # the vertical boundry is the distance from the floor to the robots maximun extension limit in the y direction
+horizontal_boundary = (
+    28 * kInchesToMeters
+)  # the horizontal boundry is the distance from the pivot point (center of robot) to the robots maximun extension limit in the x direction (one side of the robot)
+vertical_boundary = (
+    78 * kInchesToMeters
+)  # the vertical boundry is the distance from the floor to the robots maximun extension limit in the y direction
 # --------------------------------------------------------------
 
 # boundary buffer constants
 # --------------------------------------------------------------
-bottom_boundary_buffer_gap = 1 * kInchesToMeters  # the buffer in between the bottom boundry
+bottom_boundary_buffer_gap = (
+    1 * kInchesToMeters
+)  # the buffer in between the bottom boundry
 top_boundary_buffer_gap = 0 * kInchesToMeters  # the buffer in between the top boundry
-side_boundary_buffer_gap = 0 * kInchesToMeters  # the buffer in between the side boundries
+side_boundary_buffer_gap = (
+    0 * kInchesToMeters
+)  # the buffer in between the side boundries
 # --------------------------------------------------------------
 
 # shoulder constants
 # --------------------------------------------------------------
 shoulder_max_rotation = math.radians(80)  # the maximum rotation of the shoulder
 shoulder_min_rotation = math.radians(110)  # the minimum rotation of the shoulder
-shoulder_intake_up_max_rotation = math.radians(90)  # the maximum rotation of the shoulder when the intake is up
+shoulder_intake_up_max_rotation = math.radians(
+    90
+)  # the maximum rotation of the shoulder when the intake is up
 # --------------------------------------------------------------
 
 # shoulder buffer constants
 # --------------------------------------------------------------
-shoulder_min_buffer_rotation = math.radians(1)  # the buffer in between the minimun rotation
-shoulder_max_buffer_rotation = math.radians(1)  # the buffer in between the maximum rotation
+shoulder_min_buffer_rotation = math.radians(
+    1
+)  # the buffer in between the minimun rotation
+shoulder_max_buffer_rotation = math.radians(
+    1
+)  # the buffer in between the maximum rotation
 # --------------------------------------------------------------
 
 # elevator constants
 # --------------------------------------------------------------
 min_elevator_height = 30 * kInchesToMeters  # the minimum height of the elevator
-elevator_pivot_offset = -2.5 * kInchesToMeters  # offset from the pivot point to the center of the elevator
+elevator_pivot_offset = (
+    -2.5 * kInchesToMeters
+)  # offset from the pivot point to the center of the elevator
 max_elevator_height = 59.5 * kInchesToMeters  # the maximum height of the elevator
 max_elevator_height_delta = 45 * kInchesToMeters  # the maximum height of the elevator
 pivot_point_height = 17 * kInchesToMeters  # the height of the pivot point
@@ -82,14 +98,18 @@ claw_length_close = 8 * kInchesToMeters  # the length of the claw when it is clo
 # elevator gear ratios
 # --------------------------------------------------------------
 elevator_rotation_gear_ratio: float = 67.38  # to one
-elevator_extend_gear_ratio: float = 6.33 #6.33  # to one
-elevator_length_per_rotation: float = 1.736 * kInchesToMeters  # the length of the elevator per rotation
+elevator_extend_gear_ratio: float = 6.33  # 6.33  # to one
+elevator_length_per_rotation: float = (
+    1.736 * kInchesToMeters
+)  # the length of the elevator per rotation
 wrist_gear_ratio: float = 100  # to one
 # 24 rotations to max extension
-stabilizer_magnitude: float = 2  # the magnitude of the rotation of the arm based on the tip of the robot
-shoulder_max_velocity: float = 25 * elevator_rotation_gear_ratio #RPM 
-shoulder_max_acceleration: float = 25 * elevator_rotation_gear_ratio # RPM / S
-shoulder_min_acceleration: float = 5 * elevator_extend_gear_ratio # RPM / S
+stabilizer_magnitude: float = (
+    2  # the magnitude of the rotation of the arm based on the tip of the robot
+)
+shoulder_max_velocity: float = 25 * elevator_rotation_gear_ratio  # RPM
+shoulder_max_acceleration: float = 25 * elevator_rotation_gear_ratio  # RPM / S
+shoulder_min_acceleration: float = 5 * elevator_extend_gear_ratio  # RPM / S
 # --------------------------------------------------------------
 
 
@@ -101,8 +121,12 @@ wrist_min_rotation = math.radians(90)  # the minimum rotation of the wrist
 
 # elevator zeroing constants
 # --------------------------------------------------------------
-elevator_initial_rotation = 0  # the initial rotation of the elevator that it will zero too
-elevator_initial_length = 0 * kInchesToMeters  # the initial length of the elevator that it will zero too
+elevator_initial_rotation = (
+    0  # the initial rotation of the elevator that it will zero too
+)
+elevator_initial_length = (
+    0 * kInchesToMeters
+)  # the initial length of the elevator that it will zero too
 # --------------------------------------------------------------
 
 claw_motor_speed: float = 1

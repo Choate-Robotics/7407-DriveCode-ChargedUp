@@ -25,6 +25,7 @@ class _Robot(wpilib.TimedRobot):
         Pneumatics.compressor.enableAnalog(90, 120)
 
         Robot.drivetrain.init()
+        Robot.intake.init()
 
         # Sensors.pv_controller = PV_Cameras()
 
