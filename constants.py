@@ -7,61 +7,82 @@ from robotpy_toolkit_7407.utils.units import hour, m, mile, rad, rev, s
 from wpimath.geometry import Pose3d, Rotation3d, Transform3d
 
 from units.SI import (
-    rotations,
-    rotations_per_minute_per_meter,
+    inches_to_meters,
     meters,
     meters_per_second,
-    miles_per_hour_to_meters_per_second,
+    radians,
     radians_per_second,
-    rotations_per_second__to__radians_per_second,
-    inches_to_meters,
+    rotations,
+    rotations_per_minute,
+    rotations_per_minute_per_second,
 )
-
-drivetrain_turn_gear_ratio = 80.4848
-
-kInchesToMeters = .0254
-
-# robot constants
-robot_length = 29 * kInchesToMeters  # the length of the robot
 
 # boundary dimension constants
 # --------------------------------------------------------------
-horizontal_boundary = 28 * kInchesToMeters  # the horizontal boundry is the distance from the pivot point (center of robot) to the robots maximun extension limit in the x direction (one side of the robot)
-vertical_boundary = 78 * kInchesToMeters  # the vertical boundry is the distance from the floor to the robots maximun extension limit in the y direction
+horizontal_boundary: meters = (
+    28 * inches_to_meters
+)  # the horizontal boundary is the distance from the pivot point (center of robot) to the\
+# robots maximum extension limit in the x direction (one side of the robot)
+vertical_boundary: meters = (
+    78 * inches_to_meters
+)  # the vertical boundary is the distance from the floor to the robots maximum extension limit in the y direction
 # --------------------------------------------------------------
 
 # boundary buffer constants
 # --------------------------------------------------------------
-bottom_boundary_buffer_gap = 1 * kInchesToMeters  # the buffer in between the bottom boundry
-top_boundary_buffer_gap = 0 * kInchesToMeters  # the buffer in between the top boundry
-side_boundary_buffer_gap = 0 * kInchesToMeters  # the buffer in between the side boundries
+bottom_boundary_buffer_gap: meters = (
+    1 * inches_to_meters
+)  # the buffer in between the bottom boundary
+top_boundary_buffer_gap: meters = (
+    0 * inches_to_meters
+)  # the buffer in between the top boundary
+side_boundary_buffer_gap: meters = (
+    0 * inches_to_meters
+)  # the buffer in between the side boundaries
 # --------------------------------------------------------------
 
 # shoulder constants
 # --------------------------------------------------------------
-shoulder_max_rotation = math.radians(80)  # the maximum rotation of the shoulder
-shoulder_min_rotation = math.radians(110)  # the minimum rotation of the shoulder
-shoulder_intake_up_max_rotation = math.radians(90)  # the maximum rotation of the shoulder when the intake is up
+shoulder_max_rotation: radians = math.radians(
+    80
+)  # the maximum rotation of the shoulder
+shoulder_min_rotation: radians = math.radians(
+    110
+)  # the minimum rotation of the shoulder
+shoulder_intake_up_max_rotation: radians = math.radians(
+    90
+)  # the maximum rotation of the shoulder when the intake is up
 # --------------------------------------------------------------
 
 # shoulder buffer constants
 # --------------------------------------------------------------
-shoulder_min_buffer_rotation = math.radians(1)  # the buffer in between the minimun rotation
-shoulder_max_buffer_rotation = math.radians(1)  # the buffer in between the maximum rotation
+shoulder_min_buffer_rotation: radians = math.radians(
+    1
+)  # the buffer in between the minimum rotation
+shoulder_max_buffer_rotation: radians = math.radians(
+    1
+)  # the buffer in between the maximum rotation
 # --------------------------------------------------------------
 
 # elevator constants
 # --------------------------------------------------------------
-min_elevator_height = 30 * kInchesToMeters  # the minimum height of the elevator
-elevator_pivot_offset = -2.5 * kInchesToMeters  # offset from the pivot point to the center of the elevator
-max_elevator_height = 59.5 * kInchesToMeters  # the maximum height of the elevator
-max_elevator_height_delta = 45 * kInchesToMeters  # the maximum height of the elevator
-pivot_point_height = 17 * kInchesToMeters  # the height of the pivot point
+min_elevator_height: meters = (
+    30 * inches_to_meters
+)  # the minimum height of the elevator
+elevator_pivot_offset: meters = (
+    -2.5 * inches_to_meters
+)  # offset from the pivot point to the center of the elevator
+max_elevator_height: meters = (
+    59.5 * inches_to_meters
+)  # the maximum height of the elevator
+max_elevator_height_delta: meters = (
+    45 * inches_to_meters
+)  # the maximum height of the elevator
+pivot_point_height: meters = 17 * inches_to_meters  # the height of the pivot point
 # --------------------------------------------------------------
 
-# DONT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING/CALL SEBASTIAN PLUNKETT
 # --------------------------------------------------------------
-elevator_zero_length: float = (min_elevator_height / 2) + (-elevator_pivot_offset)
+elevator_zero_length: meters = (min_elevator_height / 2) + (-elevator_pivot_offset)
 # gets the length of the elevator above the pivot point using the offset and the min height
 # --------------------------------------------------------------
 
@@ -72,37 +93,53 @@ arm_pose_accuracy: float = 0.01  # the accuracy of the arm pose
 
 # claw constants
 # --------------------------------------------------------------
-claw_height = 10 * kInchesToMeters  # the height of the claw
-claw_width = 3 * kInchesToMeters  # the width of the claw
-claw_length_open = 14 * kInchesToMeters  # the length of the claw when it is open
-claw_length_close = 8 * kInchesToMeters  # the length of the claw when it is closed
+claw_height: meters = 10 * inches_to_meters  # the height of the claw
+claw_width: meters = 3 * inches_to_meters  # the width of the claw
+claw_length_open: meters = (
+    14 * inches_to_meters
+)  # the length of the claw when it is open
+claw_length_close: meters = (
+    8 * inches_to_meters
+)  # the length of the claw when it is closed
 # --------------------------------------------------------------
 
 
 # elevator gear ratios
 # --------------------------------------------------------------
-elevator_rotation_gear_ratio: float = 67.38  # to one
-elevator_extend_gear_ratio: float = 6.33 #6.33  # to one
-elevator_length_per_rotation: float = 1.736 * kInchesToMeters  # the length of the elevator per rotation
-wrist_gear_ratio: float = 100  # to one
+elevator_rotation_gear_ratio: rotations = 67.38  # to one
+elevator_extend_gear_ratio: rotations = 6.33  # 6.33  # to one
+elevator_length_per_rotation: meters = (
+    1.736 * inches_to_meters
+)  # the length of the elevator per rotation
+wrist_gear_ratio: rotations = 100  # to one
 # 24 rotations to max extension
-stabilizer_magnitude: float = 2  # the magnitude of the rotation of the arm based on the tip of the robot
-shoulder_max_velocity: float = 25 * elevator_rotation_gear_ratio #RPM 
-shoulder_max_acceleration: float = 25 * elevator_rotation_gear_ratio # RPM / S
-shoulder_min_acceleration: float = 5 * elevator_extend_gear_ratio # RPM / S
+stabilizer_magnitude: float = (
+    2  # the magnitude of the rotation of the arm based on the tip of the robot
+)
+shoulder_max_velocity: rotations_per_minute = 25 * elevator_rotation_gear_ratio  # RPM
+shoulder_max_acceleration: rotations_per_minute_per_second = (
+    25 * elevator_rotation_gear_ratio
+)  # RPM / S
+shoulder_min_acceleration: rotations_per_minute_per_second = (
+    5 * elevator_extend_gear_ratio
+)  # RPM / S
 # --------------------------------------------------------------
 
 
 # Wrist soft mount
 # --------------------------------------------------------------
-wrist_max_rotation = math.radians(90)  # the maximum rotation of the wrist
-wrist_min_rotation = math.radians(90)  # the minimum rotation of the wrist
+wrist_max_rotation: radians = math.radians(90)  # the maximum rotation of the wrist
+wrist_min_rotation: radians = math.radians(90)  # the minimum rotation of the wrist
 # --------------------------------------------------------------
 
 # elevator zeroing constants
 # --------------------------------------------------------------
-elevator_initial_rotation = 0  # the initial rotation of the elevator that it will zero too
-elevator_initial_length = 0 * kInchesToMeters  # the initial length of the elevator that it will zero too
+elevator_initial_rotation = (
+    0  # the initial rotation of the elevator that it will zero to
+)
+elevator_initial_length = (
+    0 * inches_to_meters
+)  # the initial length of the elevator that it will zero to
 # --------------------------------------------------------------
 
 claw_motor_speed: float = 1
@@ -134,7 +171,7 @@ top_cone_intake_arm_pose: Pose3d = Pose3d(0, 0, 0, claw_horizontal_rotation)
 
 # Apriltag positions (Relative to the apriltag)
 # --------------------------------------------------------------
-## CONE PEGS ##
+# CONE PEGS #
 left_high_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
 left_mid_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
 left_low_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
@@ -142,12 +179,12 @@ right_high_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
 right_mid_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
 right_low_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
 
-## CUBE PLATFORMS ##
+# CUBE PLATFORMS #
 center_low_platform_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)
 center_mid_platform_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)
 center_high_platform_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)
 
-## LOADING STATION ##
+# LOADING STATION #
 double_loading_station_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)
 single_loading_station_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)
 # --------------------------------------------------------------
@@ -157,74 +194,67 @@ period = 0.03
 # --- DRIVETRAIN ---
 # drivetrain_turn_gear_ratio = ((8.16 * 4096)/(2*math.pi) * rev_sensor_unit / rad).asNumber()
 
-drivetrain_turn_gear_ratio = 21.45
+drivetrain_turn_gear_ratio: rotations = 21.45
 drivetrain_move_gear_ratio_as_rotations_per_meter = 20.64
 
-drivetrain_move_gear_ratio = 20.64 * 62  # 20.64 * 60
+drivetrain_move_gear_ratio: rotations_per_minute = 20.64 * 60  # 20.64 * 62
 
-# track_width = (24.2 * inch).asNumber(m)
-track_width = 0.60325
-robot_length = 0.7366
+track_width: meters = 0.60325
+robot_length: meters = 0.7366
 
 # TODO Maybe change these
-drivetrain_max_vel = (20 * mile / hour).asNumber(m / s)  # 10
-drivetrain_target_max_vel = (3 * mile / hour).asNumber(m / s)  # 7
-drivetrain_max_angular_vel = (5 * rev / s).asNumber(rad / s)  # 4
-drivetrain_max_climb_vel = (5 * mile / hour).asNumber(m / s)
-
-kCentimetersPerInch = 2.54
-
-kCentimetersPerMeter = 100
-
-kMetersPerInch = kCentimetersPerInch / kCentimetersPerMeter
+drivetrain_max_vel: meters_per_second = (20 * mile / hour).asNumber(m / s)  # 10
+drivetrain_target_max_vel: meters_per_second = (3 * mile / hour).asNumber(m / s)  # 7
+drivetrain_max_angular_vel: radians_per_second = (5 * rev / s).asNumber(rad / s)  # 4
+drivetrain_max_climb_vel: meters_per_second = (5 * mile / hour).asNumber(m / s)
 
 ApriltagPositionDict = {
     1: Pose3d(
-        (kMetersPerInch * 610.77),
-        (kMetersPerInch * 42.19),
-        (kMetersPerInch * 18.22),
+        (inches_to_meters * 610.77),
+        (inches_to_meters * 42.19),
+        (inches_to_meters * 18.22),
         Rotation3d(0.0, 0.0, math.pi),
     ),
     2: Pose3d(
-        (kMetersPerInch * 610.77),
-        (kMetersPerInch * 108.19),
-        (kMetersPerInch * 18.22),
+        (inches_to_meters * 610.77),
+        (inches_to_meters * 108.19),
+        (inches_to_meters * 18.22),
         Rotation3d(0.0, 0.0, math.pi),
     ),
     3: Pose3d(
-        (kMetersPerInch * 610.77),
-        (kMetersPerInch * 174.19),  # FIRST's diagram has a typo (it says 147.19)
-        (kMetersPerInch * 18.22),
+        (inches_to_meters * 610.77),
+        (inches_to_meters * 174.19),  # FIRST's diagram has a typo (it says 147.19)
+        (inches_to_meters * 18.22),
         Rotation3d(0.0, 0.0, math.pi),
     ),
     4: Pose3d(
-        (kMetersPerInch * 636.96),
-        (kMetersPerInch * 265.74),
-        (kMetersPerInch * 27.38),
+        (inches_to_meters * 636.96),
+        (inches_to_meters * 265.74),
+        (inches_to_meters * 27.38),
         Rotation3d(0.0, 0.0, math.pi),
     ),
     5: Pose3d(
-        (kMetersPerInch * 14.25),
-        (kMetersPerInch * 265.74),
-        (kMetersPerInch * 27.38),
+        (inches_to_meters * 14.25),
+        (inches_to_meters * 265.74),
+        (inches_to_meters * 27.38),
         Rotation3d(),
     ),
     6: Pose3d(
-        (kMetersPerInch * 40.45),
-        (kMetersPerInch * 174.19),  # FIRST's diagram has a typo (it says 147.19)
-        (kMetersPerInch * 18.22),
+        (inches_to_meters * 40.45),
+        (inches_to_meters * 174.19),  # FIRST's diagram has a typo (it says 147.19)
+        (inches_to_meters * 18.22),
         Rotation3d(),
     ),
     7: Pose3d(
-        (kMetersPerInch * 40.45),
-        (kMetersPerInch * 108.19),
-        (kMetersPerInch * 18.22),
+        (inches_to_meters * 40.45),
+        (inches_to_meters * 108.19),
+        (inches_to_meters * 18.22),
         Rotation3d(),
     ),
     8: Pose3d(
-        (kMetersPerInch * 40.45),
-        (kMetersPerInch * 42.19),
-        (kMetersPerInch * 18.22),
+        (inches_to_meters * 40.45),
+        (inches_to_meters * 42.19),
+        (inches_to_meters * 18.22),
         Rotation3d(),
     ),
 }
