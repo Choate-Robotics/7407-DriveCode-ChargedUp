@@ -27,16 +27,17 @@ class ClimberZero(SubsystemCommand[Climber]):
         pass
 
 
-'''
-    TODO: Determine if we even need this command, or directly using the subsystem method instead 
-'''
-class ClimberEnable(SubsystemCommand[Climber]):
+
+class ClimberDeploy(SubsystemCommand[Climber]):
     def __init__(self, subsystem: Climber):
         super().__init__(subsystem)
         self.subsystem = subsystem
     
     def initialize(self):
-        Robot.climber.climber_deploy()
+        if not Robot.climber.climber_active:
+            Robot.climber.climber_deploy()
+        else:
+            Robot.climber.climber_disable()
 
     def execute(self):
         pass
@@ -85,22 +86,5 @@ class ClimberUnpivot(SubsystemCommand[Climber]):
     def end(self, interrupted=False):
         pass
 
-class ClimberDisable(SubsystemCommand[Climber]):
-    def __init__(self, subsystem: Climber):
-        super().__init__(subsystem)
-        self.subsystem = subsystem
-    
-    def initialize(self):
-        # self.turn_reversed = Robot.climber.pivot_threshold < Robot.climber.get_angle()
-        Robot.climber.climber_disable()
-
-    def execute(self):
-        pass
-
-    def isFinished(self) -> bool:
-        return True
-    
-    def end(self, interrupted=False):
-        pass
 
 
