@@ -47,7 +47,7 @@ class Arm(Subsystem):  # elevator class
     wrist: SparkMax = SparkMax(18, inverted=True, config=WRIST_CONFIG)
     claw_motor: SparkMax = SparkMax(12, inverted=False)
     claw_grabber: wpilib.DoubleSolenoid = wpilib.DoubleSolenoid(
-        1, wpilib.PneumaticsModuleType.REVPH, 4, 5
+        config.pneumatics_control_module, wpilib.PneumaticsModuleType.REVPH, 0, 1
     )
     initialized: bool = False
     brake_enabled: bool = False
@@ -173,7 +173,7 @@ class Arm(Subsystem):  # elevator class
     def engage_claw(self):
         # Set distance forward (closes claw)
         self.open_claw()
-        self.set_claw_output(constants.claw_motor_speed)
+        self.set_claw_output(config.claw_motor_speed)
 
     def disengage_claw(self):
         self.close_claw()
@@ -384,7 +384,6 @@ class Arm(Subsystem):  # elevator class
 
     def update_pose(self) -> None:
         """Updates the pose of the arm using the encoder values and rotation of the elevator"""
-        # updates the pose of the arm using the encoder values and rotation of the elevator
         angle = self.get_rotation()
         print("POSE ANGLE: " + str(angle))
         length = self.get_length()

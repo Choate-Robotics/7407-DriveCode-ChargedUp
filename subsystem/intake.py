@@ -11,7 +11,7 @@ class Intake(Subsystem):
         self.intake_motor = SparkMax(config.intake_motor_id)
 
         self.intake_piston = DoubleSolenoidPiston(
-            config.intake_piston_module,
+            config.pneumatics_control_module,
             config.intake_piston_forwardChannel,
             config.intake_piston_reverseChannel,
         )

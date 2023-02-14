@@ -6,17 +6,6 @@ import math
 from robotpy_toolkit_7407.utils.units import hour, m, mile, rad, rev, s
 from wpimath.geometry import Pose3d, Rotation3d, Transform3d
 
-from units.SI import (
-    rotations,
-    rotations_per_minute_per_meter,
-    meters,
-    meters_per_second,
-    miles_per_hour_to_meters_per_second,
-    radians_per_second,
-    rotations_per_second__to__radians_per_second,
-    inches_to_meters,
-)
-
 drivetrain_turn_gear_ratio = 80.4848
 
 kInchesToMeters = 0.0254
@@ -129,7 +118,6 @@ elevator_initial_length = (
 )  # the initial length of the elevator that it will zero too
 # --------------------------------------------------------------
 
-claw_motor_speed: float = 1
 
 # general claw rotations
 # --------------------------------------------------------------
