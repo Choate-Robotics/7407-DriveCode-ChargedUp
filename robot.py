@@ -17,7 +17,7 @@ class _Robot(wpilib.TimedRobot):
         super().__init__()
 
     def robotInit(self):
-        Robot.arm.init()
+        Robot.Arm.init()
         OI.init()
         OI.map_controls()
         period = 0.03
@@ -74,7 +74,7 @@ class _Robot(wpilib.TimedRobot):
                     pv_pose[0][0].toPose2d().Y(),
                     pv_pose[0][0].rotation().toRotation2d().radians(),
                 ],
-            )
+            ) 
         except Exception:
             pass
 
@@ -85,15 +85,15 @@ class _Robot(wpilib.TimedRobot):
         commands2.CommandScheduler.getInstance().run()
 
     def teleopInit(self):
-        # commands2.CommandScheduler.getInstance().schedule(command.ZeroArm(Robot.Arm).andThen(command.manualMovement(Robot.Arm)))
-
+        
+        #commands2.CommandScheduler.getInstance().schedule(command.ZeroArm(Robot.Arm).andThen(command.ManualMovement(Robot.Arm)))
         logger.debug("TELEOP", "Teleop Initialized")
         commands2.CommandScheduler.getInstance().schedule(
             command.DriveSwerveCustom(Robot.drivetrain)
         )
 
     def teleopPeriodic(self):
-        pass
+        print(Pneumatics.compressor.getPressure())
 
     def autonomousInit(self):
         routine.run()

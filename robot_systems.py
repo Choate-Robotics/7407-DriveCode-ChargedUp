@@ -6,7 +6,7 @@ from sensors import FieldOdometry, PV_Cameras
 
 
 class Robot:
-    arm = subsystem.Arm()
+    Arm = subsystem.Arm()
     drivetrain = subsystem.Drivetrain()
 
 

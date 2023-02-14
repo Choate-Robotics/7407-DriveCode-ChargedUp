@@ -87,9 +87,9 @@ elevator_length_per_rotation: float = 1.736 * kInchesToMeters  # the length of t
 wrist_gear_ratio: float = 100  # to one
 # 24 rotations to max extension
 stabilizer_magnitude: float = 2  # the magnitude of the rotation of the arm based on the tip of the robot
-shoulder_max_velocity: float = 25 * elevator_rotation_gear_ratio #RPM 
-shoulder_max_acceleration: float = 25 * elevator_rotation_gear_ratio # RPM / S
-shoulder_min_acceleration: float = 5 * elevator_extend_gear_ratio # RPM / S
+shoulder_max_velocity: float = 10 * elevator_rotation_gear_ratio #RPM 
+shoulder_max_acceleration: float = 1 * elevator_rotation_gear_ratio # RPM / S
+shoulder_min_acceleration: float = .1 * elevator_extend_gear_ratio # RPM / S
 # --------------------------------------------------------------
 
 
@@ -105,7 +105,7 @@ elevator_initial_rotation = 0  # the initial rotation of the elevator that it wi
 elevator_initial_length = 0 * kInchesToMeters  # the initial length of the elevator that it will zero too
 # --------------------------------------------------------------
 
-claw_motor_speed: float = 1
+claw_motor_speed: float = .2
 
 # general claw rotations
 # --------------------------------------------------------------

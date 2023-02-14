@@ -4,6 +4,7 @@ from robotpy_toolkit_7407.command import SubsystemCommand
 
 import constants
 import utils
+import rev
 from oi.keymap import Keymap
 from robot_systems import Sensors
 from subsystem import Arm
@@ -52,19 +53,20 @@ class ManualMovement(SubsystemCommand[Arm]):
         self.extend: float
 
     def initialize(self) -> None:
-        ...
+        self.subsystem.rotation_PID.setReference(10, rev.CANSparkMax.ControlType.kSmartMotion)
 
     def execute(self) -> None:
-        if abs(Keymap.Arm.ELEVATOR_ROTATION_AXIS.value) < 0.05:
-            self.rotate = 0
-        else:
-            self.rotate = Keymap.Arm.ELEVATOR_ROTATION_AXIS.value
-        self.subsystem.set_rotation(self.rotate * (2 * math.pi))
-        if abs(Keymap.Arm.CLAW_ROTATION_AXIS.value) < 0.05:
-            self.claw_rotate = 0
-        else:
-            self.claw_rotate = Keymap.Arm.CLAW_ROTATION_AXIS.value
-        self.subsystem.set_angle_wrist(self.claw_rotate * (2 * math.pi))
+        ...
+        # if abs(Keymap.Arm.ELEVATOR_ROTATION_AXIS.value) < 0.1:
+        #     self.rotate = 0
+        # else:
+        #     self.rotate = Keymap.Arm.ELEVATOR_ROTATION_AXIS.value
+        # self.subsystem.set_rotation(self.rotate * (2 * math.pi))
+        # if abs(Keymap.Arm.CLAW_ROTATION_AXIS.value) < 0.1:
+        #     self.claw_rotate = 0
+        # else:
+        #     self.claw_rotate = Keymap.Arm.CLAW_ROTATION_AXIS.value
+        # self.subsystem.set_angle_wrist(self.claw_rotate * (2 * math.pi))
         # if abs(Keymap.Arm.ELEVATOR_EXTENSION_AXIS.value) < .05:
         #     self.extend = 0
         # else:
