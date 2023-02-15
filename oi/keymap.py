@@ -5,18 +5,20 @@ from robotpy_toolkit_7407.oi import (
     XBoxController,
 )
 from robotpy_toolkit_7407.oi.joysticks import Joysticks
+from wpilib import XboxController
 
 controllerDRIVER = XBoxController
 controllerOPERATOR = XBoxController
-
+controllerNUMPAD = XBoxController
 
 class Controllers:
     DRIVER = 0
     OPERATOR = 1
+    NUMPAD = 2
 
     DRIVER_CONTROLLER = wpilib.Joystick(0)
     OPERATOR_CONTROLLER = wpilib.Joystick(1)
-
+    NUMPAD_CONTROLLER = wpilib.Joystick(2)
 
 class Keymap:
     class Drivetrain:
@@ -66,4 +68,71 @@ class Keymap:
         ENGAGE_CLAW = commands2.button.Button(
             lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerOPERATOR.RT)
             > 0.8
+        )
+    
+    class Scoring:
+        CONFIRM = commands2.button.Button( # 0, Right Thumb/Stick
+            lambda: Controllers.NUMPAD_CONTROLLER.getRawAxis(10)
+            > 0.8
+        )
+
+        DELETE = commands2.button.Button( # Dot, Left Trigger
+            lambda: Controllers.NUMPAD_CONTROLLER.getRawAxis(controllerNUMPAD.LT)
+            > 0.8
+        )
+
+        LEFT_GRID = commands2.button.Button( # NUM, D-pad Up
+ 
+        )
+
+        MIDDLE_GRID = commands2.button.Button( # /, D-pad Down
+
+        )
+
+        RIGHT_GRID = commands2.button.Button( # *, D-pad Left
+
+        )
+
+        TOP_LEFT = commands2.button.JoystickButton( # 7, Back
+            Joysticks.joysticks[Controllers.NUMPAD],
+            controllerNUMPAD.SELECT
+        )
+
+        TOP_MIDDLE = commands2.button.JoystickButton( # 8, Start
+            Joysticks.joysticks[Controllers.NUMPAD],
+            controllerNUMPAD.START
+        )
+
+        TOP_RIGHT = commands2.button.Button( # 9, Left Thumb/Stick
+            lambda: Controllers.NUMPAD_CONTROLLER.getRawAxis(9)
+            > 0.8
+        )
+
+        MIDDLE_LEFT = commands2.button.JoystickButton( # 4, Y
+            Joysticks.joysticks[Controllers.NUMPAD], controllerNUMPAD.Y
+        )
+        
+        MIDDLE_MIDDLE = commands2.button.Button( # 5, Left Bumper
+            lambda: Controllers.NUMPAD_CONTROLLER.getRawAxis(controllerNUMPAD.LB)
+            > 0.8
+        )
+
+        MIDDLE_RIGHT = commands2.button.Button( # 6, Right Bumper
+            lambda: Controllers.NUMPAD_CONTROLLER.getRawAxis(controllerNUMPAD.RB)
+            > 0.8
+        )
+
+        BOTTOM_LEFT = commands2.button.Button( # 1, A
+            Joysticks.joysticks[Controllers.NUMPAD], 
+            controllerNUMPAD.A
+        )
+
+        BOTTOM_MIDDLE = commands2.button.Button( # 2, B
+            Joysticks.joysticks[Controllers.NUMPAD], 
+            controllerNUMPAD.B
+        )
+
+        BOTTOM_RIGHT = commands2.button.Button( # 3, X
+            Joysticks.joysticks[Controllers.NUMPAD], 
+            controllerNUMPAD.X
         )
