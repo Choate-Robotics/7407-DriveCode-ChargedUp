@@ -48,7 +48,7 @@ class ZeroShoulder(SubsystemCommand[Arm]):
         # return not self.subsystem.elevator_bottom_sensor and \
         # self.subsystem.main_rotation_motor.get_sensor_position() == 0
         return (
-                round(self.subsystem.main_rotation_motor.get_sensor_position()) == 0
+                abs(self.subsystem.main_rotation_motor.get_sensor_position()) < .1
         )
 
     def end(self, interrupted=False):
@@ -70,13 +70,14 @@ class ZeroWrist(SubsystemCommand[Arm]):
 
     def isFinished(self):
         return (
-                round(self.subsystem.wrist.get_sensor_position()) == 0
+                abs(self.subsystem.wrist.get_sensor_position()) < .1
         )
 
     def end(self, interrupted=False):
         utils.logger.debug("Wrist", "Wrist Successfully Zeroed.")
 
 ZeroArm = lambda: commands2.SequentialCommandGroup(
+    commands2.InstantCommand(lambda: Robot.Arm.disengage_claw()),
     ZeroElevator(Robot.Arm),
     ZeroShoulder(Robot.Arm),
     ZeroWrist(Robot.Arm)
@@ -117,7 +118,6 @@ class ManualMovement(SubsystemCommand[Arm]):
     def end(self, interrupted: bool):
         pass
 
-
 class ArmAssistedRobotStabilizer(SubsystemCommand[Arm]):
     def __init__(self, subsystem: Arm):
         super().__init__(subsystem)
@@ -140,7 +140,6 @@ class ArmAssistedRobotStabilizer(SubsystemCommand[Arm]):
             self.subsystem.enable_brake()
             self.subsystem.stop()
 
-
 class HardStop(SubsystemCommand[Arm]):
     def initialize(self) -> None:
         self.subsystem.enable_brake()
@@ -156,7 +155,6 @@ class HardStop(SubsystemCommand[Arm]):
             self.subsystem.enable_brake()
             self.subsystem.stop()
 
-
 class EngageClaw(SubsystemCommand[Arm]):
     def initialize(self) -> None:
         self.subsystem.engage_claw()
@@ -170,7 +168,6 @@ class EngageClaw(SubsystemCommand[Arm]):
     def end(self, interrupted=False) -> None:
         ...
 
-
 class DisengageClaw(SubsystemCommand[Arm]):
     def initialize(self) -> None:
         self.subsystem.disengage_claw()
@@ -183,7 +180,6 @@ class DisengageClaw(SubsystemCommand[Arm]):
 
     def end(self, interrupted=False) -> None:
         ...
-
 
 class CubeIntakeExtend(SubsystemCommand[Arm]):
     def initialize(self) -> None:
@@ -199,7 +195,6 @@ class CubeIntakeExtend(SubsystemCommand[Arm]):
 
     def end(self, interrupted=False) -> None:
         pass
-
 
 class CubeIntakeRetract(SubsystemCommand[Arm]):
     def initialize(self) -> None:

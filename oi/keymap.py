@@ -29,7 +29,7 @@ class Keymap:
             Joysticks.joysticks[Controllers.DRIVER], controllerDRIVER.A
         )
         REZERO_MOTORS = commands2.button.JoystickButton(
-            Joysticks.joysticks[Controllers.DRIVER], controllerOPERATOR.B
+            Joysticks.joysticks[Controllers.DRIVER], controllerOPERATOR.X
         )
 
     class Arm:
@@ -62,8 +62,13 @@ class Keymap:
             > 0.8
         )
 
+        
+
     class Claw:
         ENGAGE_CLAW = commands2.button.Button(
             lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerOPERATOR.RT)
             > 0.8
         )
+        
+        ENGAGE_DOUBLE_STATION = Joysticks.joysticks[Controllers.DRIVER], controllerOPERATOR.X
+        
