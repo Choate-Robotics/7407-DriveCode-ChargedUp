@@ -88,6 +88,7 @@ rotations_per_second__to__degrees_per_second: int = rotations_to_degrees
 
 rotations_per_minute: Type[float] = float
 rotations_per_minute_per_meter: Type[float] = float
+rotations_per_minute_per_second: Type[float] = float
 
 miles_per_hour: Type[float] = float
 miles_per_hour_to_meters_per_second: float = miles_to_meters * hours_to_seconds

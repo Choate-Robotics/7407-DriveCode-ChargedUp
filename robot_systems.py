@@ -8,6 +8,7 @@ from sensors import FieldOdometry, PV_Cameras
 class Robot:
     Arm = subsystem.Arm()
     drivetrain = subsystem.Drivetrain()
+    intake = subsystem.Intake()
 
 
 class Pneumatics:

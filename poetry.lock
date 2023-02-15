@@ -326,14 +326,14 @@ pyflakes = ">=3.0.0,<3.1.0"
 
 [[package]]
 name = "identify"
-version = "2.5.17"
+version = "2.5.18"
 description = "File identification library for Python"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "identify-2.5.17-py2.py3-none-any.whl", hash = "sha256:7d526dd1283555aafcc91539acc061d8f6f59adb0a7bba462735b0a318bff7ed"},
-    {file = "identify-2.5.17.tar.gz", hash = "sha256:93cc61a861052de9d4c541a7acb7e3dcc9c11b398a2144f6e52ae5285f5f4f06"},
+    {file = "identify-2.5.18-py2.py3-none-any.whl", hash = "sha256:93aac7ecf2f6abf879b8f29a8002d3c6de7086b8c28d88e1ad15045a15ab63f9"},
+    {file = "identify-2.5.18.tar.gz", hash = "sha256:89e144fa560cc4cffb6ef2ab5e9fb18ed9f9b3cb054384bab4b95c12f6c309fe"},
 ]
 
 [package.extras]
@@ -785,32 +785,32 @@ files = [
 
 [[package]]
 name = "robotpy"
-version = "2023.3.2.2"
+version = "2023.3.2.3"
 description = "Meta package to make installing robotpy easier"
 category = "main"
 optional = false
 python-versions = ">=3.7,<3.12"
 files = [
-    {file = "robotpy-2023.3.2.2-py3-none-any.whl", hash = "sha256:59d75aef85246936164636f5c9f819a03171f3d34d9cf663465c7d695bca8400"},
-    {file = "robotpy-2023.3.2.2.tar.gz", hash = "sha256:8ccf226f56b73f814e1a3225de04b09a650c010b0865e96b1e6ecc491999fc93"},
+    {file = "robotpy-2023.3.2.3-py3-none-any.whl", hash = "sha256:b7c1173bcc129fca0ba1911ef5bf9c80b62638debaaa8ff41195b7272fd68419"},
+    {file = "robotpy-2023.3.2.3.tar.gz", hash = "sha256:c75e30b6d8de78f58f3181947bab8f95ed67f3775455c22a6dc6374416a6d8d1"},
 ]
 
 [package.dependencies]
 pyfrc = {version = ">=2023.0.1,<2024.0.0", markers = "platform_machine != \"armv7l\""}
 pyntcore = "2023.3.2.1"
-robotpy-commands-v2 = {version = "2023.3.2.1", optional = true, markers = "extra == \"commands2\""}
+robotpy-commands-v2 = {version = "2023.3.2.2", optional = true, markers = "extra == \"commands2\""}
 robotpy-hal = "2023.3.2.1"
 robotpy-halsim-gui = {version = "2023.3.2.1", markers = "platform_machine != \"armv7l\""}
 robotpy-installer = {version = ">=2023.0.2,<2024.0.0", markers = "platform_machine != \"armv7l\""}
-robotpy-wpilib-utilities = "2023.0.0"
+robotpy-wpilib-utilities = ">=2023.0.0,<2024"
 robotpy-wpimath = "2023.3.2.1"
 robotpy-wpiutil = "2023.3.2.1"
 wpilib = "2023.3.2.1"
 
 [package.extras]
-all = ["numpy", "pyfrc (>=2023.0.1,<2024.0.0)", "pyntcore (==2023.3.2.1)", "robotpy-apriltag (==2023.3.2.1)", "robotpy-commands-v2 (==2023.3.2.1)", "robotpy-cscore (==2023.3.2.1)", "robotpy-ctre (>=2023.0.0,<2024.0.0)", "robotpy-hal (==2023.3.2.1)", "robotpy-halsim-ds-socket (==2023.3.2.1)", "robotpy-halsim-gui (==2023.3.2.1)", "robotpy-halsim-ws (==2023.3.2.1)", "robotpy-installer (>=2023.0.2,<2024.0.0)", "robotpy-navx (>=2023.0.1,<2024.0.0)", "robotpy-opencv", "robotpy-pathplannerlib (>=2023.0.0,<2024.0.0)", "robotpy-photonvision (>=2023.1.2,<2024.0.0)", "robotpy-playingwithfusion (>=2023.0.0,<2024.0.0)", "robotpy-rev (>=2023.1.1,<2024.0.0)", "robotpy-wpilib-utilities (==2023.0.0)", "robotpy-wpimath (==2023.3.2.1)", "robotpy-wpiutil (==2023.3.2.1)", "wpilib (==2023.3.2.1)"]
+all = ["numpy", "pyfrc (>=2023.0.1,<2024.0.0)", "pyntcore (==2023.3.2.1)", "robotpy-apriltag (==2023.3.2.1)", "robotpy-commands-v2 (==2023.3.2.2)", "robotpy-cscore (==2023.3.2.1)", "robotpy-ctre (>=2023.0.0,<2024.0.0)", "robotpy-hal (==2023.3.2.1)", "robotpy-halsim-ds-socket (==2023.3.2.1)", "robotpy-halsim-gui (==2023.3.2.1)", "robotpy-halsim-ws (==2023.3.2.1)", "robotpy-installer (>=2023.0.2,<2024.0.0)", "robotpy-navx (>=2023.0.1,<2024.0.0)", "robotpy-opencv", "robotpy-pathplannerlib (>=2023.0.0,<2024.0.0)", "robotpy-photonvision (>=2023.1.2,<2024.0.0)", "robotpy-playingwithfusion (>=2023.0.0,<2024.0.0)", "robotpy-rev (>=2023.1.1,<2024.0.0)", "robotpy-wpilib-utilities (>=2023.0.0,<2024)", "robotpy-wpimath (==2023.3.2.1)", "robotpy-wpiutil (==2023.3.2.1)", "wpilib (==2023.3.2.1)"]
 apriltag = ["numpy", "robotpy-apriltag (==2023.3.2.1)", "robotpy-opencv"]
-commands2 = ["robotpy-commands-v2 (==2023.3.2.1)"]
+commands2 = ["robotpy-commands-v2 (==2023.3.2.2)"]
 cscore = ["numpy", "robotpy-cscore (==2023.3.2.1)", "robotpy-opencv"]
 ctre = ["robotpy-ctre (>=2023.0.0,<2024.0.0)"]
 navx = ["robotpy-navx (>=2023.0.1,<2024.0.0)"]
@@ -852,28 +852,28 @@ robotpy-wpiutil = ">=2023.3.2,<2023.4.0"
 
 [[package]]
 name = "robotpy-commands-v2"
-version = "2023.3.2.1"
+version = "2023.3.2.2"
 description = "WPILib command framework v2"
 category = "main"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "robotpy-commands-v2-2023.3.2.1.tar.gz", hash = "sha256:b340eb23223de0fc67365fd67e67d1fbd8eed2e3aa59a1cb9c4774560ef7f6c7"},
-    {file = "robotpy_commands_v2-2023.3.2.1-cp310-cp310-macosx_10_16_x86_64.whl", hash = "sha256:1a6d517e16bb208333076f75d87c18027451fce000f24c1f6c37aa9096556768"},
-    {file = "robotpy_commands_v2-2023.3.2.1-cp310-cp310-manylinux_2_35_x86_64.whl", hash = "sha256:b5bf805f312c9d4943f6c8f5563c7a4c79ca534d608e129a7d13e2fdabf34ac0"},
-    {file = "robotpy_commands_v2-2023.3.2.1-cp310-cp310-win_amd64.whl", hash = "sha256:306c4d208b960a22335b9f54e89e3b6f1fda03a71e6b4e831e2bb6aa3499a176"},
-    {file = "robotpy_commands_v2-2023.3.2.1-cp311-cp311-macosx_11_0_universal2.whl", hash = "sha256:a63d8f1be00f7f0aa424708cf7f1aa6d601dd31b01ef81a07322e5a4617a9dea"},
-    {file = "robotpy_commands_v2-2023.3.2.1-cp311-cp311-manylinux_2_35_x86_64.whl", hash = "sha256:4ba1a9a83708885f3f2da080462de8bb98f8d9e594821992ede21e6452163cea"},
-    {file = "robotpy_commands_v2-2023.3.2.1-cp311-cp311-win_amd64.whl", hash = "sha256:4f1818840d77b22598673687801c4de549d11767e8e5efb3bc56e093ea122ef5"},
-    {file = "robotpy_commands_v2-2023.3.2.1-cp37-cp37m-macosx_10_16_x86_64.whl", hash = "sha256:83b3bdc89189f649e482004b30611658986f5bc4f981e28ee98b35d147b5c2b4"},
-    {file = "robotpy_commands_v2-2023.3.2.1-cp37-cp37m-manylinux_2_35_x86_64.whl", hash = "sha256:0e94620619671fa7e6f93a29c2aa28d3106b3af5fc222bab9744a82638c70568"},
-    {file = "robotpy_commands_v2-2023.3.2.1-cp37-cp37m-win_amd64.whl", hash = "sha256:6642298fd269ae865395a99feef360e705f3d7b108b8e0c5436c7a6f0757a720"},
-    {file = "robotpy_commands_v2-2023.3.2.1-cp38-cp38-macosx_10_16_x86_64.whl", hash = "sha256:9595ed210079765d5d34d77329995442f3b3524c6a708ce32c37625fc3b82b1c"},
-    {file = "robotpy_commands_v2-2023.3.2.1-cp38-cp38-manylinux_2_35_x86_64.whl", hash = "sha256:fad72dd15afdaa725cc051a190d2fd9495334ba41a3354db4d874a0c89ccda08"},
-    {file = "robotpy_commands_v2-2023.3.2.1-cp38-cp38-win_amd64.whl", hash = "sha256:acc16c84256c6216990c180d88d93b1c0b76850a5fd7a7f700faa5bb38a027a0"},
-    {file = "robotpy_commands_v2-2023.3.2.1-cp39-cp39-macosx_10_16_x86_64.whl", hash = "sha256:e33dc4a1c520e83591dee1541e378f4b8f5aa091ddb0ca2bdbe20786aae0fc2e"},
-    {file = "robotpy_commands_v2-2023.3.2.1-cp39-cp39-manylinux_2_35_x86_64.whl", hash = "sha256:11b799c7da10d82091c18809e14dfc74280471701a07ed1edecdc0d018a97ed4"},
-    {file = "robotpy_commands_v2-2023.3.2.1-cp39-cp39-win_amd64.whl", hash = "sha256:3a229fba29829123f1dd5d1b248c67232ad21533fad8dece4228ad8b3993aea0"},
+    {file = "robotpy-commands-v2-2023.3.2.2.tar.gz", hash = "sha256:60a0c18eba92f0af2db38cd07bf521afeb04e6161e129ce53888eef852e0d37c"},
+    {file = "robotpy_commands_v2-2023.3.2.2-cp310-cp310-macosx_10_16_x86_64.whl", hash = "sha256:0c7a9274d33796ba2d66f643527275c1bb5a3761ba184abceebbdab8e374fa53"},
+    {file = "robotpy_commands_v2-2023.3.2.2-cp310-cp310-manylinux_2_35_x86_64.whl", hash = "sha256:fc078b7cabeae4658036c1feff734b023586255fcc4aeda6c41d6f236eb3cc4e"},
+    {file = "robotpy_commands_v2-2023.3.2.2-cp310-cp310-win_amd64.whl", hash = "sha256:c94ea5cec732d2a2ace32e4c5f92289154996c52b831f2661496b261279a779b"},
+    {file = "robotpy_commands_v2-2023.3.2.2-cp311-cp311-macosx_11_0_universal2.whl", hash = "sha256:832bf071ba7a6bc7312e77356ba9dd6d13bd79fdc2684a63f17feb3dfdf54260"},
+    {file = "robotpy_commands_v2-2023.3.2.2-cp311-cp311-manylinux_2_35_x86_64.whl", hash = "sha256:2b37afdc69abf1f66deaaacb1244524627743dd3010f50af5a6ca165a0e1abe6"},
+    {file = "robotpy_commands_v2-2023.3.2.2-cp311-cp311-win_amd64.whl", hash = "sha256:be69b24535f1612276ffce24d3c44b735a0cb43d72723587aad413da20dfa8de"},
+    {file = "robotpy_commands_v2-2023.3.2.2-cp37-cp37m-macosx_10_16_x86_64.whl", hash = "sha256:2ec2d5120d3c3c84fe886804d20e1de384c054d2b49aa97fffd6be9570cd8aee"},
+    {file = "robotpy_commands_v2-2023.3.2.2-cp37-cp37m-manylinux_2_35_x86_64.whl", hash = "sha256:7e18e475e64c51cd1bfc27b79cffc518266fead179f8d5a86b6726f806a22d0a"},
+    {file = "robotpy_commands_v2-2023.3.2.2-cp37-cp37m-win_amd64.whl", hash = "sha256:6f0ebeae3e1534786bbe4678baaaa7d4d8b99a6ebf084fe322424249a66ecbd6"},
+    {file = "robotpy_commands_v2-2023.3.2.2-cp38-cp38-macosx_10_16_x86_64.whl", hash = "sha256:660f2f1c3ce9cdcc4a96d4edb75baa5949ab450d34f853aeb4b6446ee48fce11"},
+    {file = "robotpy_commands_v2-2023.3.2.2-cp38-cp38-manylinux_2_35_x86_64.whl", hash = "sha256:bd44edf66b8499b4dd1f5ceb4f21ebbc7cc57cd0cfb600289e41872817f31852"},
+    {file = "robotpy_commands_v2-2023.3.2.2-cp38-cp38-win_amd64.whl", hash = "sha256:64d275178b2ddccb14cf8b362a4ce3fbc6a56f7b5b1698228ef521b5691b8164"},
+    {file = "robotpy_commands_v2-2023.3.2.2-cp39-cp39-macosx_10_16_x86_64.whl", hash = "sha256:16b5bb376672e7a14758b928b486f02d4640c6bcd74750db8315facd96978c73"},
+    {file = "robotpy_commands_v2-2023.3.2.2-cp39-cp39-manylinux_2_35_x86_64.whl", hash = "sha256:c664f12c999bedf911fd3ae338861eee91e42c1385716ee422845a7abdb56383"},
+    {file = "robotpy_commands_v2-2023.3.2.2-cp39-cp39-win_amd64.whl", hash = "sha256:3c177a88885abeb95afd1e9a3d34d341511b6456676173b1aa10b4fe72d621e8"},
 ]
 
 [package.dependencies]
@@ -1050,14 +1050,14 @@ wpilib = ">=2023.1.1.0,<2024.0.0"
 
 [[package]]
 name = "robotpy-toolkit-7407"
-version = "2023.1.5.0"
+version = "2023.1.6.0"
 description = "FRC Wired Boars Team 7407's Toolkit for usage with RobotPy"
 category = "main"
 optional = false
 python-versions = ">3.9,<3.12"
 files = [
-    {file = "robotpy_toolkit_7407-2023.1.5.0-py3-none-any.whl", hash = "sha256:69634aeb0cd9590f613b32066bf3f7a5d209183c4add13792461652b3a34128d"},
-    {file = "robotpy_toolkit_7407-2023.1.5.0.tar.gz", hash = "sha256:42372fcc25478d21949a47680298196abc45eda9b5386c016000426d2b7fd5df"},
+    {file = "robotpy_toolkit_7407-2023.1.6.0-py3-none-any.whl", hash = "sha256:e6eced1912b96951acae2eee9b4acfe4e18905dab0c3089e8b9072ec52128ddd"},
+    {file = "robotpy_toolkit_7407-2023.1.6.0.tar.gz", hash = "sha256:1b5d4be9b3263a2398f56ad0c8b67b6205898a81be839063304ffde601c2b809"},
 ]
 
 [package.dependencies]
@@ -1071,19 +1071,19 @@ robotpy-rev = ">=2023.1.1,<2024.0.0"
 
 [[package]]
 name = "robotpy-wpilib-utilities"
-version = "2023.0.0"
+version = "2023.1.0"
 description = "Useful utility functions/objects for RobotPy"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "robotpy-wpilib-utilities-2023.0.0.tar.gz", hash = "sha256:03ebacc0d63a237056730a45410200f6ae8f263d226b09f98c0f38e4ec98ec42"},
-    {file = "robotpy_wpilib_utilities-2023.0.0-py3-none-any.whl", hash = "sha256:119a0d5a3195c145bbf9c82b71b35139e492ef77bc859cc2b12b1bc5c91d2617"},
+    {file = "robotpy-wpilib-utilities-2023.1.0.tar.gz", hash = "sha256:7cbf7fb813a58e0be19e3ba09fd28b867624de373e68acb8a782f1757bfb7c8f"},
+    {file = "robotpy_wpilib_utilities-2023.1.0-py3-none-any.whl", hash = "sha256:1e92770a77989a2e409ea8affffcb8afcd4e3bce04c44c7df92b32c59029e477"},
 ]
 
 [package.dependencies]
-pyntcore = ">=2023.0.0b4"
-wpilib = ">=2023.0.0b4,<2024.0.0"
+pyntcore = ">=2023.2.1.4"
+wpilib = ">=2023.2.1,<2024"
 
 [[package]]
 name = "robotpy-wpimath"
@@ -1171,14 +1171,14 @@ files = [
 
 [[package]]
 name = "setuptools"
-version = "67.2.0"
+version = "67.3.1"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "setuptools-67.2.0-py3-none-any.whl", hash = "sha256:16ccf598aab3b506593c17378473978908a2734d7336755a8769b480906bec1c"},
-    {file = "setuptools-67.2.0.tar.gz", hash = "sha256:b440ee5f7e607bb8c9de15259dba2583dd41a38879a7abc1d43a71c59524da48"},
+    {file = "setuptools-67.3.1-py3-none-any.whl", hash = "sha256:23c86b4e44432bfd8899384afc08872ec166a24f48a3f99f293b0a557e6a6b5d"},
+    {file = "setuptools-67.3.1.tar.gz", hash = "sha256:daec07fd848d80676694d6bf69c009d28910aeece68a38dbe88b7e1bb6dba12e"},
 ]
 
 [package.extras]
