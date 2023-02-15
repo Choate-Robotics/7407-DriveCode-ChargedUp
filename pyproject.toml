@@ -2,11 +2,11 @@
 name = "7407-DRIVECODE-ChargedUp"
 version = "0.1.0"
 description = "Team 7407 Wired Boars ChargedUp Robot Code"
-authors = ["Sidharth Rao <sidharthmrao@gmail.com>"]
+authors = ["Sidharth Rao <sidharthmrao@gmail.com>", "Sebastian Plunkett <gamebot60000@gmail.com>"]
 
 [tool.poetry.dependencies]
-python=">3.9,<3.12"
-robotpy-toolkit-7407 = "^0.5.49.13"
+python = ">3.9,<3.12"
+robotpy-toolkit-7407 = "^2023.1.3.0"
 pre-commit = "^3.0.0"
 black = "^22.12.0"
 isort = "^5.11.4"
@@ -17,3 +17,6 @@ flake8 = "^6.0.0"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+pythonpath = [".", "subsystem", "command", "sensors", "oi", "robotpy-toolkit-7407"]

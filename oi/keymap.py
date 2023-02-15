@@ -1,9 +1,10 @@
+import commands2.button
+import wpilib
 from robotpy_toolkit_7407.oi import (
-    DefaultButton,
     JoystickAxis,
-    LogitechController,
     XBoxController,
 )
+from robotpy_toolkit_7407.oi.joysticks import Joysticks
 
 controllerDRIVER = XBoxController
 controllerOPERATOR = XBoxController
@@ -13,6 +14,9 @@ class Controllers:
     DRIVER = 0
     OPERATOR = 1
 
+    DRIVER_CONTROLLER = wpilib.Joystick(0)
+    OPERATOR_CONTROLLER = wpilib.Joystick(1)
+
 
 class Keymap:
     class Drivetrain:
@@ -21,24 +25,45 @@ class Keymap:
         DRIVE_ROTATION_AXIS = JoystickAxis(
             Controllers.DRIVER, controllerDRIVER.R_JOY[0]
         )
-        RESET_GYRO = DefaultButton(Controllers.DRIVER, controllerDRIVER.A)
-        REZERO_MOTORS = DefaultButton(Controllers.DRIVER, controllerDRIVER.B)
-        AIM_SWERVE = DefaultButton(Controllers.DRIVER, controllerDRIVER.RT)
-        DRIVER_CENTRIC = DefaultButton(Controllers.DRIVER, controllerDRIVER.LB)
-        DRIVER_CENTRIC_REVERSED = DefaultButton(Controllers.DRIVER, controllerDRIVER.RB)
-    
-    class Elevator:
-        ELEVATOR_SWING = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.R_JOY[4])
-        ELEVATOR_EXTEND =JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.R_JOY[5])
-        REZERO_ARM = DefaultButton(Controllers.OPERATOR, controllerOPERATOR.A)
-    
+        RESET_GYRO = commands2.button.JoystickButton(
+            Joysticks.joysticks[Controllers.DRIVER], controllerDRIVER.A
+        )
+        REZERO_MOTORS = commands2.button.JoystickButton(
+            Joysticks.joysticks[Controllers.DRIVER], controllerOPERATOR.B
+        )
+
+    class Arm:
+        ELEVATOR_ROTATION_AXIS = JoystickAxis(
+            Controllers.OPERATOR, controllerOPERATOR.L_JOY[0]
+        )
+        ELEVATOR_EXTENSION_AXIS = JoystickAxis(
+            Controllers.OPERATOR, controllerOPERATOR.L_JOY[1]
+        )
+        CLAW_ROTATION_AXIS = JoystickAxis(
+            Controllers.OPERATOR, controllerOPERATOR.R_JOY[0]
+        )
+        REZERO_ELEVATOR = commands2.button.JoystickButton(
+            Joysticks.joysticks[Controllers.OPERATOR], controllerOPERATOR.A
+        )
+        EXTEND_ELEVATOR_MAX = commands2.button.JoystickButton(
+            Joysticks.joysticks[Controllers.OPERATOR], controllerOPERATOR.B
+        )
+        RETRACT_ELEVATOR_MIN = commands2.button.JoystickButton(
+            Joysticks.joysticks[Controllers.OPERATOR], controllerOPERATOR.X
+        )
+
+        ARM_BRAKE = commands2.button.JoystickButton(
+            Joysticks.joysticks[Controllers.OPERATOR], controllerOPERATOR.Y
+        )
+
     class Intake:
-        AUTO_GRAB = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.RT) #I'm not sure if we want this, but just in case I added it here
-        WRIST_Y = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.DP) #d-pad doesn't exist in the toolkit but I think it makes sense
-        # WRIST_Y = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.L_JOY[1]) # Use if not using above
-        CLAW_TOGGLE = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.LB)
-        INTAKE = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.B)
-    
-    class Climb: #I will move these to other classes, I'm just not yet sure where they go.
-        AUTO_BALANCE = JoystickAxis(Controllers.OPERATOR, controllerDRIVER)
-        FORKLIFT = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR)
+        INTAKE_ENABLE = commands2.button.Button(
+            lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerOPERATOR.LT)
+            > 0.8
+        )
+
+    class Claw:
+        ENGAGE_CLAW = commands2.button.Button(
+            lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerOPERATOR.RT)
+            > 0.8
+        )
