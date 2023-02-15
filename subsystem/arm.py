@@ -40,8 +40,8 @@ class Arm(Subsystem):  # elevator class
     )  # motor that rotates the arm
     # main_rotation_motor.__pid_controller.setSmartMotionMaxAccel(2 * constants.elevator_rotation_gear_ratio, 0)
     # Brake
-    brake: wpilib.Solenoid = wpilib.Solenoid(
-        1, wpilib.PneumaticsModuleType.REVPH, config.elevator_brake_id
+    brake: wpilib.DoubleSolenoid = wpilib.DoubleSolenoid(
+        31, wpilib.PneumaticsModuleType.REVPH, 14, 15
     )  # brake that holds the arm in place
     # Wrist and Claw
     wrist: SparkMax = SparkMax(18, inverted=True, config=WRIST_CONFIG)
@@ -190,7 +190,7 @@ class Arm(Subsystem):  # elevator class
             return False
         else:
             self.brake_enabled = True
-            self.brake.set(True)
+            self.brake.set(wpilib.DoubleSolenoid.Value.kReverse)
             return True
 
     def disable_brake(self) -> bool:
@@ -199,7 +199,7 @@ class Arm(Subsystem):  # elevator class
             return False
         else:
             self.brake_enabled = False
-            self.brake.set(False)
+            self.brake.set(wpilib.DoubleSolenoid.Value.kReverse)
             return True
 
     def enable_brake_override(self) -> None:
