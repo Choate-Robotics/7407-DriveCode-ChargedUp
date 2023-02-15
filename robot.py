@@ -87,7 +87,8 @@ class _Robot(wpilib.TimedRobot):
 
     def teleopInit(self):
         
-        #commands2.CommandScheduler.getInstance().schedule(command.ZeroArm(Robot.Arm).andThen(command.ManualMovement(Robot.Arm)))
+        commands2.CommandScheduler.getInstance().schedule(command.ZeroArm())
+        #command.ZeroArm()
         logger.debug("TELEOP", "Teleop Initialized")
         commands2.CommandScheduler.getInstance().schedule(
             command.DriveSwerveCustom(Robot.drivetrain)

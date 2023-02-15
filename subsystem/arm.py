@@ -13,7 +13,7 @@ from units.SI import radians
 # importing packages
 
 SHOULDER_CONFIG = SparkMaxConfig(
-    0.006, 0, 1, 0.2, (-0.3, 0.3), idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    0.6, 0, 1, 0.2, (-0.3, 0.3), idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 ELEVATOR_CONFIG = SparkMaxConfig(
     1, 0, 0.004, 0.00017, (-0.5, 0.5), idle_mode=rev.CANSparkMax.IdleMode.kBrake
@@ -44,7 +44,7 @@ class Arm(Subsystem):  # elevator class
         31, wpilib.PneumaticsModuleType.REVPH, 14, 15
     )  # brake that holds the arm in place
     # Wrist and Claw
-    wrist: SparkMax = SparkMax(18, inverted=True, config=WRIST_CONFIG)
+    wrist: SparkMax = SparkMax(18, inverted=False, config=WRIST_CONFIG)
     claw_motor: SparkMax = SparkMax(12, inverted=False)
     claw_grabber: wpilib.DoubleSolenoid = wpilib.DoubleSolenoid(
         config.pneumatics_control_module, wpilib.PneumaticsModuleType.REVPH, 0, 1
@@ -117,6 +117,8 @@ class Arm(Subsystem):  # elevator class
         self.rotation_PID.setIZone(0.0)
         self.rotation_PID.setSmartMotionAllowedClosedLoopError(.1)
         self.rotation_PID.setSmartMotionMinOutputVelocity(0.0)
+        self.zero_elevator_rotation()
+        self.zero_wrist()
 
     def set_angle_wrist(self, pos: float):
         """
@@ -152,7 +154,7 @@ class Arm(Subsystem):  # elevator class
         # print("ELEVATOR RATIO: " + str(constants.elevator_rotation_gear_ratio))
         # print( "MOTOR POSITION W/GEAR RATIO:" + str(motor_position))
         # set motor position to the difference
-        self.wrist.set_sensor_position(motor_position)
+        self.wrist.set_sensor_position(-motor_position)
         # run the motor to the zero position
         self.wrist.set_target_position(0)
 
@@ -199,7 +201,7 @@ class Arm(Subsystem):  # elevator class
             return False
         else:
             self.brake_enabled = False
-            self.brake.set(wpilib.DoubleSolenoid.Value.kReverse)
+            self.brake.set(wpilib.DoubleSolenoid.Value.kOff)
             return True
 
     def enable_brake_override(self) -> None:
@@ -310,8 +312,8 @@ class Arm(Subsystem):  # elevator class
         # print("RADIANS: " + str(radians))
         def set(angle: radians):
             rotations = (angle / (2 * math.pi)) * constants.elevator_rotation_gear_ratio
-            #self.main_rotation_motor.set_target_position(rotations)
-            self.rotation_PID.setReference(1, rev.CANSparkMax.ControlType.kVelocity)
+            self.main_rotation_motor.set_target_position(rotations)
+            # self.rotation_PID.setReference(1, rev.CANSparkMax.ControlType.kVelocity)
 
         # if the rotation is within the soft limits, set the rotation to the given angle
         if not self.disable_rotation:

@@ -22,14 +22,13 @@ class OI:
         # Keymap.Arm.ENGAGE_CLAW().whenPressed(engageClaw()).whenReleased(disEngageClaw())
 
         Keymap.Intake.INTAKE_ENABLE.whenPressed(command.IntakeEnable(Robot.intake).andThen(
-            WaitCommand(2).andThen(command.CubeIntake(Robot.Arm))
-        ))
-        Keymap.Intake.INTAKE_ENABLE.onFalse(command.IntakeDisable(Robot.intake))
-        Keymap.Claw.ENGAGE_CLAW.onTrue(InstantCommand(lambda: Robot.Arm.engage_claw()))
+            WaitCommand(3).andThen(command.CubeIntakeExtend(Robot.Arm))))
+        # Keymap.Intake.INTAKE_ENABLE.whenPressed(command.CubeIntakeExtend(Robot.Arm))
+        Keymap.Intake.INTAKE_ENABLE.onFalse(
+            command.IntakeDisable(Robot.intake))
+        Keymap.Claw.ENGAGE_CLAW.onTrue(
+            InstantCommand(lambda: Robot.Arm.engage_claw()))
         Keymap.Claw.ENGAGE_CLAW.onFalse(
-            InstantCommand(lambda: Robot.Arm.disengage_claw()).andThen(
-                WaitCommand(2).andThen(
-                    command.ZeroArm(Robot.Arm)
-                )
+            InstantCommand(lambda: Robot.Arm.disengage_claw())
             )
-        )
+        
