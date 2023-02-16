@@ -1,15 +1,13 @@
 import math
-
-from robotpy_toolkit_7407.command import SubsystemCommand
-
+import config
 import constants
 import utils
+from robotpy_toolkit_7407.command import SubsystemCommand
+from commands2 import SequentialCommandGroup
 from oi.keymap import Keymap
-from robot_systems import Sensors
-from subsystem import Arm
+from robot_systems import Sensors, Robot
+from subsystem import Arm, Claw
 from units.SI import meters, radians
-from robot_systems import Robot
-
 
 class ZeroArm(SubsystemCommand[Arm]):
     def __init__(self, subsystem: Arm):
@@ -42,7 +40,6 @@ class ZeroArm(SubsystemCommand[Arm]):
         if not interrupted:
             self.subsystem.enable_brake()
             self.subsystem.stop()
-
 
 class ManualMovement(SubsystemCommand[Arm]):
     def __init__(self, subsystem: Arm):
@@ -78,7 +75,6 @@ class ManualMovement(SubsystemCommand[Arm]):
     def end(self, interrupted: bool):
         pass
 
-
 class ArmAssistedRobotStabilizer(SubsystemCommand[Arm]):
     def __init__(self, subsystem: Arm):
         super().__init__(subsystem)
@@ -101,7 +97,6 @@ class ArmAssistedRobotStabilizer(SubsystemCommand[Arm]):
             self.subsystem.enable_brake()
             self.subsystem.stop()
 
-
 class HardStop(SubsystemCommand[Arm]):
     def initialize(self) -> None:
         self.subsystem.enable_brake()
@@ -117,34 +112,65 @@ class HardStop(SubsystemCommand[Arm]):
             self.subsystem.enable_brake()
             self.subsystem.stop()
 
+class ClawInit(SubsystemCommand[Claw]):
 
-class EngageClaw(SubsystemCommand[Arm]):
-    def initialize(self) -> None:
-        self.subsystem.engage_claw()
+    def __init__(self, subsystem: Claw):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
 
-    def execute(self) -> None:
-        pass
-
-    def isFinished(self) -> bool:
-        return True
-
-    def end(self, interrupted=False) -> None:
-        ...
-
-
-class DisengageClaw(SubsystemCommand[Arm]):
-    def initialize(self) -> None:
-        self.subsystem.disengage_claw()
+    def initialize(self) -> None:   
+        self.subsystem.zero()
 
     def execute(self) -> None:
         pass
 
     def isFinished(self) -> bool:
-        return True
+        return round(math.degrees(self.subsystem.get_angle())) == 0
+    
+    def end(self, interrupted: bool) -> None:
+        pass
 
-    def end(self, interrupted=False) -> None:
-        ...
+class ClawWrist(SubsystemCommand[Claw]):
 
+    def __init__(self, subsystem: Claw, up: bool):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+        self.up = up
+
+    def initialize(self) -> None:
+        self.subsystem.set_claw_ouput(config.claw_motor_speed)
+        if self.up:
+            self.subsystem.set_angle(math.pi / 2)
+        else:
+            self.subsystem.set_angle(0)
+
+    def execute(self) -> None:
+        pass
+
+    def isFinished(self) -> bool:
+        if self.up:
+            return round(math.degrees(self.subsystem.get_angle())) == 90
+        else:
+            return round(math.degrees(self.subsystem.get_angle())) == 0
+
+class ClawCrunch(SubsystemCommand[Claw]):
+
+    def __init__(self, subsystem: Claw,  compress: bool):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+        self.compress = compress
+
+    def initialize(self) -> None:
+        if self.compress:
+            self.subsystem.open_claw()
+        else:
+            self.subsystem.close_claw()
+
+    def execute(self) -> None:
+        pass
+
+    def isFinished(self) -> bool:
+        return self.subsystem.claw_compressed
 
 class CubeIntake(SubsystemCommand[Arm]):
     def initialize(self) -> None:
@@ -161,7 +187,6 @@ class CubeIntake(SubsystemCommand[Arm]):
     def end(self, interrupted=False) -> None:
         self.subsystem.set_rotation(math.radians(0))
         self.subsystem.set_angle_wrist(math.radians(0))
-
 
 class SetArm(SubsystemCommand[Arm]):
     def __init__(
@@ -198,3 +223,11 @@ class SetArm(SubsystemCommand[Arm]):
         self.subsystem.set_angle_wrist(math.radians(0))
         self.subsystem.set_rotation(math.radians(0))
         self.subsystem.set_angle_wrist(math.radians(0))
+
+ClawCommands = lambda: SequentialCommandGroup(
+    ClawInit(),
+    ClawWrist(Robot.claw, up=True),
+    ClawWrist(Robot.claw, up=False),
+    ClawCrunch(Robot.claw, compress=True),
+    ClawCrunch(Robot.claw, compress=False),
+)
