@@ -75,7 +75,7 @@ class _Robot(wpilib.TimedRobot):
                     pv_pose[0][0].toPose2d().Y(),
                     pv_pose[0][0].rotation().toRotation2d().radians(),
                 ],
-            ) 
+            )
         except Exception:
             pass
 
@@ -86,9 +86,6 @@ class _Robot(wpilib.TimedRobot):
         commands2.CommandScheduler.getInstance().run()
 
     def teleopInit(self):
-        
-        #commands2.CommandScheduler.getInstance().schedule(command.ZeroArm())
-        #command.ZeroArm()
         logger.debug("TELEOP", "Teleop Initialized")
         commands2.CommandScheduler.getInstance().schedule(
             command.DriveSwerveCustom(Robot.drivetrain)

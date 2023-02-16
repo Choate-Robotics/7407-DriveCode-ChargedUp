@@ -8,6 +8,7 @@ from wpimath.geometry import Pose3d
 
 import config
 import constants
+import utils
 from units.SI import radians
 
 # importing packages
@@ -115,7 +116,7 @@ class Arm(Subsystem):  # elevator class
         self.rotation_PID.setSmartMotionMaxVelocity(constants.shoulder_max_velocity)
         self.rotation_PID.setSmartMotionMaxAccel(5)
         self.rotation_PID.setIZone(0.0)
-        self.rotation_PID.setSmartMotionAllowedClosedLoopError(.1)
+        self.rotation_PID.setSmartMotionAllowedClosedLoopError(0.1)
         self.rotation_PID.setSmartMotionMinOutputVelocity(0.0)
         self.zero_elevator_rotation()
         self.zero_wrist()
@@ -230,10 +231,14 @@ class Arm(Subsystem):  # elevator class
 
     def is_at_position(self, length, angle, angle_wrist) -> bool:
         """checks if the arm is at the desired position"""  # TODO: ADD A THRESHOLD FOR THIS CHECK!!
+        length_threshold = 0.05
+        rotation_threshold = math.radians(2)
+        wrist_threshold = math.radians(2)
+
         return (
-            length == self.get_length()
-            and angle == self.get_rotation()
-            and angle_wrist == self.get_angle_wrist()
+            abs(length - self.get_length()) < length_threshold
+            and abs(angle - self.get_rotation()) < rotation_threshold
+            and abs(angle_wrist - self.get_angle_wrist()) < wrist_threshold
         )
 
     def is_at_length(self, length: float) -> bool:
@@ -285,14 +290,14 @@ class Arm(Subsystem):  # elevator class
         """Sets the length of the elevator to the given meters, returns true if the elevator is at the given meters, float of the meters the elevator is at if it is not at the given meters"""
         print(meters)
         if not self.disable_extension:
-            length_ratio = self.boundary_box(self.get_rotation())
+            length_ratio = utils.boundary_box(self, self.get_rotation())
             # lol = min(length_ratio * constants.max_elevator_height, meters)
             lol = meters
             print(lol)
             length = lol * (1 / constants.elevator_length_per_rotation)
             print(length)
             self.motor_extend.set_target_position(length)
-            self.rotation_PID.setSmartMotionMaxAccel(.01)
+            self.rotation_PID.setSmartMotionMaxAccel(0.01)
 
     def shoulder_rotation_limits(self, angle: radians) -> bool:
         """Returns if the given radians are within the soft limits of the shoulder"""
@@ -361,27 +366,21 @@ class Arm(Subsystem):  # elevator class
 
     def zero_elevator_rotation(self) -> None:
         """Sets the shoulder to the zero position (no extension)"""
-        self.main_rotation_motor.set_sensor_position(0)
-        # print(self.main_rotation_motor.get_sensor_position())
-        # get Absolute encoder position
         abs_encoder_position: float = self.abs_encoder.getPosition()
-        # print("INTERN ABS:" + str(abs_encoder_position))
-        # calculate the difference between the current position and the zero position
+
         if abs_encoder_position > 0.5:
             abs_encoder_position = -(1 - abs_encoder_position)
+
         encoder_difference: float = (
             abs_encoder_position - constants.elevator_initial_rotation
         )
-        # print("INTERN ENC: " + str(encoder_difference))
-        # convert absolute position ratio to motor rotations and gearbox ratio
+
         motor_position: float = (
             encoder_difference * constants.elevator_rotation_gear_ratio
         )
-        # print("ELEVATOR RATIO: " + str(constants.elevator_rotation_gear_ratio))
-        # print( "MOTOR POSITION W/GEAR RATIO:" + str(motor_position))
-        # set motor position to the difference
+
         self.main_rotation_motor.set_sensor_position(motor_position)
-        # run the motor to the zero position
+
         self.main_rotation_motor.set_target_position(0)
 
     def extend_max_elevator(self) -> None:

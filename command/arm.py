@@ -1,15 +1,15 @@
 import math
 
-from robotpy_toolkit_7407.command import SubsystemCommand
 import commands2
+import rev
+from robotpy_toolkit_7407.command import SubsystemCommand
+
 import constants
 import utils
-import rev
-from oi.keymap import Keymap
-from robot_systems import Sensors, Robot
+from robot_systems import Robot, Sensors
 from subsystem import Arm
 from units.SI import meters, radians
-import robot
+
 
 class ZeroElevator(SubsystemCommand[Arm]):
     def __init__(self, subsystem: Arm):
@@ -20,17 +20,18 @@ class ZeroElevator(SubsystemCommand[Arm]):
         self.subsystem.motor_extend.set_sensor_position(0)
 
     def execute(self):
-        #self.subsystem.zero_elevator_length()
+        # self.subsystem.zero_elevator_length()
         ...
 
     def isFinished(self):
         # return (
-        #     self.subsystem.elevator_bottom_sensor.get()   
+        #     self.subsystem.elevator_bottom_sensor.get()
         # )
         return True
 
     def end(self, interrupted=False):
         utils.logger.debug("Elevator", "Elevator Successfully Zeroed.")
+
 
 class ZeroShoulder(SubsystemCommand[Arm]):
     def __init__(self, subsystem: Arm):
@@ -47,15 +48,14 @@ class ZeroShoulder(SubsystemCommand[Arm]):
     def isFinished(self):
         # return not self.subsystem.elevator_bottom_sensor and \
         # self.subsystem.main_rotation_motor.get_sensor_position() == 0
-        return (
-                abs(self.subsystem.main_rotation_motor.get_sensor_position()) < .1
-        )
+        return abs(self.subsystem.main_rotation_motor.get_sensor_position()) < 0.1
 
     def end(self, interrupted=False):
         utils.logger.debug("Shoulder", "Shoulder Successfully Zeroed.")
         if not interrupted:
             self.subsystem.enable_brake()
             self.subsystem.stop()
+
 
 class ZeroWrist(SubsystemCommand[Arm]):
     def __init__(self, subsystem: Arm):
@@ -69,19 +69,19 @@ class ZeroWrist(SubsystemCommand[Arm]):
         ...
 
     def isFinished(self):
-        return (
-                abs(self.subsystem.wrist.get_sensor_position()) < .1
-        )
+        return abs(self.subsystem.wrist.get_sensor_position()) < 0.1
 
     def end(self, interrupted=False):
         utils.logger.debug("Wrist", "Wrist Successfully Zeroed.")
+
 
 ZeroArm = lambda: commands2.SequentialCommandGroup(
     commands2.InstantCommand(lambda: Robot.Arm.disengage_claw()),
     ZeroElevator(Robot.Arm),
     ZeroShoulder(Robot.Arm),
-    ZeroWrist(Robot.Arm)
+    ZeroWrist(Robot.Arm),
 )
+
 
 class ManualMovement(SubsystemCommand[Arm]):
     def __init__(self, subsystem: Arm):
@@ -92,7 +92,9 @@ class ManualMovement(SubsystemCommand[Arm]):
         self.extend: float
 
     def initialize(self) -> None:
-        self.subsystem.rotation_PID.setReference(10, rev.CANSparkMax.ControlType.kSmartMotion)
+        self.subsystem.rotation_PID.setReference(
+            10, rev.CANSparkMax.ControlType.kSmartMotion
+        )
 
     def execute(self) -> None:
         ...
@@ -118,6 +120,7 @@ class ManualMovement(SubsystemCommand[Arm]):
     def end(self, interrupted: bool):
         pass
 
+
 class ArmAssistedRobotStabilizer(SubsystemCommand[Arm]):
     def __init__(self, subsystem: Arm):
         super().__init__(subsystem)
@@ -140,6 +143,7 @@ class ArmAssistedRobotStabilizer(SubsystemCommand[Arm]):
             self.subsystem.enable_brake()
             self.subsystem.stop()
 
+
 class HardStop(SubsystemCommand[Arm]):
     def initialize(self) -> None:
         self.subsystem.enable_brake()
@@ -155,6 +159,7 @@ class HardStop(SubsystemCommand[Arm]):
             self.subsystem.enable_brake()
             self.subsystem.stop()
 
+
 class EngageClaw(SubsystemCommand[Arm]):
     def initialize(self) -> None:
         self.subsystem.engage_claw()
@@ -168,6 +173,7 @@ class EngageClaw(SubsystemCommand[Arm]):
     def end(self, interrupted=False) -> None:
         ...
 
+
 class DisengageClaw(SubsystemCommand[Arm]):
     def initialize(self) -> None:
         self.subsystem.disengage_claw()
@@ -180,6 +186,7 @@ class DisengageClaw(SubsystemCommand[Arm]):
 
     def end(self, interrupted=False) -> None:
         ...
+
 
 class CubeIntakeExtend(SubsystemCommand[Arm]):
     def initialize(self) -> None:
@@ -196,6 +203,7 @@ class CubeIntakeExtend(SubsystemCommand[Arm]):
     def end(self, interrupted=False) -> None:
         pass
 
+
 class CubeIntakeRetract(SubsystemCommand[Arm]):
     def initialize(self) -> None:
         self.subsystem.set_rotation(math.radians(0))
@@ -211,14 +219,15 @@ class CubeIntakeRetract(SubsystemCommand[Arm]):
     def end(self, interrupted=False) -> None:
         pass
 
+
 class SetArm(SubsystemCommand[Arm]):
     def __init__(
-            self,
-            subsystem: Arm,
-            distance: meters,
-            shoulder_angle: radians,
-            wrist_angle: radians,
-            claw_active: bool = False,
+        self,
+        subsystem: Arm,
+        distance: meters,
+        shoulder_angle: radians,
+        wrist_angle: radians,
+        claw_active: bool = False,
     ):
         super().__init__(subsystem)
         self.distance = distance
@@ -237,12 +246,13 @@ class SetArm(SubsystemCommand[Arm]):
         self.subsystem.update_pose()
 
     def isFinished(self) -> bool:
+        print("FINISHED")
         return self.subsystem.is_at_position(
             self.distance, self.shoulder_angle, self.wrist_angle
         )
 
     def end(self, interrupted: bool) -> None:
         self.subsystem.disengage_claw()
-        self.subsystem.set_angle_wrist(math.radians(0))
-        self.subsystem.set_rotation(math.radians(0))
-        self.subsystem.set_angle_wrist(math.radians(0))
+        # self.subsystem.set_angle_wrist(math.radians(0))
+        # self.subsystem.set_rotation(math.radians(0))
+        # self.subsystem.set_angle_wrist(math.radians(0))
