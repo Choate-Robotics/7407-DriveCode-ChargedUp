@@ -14,7 +14,6 @@ MOVE_CONFIG = SparkMaxConfig(
     0.00005, 0, 0.0004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 
-
 class Claw(Subsystem):
     claw_motor: SparkMax = SparkMax(can_id=1, config=MOVE_CONFIG)
 

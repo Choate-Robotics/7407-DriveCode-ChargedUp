@@ -43,12 +43,7 @@ class Arm(Subsystem):  # elevator class
     brake: wpilib.Solenoid = wpilib.Solenoid(
         1, wpilib.PneumaticsModuleType.REVPH, config.elevator_brake_id
     )  # brake that holds the arm in place
-    # Wrist and Claw
     wrist: SparkMax = SparkMax(18, inverted=True, config=WRIST_CONFIG)
-    claw_motor: SparkMax = SparkMax(12, inverted=False)
-    claw_grabber: wpilib.DoubleSolenoid = wpilib.DoubleSolenoid(
-        1, wpilib.PneumaticsModuleType.REVPH, 4, 5
-    )
     initialized: bool = False
     brake_enabled: bool = False
     pose: Pose3d
@@ -58,9 +53,6 @@ class Arm(Subsystem):  # elevator class
     disable_extension: bool = False
     disable_rotation: bool = False
     intake_up: bool = True
-    claw_motor_initialized: bool = False
-    claw_compressed: bool = False
-    claw_open: bool = False
 
     def __init__(self):
         super().__init__()
@@ -75,9 +67,6 @@ class Arm(Subsystem):  # elevator class
     def init(self):  # initializing motors
         """initializes the motors"""
         self.motor_extend.init()
-        self.claw_motor.init()
-        self.distance_sensor = self.claw_motor.motor.getAnalog()
-        self.claw_motor_initialized = True
         self.secondary_rotation_motor.init()
         self.main_rotation_motor.init()
         self.elevator_bottom_sensor = self.motor_extend.motor.getReverseLimitSwitch(
@@ -150,34 +139,6 @@ class Arm(Subsystem):  # elevator class
         self.wrist.set_sensor_position(motor_position)
         # run the motor to the zero position
         self.wrist.set_target_position(0)
-
-    # def set claw motor output (speed)
-    def set_claw_output(self, speed: float):
-        """
-        Set the output of the claw motor
-
-        Args:
-            output (float): Speed from -1 to 1
-        """
-        self.claw_motor.set_raw_output(speed)
-        self.raw_output = speed
-
-    def open_claw(self):
-        self.claw_grabber.set(wpilib.DoubleSolenoid.Value.kForward)
-        self.claw_open = True
-
-    def close_claw(self):
-        self.claw_grabber.set(wpilib.DoubleSolenoid.Value.kReverse)
-        self.claw_open = False
-
-    def engage_claw(self):
-        # Set distance forward (closes claw)
-        self.open_claw()
-        self.set_claw_output(constants.claw_motor_speed)
-
-    def disengage_claw(self):
-        self.close_claw()
-        self.set_claw_output(0)
 
     def enable_brake(self) -> bool:
         """enables the brake"""
@@ -267,7 +228,6 @@ class Arm(Subsystem):  # elevator class
         self.motor_extend.set_raw_output(0)
         self.main_rotation_motor.set_raw_output(0)
         self.wrist.set_raw_output(0)
-        self.claw_motor.set_raw_output(0)
 
     def hard_stop(self) -> None:
         """stops the elevator and enables the brake"""
