@@ -81,16 +81,19 @@ class Keymap:
             > 0.8
         )
 
-        LEFT_GRID = commands2.button.Button( # NUM, D-pad Up
- 
+        LEFT_GRID = commands2.button.Button( # NUM, Axis X Min (Left)
+            lambda: Controllers.NUMPAD_CONTROLLER.getRawAxis(controllerNUMPAD.L_JOY[0])
+            < -0.8
         )
 
-        MIDDLE_GRID = commands2.button.Button( # /, D-pad Down
-
+        MIDDLE_GRID = commands2.button.Button( # /, Axis Y Max (Left)
+            lambda: Controllers.NUMPAD_CONTROLLER.getRawAxis(controllerNUMPAD.L_JOY[1])
+            > 0.8
         )
 
-        RIGHT_GRID = commands2.button.Button( # *, D-pad Left
-
+        RIGHT_GRID = commands2.button.Button( # *, Axis Y Min (Left)
+            lambda: Controllers.NUMPAD_CONTROLLER.getRawAxis(controllerNUMPAD.L_JOY[1])
+            < -0.8
         )
 
         TOP_LEFT = commands2.button.JoystickButton( # 7, Back
