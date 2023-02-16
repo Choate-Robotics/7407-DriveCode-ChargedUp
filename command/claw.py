@@ -1,11 +1,31 @@
 import math
 import config
-from commands2 import SequentialCommandGroup
 from robotpy_toolkit_7407.command import SubsystemCommand
 from robot_systems import Robot
 from subsystem import Claw
 
-class ClawInit(SubsystemCommand[Claw]):
+'''
+reset command (0)
+open command
+close command
+'''
+
+class InitClaw(SubsystemCommand[Claw]):
+
+    def __init__(self, subsystem: Claw):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+
+    def initialize(self) -> None:
+        self.subsystem.init()
+
+    def execute(self) -> None:
+        pass
+
+    def isFinished(self) -> bool:
+        return True
+
+class ClawReset(SubsystemCommand[Claw]):
 
     def __init__(self, subsystem: Claw):
         super().__init__(subsystem)
@@ -64,11 +84,3 @@ class ClawCrunch(SubsystemCommand[Claw]):
 
     def isFinished(self) -> bool:
         return self.subsystem.claw_compressed
-
-ClawCommands = lambda: SequentialCommandGroup(
-    ClawInit(),
-    ClawWrist(Robot.claw, up=True),
-    ClawWrist(Robot.claw, up=False),
-    ClawCrunch(Robot.claw, compress=True),
-    ClawCrunch(Robot.claw, compress=False),
-)

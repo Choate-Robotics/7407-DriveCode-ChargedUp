@@ -44,7 +44,6 @@ class ManualMovement(SubsystemCommand[Arm]):
         super().__init__(subsystem)
         self.subsystem = subsystem
         self.rotate: float = 0
-        self.claw_rotate: float = 0
         self.extend: float
 
     def initialize(self) -> None:
@@ -56,16 +55,6 @@ class ManualMovement(SubsystemCommand[Arm]):
         else:
             self.rotate = Keymap.Arm.ELEVATOR_ROTATION_AXIS.value
         self.subsystem.set_rotation(self.rotate * (2 * math.pi))
-        if abs(Keymap.Arm.CLAW_ROTATION_AXIS.value) < 0.05:
-            self.claw_rotate = 0
-        else:
-            self.claw_rotate = Keymap.Arm.CLAW_ROTATION_AXIS.value
-        self.subsystem.set_angle_wrist(self.claw_rotate * (2 * math.pi))
-        # if abs(Keymap.Arm.ELEVATOR_EXTENSION_AXIS.value) < .05:
-        #     self.extend = 0
-        # else:
-        #     self.elevator = Keymap.Arm.ELEVATOR_EXTENSION_AXIS.value
-        # self.subsystem.set_angle_wrist(self.extend * (2 * math.pi))
 
     def isFinished(self) -> bool:
         return False
@@ -114,7 +103,6 @@ class CubeIntake(SubsystemCommand[Arm]):
     def initialize(self) -> None:
         self.subsystem.set_rotation(math.radians(90))
         self.subsystem.set_angle_wrist(math.radians(90))
-        self.subsystem.engage_claw()
 
     def execute(self) -> None:
         pass
@@ -133,20 +121,16 @@ class SetArm(SubsystemCommand[Arm]):
             distance: meters,
             shoulder_angle: radians,
             wrist_angle: radians,
-            claw_active: bool = False,
     ):
         super().__init__(subsystem)
         self.distance = distance
         self.shoulder_angle = shoulder_angle
         self.wrist_angle = wrist_angle
-        self.claw_active = claw_active
 
     def initialize(self):
         self.subsystem.set_rotation(self.shoulder_angle)
         self.subsystem.set_angle_wrist(self.wrist_angle)
         self.subsystem.set_length(self.distance)
-        if self.claw_active:
-            self.subsystem.engage_claw()
 
     def execute(self) -> None:
         self.subsystem.update_pose()
@@ -157,7 +141,6 @@ class SetArm(SubsystemCommand[Arm]):
         )
 
     def end(self, interrupted: bool) -> None:
-        self.subsystem.disengage_claw()
         self.subsystem.set_angle_wrist(math.radians(0))
         self.subsystem.set_rotation(math.radians(0))
         self.subsystem.set_angle_wrist(math.radians(0))

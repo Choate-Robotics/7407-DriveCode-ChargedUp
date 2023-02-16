@@ -35,7 +35,7 @@ class Claw(Subsystem):
 
     def init(self):
         self.claw_motor.init()
-        self.zero()
+        # self.zero() - calling second class from commands instead
         self.claw_motor_initialized = True
 
     def set_angle(self, pos: float):
@@ -77,5 +77,5 @@ class Claw(Subsystem):
 
     def close_claw(self):
         self.claw_close_piston.retract()
-        self.set_claw_ouput(0)
+        self.claw_motor.set_target_velocity(0)
         self.claw_compressed = False
