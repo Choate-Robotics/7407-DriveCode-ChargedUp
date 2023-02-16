@@ -1,7 +1,5 @@
 import math
-
 import wpilib
-
 import config
 
 
