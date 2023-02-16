@@ -190,8 +190,8 @@ class DisengageClaw(SubsystemCommand[Arm]):
 
 class CubeIntakeExtend(SubsystemCommand[Arm]):
     def initialize(self) -> None:
-        self.subsystem.set_rotation(math.radians(90))
-        self.subsystem.set_angle_wrist(math.radians(90))
+        self.subsystem.set_rotation(math.radians(45))
+        self.subsystem.set_angle_wrist(math.radians(45))
         self.subsystem.engage_claw()
 
     def execute(self) -> None:
@@ -222,12 +222,12 @@ class CubeIntakeRetract(SubsystemCommand[Arm]):
 
 class SetArm(SubsystemCommand[Arm]):
     def __init__(
-        self,
-        subsystem: Arm,
-        distance: meters,
-        shoulder_angle: radians,
-        wrist_angle: radians,
-        claw_active: bool = False,
+            self,
+            subsystem: Arm,
+            distance: meters,
+            shoulder_angle: radians,
+            wrist_angle: radians,
+            claw_active: bool = False,
     ):
         super().__init__(subsystem)
         self.distance = distance

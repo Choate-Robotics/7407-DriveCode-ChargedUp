@@ -92,7 +92,9 @@ class _Robot(wpilib.TimedRobot):
         )
 
     def teleopPeriodic(self):
-        print(Pneumatics.compressor.getPressure())
+        # print(Pneumatics.compressor.getPressure())
+        print("I THINK I'm AT: ", math.degrees(Robot.Arm.get_rotation()))
+        ...
 
     def autonomousInit(self):
         routine.run()

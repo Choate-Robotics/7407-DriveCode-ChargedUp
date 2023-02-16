@@ -20,24 +20,24 @@ from units.SI import (
 # boundary dimension constants
 # --------------------------------------------------------------
 horizontal_boundary: meters = (
-    28 * inches_to_meters
+        28 * inches_to_meters
 )  # the horizontal boundary is the distance from the pivot point (center of robot) to the\
 # robots maximum extension limit in the x direction (one side of the robot)
 vertical_boundary: meters = (
-    78 * inches_to_meters
+        78 * inches_to_meters
 )  # the vertical boundary is the distance from the floor to the robots maximum extension limit in the y direction
 # --------------------------------------------------------------
 
 # boundary buffer constants
 # --------------------------------------------------------------
 bottom_boundary_buffer_gap: meters = (
-    1 * inches_to_meters
+        1 * inches_to_meters
 )  # the buffer in between the bottom boundary
 top_boundary_buffer_gap: meters = (
-    0 * inches_to_meters
+        0 * inches_to_meters
 )  # the buffer in between the top boundary
 side_boundary_buffer_gap: meters = (
-    0 * inches_to_meters
+        0 * inches_to_meters
 )  # the buffer in between the side boundaries
 # --------------------------------------------------------------
 
@@ -67,16 +67,16 @@ shoulder_max_buffer_rotation: radians = math.radians(
 # elevator constants
 # --------------------------------------------------------------
 min_elevator_height: meters = (
-    30 * inches_to_meters
+        30 * inches_to_meters
 )  # the minimum height of the elevator
 elevator_pivot_offset: meters = (
-    -2.5 * inches_to_meters
+        -2.5 * inches_to_meters
 )  # offset from the pivot point to the center of the elevator
 max_elevator_height: meters = (
-    59.5 * inches_to_meters
+        59.5 * inches_to_meters
 )  # the maximum height of the elevator
 max_elevator_height_delta: meters = (
-    45 * inches_to_meters
+        45 * inches_to_meters
 )  # the maximum height of the elevator
 pivot_point_height: meters = 17 * inches_to_meters  # the height of the pivot point
 # --------------------------------------------------------------
@@ -96,10 +96,10 @@ arm_pose_accuracy: float = 0.01  # the accuracy of the arm pose
 claw_height: meters = 10 * inches_to_meters  # the height of the claw
 claw_width: meters = 3 * inches_to_meters  # the width of the claw
 claw_length_open: meters = (
-    14 * inches_to_meters
+        14 * inches_to_meters
 )  # the length of the claw when it is open
 claw_length_close: meters = (
-    8 * inches_to_meters
+        8 * inches_to_meters
 )  # the length of the claw when it is closed
 # --------------------------------------------------------------
 
@@ -109,7 +109,7 @@ claw_length_close: meters = (
 elevator_rotation_gear_ratio: rotations = 67.38  # to one
 elevator_extend_gear_ratio: rotations = 6.33  # 6.33  # to one
 elevator_length_per_rotation: meters = (
-    1.736 * inches_to_meters
+        1.736 * inches_to_meters
 )  # the length of the elevator per rotation
 wrist_gear_ratio: rotations = 100  # to one
 # 24 rotations to max extension
@@ -118,10 +118,10 @@ stabilizer_magnitude: float = (
 )
 shoulder_max_velocity: rotations_per_minute = 25 * elevator_rotation_gear_ratio  # RPM
 shoulder_max_acceleration: rotations_per_minute_per_second = (
-    25 * elevator_rotation_gear_ratio
+        25 * elevator_rotation_gear_ratio
 )  # RPM / S
 shoulder_min_acceleration: rotations_per_minute_per_second = (
-    5 * elevator_extend_gear_ratio
+        5 * elevator_extend_gear_ratio
 )  # RPM / S
 # --------------------------------------------------------------
 
@@ -138,7 +138,7 @@ elevator_initial_rotation = (
     0  # the initial rotation of the elevator that it will zero to
 )
 elevator_initial_length = (
-    0 * inches_to_meters
+        0 * inches_to_meters
 )  # the initial length of the elevator that it will zero to
 # --------------------------------------------------------------
 

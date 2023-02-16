@@ -1,3 +1,5 @@
+import math
+
 from commands2 import InstantCommand, WaitCommand
 from robotpy_toolkit_7407.utils import logger
 
@@ -23,7 +25,7 @@ class OI:
 
         Keymap.Intake.INTAKE_ENABLE.whenPressed(
             command.IntakeEnable(Robot.intake).andThen(
-                WaitCommand(0).andThen(command.CubeIntakeExtend(Robot.Arm))
+                WaitCommand(0).andThen(command.SetArm(Robot.Arm, 0, math.radians(45), math.radians(45), False))
             )
         )
 
