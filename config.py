@@ -20,3 +20,6 @@ kRobotVisionPoseWeight = 0.1
 claw_motor_extend_id = 0
 
 red_team: bool = False
+
+# Scoring position
+scoring_position = ""

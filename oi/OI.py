@@ -27,3 +27,25 @@ class OI:
         Keymap.Claw.ENGAGE_CLAW.onFalse(
             InstantCommand(lambda: Robot.arm.disengage_claw())
         )
+
+        # Grid
+        Keymap.Scoring.LEFT_GRID.onTrue()
+        Keymap.Scoring.MIDDLE_GRID.onTrue()
+        Keymap.Scoring.RIGHT_GRID.onTrue()
+
+        # Position in grid
+        Keymap.Scoring.TOP_LEFT.onTrue()
+        Keymap.Scoring.TOP_MIDDLE.onTrue()
+        Keymap.Scoring.TOP_RIGHT.onTrue()
+
+        Keymap.Scoring.MIDDLE_LEFT.onTrue()
+        Keymap.Scoring.MIDDLE_MIDDLE.onTrue()
+        Keymap.Scoring.MIDDLE_RIGHT.onTrue()
+
+        Keymap.Scoring.BOTTOM_LEFT.onTrue()
+        Keymap.Scoring.BOTTOM_MIDDLE.onTrue()
+        Keymap.Scoring.BOTTOM_RIGHT.onTrue()
+
+        # Confirm and delete
+        Keymap.Scoring.CONFIRM.onTrue()
+        Keymap.Scoring.DELETE.onTrue()

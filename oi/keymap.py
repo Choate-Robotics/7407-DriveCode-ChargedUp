@@ -5,7 +5,6 @@ from robotpy_toolkit_7407.oi import (
     XBoxController,
 )
 from robotpy_toolkit_7407.oi.joysticks import Joysticks
-from wpilib import XboxController
 
 controllerDRIVER = XBoxController
 controllerOPERATOR = XBoxController
