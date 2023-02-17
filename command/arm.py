@@ -9,7 +9,7 @@ import utils
 from robot_systems import Robot, Sensors
 from subsystem import Arm
 from units.SI import meters, radians
-
+import wpilib
 
 class ZeroElevator(SubsystemCommand[Arm]):
     def __init__(self, subsystem: Arm):
@@ -95,21 +95,20 @@ class ManualMovement(SubsystemCommand[Arm]):
     def initialize(self) -> None:
         self.subsystem.disable_brake()
         self.subsystem.update_pose()
+        self.subsystem.set_rotation(math.radians(45))
         # self.subsystem.rotation_PID.setReference(
         #     10, rev.CANSparkMax.ControlType.kSmartMotion
         # )
 
     def execute(self) -> None:
-        self.subsystem.update_pose()
-        self.subsystem.set_rotation(math.radians(45))
         ...
         # self.subsystem.update_pose()
         # if abs(Keymap.Arm.ELEVATOR_ROTATION_AXIS.value) < 0.1:
         #     self.rotate = 0
         # else:
-        #     self.rotate = Keymap.Arm.ELEVATOR_ROTATION_AXIS.value 
-        # self.subsystem.set_rotation(math.radians(45))
-            
+        #     self.rotate = Keymap.Arm.ELEVATOR_ROTATION_AXIS.value / 50
+        # # self.subsystem.set_rotation(math.radians(45))
+        # self.subsystem.main_rotation_motor.set_raw_output(self.rotate)
         # self.subsystem.set_rotation(self.rotate * (2 * math.pi))
         
         # if abs(Keymap.Arm.CLAW_ROTATION_AXIS.value) < 0.1:
@@ -131,6 +130,33 @@ class ManualMovement(SubsystemCommand[Arm]):
     def end(self, interrupted: bool):
         self.subsystem.enable_brake()
 
+
+class PIDTune(SubsystemCommand[Arm]):
+    def __init__(self, subsystem: Arm, rad):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+        self.rotate: float = rad
+        self.claw_rotate: float = 0
+        self.extend: float
+
+    def initialize(self) -> None:
+        self.subsystem.disable_brake()
+        self.subsystem.update_pose()
+        self.subsystem.set_rotation(self.rotate)
+        # self.subsystem.rotation_PID.setReference(
+        #     10, rev.CANSparkMax.ControlType.kSmartMotion
+        # )
+
+    def execute(self) -> None:
+        wpilib.SmartDashboard.putNumber("Arm Target", math.degrees(self.rotate))
+        wpilib.SmartDashboard.putNumber("Arm Error", math.degrees(self.subsystem.get_rotation()))
+        self.subsystem.update_pose()
+
+    def isFinished(self) -> bool:
+        return False
+
+    def end(self, interrupted: bool):
+        self.subsystem.enable_brake()
 
 class ArmAssistedRobotStabilizer(SubsystemCommand[Arm]):
     def __init__(self, subsystem: Arm):

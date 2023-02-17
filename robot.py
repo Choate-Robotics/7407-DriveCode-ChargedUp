@@ -90,17 +90,17 @@ class _Robot(wpilib.TimedRobot):
     def teleopInit(self):
         # Robot.Arm.zero_elevator_rotation()
         logger.debug("TELEOP", "Teleop Initialized")
-        commands2.CommandScheduler.getInstance().schedule(command.ManualMovement(Robot.Arm))
+        commands2.CommandScheduler.getInstance().schedule(command.PIDTune(Robot.Arm, math.radians(10)))
         
         commands2.CommandScheduler.getInstance().schedule(
             command.DriveSwerveCustom(Robot.drivetrain)
         )
 
     def teleopPeriodic(self):
-        ...
+
         # print(Pneumatics.compressor.getPressure())
         # print(Robot.Arm.main_rotation_motor.get_sensor_position())
-        # print(Robot.Arm.main_rotation_motor.motor.getAppliedOutput())
+        print(Robot.Arm.main_rotation_motor.motor.getAppliedOutput() * Robot.Arm.main_rotation_motor.motor.getBusVoltage())
         # print(Robot.Arm.main_rotation_motor.motor.getSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward))
     def autonomousInit(self):
         routine.run()

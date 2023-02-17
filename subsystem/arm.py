@@ -15,7 +15,7 @@ from units.SI import radians
 # importing packages
 
 SHOULDER_CONFIG = SparkMaxConfig(
-    0.000006, 0, .5, .2, (-0.5, 0.5), idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    0.000000005, 0, .25, 0.16, (-0.8, 0.8), idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 
 ELEVATOR_CONFIG = SparkMaxConfig(
@@ -45,7 +45,7 @@ class Arm(Subsystem):  # elevator class
     # main_rotation_motor.__pid_controller.setSmartMotionMaxAccel(2 * constants.elevator_rotation_gear_ratio, 0)
     # Brake
     brake: wpilib.DoubleSolenoid = wpilib.DoubleSolenoid(
-        31, wpilib.PneumaticsModuleType.REVPH, 15, 14
+        config.pneumatics_control_module, wpilib.PneumaticsModuleType.REVPH, 15, 14
     )  # brake that holds the arm in place
     # Wrist and Claw
     wrist: SparkMax = SparkMax(18, inverted=False, config=WRIST_CONFIG)
@@ -117,12 +117,13 @@ class Arm(Subsystem):  # elevator class
             rev.CANSparkMax.SoftLimitDirection.kReverse,
             -self.wrist_angle_to_motor_rotations(constants.wrist_min_rotation),
         )
-        self.rotation_PID.setSmartMotionAllowedClosedLoopError(2)
+        self.rotation_PID.setSmartMotionAccelStrategy(self.rotation_PID.AccelStrategy.kTrapezoidal)
+        self.rotation_PID.setSmartMotionAllowedClosedLoopError(.2)
         self.rotation_PID.setSmartMotionMaxVelocity(constants.shoulder_max_velocity)
-        self.rotation_PID.setSmartMotionMaxAccel(5)
+        self.rotation_PID.setSmartMotionMaxAccel(10)
         self.rotation_PID.setIZone(0.0)
         # self.main_rotation_motor.motor.setClosedLoopRampRate(3)
-        # self.zero_elevator_rotation()
+        self.zero_elevator_rotation()
         self.zero_wrist()
         
     def set_angle_wrist(self, pos: float):
@@ -315,11 +316,11 @@ class Arm(Subsystem):  # elevator class
         """Sets the rotation of the shoulder to the given radians, returns true if the shoulder is at the given radians, float of the radians the shoulder is at if it is not at the given radians"""
 
         # print("RADIANS: " + str(radians))
-        def set(angle: radians):
-            rotations = (angle / (2 * math.pi)) * constants.elevator_rotation_gear_ratio
+        def set(rads: radians):
+            rotations = (rads / (2 * math.pi)) * constants.elevator_rotation_gear_ratio
             # self.main_rotation_motor.set_target_position(rotations)
             ff = self.ff
-            self.rotation_PID.setReference(rotations, rev.CANSparkMax.ControlType.kSmartMotion, arbFeedforward=ff, arbFFUnits=rev.SparkMaxPIDController.ArbFFUnits.kPercentOut)
+            self.rotation_PID.setReference(rotations, rev.CANSparkMax.ControlType.kSmartMotion, arbFeedforward=ff, arbFFUnits=rev.SparkMaxPIDController.ArbFFUnits.kVoltage)
 
         # if the rotation is within the soft limits, set the rotation to the given angle
         if not self.disable_rotation:
@@ -328,9 +329,9 @@ class Arm(Subsystem):  # elevator class
                 return True
             else:
                 if angle < 0:
-                    set(-constants.shoulder_min_rotation)
+                    set(-constants.shoulder_min_rotation + math.radians(1))
                 else:
-                    set(constants.shoulder_max_rotation)
+                    set(constants.shoulder_max_rotation - math.radians(1))
 
     def get_length(self) -> float:  # returns arm extension
         """Gets the length of the elevator in meters"""
@@ -391,10 +392,12 @@ class Arm(Subsystem):  # elevator class
         angle = self.get_rotation()
         print("POSE ANGLE: " + str(angle))
         length = self.get_length()
+        hv = .5
+        hve = 1.5
         if angle < math.radians(90) and angle > -math.radians(90):
-            ff = (((.27-.06) * 0 + .06) * (math.sin(angle))) * -1
+            ff = (((hve-hv) * 0 + hv) * (math.sin(angle))) * -1
         else:
-            ff = ((.27-.06) * 0 + .06) * (1 if angle > 0 else -1) * -1
+            ff = ((hve-hv) * 0 + hv) * (1 if angle > 0 else -1) * -1
         
         self.ff = ff
         print("FF: ", self.ff)

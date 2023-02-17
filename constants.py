@@ -44,10 +44,10 @@ side_boundary_buffer_gap: meters = (
 # shoulder constants
 # --------------------------------------------------------------
 shoulder_max_rotation: radians = math.radians(
-    90
+    80
 )  # the maximum rotation of the shoulder
 shoulder_min_rotation: radians = math.radians(
-    90
+    110
 )  # the minimum rotation of the shoulder
 shoulder_intake_up_max_rotation: radians = math.radians(
     90
@@ -116,9 +116,9 @@ wrist_gear_ratio: rotations = 100  # to one
 stabilizer_magnitude: float = (
     2  # the magnitude of the rotation of the arm based on the tip of the robot
 )
-shoulder_max_velocity: rotations_per_minute = 25 * elevator_rotation_gear_ratio  # RPM
+shoulder_max_velocity: rotations_per_minute = 5 * elevator_rotation_gear_ratio  # RPM
 shoulder_max_acceleration: rotations_per_minute_per_second = (
-    25 * elevator_rotation_gear_ratio
+    1 * elevator_rotation_gear_ratio
 )  # RPM / S
 shoulder_min_acceleration: rotations_per_minute_per_second = (
     5 * elevator_extend_gear_ratio
