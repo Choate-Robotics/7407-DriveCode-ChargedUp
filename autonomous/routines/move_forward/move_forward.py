@@ -29,7 +29,6 @@ path_1 = FollowPathCustom(
     period=constants.period,
 )
 
-
 auto = SequentialCommandGroup(
     path_1
 )

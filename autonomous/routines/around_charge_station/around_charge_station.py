@@ -18,7 +18,7 @@ configs = {
         "max_accel": max_accel,
         "start_vel": 0,
         "end_vel": 0
-    }
+    },
 }
 
 trajectories = generate_trajectories(configs)
@@ -28,7 +28,6 @@ path_1 = FollowPathCustom(
     trajectory=trajectories["trajectory_1"],
     period=constants.period,
 )
-
 
 auto = SequentialCommandGroup(
     path_1
