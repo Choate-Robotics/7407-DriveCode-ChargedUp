@@ -226,12 +226,12 @@ class CubeIntakeRetract(SubsystemCommand[Arm]):
 
 class SetArm(SubsystemCommand[Arm]):
     def __init__(
-            self,
-            subsystem: Arm,
-            distance: meters,
-            shoulder_angle: radians,
-            wrist_angle: radians,
-            claw_active: bool = False,
+        self,
+        subsystem: Arm,
+        distance: meters,
+        shoulder_angle: radians,
+        wrist_angle: radians,
+        claw_active: bool = False,
     ):
         super().__init__(subsystem)
         self.distance = distance
@@ -254,14 +254,18 @@ class SetArm(SubsystemCommand[Arm]):
             commands2.CommandScheduler.getInstance().schedule(
                 SequentialCommandGroup(
                     WaitCommand(0.5),
-                    InstantCommand(lambda: self.subsystem.set_angle_wrist(self.wrist_angle)),
+                    InstantCommand(
+                        lambda: self.subsystem.set_angle_wrist(self.wrist_angle)
+                    ),
                     InstantCommand(lambda: self.subsystem.set_length(self.distance)),
                 )
             )
         else:
             commands2.CommandScheduler.getInstance().schedule(
                 SequentialCommandGroup(
-                    InstantCommand(lambda: self.subsystem.set_angle_wrist(self.wrist_angle)),
+                    InstantCommand(
+                        lambda: self.subsystem.set_angle_wrist(self.wrist_angle)
+                    ),
                     InstantCommand(lambda: self.subsystem.set_length(self.distance)),
                 )
             )
@@ -273,10 +277,7 @@ class SetArm(SubsystemCommand[Arm]):
             1,
             0,
             0,
-            TrapezoidProfileRadians.Constraints(
-                .2,
-                .05
-            ),
+            TrapezoidProfileRadians.Constraints(0.2, 0.05),
         )
 
         self.start_time = time.perf_counter()
@@ -288,7 +289,7 @@ class SetArm(SubsystemCommand[Arm]):
         current_time = time.perf_counter() - self.start_time
         current_theta = self.subsystem.get_rotation()
 
-        maximum_power = .2
+        maximum_power = 0.2
 
         self.subsystem.arm_rotation_motor.set_raw_output(
             min(
@@ -296,7 +297,7 @@ class SetArm(SubsystemCommand[Arm]):
                 self.arm_controller.calculate(
                     current_theta,
                     self.theta_f,
-                )
+                ),
             )
         )
 
