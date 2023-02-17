@@ -24,9 +24,10 @@ class OI:
         # Keymap.Arm.ENGAGE_CLAW().whenPressed(engageClaw()).whenReleased(disEngageClaw())
 
         Keymap.Intake.INTAKE_ENABLE.whenPressed(
-            command.IntakeEnable(Robot.intake).andThen(
-                WaitCommand(0).andThen(command.SetArm(Robot.Arm, 0, math.radians(45), math.radians(45), False))
-            )
+            command.SetArm(Robot.Arm, 0, math.radians(0), math.radians(0), False)
+            # command.IntakeEnable(Robot.intake).andThen(
+            #     WaitCommand(0).andThen(command.SetArm(Robot.Arm, 0, math.radians(45), math.radians(45), False))
+            # )
         )
 
         Keymap.Intake.INTAKE_ENABLE.whenReleased(

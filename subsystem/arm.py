@@ -72,11 +72,11 @@ class Arm(Subsystem):
         """initializes the motors"""
         self.motor_extend.init()
         self.claw_motor.init()
+        self.arm_rotation_motor.init()
         self.arm_rotation_follower_motor.init()
         self.arm_rotation_follower_motor.motor.follow(
             self.arm_rotation_motor.motor, True
         )
-        self.arm_rotation_motor.init()
         self.wrist.init()
 
         self.claw_motor_initialized = True
@@ -229,9 +229,9 @@ class Arm(Subsystem):
         wrist_threshold = math.radians(2)
 
         return (
-            abs(length - self.get_length()) < length_threshold
-            and abs(angle - self.get_rotation()) < rotation_threshold
-            and abs(angle_wrist - self.get_angle_wrist()) < wrist_threshold
+                abs(length - self.get_length()) < length_threshold
+                and abs(angle - self.get_rotation()) < rotation_threshold
+                and abs(angle_wrist - self.get_angle_wrist()) < wrist_threshold
         )
 
     def is_at_length(self, length: float) -> bool:
@@ -289,8 +289,8 @@ class Arm(Subsystem):
             print(lol)
             length = lol * (1 / constants.elevator_length_per_rotation)
             print(length)
-            self.motor_extend.set_target_position(length)
-            self.rotation_PID.setSmartMotionMaxAccel(0.01)
+            # self.motor_extend.set_target_position(length)
+            # self.rotation_PID.setSmartMotionMaxAccel(0.01)
 
     def shoulder_rotation_limits(self, angle: radians) -> bool:
         """Returns if the given radians are within the soft limits of the shoulder"""
@@ -299,9 +299,9 @@ class Arm(Subsystem):
             return True
         else:
             return (
-                constants.shoulder_max_rotation
-                >= angle
-                >= -constants.shoulder_min_rotation
+                    constants.shoulder_max_rotation
+                    >= angle
+                    >= -constants.shoulder_min_rotation
             )
 
     def set_rotation(self, angle: radians):  # set arm rotation
@@ -310,8 +310,8 @@ class Arm(Subsystem):
         # print("RADIANS: " + str(radians))
         def set_arm_angle(aligned_angle: radians):
             rotations = (
-                aligned_angle / (2 * math.pi)
-            ) * constants.elevator_rotation_gear_ratio
+                                aligned_angle / (2 * math.pi)
+                        ) * constants.elevator_rotation_gear_ratio
             self.arm_rotation_motor.set_target_position(rotations)
             # self.rotation_PID.setReference(1, rev.CANSparkMax.ControlType.kVelocity)
 
@@ -333,16 +333,16 @@ class Arm(Subsystem):
     def get_length(self) -> float:  # returns arm extension
         """Gets the length of the elevator in meters"""
         return self.motor_extend.get_sensor_position() / (
-            1 / constants.elevator_length_per_rotation
+                1 / constants.elevator_length_per_rotation
         )
         # return (self.motor_extend.get_sensor_position() * constants.elevator_extend_gear_ratio * constants.max_elevator_height_delta) + constants.elevator_zero_length
 
     def get_rotation(self) -> float:
         """Gets the rotation of the shoulder in radians"""
         return (
-            self.arm_rotation_motor.get_sensor_position()
-            / constants.elevator_rotation_gear_ratio
-        ) * (2 * math.pi)
+                       self.arm_rotation_motor.get_sensor_position()
+                       / constants.elevator_rotation_gear_ratio
+               ) * (2 * math.pi)
 
     def get_rotation_radians_abs(self) -> float:
         """Gets the rotation of the shoulder in rotations from the absolute encoder"""
@@ -367,11 +367,11 @@ class Arm(Subsystem):
             abs_encoder_position = -(1 - abs_encoder_position)
 
         encoder_difference: float = (
-            abs_encoder_position - constants.elevator_initial_rotation
+                abs_encoder_position - constants.elevator_initial_rotation
         )
 
         motor_position: float = (
-            encoder_difference * constants.elevator_rotation_gear_ratio
+                encoder_difference * constants.elevator_rotation_gear_ratio
         )
 
         self.arm_rotation_motor.set_sensor_position(motor_position)

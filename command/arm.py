@@ -5,8 +5,8 @@ import commands2
 import rev
 from commands2 import InstantCommand, SequentialCommandGroup, WaitCommand
 from robotpy_toolkit_7407.command import SubsystemCommand
-from wpimath._controls._controls.trajectory import TrapezoidProfileRadians
 from wpimath.controller import ProfiledPIDControllerRadians
+from wpimath.trajectory import TrapezoidProfileRadians
 
 import constants
 import utils
@@ -226,12 +226,12 @@ class CubeIntakeRetract(SubsystemCommand[Arm]):
 
 class SetArm(SubsystemCommand[Arm]):
     def __init__(
-        self,
-        subsystem: Arm,
-        distance: meters,
-        shoulder_angle: radians,
-        wrist_angle: radians,
-        claw_active: bool = False,
+            self,
+            subsystem: Arm,
+            distance: meters,
+            shoulder_angle: radians,
+            wrist_angle: radians,
+            claw_active: bool = False,
     ):
         super().__init__(subsystem)
         self.distance = distance
@@ -274,17 +274,20 @@ class SetArm(SubsystemCommand[Arm]):
             self.subsystem.engage_claw()
 
         self.arm_controller = ProfiledPIDControllerRadians(
-            1,
+            3,
             0,
             0,
-            TrapezoidProfileRadians.Constraints(0.2, 0.05),
+            TrapezoidProfileRadians.Constraints(0.4, 0.2),
         )
 
         self.start_time = time.perf_counter()
         self.theta_i = self.subsystem.get_rotation()
         self.theta_f = self.shoulder_angle
 
+        self.subsystem.disable_brake()
+
     def execute(self) -> None:
+        print("RUNNING")
         self.subsystem.update_pose()
         current_time = time.perf_counter() - self.start_time
         current_theta = self.subsystem.get_rotation()
@@ -307,7 +310,8 @@ class SetArm(SubsystemCommand[Arm]):
         )
 
     def end(self, interrupted: bool) -> None:
-        self.subsystem.arm_rotation_motor.set_target_velocity(0)
+        self.subsystem.arm_rotation_motor.set_raw_output(0)
+        # self.subsystem.enable_brake()
         self.subsystem.disengage_claw()
         # self.subsystem.set_angle_wrist(math.radians(0))
         # self.subsystem.set_rotation(math.radians(0))
