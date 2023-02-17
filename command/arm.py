@@ -1,8 +1,12 @@
 import math
+import time
 
 import commands2
 import rev
+from commands2 import InstantCommand, SequentialCommandGroup, WaitCommand
 from robotpy_toolkit_7407.command import SubsystemCommand
+from wpimath._controls._controls.trajectory import TrapezoidProfileRadians
+from wpimath.controller import ProfiledPIDControllerRadians
 
 import constants
 import utils
@@ -48,7 +52,7 @@ class ZeroShoulder(SubsystemCommand[Arm]):
     def isFinished(self):
         # return not self.subsystem.elevator_bottom_sensor and \
         # self.subsystem.main_rotation_motor.get_sensor_position() == 0
-        return abs(self.subsystem.main_rotation_motor.get_sensor_position()) < 0.1
+        return abs(self.subsystem.arm_rotation_motor.get_sensor_position()) < 0.1
 
     def end(self, interrupted=False):
         utils.logger.debug("Shoulder", "Shoulder Successfully Zeroed.")
@@ -235,23 +239,74 @@ class SetArm(SubsystemCommand[Arm]):
         self.wrist_angle = wrist_angle
         self.claw_active = claw_active
 
+        self.arm_controller: ProfiledPIDControllerRadians | None = None
+
+        self.start_time = None
+        self.theta_i = 0
+        self.theta_f = 0
+        self.theta_diff = 0
+        self.threshold = math.radians(1)
+
+        self.desired_time = 3
+
     def initialize(self):
-        self.subsystem.set_rotation(self.shoulder_angle)
-        self.subsystem.set_angle_wrist(self.wrist_angle)
-        self.subsystem.set_length(self.distance)
+        if self.shoulder_angle > self.subsystem.get_rotation():
+            commands2.CommandScheduler.getInstance().schedule(
+                SequentialCommandGroup(
+                    WaitCommand(0.5),
+                    InstantCommand(lambda: self.subsystem.set_angle_wrist(self.wrist_angle)),
+                    InstantCommand(lambda: self.subsystem.set_length(self.distance)),
+                )
+            )
+        else:
+            commands2.CommandScheduler.getInstance().schedule(
+                SequentialCommandGroup(
+                    InstantCommand(lambda: self.subsystem.set_angle_wrist(self.wrist_angle)),
+                    InstantCommand(lambda: self.subsystem.set_length(self.distance)),
+                )
+            )
+
         if self.claw_active:
             self.subsystem.engage_claw()
 
+        self.arm_controller = ProfiledPIDControllerRadians(
+            1,
+            0,
+            0,
+            TrapezoidProfileRadians.Constraints(
+                .2,
+                .05
+            ),
+        )
+
+        self.start_time = time.perf_counter()
+        self.theta_i = self.subsystem.get_rotation()
+        self.theta_f = self.shoulder_angle
+
     def execute(self) -> None:
         self.subsystem.update_pose()
+        current_time = time.perf_counter() - self.start_time
+        current_theta = self.subsystem.get_rotation()
+
+        maximum_power = .2
+
+        self.subsystem.arm_rotation_motor.set_raw_output(
+            min(
+                maximum_power,
+                self.arm_controller.calculate(
+                    current_theta,
+                    self.theta_f,
+                )
+            )
+        )
 
     def isFinished(self) -> bool:
-        print("FINISHED")
         return self.subsystem.is_at_position(
             self.distance, self.shoulder_angle, self.wrist_angle
         )
 
     def end(self, interrupted: bool) -> None:
+        self.subsystem.arm_rotation_motor.set_target_velocity(0)
         self.subsystem.disengage_claw()
         # self.subsystem.set_angle_wrist(math.radians(0))
         # self.subsystem.set_rotation(math.radians(0))
