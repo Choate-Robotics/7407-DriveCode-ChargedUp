@@ -5,8 +5,9 @@ import wpilib
 from robotpy_toolkit_7407 import Subsystem
 from robotpy_toolkit_7407.motors.rev_motors import SparkMax, SparkMaxConfig
 from wpimath.geometry import Pose3d
-
+import wpimath
 import config
+from wpimath.controller import ArmFeedforward
 import constants
 import utils
 from units.SI import radians
@@ -14,8 +15,9 @@ from units.SI import radians
 # importing packages
 
 SHOULDER_CONFIG = SparkMaxConfig(
-    0.6, 0, 1, 0.2, (-0.3, 0.3), idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    0.0000006, 0, .5, .2, (-0.5, 0.5), idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
+
 ELEVATOR_CONFIG = SparkMaxConfig(
     1, 0, 0.004, 0.00017, (-0.5, 0.5), idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
@@ -23,6 +25,7 @@ ELEVATOR_CONFIG = SparkMaxConfig(
 WRIST_CONFIG = SparkMaxConfig(
     0.05, 0, 0.004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
+
 
 
 class Arm(Subsystem):  # elevator class
@@ -62,6 +65,7 @@ class Arm(Subsystem):  # elevator class
     claw_motor_initialized: bool = False
     claw_compressed: bool = False
     claw_open: bool = False
+    ff: float
 
     def __init__(self):
         super().__init__()
@@ -72,6 +76,7 @@ class Arm(Subsystem):  # elevator class
         self.elevator_top_sensor = None
         self.elevator_bottom_sensor = None
         self.pose = None
+        self.ff = .27
 
     def init(self):  # initializing motors
         """initializes the motors"""
@@ -102,7 +107,7 @@ class Arm(Subsystem):  # elevator class
         )
         self.main_rotation_motor.motor.setSoftLimit(
             rev.CANSparkMax.SoftLimitDirection.kReverse,
-            self.shoulder_angle_to_motor_rotations(constants.shoulder_min_rotation),
+            -self.shoulder_angle_to_motor_rotations(constants.shoulder_min_rotation),
         )
         self.wrist.motor.setSoftLimit(
             rev.CANSparkMax.SoftLimitDirection.kForward,
@@ -112,15 +117,14 @@ class Arm(Subsystem):  # elevator class
             rev.CANSparkMax.SoftLimitDirection.kReverse,
             -self.wrist_angle_to_motor_rotations(constants.wrist_min_rotation),
         )
-        self.enable_brake()
+        self.rotation_PID.setSmartMotionAllowedClosedLoopError(2)
         self.rotation_PID.setSmartMotionMaxVelocity(constants.shoulder_max_velocity)
         self.rotation_PID.setSmartMotionMaxAccel(5)
         self.rotation_PID.setIZone(0.0)
-        self.rotation_PID.setSmartMotionAllowedClosedLoopError(0.1)
-        self.rotation_PID.setSmartMotionMinOutputVelocity(0.0)
-        self.zero_elevator_rotation()
+        # self.main_rotation_motor.motor.setClosedLoopRampRate(3)
+        # self.zero_elevator_rotation()
         self.zero_wrist()
-
+        
     def set_angle_wrist(self, pos: float):
         """
         Set the angle of the claw
@@ -297,7 +301,7 @@ class Arm(Subsystem):  # elevator class
             length = lol * (1 / constants.elevator_length_per_rotation)
             print(length)
             self.motor_extend.set_target_position(length)
-            self.rotation_PID.setSmartMotionMaxAccel(0.01)
+            # self.rotation_PID.setSmartMotionMaxAccel(0.01)
 
     def shoulder_rotation_limits(self, angle: radians) -> bool:
         """Returns if the given radians are within the soft limits of the shoulder"""
@@ -305,11 +309,7 @@ class Arm(Subsystem):  # elevator class
         if self.rotation_override:
             return True
         else:
-            return (
-                constants.shoulder_max_rotation
-                >= angle
-                >= -constants.shoulder_min_rotation
-            )
+            return angle < constants.shoulder_max_rotation and angle > -constants.shoulder_min_rotation
 
     def set_rotation(self, angle: radians):  # set arm rotation
         """Sets the rotation of the shoulder to the given radians, returns true if the shoulder is at the given radians, float of the radians the shoulder is at if it is not at the given radians"""
@@ -317,23 +317,20 @@ class Arm(Subsystem):  # elevator class
         # print("RADIANS: " + str(radians))
         def set(angle: radians):
             rotations = (angle / (2 * math.pi)) * constants.elevator_rotation_gear_ratio
-            self.main_rotation_motor.set_target_position(rotations)
-            # self.rotation_PID.setReference(1, rev.CANSparkMax.ControlType.kVelocity)
+            # self.main_rotation_motor.set_target_position(rotations)
+            ff = self.ff
+            self.rotation_PID.setReference(rotations, rev.CANSparkMax.ControlType.kSmartMotion, arbFeedforward=ff, arbFFUnits=rev.SparkMaxPIDController.ArbFFUnits.kPercentOut)
 
         # if the rotation is within the soft limits, set the rotation to the given angle
         if not self.disable_rotation:
             if self.shoulder_rotation_limits(angle):
-                # print("In LIMITS")
                 set(angle)
                 return True
             else:
-                # print("NOT IN LIMITS")
-                if angle > 0:
-                    y = constants.shoulder_max_rotation
+                if angle < 0:
+                    set(-constants.shoulder_min_rotation)
                 else:
-                    y = -constants.shoulder_min_rotation
-                set(y)
-                return y
+                    set(constants.shoulder_max_rotation)
 
     def get_length(self) -> float:  # returns arm extension
         """Gets the length of the elevator in meters"""
@@ -381,7 +378,8 @@ class Arm(Subsystem):  # elevator class
 
         self.main_rotation_motor.set_sensor_position(motor_position)
 
-        self.main_rotation_motor.set_target_position(0)
+        self.rotation_PID.setReference(0, rev.CANSparkMax.ControlType.kSmartMotion)
+        # self.main_rotation_motor.set_target_position(0)
 
     def extend_max_elevator(self) -> None:
         """Sets the elevator to the max position (no rotation)"""
@@ -393,6 +391,14 @@ class Arm(Subsystem):  # elevator class
         angle = self.get_rotation()
         print("POSE ANGLE: " + str(angle))
         length = self.get_length()
+        if angle < math.radians(90) and angle > -math.radians(90):
+            ff = (((.27-.05) * 0 + .05) * (math.sin(angle)))
+        else:
+            ff = ((.27-.05) * 0 + .05) * (1 if angle > 0 else -1)
+        
+        self.ff = ff
+        print("FF: ", self.ff)
+        print("Rotation: " + str(math.degrees(self.get_rotation())))
         print("POSE LENGTH: " + str(length))
         self.length = length
         self.angle = angle

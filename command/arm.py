@@ -3,7 +3,7 @@ import math
 import commands2
 import rev
 from robotpy_toolkit_7407.command import SubsystemCommand
-
+from oi.keymap import Keymap
 import constants
 import utils
 from robot_systems import Robot, Sensors
@@ -51,6 +51,7 @@ class ZeroShoulder(SubsystemCommand[Arm]):
         return abs(self.subsystem.main_rotation_motor.get_sensor_position()) < 0.1
 
     def end(self, interrupted=False):
+        print("SHOULDER ZEROED")
         utils.logger.debug("Shoulder", "Shoulder Successfully Zeroed.")
         if not interrupted:
             self.subsystem.enable_brake()
@@ -92,17 +93,25 @@ class ManualMovement(SubsystemCommand[Arm]):
         self.extend: float
 
     def initialize(self) -> None:
-        self.subsystem.rotation_PID.setReference(
-            10, rev.CANSparkMax.ControlType.kSmartMotion
-        )
+        self.subsystem.disable_brake()
+        self.subsystem.update_pose()
+        # self.subsystem.rotation_PID.setReference(
+        #     10, rev.CANSparkMax.ControlType.kSmartMotion
+        # )
 
     def execute(self) -> None:
+        self.subsystem.update_pose()
+        self.subsystem.set_rotation(math.radians(45))
         ...
+        # self.subsystem.update_pose()
         # if abs(Keymap.Arm.ELEVATOR_ROTATION_AXIS.value) < 0.1:
         #     self.rotate = 0
         # else:
-        #     self.rotate = Keymap.Arm.ELEVATOR_ROTATION_AXIS.value
+        #     self.rotate = Keymap.Arm.ELEVATOR_ROTATION_AXIS.value 
+        # self.subsystem.set_rotation(math.radians(45))
+            
         # self.subsystem.set_rotation(self.rotate * (2 * math.pi))
+        
         # if abs(Keymap.Arm.CLAW_ROTATION_AXIS.value) < 0.1:
         #     self.claw_rotate = 0
         # else:
@@ -115,10 +124,12 @@ class ManualMovement(SubsystemCommand[Arm]):
         # self.subsystem.set_angle_wrist(self.extend * (2 * math.pi))
 
     def isFinished(self) -> bool:
-        return False
+        return self.subsystem.is_at_position(
+            0, math.radians(45), 0
+        )
 
     def end(self, interrupted: bool):
-        pass
+        self.subsystem.enable_brake()
 
 
 class ArmAssistedRobotStabilizer(SubsystemCommand[Arm]):

@@ -44,10 +44,10 @@ side_boundary_buffer_gap: meters = (
 # shoulder constants
 # --------------------------------------------------------------
 shoulder_max_rotation: radians = math.radians(
-    80
+    90
 )  # the maximum rotation of the shoulder
 shoulder_min_rotation: radians = math.radians(
-    110
+    90
 )  # the minimum rotation of the shoulder
 shoulder_intake_up_max_rotation: radians = math.radians(
     90

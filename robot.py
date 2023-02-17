@@ -3,7 +3,7 @@ import math
 import commands2
 import wpilib
 from wpilib import SmartDashboard
-
+import rev
 import command
 from autonomous import routine
 from oi.OI import OI
@@ -83,17 +83,25 @@ class _Robot(wpilib.TimedRobot):
             "gyro_angle: ", math.degrees(Robot.drivetrain.gyro.get_robot_heading())
         )
 
+        # print(math.degrees(Robot.Arm.get_rotation()))
+
         commands2.CommandScheduler.getInstance().run()
 
     def teleopInit(self):
+        # Robot.Arm.zero_elevator_rotation()
         logger.debug("TELEOP", "Teleop Initialized")
+        commands2.CommandScheduler.getInstance().schedule(command.ManualMovement(Robot.Arm))
+        
         commands2.CommandScheduler.getInstance().schedule(
             command.DriveSwerveCustom(Robot.drivetrain)
         )
 
     def teleopPeriodic(self):
-        print(Pneumatics.compressor.getPressure())
-
+        ...
+        # print(Pneumatics.compressor.getPressure())
+        # print(Robot.Arm.main_rotation_motor.get_sensor_position())
+        # print(Robot.Arm.main_rotation_motor.motor.getAppliedOutput())
+        # print(Robot.Arm.main_rotation_motor.motor.getSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward))
     def autonomousInit(self):
         routine.run()
 
