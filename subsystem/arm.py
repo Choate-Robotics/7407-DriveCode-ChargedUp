@@ -15,7 +15,7 @@ from units.SI import radians
 # importing packages
 
 SHOULDER_CONFIG = SparkMaxConfig(
-    0.0000006, 0, .5, .2, (-0.5, 0.5), idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    0.000006, 0, .5, .2, (-0.5, 0.5), idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 
 ELEVATOR_CONFIG = SparkMaxConfig(
@@ -392,9 +392,9 @@ class Arm(Subsystem):  # elevator class
         print("POSE ANGLE: " + str(angle))
         length = self.get_length()
         if angle < math.radians(90) and angle > -math.radians(90):
-            ff = (((.27-.05) * 0 + .05) * (math.sin(angle)))
+            ff = (((.27-.06) * 0 + .06) * (math.sin(angle))) * -1
         else:
-            ff = ((.27-.05) * 0 + .05) * (1 if angle > 0 else -1)
+            ff = ((.27-.06) * 0 + .06) * (1 if angle > 0 else -1) * -1
         
         self.ff = ff
         print("FF: ", self.ff)
