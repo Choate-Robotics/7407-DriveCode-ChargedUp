@@ -207,7 +207,7 @@ robot_length: meters = 0.7366
 
 # TODO Maybe change these
 drivetrain_max_vel: meters_per_second = (20 * mile / hour).asNumber(m / s)  # 10
-drivetrain_max_acceleration: meters_per_second_squared = (2 * mile / hour).asNumber(
+drivetrain_max_target_accel: meters_per_second_squared = (10 * mile / hour).asNumber(
     m / s
 )
 drivetrain_target_max_vel: meters_per_second = (3 * mile / hour).asNumber(m / s)  # 7
