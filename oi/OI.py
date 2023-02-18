@@ -1,8 +1,13 @@
+import math
+
+import commands2
 from commands2 import InstantCommand
 from robotpy_toolkit_7407.utils import logger
+from wpimath.geometry import Pose2d
 
+import command
 from oi.keymap import Keymap
-from robot_systems import Robot
+from robot_systems import Robot, Sensors
 
 logger.info("Hi, I'm OI!")
 
@@ -33,6 +38,33 @@ class OI:
 
         Keymap.Intake.INTAKE_ENABLE.whenReleased(
             InstantCommand(lambda: Robot.intake.intake_disable())
+        )
+
+        Keymap.Claw.ENGAGE_CLAW.whenPressed(
+            command.Target(
+                Robot.drivetrain,
+                Robot.arm,
+                Robot.grabber,
+                Sensors.odometry,
+                pose=Pose2d(8.4, 2.3, 0),
+                arm_angle=math.radians(0),
+                arm_length=0,
+                wrist_angle=math.radians(-45),
+                wrist_enabled=True,
+            )
+        )
+
+        Keymap.Claw.ENGAGE_CLAW.whenReleased(
+            InstantCommand(
+                lambda: commands2.CommandScheduler.getInstance().schedule(
+                    commands=[
+                        command.DriveSwerveCustom(Robot.drivetrain),
+                        command.SetArm(Robot.arm, 0, 0),
+                        command.SetGrabber(Robot.grabber, 0, False),
+                        command.IntakeDisable(Robot.intake),
+                    ]
+                )
+            )
         )
 
         # Keymap.Intake.INTAKE_ENABLE.whenReleased(

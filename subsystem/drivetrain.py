@@ -19,7 +19,7 @@ from wpimath.geometry import Pose2d
 
 import constants
 from oi.keymap import Keymap
-from units.SI import degrees
+from units.SI import degrees, meters_per_second_squared
 
 TURN_CONFIG = SparkMaxConfig(
     0.2, 0, 0.003, 0.00015, (-0.5, 0.5), rev.CANSparkMax.IdleMode.kBrake
@@ -132,6 +132,7 @@ class Drivetrain(SwerveDrivetrain):
     axis_rotation = Keymap.Drivetrain.DRIVE_ROTATION_AXIS
     track_width: meters = constants.track_width
     max_vel: meters_per_second = constants.drivetrain_max_vel
+    max_accel: meters_per_second_squared = constants.drivetrain_max_acceleration
     max_angular_vel: radians_per_second = constants.drivetrain_max_angular_vel
     deadzone_velocity: meters_per_second = 0.01
     deadzone_angular_velocity: radians_per_second = math.radians(5)

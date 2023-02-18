@@ -10,6 +10,7 @@ from units.SI import (
     inches_to_meters,
     meters,
     meters_per_second,
+    meters_per_second_squared,
     radians,
     radians_per_second,
     rotations,
@@ -206,6 +207,9 @@ robot_length: meters = 0.7366
 
 # TODO Maybe change these
 drivetrain_max_vel: meters_per_second = (20 * mile / hour).asNumber(m / s)  # 10
+drivetrain_max_acceleration: meters_per_second_squared = (2 * mile / hour).asNumber(
+    m / s
+)
 drivetrain_target_max_vel: meters_per_second = (3 * mile / hour).asNumber(m / s)  # 7
 drivetrain_max_angular_vel: radians_per_second = (5 * rev / s).asNumber(rad / s)  # 4
 drivetrain_max_climb_vel: meters_per_second = (5 * mile / hour).asNumber(m / s)

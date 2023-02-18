@@ -17,8 +17,6 @@ class _Robot(wpilib.TimedRobot):
         super().__init__()
 
     def robotInit(self):
-        OI.init()
-        OI.map_controls()
         period = 0.03
         commands2.CommandScheduler.getInstance().setPeriod(period)
         Pneumatics.compressor.enableAnalog(90, 120)
@@ -32,6 +30,9 @@ class _Robot(wpilib.TimedRobot):
 
         Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
         Sensors.gyro = Robot.drivetrain.gyro
+
+        OI.init()
+        OI.map_controls()
 
     def robotPeriodic(self):
         Sensors.odometry.update()
