@@ -36,10 +36,16 @@ class OI:
         #     )
         # )
         Keymap.Intake.INTAKE_ENABLE.whileHeld(
-            command.SetArm(Robot.Arm, 0, math.radians(45), 0).andThen(
-                WaitCommand(0).andThen(command.IntakeDisable(Robot.intake))
+            command.SetArm(Robot.Arm, 0, math.radians(90), -math.radians(0)).andThen(
+                command.EngageClaw(Robot.Arm)
             )
         )
+        
+        # Keymap.Intake.INTAKE_ENABLE.whileHeld(
+        #     command.setShoulderRotation(Robot.Arm, math.radians(90)).andThen(
+        #         command.EngageClaw(Robot.Arm)
+        #     )
+        # )
 
         Keymap.Claw.ENGAGE_CLAW.onTrue(InstantCommand(lambda: Robot.Arm.engage_claw()))
         Keymap.Claw.ENGAGE_CLAW.onFalse(

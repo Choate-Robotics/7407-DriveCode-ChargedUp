@@ -14,10 +14,10 @@ from units.SI import radians
 # importing packages
 
 SHOULDER_CONFIG = SparkMaxConfig(
-    0.6, 0, 1, 0.2, (-0.3, 0.3), idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    0.006, 0, 1, 0.2, (-0.5, 0.5), idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 ELEVATOR_CONFIG = SparkMaxConfig(
-    1, 0, 0.004, 0.00017, (-0.5, 0.5), idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    1.5, 0, 0.004, 0.00017, (-0.5, 0.5), idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 
 WRIST_CONFIG = SparkMaxConfig(
@@ -27,7 +27,7 @@ WRIST_CONFIG = SparkMaxConfig(
 
 class Arm(Subsystem):
     motor_extend: SparkMax = SparkMax(
-        config.elevator_motor_extend_id, config=ELEVATOR_CONFIG
+        config.elevator_motor_extend_id, config=ELEVATOR_CONFIG, inverted=False
     )
     arm_rotation_motor: SparkMax = SparkMax(
         config.elevator_main_rotation_motor_id, inverted=True, config=SHOULDER_CONFIG
@@ -101,12 +101,12 @@ class Arm(Subsystem):
 
         self.arm_rotation_motor.motor.setSoftLimit(
             rev.CANSparkMax.SoftLimitDirection.kForward,
-            67.38
+            self.shoulder_angle_to_motor_rotations(constants.shoulder_max_rotation)
         )
 
         self.arm_rotation_motor.motor.setSoftLimit(
             rev.CANSparkMax.SoftLimitDirection.kReverse,
-            -67.38
+            -self.shoulder_angle_to_motor_rotations(constants.shoulder_min_rotation)
         )
 
         self.wrist.motor.setSoftLimit(
@@ -119,8 +119,7 @@ class Arm(Subsystem):
             -self.wrist_angle_to_motor_rotations(constants.wrist_min_rotation),
         )
 
-        self.enable_brake()
-        #$self.zero_elevator_rotation()
+        # self.zero_elevator_rotation()
         self.zero_wrist()
 
     def set_angle_wrist(self, pos: float):
@@ -221,17 +220,25 @@ class Arm(Subsystem):
     def set_pose(self, pose: Pose3d) -> None:
         """sets the pose of the arm"""
         self.pose = pose
+        
+    def is_at_length(self, length) -> bool:
+        length_threshold = 0.05
+        return abs(length - self.get_length()) < length_threshold
+    
+    def is_at_shoulder_rotation(self,angle):
+        rotation_threshold = math.radians(2)
+        abs(angle - self.get_rotation()) < rotation_threshold
+        
+    def is_at_wrist_rotation(self, angle_wrist):
+        wrist_threshold = math.radians(2)
+        abs(angle_wrist - self.get_angle_wrist()) < wrist_threshold
 
     def is_at_position(self, length, angle, angle_wrist) -> bool:
-        """checks if the arm is at the desired position"""  # TODO: ADD A THRESHOLD FOR THIS CHECK!!
-        length_threshold = 0.05
-        rotation_threshold = math.radians(2)
-        wrist_threshold = math.radians(2)
-
+        """checks if the arm is at the desired position"""      
         return (
-                abs(length - self.get_length()) < length_threshold
-                and abs(angle - self.get_rotation()) < rotation_threshold
-                and abs(angle_wrist - self.get_angle_wrist()) < wrist_threshold
+                self.is_at_length(length)
+                and self.is_at_shoulder_rotation(angle)
+                and self.is_at_wrist_rotation(angle_wrist)
         )
 
     def is_at_length(self, length: float) -> bool:
@@ -300,7 +307,7 @@ class Arm(Subsystem):
         else:
             return (
                     constants.shoulder_max_rotation
-                    >= angle
+                    >= angle and angle
                     >= -constants.shoulder_min_rotation
             )
 
@@ -356,7 +363,7 @@ class Arm(Subsystem):
     def zero_elevator_length(self) -> None:
         """Sets the elevator to the zero position (no rotation)"""
         self.motor_extend.set_target_position(
-            self.motor_extend.get_sensor_position() - 0.005
+            self.motor_extend.get_sensor_position() + 0.005
         )
 
     def zero_elevator_rotation(self) -> None:
