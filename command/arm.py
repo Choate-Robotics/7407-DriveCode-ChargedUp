@@ -302,7 +302,7 @@ class SetArm(SubsystemCommand[Arm]):
         self.theta_i = 0
         self.theta_f = 0
         self.theta_diff = 0
-        self.threshold = math.radians(5)
+        self.threshold = math.radians(2.5)
 
         self.desired_time = 3
 
