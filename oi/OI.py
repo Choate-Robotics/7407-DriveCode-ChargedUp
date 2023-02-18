@@ -36,7 +36,7 @@ class OI:
         #     )
         # )
         Keymap.Intake.INTAKE_ENABLE.whileHeld(
-            command.SetArm(Robot.Arm, 0, math.radians(90), -math.radians(0)).andThen(
+            command.SetArm(Robot.Arm, 0, math.radians(45), -math.radians(0)).andThen(
                 command.EngageClaw(Robot.Arm)
             )
         )

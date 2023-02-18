@@ -243,7 +243,7 @@ class setShoulderRotation(SubsystemCommand[Arm]):
         
     def initialize(self) -> None:
         self.arm_controller = PIDController(1
-        ,0,0.05)
+        ,0,0.03)
         
         self.arm_ff = ArmFeedforward(kG=0.045,kS=0,kV=0,kA=0) #perfect dont touch
 
@@ -269,10 +269,16 @@ class setShoulderRotation(SubsystemCommand[Arm]):
             math.pi/2 - current_theta, #sets correct origin 
             self.theta_f,
         ))
-        if abs(pid_voltage) < .0005:
+        # if abs(pid_voltage) < .0005:
+        #     pid_voltage = 0
+        #print(self.subsystem.is_at_shoulder_rotation(math.pi/2 - self.shoulder_angle))
+        if self.subsystem.is_at_shoulder_rotation(math.pi/2 - self.shoulder_angle):
             pid_voltage = 0
         desired_voltage = (feed_forward + pid_voltage) * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
-        print(desired_voltage)
+        #print(self.shoulder_angle)
+        print("SHOULDER: ", self.shoulder_angle)
+        print("CURRENT: ", current_theta)
+
         SmartDashboard.putNumber("PID_Voltage", pid_voltage)
         self.subsystem.arm_rotation_motor.pid_controller.setReference(
             min(maximum_power, abs(desired_voltage)) * (1 if desired_voltage > 0 else -1), rev.CANSparkMax.ControlType.kVoltage, pidSlot=1
@@ -427,8 +433,13 @@ class SetArm(SubsystemCommand[Arm]):
             math.pi/2 - current_theta, #sets correct origin 
             self.theta_f,
         ))
-        if abs(pid_voltage) < .02:
+        if self.subsystem.is_at_shoulder_rotation(math.pi/2 - self.shoulder_angle):
             pid_voltage = 0
+        desired_voltage = (feed_forward + pid_voltage) * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
+        #print(self.shoulder_angle)
+        print("SHOULDER: ", self.shoulder_angle)
+        print("CURRENT: ", current_theta)
+        
         desired_voltage = (feed_forward + pid_voltage) * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
         print(desired_voltage)
         SmartDashboard.putNumber("PID_Voltage", pid_voltage)
