@@ -33,11 +33,11 @@ class OI:
         # )
 
         Keymap.Intake.INTAKE_ENABLE.whenPressed(
-            InstantCommand(lambda: Robot.intake.intake_enable())
+            command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(45))
         )
 
         Keymap.Intake.INTAKE_ENABLE.whenReleased(
-            InstantCommand(lambda: Robot.intake.intake_disable())
+            command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(0))
         )
 
         Keymap.Claw.ENGAGE_CLAW.whenPressed(
@@ -48,7 +48,7 @@ class OI:
                 Sensors.odometry,
                 pose=Pose2d(14.44, 1.05, 0),  # 8.4 2.3 0
                 arm_angle=math.radians(45),
-                arm_length=0,
+                arm_length=0.3,
                 wrist_angle=math.radians(-45),
                 wrist_enabled=True,
             )
@@ -84,18 +84,17 @@ class OI:
         #         command.SetGrabber(Robot.grabber, wrist_angle=math.radians(0), claw_active=False)
         #     )
         # )
-        
-        
-        Keymap.Intake.INTAKE_ENABLE.whenPressed(
-            command.setElevator(Robot.arm, .3)
-        )
 
-        Keymap.Intake.INTAKE_ENABLE.whenReleased(
-            command.setElevator(Robot.arm, 0)
-        )
+        # Keymap.Intake.INTAKE_ENABLE.whenPressed(
+        #     command.setElevator(Robot.arm, .3)
+        # )
+        #
+        # Keymap.Intake.INTAKE_ENABLE.whenReleased(
+        #     command.setElevator(Robot.arm, 0)
+        # )
 
-        Keymap.Claw.ENGAGE_CLAW.onTrue(InstantCommand(lambda: Robot.arm.engage_claw()))
-        Keymap.Claw.ENGAGE_CLAW.onFalse(
-            InstantCommand(lambda: Robot.arm.disengage_claw())
-
-        )
+        # Keymap.Claw.ENGAGE_CLAW.onTrue(InstantCommand(lambda: Robot.arm.engage_claw()))
+        # Keymap.Claw.ENGAGE_CLAW.onFalse(
+        #     InstantCommand(lambda: Robot.arm.disengage_claw())
+        #
+        # )

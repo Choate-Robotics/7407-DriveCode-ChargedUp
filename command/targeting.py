@@ -42,6 +42,7 @@ class Target(SubsystemCommand[Drivetrain]):
         self.trajectory: CustomTrajectory | None = None
 
         self.finished = False
+        self.drive_on = False
 
     def finish(self) -> None:
         self.finished = True
@@ -64,7 +65,7 @@ class Target(SubsystemCommand[Drivetrain]):
             print("Failed to generate trajectory.")
             self.finished = True
 
-        if not self.finished:
+        if not self.finished and self.drive_on:
             commands2.CommandScheduler.getInstance().schedule(
                 SequentialCommandGroup(
                     ParallelCommandGroup(
@@ -74,7 +75,9 @@ class Target(SubsystemCommand[Drivetrain]):
                                 self.drivetrain, self.pose.rotation().radians()
                             ),
                         ),
-                        command.SetArm(self.arm, self.arm_length, self.arm_angle),
+                        SequentialCommandGroup(
+                            command.SetArm(self.arm, self.arm_length, self.arm_angle)
+                        ),
                         command.SetGrabber(
                             self.grabber, self.wrist_angle, self.wrist_enabled
                         ),

@@ -4,8 +4,7 @@ import time
 import rev
 from robotpy_toolkit_7407.command import SubsystemCommand
 from wpilib import SmartDashboard
-from wpimath.controller import ArmFeedforward, PIDController, ProfiledPIDController
-from wpimath.trajectory import TrapezoidProfile
+from wpimath.controller import ArmFeedforward, PIDController
 
 import constants
 import utils
@@ -293,10 +292,10 @@ class setElevator(SubsystemCommand[Arm]):
 
     def initialize(self) -> None:
         self.subsystem.set_length(self.length)
-        
+
     def execute(self) -> None:
-        if self.subsystem.get_length() < .2 * constants.max_elevator_height_delta:
-            self.subsystem.motor_extend.pid_controller.setOutputRange(-.1, 1)
+        if self.subsystem.get_length() < 0.2 * constants.max_elevator_height_delta:
+            self.subsystem.motor_extend.pid_controller.setOutputRange(-0.1, 1)
         else:
             self.subsystem.motor_extend.pid_controller.setOutputRange(-1, 1)
 
@@ -365,6 +364,8 @@ class SetArm(SubsystemCommand[Arm]):
         if not self.subsystem.is_at_position(self.distance, self.shoulder_angle):
             self.subsystem.disable_brake()
 
+        self.subsystem.set_length(self.distance)
+
     def execute(self) -> None:
         SmartDashboard.putNumber("ARM_CURRENT", self.subsystem.get_rotation())
 
@@ -406,6 +407,11 @@ class SetArm(SubsystemCommand[Arm]):
             rev.CANSparkMax.ControlType.kVoltage,
             1,
         )
+
+        if self.subsystem.get_length() < 0.2 * constants.max_elevator_height_delta:
+            self.subsystem.motor_extend.pid_controller.setOutputRange(-0.1, 1)
+        else:
+            self.subsystem.motor_extend.pid_controller.setOutputRange(-1, 1)
 
     def isFinished(self) -> bool:
         return False
