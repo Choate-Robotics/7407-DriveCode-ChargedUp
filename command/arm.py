@@ -1,7 +1,6 @@
 import math
 import time
 
-import commands2
 import rev
 from robotpy_toolkit_7407.command import SubsystemCommand
 from wpilib import SmartDashboard
@@ -9,7 +8,7 @@ from wpimath.controller import ArmFeedforward, PIDController
 
 import constants
 import utils
-from robot_systems import Robot, Sensors
+from robot_systems import Sensors
 from subsystem import Arm, Grabber
 from units.SI import meters, radians
 
@@ -76,14 +75,6 @@ class ZeroWrist(SubsystemCommand[Grabber]):
 
     def end(self, interrupted=False):
         utils.logger.debug("Wrist", "Wrist Successfully Zeroed.")
-
-
-ZeroArm = lambda: commands2.SequentialCommandGroup(
-    commands2.InstantCommand(lambda: Robot.arm.disengage_claw()),
-    ZeroElevator(Robot.arm),
-    ZeroShoulder(Robot.arm),
-    ZeroWrist(Robot.arm),
-)
 
 
 class ManualMovement(SubsystemCommand[Arm]):
@@ -249,7 +240,6 @@ class setShoulderRotation(SubsystemCommand[Arm]):
             self.subsystem.disable_brake()
 
     def execute(self) -> None:
-        current_time = time.perf_counter() - self.start_time
         current_theta = self.subsystem.get_rotation()
 
         maximum_power = 0.5 * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
@@ -319,7 +309,7 @@ class SetArm(SubsystemCommand[Arm]):
     def initialize(self):
         self.arm_controller = PIDController(1, 0, 0.03)
 
-        self.arm_ff = ArmFeedforward(kG=0.045, kS=0, kV=0, kA=0)  # perfect dont touch
+        self.arm_ff = ArmFeedforward(kG=0.045, kS=0, kV=0, kA=0)  # perfect don't touch
 
         self.start_time = time.perf_counter()
         self.theta_i = self.subsystem.get_rotation()
@@ -329,9 +319,16 @@ class SetArm(SubsystemCommand[Arm]):
             self.subsystem.disable_brake()
 
     def execute(self) -> None:
+        SmartDashboard.putNumber("ARM_CURRENT", self.subsystem.get_rotation())
+
+        SmartDashboard.putNumber("ARM_TARGET", self.real_desired)
+
+        SmartDashboard.putNumber(
+            "ARM_ERROR", self.real_desired - self.subsystem.get_rotation()
+        )
+
         # print("RUNNING")
         self.subsystem.update_pose()
-        current_time = time.perf_counter() - self.start_time
         current_theta = self.subsystem.get_rotation()
 
         maximum_power = 0.8 * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
@@ -372,7 +369,3 @@ class SetArm(SubsystemCommand[Arm]):
             self.subsystem.arm_rotation_motor.pid_controller.setReference(
                 0, rev.CANSparkMax.ControlType.kVoltage, 0
             )
-        # self.subsystem.disengage_claw()
-        # self.subsystem.set_angle_wrist(math.radians(0))
-        # self.subsystem.set_rotation(math.radians(0))
-        # self.subsystem.set_angle_wrist(math.radians(0))

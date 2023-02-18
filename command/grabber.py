@@ -1,4 +1,5 @@
 from robotpy_toolkit_7407 import SubsystemCommand
+from wpilib import SmartDashboard
 
 from subsystem import Grabber
 from units.SI import radians
@@ -19,6 +20,13 @@ class SetGrabber(SubsystemCommand[Grabber]):
             self.subsystem.disengage_claw()
 
     def execute(self) -> None:
+        SmartDashboard.putNumber("WRIST_CURRENT", self.subsystem.get_angle())
+
+        SmartDashboard.putNumber("WRIST_TARGET", self.wrist_angle)
+
+        SmartDashboard.putNumber(
+            "WRIST_ERROR", self.wrist_angle - self.subsystem.get_angle()
+        )
         ...
 
     def isFinished(self) -> bool:
