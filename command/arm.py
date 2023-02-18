@@ -5,8 +5,9 @@ import commands2
 import rev
 from commands2 import InstantCommand, SequentialCommandGroup, WaitCommand
 from robotpy_toolkit_7407.command import SubsystemCommand
-from wpimath.controller import ProfiledPIDControllerRadians
+from wpimath.controller import ProfiledPIDControllerRadians, ArmFeedforward, PIDController
 from wpimath.trajectory import TrapezoidProfileRadians
+from wpilib import SmartDashboard
 
 import constants
 import utils
@@ -239,8 +240,8 @@ class SetArm(SubsystemCommand[Arm]):
         self.wrist_angle = wrist_angle
         self.claw_active = claw_active
 
-        self.arm_controller: ProfiledPIDControllerRadians | None = None
-
+        self.arm_controller: PIDController | None = None
+        self.arm_ff: ArmFeedforward | None = None
         self.start_time = None
         self.theta_i = 0
         self.theta_f = 0
@@ -273,12 +274,18 @@ class SetArm(SubsystemCommand[Arm]):
         if self.claw_active:
             self.subsystem.engage_claw()
 
-        self.arm_controller = ProfiledPIDControllerRadians(
-            3,
-            0,
-            0,
-            TrapezoidProfileRadians.Constraints(0.4, 0.2),
-        )
+        self.arm_controller = PIDController(1
+        ,0,0.03)
+        
+        
+        #ProfiledPIDControllerRadians(
+           # .1,
+          #  0,
+          #  0,
+         #   TrapezoidProfileRadians.Constraints(0.4, 0.2),
+        #)
+
+        self.arm_ff = ArmFeedforward(kG=0.045,kS=0,kV=0,kA=0) #perfect dont touch
 
         self.start_time = time.perf_counter()
         self.theta_i = self.subsystem.get_rotation()
@@ -287,22 +294,47 @@ class SetArm(SubsystemCommand[Arm]):
         self.subsystem.disable_brake()
 
     def execute(self) -> None:
-        print("RUNNING")
+        #print("RUNNING")
         self.subsystem.update_pose()
         current_time = time.perf_counter() - self.start_time
         current_theta = self.subsystem.get_rotation()
 
-        maximum_power = 0.2
+        maximum_power = 0.7
+        #print(math.pi/2 - self.theta_f)
+        # print("Actual Theta:", current_theta)
+        # print("Theta:", math.pi/2 - current_theta)
 
+        feed_forward = (-self.arm_ff.calculate(angle=(math.pi/2 - current_theta),velocity=0.1,acceleration=0))
+        # print("Voltage", desired_voltage)
+        pid_voltage = -(self.arm_controller.calculate(
+            math.pi/2 - current_theta, #sets correct origin 
+            self.theta_f,
+        ))
+        if abs(pid_voltage) < .05:
+            pid_voltage = 0
+        desired_voltage = feed_forward + pid_voltage
+        print(pid_voltage)
+        SmartDashboard.putNumber("PID_Voltage", pid_voltage)
         self.subsystem.arm_rotation_motor.set_raw_output(
             min(
                 maximum_power,
-                self.arm_controller.calculate(
-                    current_theta,
-                    self.theta_f,
-                ),
-            )
+                abs(desired_voltage)
+                # self.arm_controller.calculate(
+                #     current_theta-math.radians(math.pi/2), #sets correct origin 
+                #     self.theta_f,
+                # ),
+            ) * (1 if desired_voltage > 0 else -1)
         )
+        # self.subsystem.arm_rotation_motor.set_raw_output(
+        #     min(
+        #         maximum_power,
+        #         desired_voltage
+        #         # self.arm_controller.calculate(
+        #         #     current_theta-math.radians(math.pi/2), #sets correct origin 
+        #         #     self.theta_f,
+        #         # ),
+        #     )
+        # )
 
     def isFinished(self) -> bool:
         return self.subsystem.is_at_position(

@@ -101,12 +101,12 @@ class Arm(Subsystem):
 
         self.arm_rotation_motor.motor.setSoftLimit(
             rev.CANSparkMax.SoftLimitDirection.kForward,
-            self.shoulder_angle_to_motor_rotations(constants.shoulder_max_rotation),
+            67.38
         )
 
         self.arm_rotation_motor.motor.setSoftLimit(
             rev.CANSparkMax.SoftLimitDirection.kReverse,
-            self.shoulder_angle_to_motor_rotations(constants.shoulder_min_rotation),
+            -67.38
         )
 
         self.wrist.motor.setSoftLimit(
@@ -120,7 +120,7 @@ class Arm(Subsystem):
         )
 
         self.enable_brake()
-        self.zero_elevator_rotation()
+        #$self.zero_elevator_rotation()
         self.zero_wrist()
 
     def set_angle_wrist(self, pos: float):
@@ -386,8 +386,8 @@ class Arm(Subsystem):
     def update_pose(self) -> None:
         """Updates the pose of the arm using the encoder values and rotation of the elevator"""
         angle = self.get_rotation()
-        print("POSE ANGLE: " + str(angle))
+        # print("POSE ANGLE: " + str(angle))
         length = self.get_length()
-        print("POSE LENGTH: " + str(length))
+        # print("POSE LENGTH: " + str(length))
         self.length = length
         self.angle = angle
