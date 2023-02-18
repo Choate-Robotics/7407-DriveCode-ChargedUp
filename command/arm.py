@@ -435,19 +435,18 @@ class SetArm(SubsystemCommand[Arm]):
         ))
         if self.subsystem.is_at_shoulder_rotation(math.pi/2 - self.shoulder_angle):
             pid_voltage = 0
-        desired_voltage = (feed_forward + pid_voltage) * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
-        #print(self.shoulder_angle)
+
         print("SHOULDER: ", self.shoulder_angle)
         print("CURRENT: ", current_theta)
-        
+
         desired_voltage = (feed_forward + pid_voltage) * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
         print(desired_voltage)
         SmartDashboard.putNumber("PID_Voltage", pid_voltage)
         self.subsystem.arm_rotation_motor.pid_controller.setReference(
             min(maximum_power, abs(desired_voltage)) * (1 if desired_voltage > 0 else -1), rev.CANSparkMax.ControlType.kVoltage, 1
         )
-        print("TARGET: ", math.degrees(self.shoulder_angle))
-        print("ERROR: ", math.degrees(self.subsystem.get_rotation()))
+        #print("TARGET: ", math.degrees(self.shoulder_angle))
+        #print("ERROR: ", math.degrees(self.subsystem.get_rotation()))
     def isFinished(self) -> bool:
         return self.subsystem.is_at_position(
             self.distance, self.shoulder_angle, self.wrist_angle
