@@ -17,7 +17,7 @@ SHOULDER_CONFIG = SparkMaxConfig(
     0.006, 0, 1, 0.2, (-0.5, 0.5), idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 ELEVATOR_CONFIG = SparkMaxConfig(
-    1.5, 0, 0.004, 0.00017, (-0.5, 0.5), idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    1.5, 0, 0.004, 0.00017, (-1, 1), idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 
 
@@ -188,6 +188,7 @@ class Arm(Subsystem):
             length = lol * (1 / constants.elevator_length_per_rotation)
             print(length)
             self.motor_extend.set_target_position(length)
+            # self.motor_extend.pid_controller.setReference(length, self.motor_extend.motor.ControlType.kPosition, arbFeedforward=)
             # self.rotation_PID.setSmartMotionMaxAccel(0.01)
 
     def shoulder_rotation_limits(self, angle: radians) -> bool:

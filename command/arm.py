@@ -295,10 +295,13 @@ class setElevator(SubsystemCommand[Arm]):
         self.subsystem.set_length(self.length)
         
     def execute(self) -> None:
-        pass
+        if self.subsystem.get_length() < .2 * constants.max_elevator_height_delta:
+            self.subsystem.motor_extend.pid_controller.setOutputRange(-.1, 1)
+        else:
+            self.subsystem.motor_extend.pid_controller.setOutputRange(-1, 1)
 
     def isFinished(self) -> bool:
-        return self.subsystem.is_at_length(self.subsystem.get_length())
+        return self.subsystem.is_at_length(self.length)
 
     def end(self, interrupted: bool) -> None:
         pass
