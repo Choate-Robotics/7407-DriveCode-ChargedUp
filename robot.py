@@ -17,15 +17,16 @@ class _Robot(wpilib.TimedRobot):
         super().__init__()
 
     def robotInit(self):
-        Robot.Arm.init()
         OI.init()
         OI.map_controls()
         period = 0.03
         commands2.CommandScheduler.getInstance().setPeriod(period)
         Pneumatics.compressor.enableAnalog(90, 120)
 
+        Robot.arm.init()
         Robot.drivetrain.init()
         Robot.intake.init()
+        Robot.grabber.init()
 
         # Sensors.pv_controller = PV_Cameras()
 
@@ -86,17 +87,17 @@ class _Robot(wpilib.TimedRobot):
         commands2.CommandScheduler.getInstance().run()
 
     def teleopInit(self):
-        Robot.Arm.zero_wrist()
         logger.debug("TELEOP", "Teleop Initialized")
-        commands2.CommandScheduler.getInstance().schedule(command.ZeroElevator(Robot.Arm))
+        commands2.CommandScheduler.getInstance().schedule(command.ZeroElevator(Robot.arm))
+        commands2.CommandScheduler.getInstance().schedule(command.ZeroWrist(Robot.grabber))
         commands2.CommandScheduler.getInstance().schedule(
             command.DriveSwerveCustom(Robot.drivetrain)
         )
 
     def teleopPeriodic(self):
-        print(Robot.Arm.elevator_bottom_sensor.get())
+        print(Robot.arm.elevator_bottom_sensor.get())
         # print(Pneumatics.compressor.getPressure())
-        #print("I THINK I'm AT: ", math.degrees(Robot.Arm.get_rotation()))
+        # print("I THINK I'm AT: ", math.degrees(Robot.Arm.get_rotation()))
         # Robot.Arm.disable_brake()
         ...
 

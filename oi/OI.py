@@ -1,6 +1,6 @@
 import math
 
-from commands2 import InstantCommand, WaitCommand
+from commands2 import InstantCommand, ParallelCommandGroup
 from robotpy_toolkit_7407.utils import logger
 
 import command
@@ -35,19 +35,22 @@ class OI:
         #         WaitCommand(0).andThen(command.IntakeDisable(Robot.intake))
         #     )
         # )
-        Keymap.Intake.INTAKE_ENABLE.whileHeld(
-            command.SetArm(Robot.Arm, 0, math.radians(45), -math.radians(0)).andThen(
-                command.EngageClaw(Robot.Arm)
+        Keymap.Intake.INTAKE_ENABLE.whenPressed(
+            ParallelCommandGroup(
+                command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(45)),
+                command.SetGrabber(Robot.grabber, wrist_angle=math.radians(-45), claw_active=True)
             )
         )
-        
-        # Keymap.Intake.INTAKE_ENABLE.whileHeld(
-        #     command.setShoulderRotation(Robot.Arm, math.radians(90)).andThen(
-        #         command.EngageClaw(Robot.Arm)
-        #     )
-        # )
 
-        Keymap.Claw.ENGAGE_CLAW.onTrue(InstantCommand(lambda: Robot.Arm.engage_claw()))
+        Keymap.Intake.INTAKE_ENABLE.whenReleased(
+            ParallelCommandGroup(
+                command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(0)),
+                command.SetGrabber(Robot.grabber, wrist_angle=math.radians(0), claw_active=False)
+            )
+        )
+
+        Keymap.Claw.ENGAGE_CLAW.onTrue(InstantCommand(lambda: Robot.arm.engage_claw()))
         Keymap.Claw.ENGAGE_CLAW.onFalse(
-            InstantCommand(lambda: Robot.Arm.disengage_claw())
+            InstantCommand(lambda: Robot.arm.disengage_claw())
+
         )

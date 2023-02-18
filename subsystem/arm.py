@@ -20,10 +20,6 @@ ELEVATOR_CONFIG = SparkMaxConfig(
     1.5, 0, 0.004, 0.00017, (-0.5, 0.5), idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 
-WRIST_CONFIG = SparkMaxConfig(
-    0.05, 0, 0.004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
-)
-
 
 class Arm(Subsystem):
     motor_extend: SparkMax = SparkMax(
@@ -40,11 +36,7 @@ class Arm(Subsystem):
     brake: wpilib.DoubleSolenoid = wpilib.DoubleSolenoid(
         31, wpilib.PneumaticsModuleType.REVPH, 15, 14
     )
-    wrist: SparkMax = SparkMax(18, inverted=False, config=WRIST_CONFIG)
-    claw_motor: SparkMax = SparkMax(12, inverted=False)
-    claw_grabber: wpilib.DoubleSolenoid = wpilib.DoubleSolenoid(
-        config.pneumatics_control_module, wpilib.PneumaticsModuleType.REVPH, 0, 1
-    )
+
     initialized: bool = False
     brake_enabled: bool = False
     pose: Pose3d
@@ -54,13 +46,10 @@ class Arm(Subsystem):
     disable_extension: bool = False
     disable_rotation: bool = False
     intake_up: bool = True
-    claw_motor_initialized: bool = False
-    claw_compressed: bool = False
-    claw_open: bool = False
 
     def __init__(self):
         super().__init__()
-        self.wrist_abs_encoder = None
+
         self.angle = None
         self.length = None
         self.distance_sensor = None
@@ -71,17 +60,11 @@ class Arm(Subsystem):
     def init(self):  # initializing motors
         """initializes the motors"""
         self.motor_extend.init()
-        self.claw_motor.init()
         self.arm_rotation_motor.init()
         self.arm_rotation_follower_motor.init()
         self.arm_rotation_follower_motor.motor.follow(
             self.arm_rotation_motor.motor, True
         )
-        self.wrist.init()
-
-        self.claw_motor_initialized = True
-
-        self.distance_sensor = self.claw_motor.motor.getAnalog()
 
         self.elevator_bottom_sensor = self.motor_extend.motor.getReverseLimitSwitch(
             rev.SparkMaxLimitSwitch.Type.kNormallyOpen
@@ -95,10 +78,6 @@ class Arm(Subsystem):
             rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle
         )
 
-        self.wrist_abs_encoder = self.wrist.motor.getAbsoluteEncoder(
-            rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle
-        )
-
         self.arm_rotation_motor.motor.setSoftLimit(
             rev.CANSparkMax.SoftLimitDirection.kForward,
             self.shoulder_angle_to_motor_rotations(constants.shoulder_max_rotation)
@@ -108,76 +87,6 @@ class Arm(Subsystem):
             rev.CANSparkMax.SoftLimitDirection.kReverse,
             -self.shoulder_angle_to_motor_rotations(constants.shoulder_min_rotation)
         )
-
-        self.wrist.motor.setSoftLimit(
-            rev.CANSparkMax.SoftLimitDirection.kForward,
-            self.wrist_angle_to_motor_rotations(constants.wrist_max_rotation),
-        )
-
-        self.wrist.motor.setSoftLimit(
-            rev.CANSparkMax.SoftLimitDirection.kReverse,
-            -self.wrist_angle_to_motor_rotations(constants.wrist_min_rotation),
-        )
-
-        # self.zero_elevator_rotation()
-        self.zero_wrist()
-
-    def set_angle_wrist(self, pos: float):
-        """
-        Set the angle of the claw
-
-        Args:
-            pos (float): Angle in radians (0, 2pi)
-        """
-        self.wrist.set_target_position(
-            (pos / (math.pi * 2)) * constants.wrist_gear_ratio
-        )
-
-    def get_angle_wrist(self):
-        """
-        Get the angle of the claw
-        :return: Angle in radians (0, 2pi)
-        :rtype: float
-        """
-        return self.wrist.get_sensor_position() / constants.wrist_gear_ratio
-
-    def zero_wrist(self):
-        """Sets the shoulder to the zero position (no extension)"""
-        self.wrist.set_sensor_position(0)
-        abs_encoder_position: float = self.wrist_abs_encoder.getPosition()
-        if abs_encoder_position > 0.5:
-            abs_encoder_position = -(1 - abs_encoder_position)
-        encoder_difference: float = abs_encoder_position - 0
-        motor_position: float = encoder_difference * constants.wrist_gear_ratio
-        self.wrist.set_sensor_position(-motor_position)
-        self.wrist.set_target_position(0)
-
-    # def set claw motor output (speed)
-    def set_claw_output(self, output: float):
-        """
-        Set the output of the claw motor
-
-        Args:
-            output (float): Speed from -1 to 1
-        """
-        self.claw_motor.set_raw_output(output)
-
-    def open_claw(self):
-        self.claw_grabber.set(wpilib.DoubleSolenoid.Value.kForward)
-        self.claw_open = True
-
-    def close_claw(self):
-        self.claw_grabber.set(wpilib.DoubleSolenoid.Value.kReverse)
-        self.claw_open = False
-
-    def engage_claw(self):
-        # Set distance forward (closes claw)
-        self.open_claw()
-        self.set_claw_output(config.claw_motor_speed)
-
-    def disengage_claw(self):
-        self.close_claw()
-        self.set_claw_output(0)
 
     def enable_brake(self) -> bool:
         """enables the brake"""
@@ -220,25 +129,20 @@ class Arm(Subsystem):
     def set_pose(self, pose: Pose3d) -> None:
         """sets the pose of the arm"""
         self.pose = pose
-        
+
     def is_at_length(self, length) -> bool:
         length_threshold = 0.05
         return abs(length - self.get_length()) < length_threshold
-    
-    def is_at_shoulder_rotation(self,angle):
-        rotation_threshold = math.radians(2)
-        abs(angle - self.get_rotation()) < rotation_threshold
-        
-    def is_at_wrist_rotation(self, angle_wrist):
-        wrist_threshold = math.radians(2)
-        abs(angle_wrist - self.get_angle_wrist()) < wrist_threshold
 
-    def is_at_position(self, length, angle, angle_wrist) -> bool:
-        """checks if the arm is at the desired position"""      
+    def is_at_shoulder_rotation(self, angle):
+        rotation_threshold = math.radians(2)
+        return abs(angle - self.get_rotation()) < rotation_threshold
+
+    def is_at_position(self, length, angle) -> bool:
+        """checks if the arm is at the desired position"""
         return (
                 self.is_at_length(length)
                 and self.is_at_shoulder_rotation(angle)
-                and self.is_at_wrist_rotation(angle_wrist)
         )
 
     def is_at_length(self, length: float) -> bool:
@@ -258,18 +162,6 @@ class Arm(Subsystem):
         return (angle * constants.elevator_rotation_gear_ratio) / (2 * math.pi)
 
     @staticmethod
-    def wrist_angle_to_motor_rotations(angle: radians):
-        """returns the scale of angle in radians to the shoulder motor rotations
-
-        Args:
-            angle (float): the angle in radians
-
-        Returns:
-            float: a float of the rotations
-        """
-        return (angle / (2 * math.pi)) * constants.wrist_gear_ratio
-
-    @staticmethod
     def abs_encoder_to_rad(encoder_value: float):
         """converts the encoder value to radians"""
         return encoder_value * (2 * math.pi)
@@ -278,7 +170,6 @@ class Arm(Subsystem):
         """stops the elevator"""
         self.motor_extend.set_raw_output(0)
         self.arm_rotation_motor.set_raw_output(0)
-        self.wrist.set_raw_output(0)
         self.claw_motor.set_raw_output(0)
 
     def hard_stop(self) -> None:
@@ -306,9 +197,7 @@ class Arm(Subsystem):
             return True
         else:
             return (
-                    constants.shoulder_max_rotation
-                    >= angle and angle
-                    >= -constants.shoulder_min_rotation
+                    constants.shoulder_max_rotation >= angle >= -constants.shoulder_min_rotation
             )
 
     def set_rotation(self, angle: radians):  # set arm rotation
