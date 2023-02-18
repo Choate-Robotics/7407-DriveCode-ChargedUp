@@ -23,7 +23,7 @@ ELEVATOR_CONFIG = SparkMaxConfig(
 
 class Arm(Subsystem):
     motor_extend: SparkMax = SparkMax(
-        config.elevator_motor_extend_id, config=ELEVATOR_CONFIG, inverted=False
+        config.elevator_motor_extend_id, config=ELEVATOR_CONFIG, inverted=True
     )
     arm_rotation_motor: SparkMax = SparkMax(
         config.elevator_main_rotation_motor_id, inverted=True, config=SHOULDER_CONFIG
