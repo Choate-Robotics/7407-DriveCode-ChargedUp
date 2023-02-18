@@ -187,7 +187,7 @@ class Arm(Subsystem):
             print(lol)
             length = lol * (1 / constants.elevator_length_per_rotation)
             print(length)
-            # self.motor_extend.set_target_position(length)
+            self.motor_extend.set_target_position(length)
             # self.rotation_PID.setSmartMotionMaxAccel(0.01)
 
     def shoulder_rotation_limits(self, angle: radians) -> bool:

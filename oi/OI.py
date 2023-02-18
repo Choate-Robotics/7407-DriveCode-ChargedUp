@@ -78,16 +78,24 @@ class OI:
         #         command.SetGrabber(Robot.grabber, wrist_angle=math.radians(-45), claw_active=True)
         #     )
         # )
-        #
         # Keymap.Intake.INTAKE_ENABLE.whenReleased(
         #     ParallelCommandGroup(
         #         command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(0)),
         #         command.SetGrabber(Robot.grabber, wrist_angle=math.radians(0), claw_active=False)
         #     )
         # )
-        #
-        # Keymap.Claw.ENGAGE_CLAW.onTrue(InstantCommand(lambda: Robot.arm.engage_claw()))
-        # Keymap.Claw.ENGAGE_CLAW.onFalse(
-        #     InstantCommand(lambda: Robot.arm.disengage_claw())
-        #
-        # )
+        
+        
+        Keymap.Intake.INTAKE_ENABLE.whenPressed(
+            command.setElevator(Robot.arm, .3)
+        )
+
+        Keymap.Intake.INTAKE_ENABLE.whenReleased(
+            command.setElevator(Robot.arm, 0)
+        )
+
+        Keymap.Claw.ENGAGE_CLAW.onTrue(InstantCommand(lambda: Robot.arm.engage_claw()))
+        Keymap.Claw.ENGAGE_CLAW.onFalse(
+            InstantCommand(lambda: Robot.arm.disengage_claw())
+
+        )

@@ -290,62 +290,42 @@ class setElevator(SubsystemCommand[Arm]):
     def __init__(self, subsystem: Arm, length):
         super().__init__(subsystem)
         self.length = length
-        self.extension_controller: ProfiledPIDController | None = None
 
     def initialize(self) -> None:
-        self.arm_controller = ProfiledPIDController(
-            1, 0, 0.03, TrapezoidProfile.Constraints()
-        )
-
-        self.extension_ff = ArmFeedforward(kG=1, kS=0, kV=0, kA=0)
-
-        self.start_time = time.perf_counter()
-        self.theta_i = self.subsystem.get_rotation()
-        self.theta_f = self.shoulder_angle
-
+        self.subsystem.set_length(self.length)
+        
     def execute(self) -> None:
-        current_length = self.subsystem.get_length()
-
-        maximum_power = 0.5 * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
-        # print(math.pi/2 - self.theta_f)
-        # print("Actual Theta:", current_theta)
-        # print("Theta:", math.pi/2 - current_theta)
-
-        feed_forward = -self.extension_ff.calculate(
-            angle=(math.pi / 2 - current_length), velocity=0.1, acceleration=0
-        )
-        # print("Voltage", desired_voltage)
-        pid_voltage = -(
-            self.arm_controller.calculate(
-                math.pi / 2 - current_length,  # sets correct origin
-                self.theta_f,
-            )
-        )
-        # if abs(pid_voltage) < .0005:
-        #     pid_voltage = 0
-        # print(self.subsystem.is_at_shoulder_rotation(math.pi/2 - self.shoulder_angle))
-        if self.subsystem.is_at_length():
-            pid_voltage = 0
-        desired_voltage = (
-            feed_forward + pid_voltage
-        ) * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
-        # print(self.shoulder_angle)
-        print("SHOULDER: ", self.shoulder_angle)
-        print("CURRENT: ", current_length)
-
-        SmartDashboard.putNumber("PID_Voltage", pid_voltage)
-        self.subsystem.motor_extend.pid_controller.setReference(
-            min(maximum_power, abs(desired_voltage))
-            * (1 if desired_voltage > 0 else -1),
-            rev.CANSparkMax.ControlType.kVoltage,
-            pidSlot=1,
-        )
+        pass
 
     def isFinished(self) -> bool:
-        return self.subsystem.is_at_length(self.shoulder_angle)
+        return self.subsystem.is_at_length(self.subsystem.get_length())
 
     def end(self, interrupted: bool) -> None:
         pass
+
+
+class SetGrabber(SubsystemCommand[Grabber]):
+    def __init__(self, subsystem: Grabber, wrist_angle: radians, claw_active: bool):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+        self.wrist_angle = wrist_angle
+        self.claw_active = claw_active
+
+    def initialize(self) -> None:
+        self.subsystem.set_angle(self.wrist_angle)
+        if self.claw_active:
+            self.subsystem.engage_claw()
+        else:
+            self.subsystem.disengage_claw()
+
+    def execute(self) -> None:
+        ...
+
+    def isFinished(self) -> bool:
+        return self.subsystem.is_at_angle(self.wrist_angle)
+
+    def end(self, interrupted: bool) -> None:
+        ...
 
 
 class SetArm(SubsystemCommand[Arm]):
