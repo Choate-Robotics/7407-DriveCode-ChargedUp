@@ -1,9 +1,6 @@
-import math
-
-from commands2 import InstantCommand, ParallelCommandGroup
+from commands2 import InstantCommand
 from robotpy_toolkit_7407.utils import logger
 
-import command
 from oi.keymap import Keymap
 from robot_systems import Robot
 
@@ -30,27 +27,35 @@ class OI:
         #     # )
         # )
 
+        Keymap.Intake.INTAKE_ENABLE.whenPressed(
+            InstantCommand(lambda: Robot.intake.intake_enable())
+        )
+
+        Keymap.Intake.INTAKE_ENABLE.whenReleased(
+            InstantCommand(lambda: Robot.intake.intake_disable())
+        )
+
         # Keymap.Intake.INTAKE_ENABLE.whenReleased(
         #     command.SetArm(Robot.Arm, 0, 0, 0).andThen(
         #         WaitCommand(0).andThen(command.IntakeDisable(Robot.intake))
         #     )
         # )
-        Keymap.Intake.INTAKE_ENABLE.whenPressed(
-            ParallelCommandGroup(
-                command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(45)),
-                command.SetGrabber(Robot.grabber, wrist_angle=math.radians(-45), claw_active=True)
-            )
-        )
-
-        Keymap.Intake.INTAKE_ENABLE.whenReleased(
-            ParallelCommandGroup(
-                command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(0)),
-                command.SetGrabber(Robot.grabber, wrist_angle=math.radians(0), claw_active=False)
-            )
-        )
-
-        Keymap.Claw.ENGAGE_CLAW.onTrue(InstantCommand(lambda: Robot.arm.engage_claw()))
-        Keymap.Claw.ENGAGE_CLAW.onFalse(
-            InstantCommand(lambda: Robot.arm.disengage_claw())
-
-        )
+        # Keymap.Intake.INTAKE_ENABLE.whenPressed(
+        #     ParallelCommandGroup(
+        #         command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(45)),
+        #         command.SetGrabber(Robot.grabber, wrist_angle=math.radians(-45), claw_active=True)
+        #     )
+        # )
+        #
+        # Keymap.Intake.INTAKE_ENABLE.whenReleased(
+        #     ParallelCommandGroup(
+        #         command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(0)),
+        #         command.SetGrabber(Robot.grabber, wrist_angle=math.radians(0), claw_active=False)
+        #     )
+        # )
+        #
+        # Keymap.Claw.ENGAGE_CLAW.onTrue(InstantCommand(lambda: Robot.arm.engage_claw()))
+        # Keymap.Claw.ENGAGE_CLAW.onFalse(
+        #     InstantCommand(lambda: Robot.arm.disengage_claw())
+        #
+        # )

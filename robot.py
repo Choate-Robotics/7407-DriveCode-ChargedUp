@@ -88,11 +88,17 @@ class _Robot(wpilib.TimedRobot):
 
     def teleopInit(self):
         logger.debug("TELEOP", "Teleop Initialized")
-        commands2.CommandScheduler.getInstance().schedule(command.ZeroElevator(Robot.arm))
-        commands2.CommandScheduler.getInstance().schedule(command.ZeroWrist(Robot.grabber))
+        commands2.CommandScheduler.getInstance().schedule(
+            command.ZeroElevator(Robot.arm)
+        )
+        commands2.CommandScheduler.getInstance().schedule(
+            command.ZeroWrist(Robot.grabber)
+        )
         commands2.CommandScheduler.getInstance().schedule(
             command.DriveSwerveCustom(Robot.drivetrain)
         )
+
+        Robot.arm.enable_brake()
 
     def teleopPeriodic(self):
         print(Robot.arm.elevator_bottom_sensor.get())
