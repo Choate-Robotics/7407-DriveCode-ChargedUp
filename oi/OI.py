@@ -46,7 +46,7 @@ class OI:
                 Robot.arm,
                 Robot.grabber,
                 Sensors.odometry,
-                pose=Pose2d(8.4, 2.3, 0),
+                pose=Pose2d(14.44, 1.05, 0),  # 8.4 2.3 0
                 arm_angle=math.radians(45),
                 arm_length=0,
                 wrist_angle=math.radians(-45),
