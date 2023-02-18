@@ -367,12 +367,20 @@ class SetArm(SubsystemCommand[Arm]):
         self.subsystem.set_length(self.distance)
 
     def execute(self) -> None:
-        SmartDashboard.putNumber("ARM_CURRENT", self.subsystem.get_rotation())
+        SmartDashboard.putNumber(
+            "ARM_CURRENT", math.degrees(self.subsystem.get_rotation())
+        )
 
-        SmartDashboard.putNumber("ARM_TARGET", self.real_desired)
+        SmartDashboard.putNumber("ARM_TARGET", math.degrees(self.real_desired))
 
         SmartDashboard.putNumber(
-            "ARM_ERROR", self.real_desired - self.subsystem.get_rotation()
+            "ARM_ERROR", math.degrees(self.real_desired - self.subsystem.get_rotation())
+        )
+
+        SmartDashboard.putNumber("DIST_CURRENT", self.subsystem.get_length())
+        SmartDashboard.putNumber("DIST_TARGET", self.distance)
+        SmartDashboard.putNumber(
+            "DIST_ERROR", self.subsystem.get_length() - self.distance
         )
 
         # print("RUNNING")
@@ -393,13 +401,10 @@ class SetArm(SubsystemCommand[Arm]):
 
         if abs(self.subsystem.get_rotation() - self.real_desired) < self.threshold:
             pid_voltage = 0
-        else:
-            print(self.subsystem.get_rotation(), self.real_desired)
 
         desired_voltage = (
             feed_forward + pid_voltage
         ) * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
-        print(desired_voltage)
         SmartDashboard.putNumber("PID_Voltage", pid_voltage)
         self.subsystem.arm_rotation_motor.pid_controller.setReference(
             min(maximum_power, abs(desired_voltage))
@@ -414,11 +419,17 @@ class SetArm(SubsystemCommand[Arm]):
             self.subsystem.motor_extend.pid_controller.setOutputRange(-1, 1)
 
     def isFinished(self) -> bool:
-        return False
+        return (
+            abs(self.subsystem.get_rotation() - self.real_desired) < math.radians(4)
+            and abs(self.subsystem.get_length() - self.distance) < 0.05
+        )
 
     def end(self, interrupted: bool) -> None:
         if not interrupted:
+            print("FINISHED ARM SET")
             self.subsystem.enable_brake()
             self.subsystem.arm_rotation_motor.pid_controller.setReference(
                 0, rev.CANSparkMax.ControlType.kVoltage, 0
             )
+        else:
+            print("FINISHED ARM SET BUT INTERRUPTED")

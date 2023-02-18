@@ -10,7 +10,7 @@ import config
 import constants
 
 WRIST_CONFIG = SparkMaxConfig(
-    0.05, 0, 0.004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    0.05, 0, 0.004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kCoast
 )
 
 
@@ -69,7 +69,11 @@ class Grabber(Subsystem):
         :return: Angle in radians (0, 2pi)
         :rtype: float
         """
-        return self.wrist.get_sensor_position() / constants.wrist_gear_ratio
+        return (
+            (self.wrist.get_sensor_position() / constants.wrist_gear_ratio)
+            * math.pi
+            * 2
+        )
 
     def set_output(self, output: float):
         """

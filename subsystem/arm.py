@@ -80,12 +80,12 @@ class Arm(Subsystem):
 
         self.arm_rotation_motor.motor.setSoftLimit(
             rev.CANSparkMax.SoftLimitDirection.kForward,
-            self.shoulder_angle_to_motor_rotations(constants.shoulder_max_rotation)
+            self.shoulder_angle_to_motor_rotations(constants.shoulder_max_rotation),
         )
 
         self.arm_rotation_motor.motor.setSoftLimit(
             rev.CANSparkMax.SoftLimitDirection.kReverse,
-            -self.shoulder_angle_to_motor_rotations(constants.shoulder_min_rotation)
+            -self.shoulder_angle_to_motor_rotations(constants.shoulder_min_rotation),
         )
 
     def enable_brake(self) -> bool:
@@ -140,10 +140,7 @@ class Arm(Subsystem):
 
     def is_at_position(self, length, angle) -> bool:
         """checks if the arm is at the desired position"""
-        return (
-                self.is_at_length(length)
-                and self.is_at_shoulder_rotation(angle)
-        )
+        return self.is_at_length(length) and self.is_at_shoulder_rotation(angle)
 
     def is_at_length(self, length: float) -> bool:
         """checks if the arm is at the desired length"""
@@ -186,7 +183,6 @@ class Arm(Subsystem):
             lol = meters
             print(lol)
             length = lol * (1 / constants.elevator_length_per_rotation)
-            print(length)
             self.motor_extend.set_target_position(length)
             # self.motor_extend.pid_controller.setReference(length, self.motor_extend.motor.ControlType.kPosition, arbFeedforward=)
             # self.rotation_PID.setSmartMotionMaxAccel(0.01)
@@ -198,7 +194,9 @@ class Arm(Subsystem):
             return True
         else:
             return (
-                    constants.shoulder_max_rotation >= angle >= -constants.shoulder_min_rotation
+                constants.shoulder_max_rotation
+                >= angle
+                >= -constants.shoulder_min_rotation
             )
 
     def set_rotation(self, angle: radians):  # set arm rotation
@@ -207,8 +205,8 @@ class Arm(Subsystem):
         # print("RADIANS: " + str(radians))
         def set_arm_angle(aligned_angle: radians):
             rotations = (
-                                aligned_angle / (2 * math.pi)
-                        ) * constants.elevator_rotation_gear_ratio
+                aligned_angle / (2 * math.pi)
+            ) * constants.elevator_rotation_gear_ratio
             self.arm_rotation_motor.set_target_position(rotations)
             # self.rotation_PID.setReference(1, rev.CANSparkMax.ControlType.kVelocity)
 
@@ -230,16 +228,16 @@ class Arm(Subsystem):
     def get_length(self) -> float:  # returns arm extension
         """Gets the length of the elevator in meters"""
         return self.motor_extend.get_sensor_position() / (
-                1 / constants.elevator_length_per_rotation
+            1 / constants.elevator_length_per_rotation
         )
         # return (self.motor_extend.get_sensor_position() * constants.elevator_extend_gear_ratio * constants.max_elevator_height_delta) + constants.elevator_zero_length
 
     def get_rotation(self) -> float:
         """Gets the rotation of the shoulder in radians"""
         return (
-                       self.arm_rotation_motor.get_sensor_position()
-                       / constants.elevator_rotation_gear_ratio
-               ) * (2 * math.pi)
+            self.arm_rotation_motor.get_sensor_position()
+            / constants.elevator_rotation_gear_ratio
+        ) * (2 * math.pi)
 
     def get_rotation_radians_abs(self) -> float:
         """Gets the rotation of the shoulder in rotations from the absolute encoder"""
@@ -264,11 +262,11 @@ class Arm(Subsystem):
             abs_encoder_position = -(1 - abs_encoder_position)
 
         encoder_difference: float = (
-                abs_encoder_position - constants.elevator_initial_rotation
+            abs_encoder_position - constants.elevator_initial_rotation
         )
 
         motor_position: float = (
-                encoder_difference * constants.elevator_rotation_gear_ratio
+            encoder_difference * constants.elevator_rotation_gear_ratio
         )
 
         self.arm_rotation_motor.set_sensor_position(motor_position)
@@ -277,7 +275,6 @@ class Arm(Subsystem):
 
     def extend_max_elevator(self) -> None:
         """Sets the elevator to the max position (no rotation)"""
-        print("EXTEND MAX")
         self.set_length(constants.max_elevator_height_delta)
 
     def update_pose(self) -> None:

@@ -1,7 +1,7 @@
 import math
 
 import commands2
-from commands2 import InstantCommand
+from commands2 import InstantCommand, SequentialCommandGroup, WaitCommand
 from robotpy_toolkit_7407.utils import logger
 from wpimath.geometry import Pose2d
 
@@ -47,20 +47,28 @@ class OI:
                 Robot.grabber,
                 Sensors.odometry,
                 pose=Pose2d(14.44, 1.05, 0),  # 8.4 2.3 0
-                arm_angle=math.radians(45),
-                arm_length=0.3,
-                wrist_angle=math.radians(-45),
+                arm_angle=math.radians(-44.78),
+                arm_length=0.55,
+                wrist_angle=math.radians(-27.09),
                 wrist_enabled=True,
             )
         )
+
+        pick_up = (-103.5, 0.099, -20.53)
+        score_mid = (-44.78, 0.55, -27.09)
+        score_high = (-47.7, 1.04, -18.61)
 
         Keymap.Claw.ENGAGE_CLAW.whenReleased(
             InstantCommand(
                 lambda: commands2.CommandScheduler.getInstance().schedule(
                     commands=[
                         command.DriveSwerveCustom(Robot.drivetrain),
-                        command.SetArm(Robot.arm, 0, 0),
-                        command.SetGrabber(Robot.grabber, 0, False),
+                        SequentialCommandGroup(
+                            command.SetGrabber(Robot.grabber, 0, False),
+                            WaitCommand(0.4),
+                            InstantCommand(lambda: Robot.grabber.set_output(0)),
+                            command.SetArm(Robot.arm, 0, 0),
+                        ),
                         command.IntakeDisable(Robot.intake),
                     ]
                 )

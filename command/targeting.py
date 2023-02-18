@@ -76,10 +76,10 @@ class Target(SubsystemCommand[Drivetrain]):
                             ),
                         ),
                         SequentialCommandGroup(
-                            command.SetArm(self.arm, self.arm_length, self.arm_angle)
-                        ),
-                        command.SetGrabber(
-                            self.grabber, self.wrist_angle, self.wrist_enabled
+                            command.SetArm(self.arm, self.arm_length, self.arm_angle),
+                            command.SetGrabber(
+                                self.grabber, self.wrist_angle, self.wrist_enabled
+                            ),
                         ),
                     ),
                     InstantCommand(lambda: self.finish()),
@@ -88,7 +88,7 @@ class Target(SubsystemCommand[Drivetrain]):
         else:
             commands2.CommandScheduler.getInstance().schedule(
                 SequentialCommandGroup(
-                    ParallelCommandGroup(
+                    SequentialCommandGroup(
                         command.SetArm(self.arm, self.arm_length, self.arm_angle),
                         command.SetGrabber(
                             self.grabber, self.wrist_angle, self.wrist_enabled
