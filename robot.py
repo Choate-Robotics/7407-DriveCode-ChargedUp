@@ -88,14 +88,17 @@ class _Robot(wpilib.TimedRobot):
 
     def teleopInit(self):
         logger.debug("TELEOP", "Teleop Initialized")
-        commands2.CommandScheduler.getInstance().schedule(command.ZeroElevator(Robot.arm))
+        commands2.CommandScheduler.getInstance().schedule(command.ZeroElevator(Robot.arm).andThen(command.setShoulderRotation(Robot.arm, math.radians(0))))
         commands2.CommandScheduler.getInstance().schedule(command.ZeroWrist(Robot.grabber))
         commands2.CommandScheduler.getInstance().schedule(
             command.DriveSwerveCustom(Robot.drivetrain)
         )
 
     def teleopPeriodic(self):
-        print(Robot.arm.elevator_bottom_sensor.get())
+        SmartDashboard.putBoolean("Limit Switch", Robot.arm.elevator_bottom_sensor.get())
+        # print("Limit Switch: ", Robot.arm.elevator_bottom_sensor.get())
+
+        # print(Robot.arm.elevator_bottom_sensor.get())
         # print(Pneumatics.compressor.getPressure())
         # print("I THINK I'm AT: ", math.degrees(Robot.Arm.get_rotation()))
         # Robot.Arm.disable_brake()

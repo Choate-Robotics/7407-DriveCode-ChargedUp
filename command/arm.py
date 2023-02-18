@@ -240,8 +240,7 @@ class setShoulderRotation(SubsystemCommand[Arm]):
         self.desired_time = 3
 
     def initialize(self) -> None:
-        self.arm_controller = PIDController(1
-                                            , 0, 0.03)
+        self.arm_controller = PIDController(1, 0, 0.03)
 
         self.arm_ff = ArmFeedforward(kG=0.045, kS=0, kV=0, kA=0)  # perfect dont touch
 
@@ -280,7 +279,7 @@ class setShoulderRotation(SubsystemCommand[Arm]):
         SmartDashboard.putNumber("PID_Voltage", pid_voltage)
         self.subsystem.arm_rotation_motor.pid_controller.setReference(
             min(maximum_power, abs(desired_voltage)) * (1 if desired_voltage > 0 else -1),
-            rev.CANSparkMax.ControlType.kVoltage, pidSlot=1
+            rev.CANSparkMax.ControlType.kVoltage, pidSlot=0
         )
 
     def isFinished(self) -> bool:
