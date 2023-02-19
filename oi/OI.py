@@ -1,5 +1,6 @@
 import math
 
+import commands2
 from commands2 import (
     InstantCommand,
     ParallelCommandGroup,
@@ -144,7 +145,11 @@ class OI:
         #
         Keymap.Targeting.TARGETING_PICKUP.whenReleased(
             SequentialCommandGroup(
-                command.DriveSwerveCustom(Robot.drivetrain),
+                InstantCommand(
+                    lambda: commands2.CommandScheduler.getInstance().schedule(
+                        command.DriveSwerveCustom(Robot.drivetrain)
+                    )
+                ),
                 InstantCommand(lambda: Robot.grabber.close_claw()),
                 WaitCommand(0.2),
                 command.Target(

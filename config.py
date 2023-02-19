@@ -1,3 +1,4 @@
+import math
 from dataclasses import dataclass
 
 from wpimath.geometry import Pose2d
@@ -46,45 +47,45 @@ claw_motor_extend_id = 0
 scoring_locations = {
     "low": TargetData(
         target_pose=Pose2d(0, 0, 0),
-        arm_angle=0,
+        arm_angle=math.radians(0),
         arm_length=0,
-        wrist_angle=0,
+        wrist_angle=math.radians(0),
         intake_enabled=False,
         claw_scoring=True,
         claw_picking=False,
     ),
     "middle": TargetData(
         target_pose=Pose2d(0, 0, 0),
-        arm_angle=-44.78,
+        arm_angle=math.radians(-44.78),
         arm_length=0.55,
-        wrist_angle=-27.09,
+        wrist_angle=math.radians(-27.09),
         intake_enabled=False,
         claw_scoring=True,
         claw_picking=False,
     ),
     "high": TargetData(
         target_pose=Pose2d(0, 0, 0),
-        arm_angle=-47.7,
+        arm_angle=math.radians(-47.7),
         arm_length=1.04,
-        wrist_angle=-18.61,
+        wrist_angle=math.radians(-18.61),
         intake_enabled=False,
         claw_scoring=True,
         claw_picking=False,
     ),
     "pickup": TargetData(
         target_pose=None,
-        arm_angle=-30,
+        arm_angle=math.radians(-30),
         arm_length=0,
-        wrist_angle=-20.53,
+        wrist_angle=math.radians(-20.53),
         intake_enabled=False,
         claw_scoring=False,
         claw_picking=True,
     ),
     "standard": TargetData(
         target_pose=None,
-        arm_angle=0,
+        arm_angle=math.radians(0),
         arm_length=0,
-        wrist_angle=0,
+        wrist_angle=math.radians(0),
         intake_enabled=False,
         claw_scoring=False,
         claw_picking=False,
