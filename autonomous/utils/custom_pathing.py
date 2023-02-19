@@ -200,6 +200,7 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
         self.subsystem.set_driver_centric((0, 0), speeds.omega)
 
     def end(self, interrupted: bool) -> None:
+        print("ENDED ROTATE")
         self.subsystem.set_driver_centric((0, 0), 0)
 
     def isFinished(self) -> bool:

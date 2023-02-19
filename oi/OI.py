@@ -1,9 +1,6 @@
-import math
-
 import commands2
 from commands2 import (
     InstantCommand,
-    ParallelCommandGroup,
     SequentialCommandGroup,
     WaitCommand,
 )
@@ -60,27 +57,27 @@ class OI:
 
         # STAND ALONE SCORING/PLACING COMMANDS
 
-        Keymap.Intake.PICK_UP_ARM.whenPressed(
-            ParallelCommandGroup(
-                command.SetArm(
-                    Robot.arm,
-                    distance=0,
-                    shoulder_angle=math.radians(-30),  # .099, -100
-                ),
-                command.SetGrabber(
-                    Robot.grabber, wrist_angle=math.radians(-20.53), claw_active=True
-                ),
-            )
-        )
-        #
-        Keymap.Intake.PICK_UP_ARM.whenReleased(
-            ParallelCommandGroup(
-                command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(0)),
-                command.SetGrabber(
-                    Robot.grabber, wrist_angle=math.radians(0), claw_active=False
-                ),
-            )
-        )
+        # Keymap.Intake.PICK_UP_ARM.whenPressed(
+        #     ParallelCommandGroup(
+        #         command.SetArm(
+        #             Robot.arm,
+        #             distance=0,
+        #             shoulder_angle=math.radians(-30),  # .099, -100
+        #         ),
+        #         command.SetGrabber(
+        #             Robot.grabber, wrist_angle=math.radians(-20.53), claw_active=True
+        #         ),
+        #     )
+        # )
+        # #
+        # Keymap.Intake.PICK_UP_ARM.whenReleased(
+        #     ParallelCommandGroup(
+        #         command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(0)),
+        #         command.SetGrabber(
+        #             Robot.grabber, wrist_angle=math.radians(0), claw_active=False
+        #         ),
+        #     )
+        # )
         #
         # Keymap.Intake.DROP_OFF_ARM.whenPressed(
         #     ParallelCommandGroup(
@@ -137,8 +134,8 @@ class OI:
                 Robot.arm,
                 Robot.grabber,
                 Robot.intake,
+                Robot.drivetrain,
                 Sensors.odometry,
-                drivetrain=Robot.drivetrain,
                 target=config.scoring_locations["pickup"],
             )
         )
@@ -151,13 +148,13 @@ class OI:
                     )
                 ),
                 InstantCommand(lambda: Robot.grabber.close_claw()),
-                WaitCommand(0.2),
+                WaitCommand(config.scoring_locations["pickup"].claw_wait_time),
                 command.Target(
                     Robot.arm,
                     Robot.grabber,
                     Robot.intake,
+                    Robot.drivetrain,
                     Sensors.odometry,
-                    drivetrain=None,
                     target=config.scoring_locations["standard"],
                 ),
             )
@@ -168,21 +165,27 @@ class OI:
                 Robot.arm,
                 Robot.grabber,
                 Robot.intake,
+                Robot.drivetrain,
                 Sensors.odometry,
-                drivetrain=Robot.drivetrain,
                 target=config.scoring_locations["middle"],
             )
         )
 
-        Keymap.Targeting.TARGETING_PICKUP.whenReleased(
+        Keymap.Targeting.TARGETING_SCORING.whenReleased(
             SequentialCommandGroup(
-                command.DriveSwerveCustom(Robot.drivetrain),
+                InstantCommand(
+                    lambda: commands2.CommandScheduler.getInstance().schedule(
+                        command.DriveSwerveCustom(Robot.drivetrain)
+                    )
+                ),
+                InstantCommand(lambda: Robot.grabber.close_claw()),
+                WaitCommand(config.scoring_locations["middle"].claw_wait_time),
                 command.Target(
                     Robot.arm,
                     Robot.grabber,
                     Robot.intake,
+                    Robot.drivetrain,
                     Sensors.odometry,
-                    drivetrain=None,
                     target=config.scoring_locations["standard"],
                 ),
             )

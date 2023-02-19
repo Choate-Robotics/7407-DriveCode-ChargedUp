@@ -92,8 +92,6 @@ class _Robot(wpilib.TimedRobot):
             "gyro_angle: ", math.degrees(Robot.drivetrain.gyro.get_robot_heading())
         )
 
-        commands2.CommandScheduler.getInstance().run()
-
         SmartDashboard.putNumber(
             "SHOULDER ANGLE: ", math.degrees(Robot.arm.get_rotation())
         )
@@ -101,6 +99,8 @@ class _Robot(wpilib.TimedRobot):
             "WRIST ANGLE: ", math.degrees(Robot.grabber.get_angle())
         )
         SmartDashboard.putNumber("SHOULDER DIST: ", Robot.arm.get_length())
+
+        commands2.CommandScheduler.getInstance().run()
 
     def teleopInit(self):
         logger.debug("TELEOP", "Teleop Initialized")

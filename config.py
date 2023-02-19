@@ -16,6 +16,8 @@ class TargetData:
     claw_picking: bool = False
     claw_scoring: bool = False
 
+    claw_wait_time: float = 0
+
     max_velocity: meters_per_second = None
     max_acceleration: meters_per_second_squared = None
 
@@ -55,7 +57,7 @@ scoring_locations = {
         claw_picking=False,
     ),
     "middle": TargetData(
-        target_pose=Pose2d(0, 0, 0),
+        target_pose=Pose2d(1, 1, 0),
         arm_angle=math.radians(-44.78),
         arm_length=0.55,
         wrist_angle=math.radians(-27.09),
@@ -77,9 +79,10 @@ scoring_locations = {
         arm_angle=math.radians(-100),
         arm_length=0.099,
         wrist_angle=math.radians(-20.53),
-        intake_enabled=False,
+        intake_enabled=True,
         claw_scoring=False,
         claw_picking=True,
+        claw_wait_time=0.2,
     ),
     "standard": TargetData(
         target_pose=None,

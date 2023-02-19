@@ -21,16 +21,13 @@ class Target(SubsystemCommand[Arm]):
         arm: Arm,
         grabber: Grabber,
         intake: Intake,
+        drivetrain: Drivetrain,
         field_odometry: FieldOdometry,
         target: TargetData,
-        drivetrain: Drivetrain | None = None,
     ):
         super().__init__(arm)
         super().addRequirements(grabber)
         super().addRequirements(intake)
-
-        if drivetrain:
-            super().addRequirements(drivetrain)
 
         self.drivetrain = drivetrain
         self.arm = arm
@@ -57,9 +54,9 @@ class Target(SubsystemCommand[Arm]):
         else:
             self.intake_command = InstantCommand(lambda: self.intake.intake_disable())
 
-        initial_pose = self.field_odometry.getPose()
-
-        if self.target.target_pose and self.drivetrain:
+        if self.target.target_pose:
+            self.addRequirements(self.drivetrain)
+            initial_pose = self.field_odometry.getPose()
             try:
                 self.trajectory = CustomTrajectory(
                     initial_pose,
@@ -105,7 +102,8 @@ class Target(SubsystemCommand[Arm]):
                         SequentialCommandGroup(
                             FollowPathCustom(self.drivetrain, self.trajectory),
                             RotateInPlace(
-                                self.drivetrain, self.pose.rotation().radians()
+                                self.drivetrain,
+                                self.target.target_pose.rotation().radians(),
                             ),
                         ),
                         self.arm_sequence,
@@ -115,7 +113,6 @@ class Target(SubsystemCommand[Arm]):
                 ),
             )
         else:
-            print("RUNNING DEFAULT")
             commands2.CommandScheduler.getInstance().schedule(
                 SequentialCommandGroup(
                     ParallelCommandGroup(self.arm_sequence, self.intake_command),
