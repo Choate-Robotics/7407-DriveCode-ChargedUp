@@ -1,11 +1,10 @@
-import math
-
-from commands2 import InstantCommand, ParallelCommandGroup, SequentialCommandGroup
+from commands2 import InstantCommand, SequentialCommandGroup, WaitCommand
 from robotpy_toolkit_7407.utils import logger
 
 import command
+import config
 from oi.keymap import Keymap
-from robot_systems import Robot
+from robot_systems import Robot, Sensors
 
 logger.info("Hi, I'm OI!")
 
@@ -105,64 +104,112 @@ class OI:
         #
         # )
 
-        pick_up = (-100, 0.099, -20.53)
-        score_mid = (-44.78, 0.55, -27.09)
-        score_high = (-47.7, 1.04, -18.61)
+        # STAND ALONE SCORING/PLACING COMMANDS
 
-        Keymap.Intake.PICK_UP_ARM.whenPressed(
-            ParallelCommandGroup(
-                command.SetArm(
-                    Robot.arm, distance=0.099, shoulder_angle=math.radians(-100)
-                ),
-                command.SetGrabber(
-                    Robot.grabber, wrist_angle=math.radians(-20.53), claw_active=True
-                ),
+        # Keymap.Intake.PICK_UP_ARM.whenPressed(
+        #     ParallelCommandGroup(
+        #         command.SetArm(
+        #             Robot.arm, distance=0.099, shoulder_angle=math.radians(-100)
+        #         ),
+        #         command.SetGrabber(
+        #             Robot.grabber, wrist_angle=math.radians(-20.53), claw_active=True
+        #         ),
+        #     )
+        # )
+        #
+        # Keymap.Intake.PICK_UP_ARM.whenReleased(
+        #     ParallelCommandGroup(
+        #         command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(0)),
+        #         command.SetGrabber(
+        #             Robot.grabber, wrist_angle=math.radians(0), claw_active=False
+        #         ),
+        #     )
+        # )
+        #
+        # Keymap.Intake.DROP_OFF_ARM.whenPressed(
+        #     ParallelCommandGroup(
+        #         command.SetArm(
+        #             Robot.arm, distance=0.55, shoulder_angle=math.radians(-44.78)
+        #         ),
+        #         command.SetGrabber(
+        #             Robot.grabber, wrist_angle=math.radians(-27.09), claw_active=False
+        #         ),
+        #     )
+        # )
+        #
+        # Keymap.Intake.DROP_OFF_ARM.whenReleased(
+        #     ParallelCommandGroup(
+        #         command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(0)),
+        #         command.SetGrabber(
+        #             Robot.grabber, wrist_angle=math.radians(0), claw_active=False
+        #         ),
+        #     )
+        # )
+        #
+        # Keymap.Intake.GRABBER_PICK.whenPressed(
+        #     InstantCommand(lambda: Robot.grabber.engage_claw())
+        # )
+        #
+        # Keymap.Intake.GRABBER_PICK.whenReleased(
+        #     SequentialCommandGroup(
+        #         InstantCommand(lambda: Robot.grabber.disengage_claw())
+        #     )
+        # )
+        #
+        # Keymap.Intake.GRABBER_SCORE.whenPressed(
+        #     InstantCommand(lambda: Robot.grabber.open_claw())
+        # )
+        #
+        # Keymap.Intake.GRABBER_SCORE.whenReleased(
+        #     InstantCommand(lambda: Robot.grabber.disengage_claw())
+        # )
+
+        # TARGETING
+
+        Keymap.Targeting.TARGETING_PICKUP.whenPressed(
+            command.Target(
+                Robot.arm,
+                Robot.grabber,
+                Sensors.odometry,
+                drivetrain=Robot.drivetrain,
+                target=config.scoring_locations["pickup"],
             )
         )
 
-        Keymap.Intake.PICK_UP_ARM.whenReleased(
-            ParallelCommandGroup(
-                command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(0)),
-                command.SetGrabber(
-                    Robot.grabber, wrist_angle=math.radians(0), claw_active=False
-                ),
-            )
-        )
-
-        Keymap.Intake.DROP_OFF_ARM.whenPressed(
-            ParallelCommandGroup(
-                command.SetArm(
-                    Robot.arm, distance=0.55, shoulder_angle=math.radians(-44.78)
-                ),
-                command.SetGrabber(
-                    Robot.grabber, wrist_angle=math.radians(-27.09), claw_active=False
-                ),
-            )
-        )
-
-        Keymap.Intake.DROP_OFF_ARM.whenReleased(
-            ParallelCommandGroup(
-                command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(0)),
-                command.SetGrabber(
-                    Robot.grabber, wrist_angle=math.radians(0), claw_active=False
-                ),
-            )
-        )
-
-        Keymap.Intake.GRABBER_PICK.whenPressed(
-            InstantCommand(lambda: Robot.grabber.engage_claw())
-        )
-
-        Keymap.Intake.GRABBER_PICK.whenReleased(
+        Keymap.Targeting.TARGETING_PICKUP.whenReleased(
             SequentialCommandGroup(
-                InstantCommand(lambda: Robot.grabber.disengage_claw())
+                command.DriveSwerveCustom(Robot.drivetrain),
+                InstantCommand(lambda: Robot.grabber.close_claw()),
+                WaitCommand(0.2),
+                command.Target(
+                    Robot.arm,
+                    Robot.grabber,
+                    Sensors.odometry,
+                    drivetrain=None,
+                    target=config.scoring_locations["standard"],
+                ),
             )
         )
 
-        Keymap.Intake.GRABBER_SCORE.whenPressed(
-            InstantCommand(lambda: Robot.grabber.open_claw())
+        Keymap.Targeting.TARGETING_SCORING.whenPressed(
+            command.Target(
+                Robot.arm,
+                Robot.grabber,
+                Sensors.odometry,
+                drivetrain=Robot.drivetrain,
+                target=config.scoring_locations["middle"],
+            )
         )
 
-        Keymap.Intake.GRABBER_SCORE.whenReleased(
-            InstantCommand(lambda: Robot.grabber.disengage_claw())
+        Keymap.Targeting.TARGETING_PICKUP.whenReleased(
+            SequentialCommandGroup(
+                command.DriveSwerveCustom(Robot.drivetrain),
+                command.Target(
+                    Robot.arm,
+                    Robot.grabber,
+                    Sensors.odometry,
+                    drivetrain=None,
+                    target=config.scoring_locations["standard"],
+                ),
+            )
         )

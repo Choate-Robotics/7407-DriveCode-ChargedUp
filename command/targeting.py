@@ -1,9 +1,10 @@
+from dataclasses import dataclass
+
 import commands2
 from commands2 import (
     InstantCommand,
     ParallelCommandGroup,
     SequentialCommandGroup,
-    WaitCommand,
 )
 from robotpy_toolkit_7407 import SubsystemCommand
 from wpimath.geometry import Pose2d
@@ -14,63 +15,94 @@ from autonomous.utils.custom_pathing import FollowPathCustom, RotateInPlace
 from autonomous.utils.trajectory import CustomTrajectory
 from sensors import FieldOdometry
 from subsystem import Arm, Drivetrain, Grabber
-from units.SI import meters, radians
+from units.SI import meters, meters_per_second, meters_per_second_squared, radians
 
 
-class Target(SubsystemCommand[Drivetrain]):
+@dataclass
+class TargetData:
+    target_pose: Pose2d | None
+    arm_angle: radians
+    arm_length: meters
+    wrist_angle: radians
+    picking: bool = False
+    scoring: bool = False
+
+    max_velocity: meters_per_second = None
+    max_acceleration: meters_per_second_squared = None
+
+
+class Target(SubsystemCommand[Arm]):
     def __init__(
         self,
-        drivetrain: Drivetrain,
         arm: Arm,
         grabber: Grabber,
         field_odometry: FieldOdometry,
-        pose: Pose2d,
-        arm_angle: radians,
-        arm_length: meters,
-        wrist_angle: radians,
-        wrist_enabled: bool,
+        target: TargetData,
+        drivetrain: Drivetrain | None = None,
     ):
-        super().__init__(drivetrain)
-        super().addRequirements(arm)
+        super().__init__(arm)
+        super().addRequirements(drivetrain)
         super().addRequirements(grabber)
         self.drivetrain = drivetrain
         self.arm = arm
         self.grabber = grabber
         self.field_odometry = field_odometry
 
-        self.pose = pose
-        self.arm_angle = arm_angle
-        self.arm_length = arm_length
-        self.wrist_angle = wrist_angle
-        self.wrist_enabled = wrist_enabled
+        self.target = target
 
         self.trajectory: CustomTrajectory | None = None
 
         self.finished = False
         self.drive_on = False
 
+        self.arm_sequence: SequentialCommandGroup | None = None
+
     def finish(self) -> None:
         self.finished = True
 
     def initialize(self) -> None:
-        current_pose = self.field_odometry.getPose()
+        initial_pose = self.field_odometry.getPose()
 
-        try:
-            self.trajectory = CustomTrajectory(
-                current_pose,
-                [],
-                self.pose,
-                self.drivetrain.max_vel,
-                self.drivetrain.max_accel,
-                0,
-                0,
+        if self.target.target_pose and self.drivetrain:
+            try:
+                self.trajectory = CustomTrajectory(
+                    initial_pose,
+                    [],
+                    self.target.target_pose,
+                    self.target.max_velocity or self.drivetrain.max_vel,
+                    self.target.max_acceleration or self.drivetrain.max_target_accel,
+                    0,
+                    0,
+                )
+            except RuntimeError:
+                utils.logger.debug("TARGETING", "Failed to generate trajectory.")
+                print("Failed to generate trajectory.")
+                self.drive_on = False
+        else:
+            self.drive_on = False
+
+        if self.target.picking:
+            self.arm_sequence = ParallelCommandGroup(
+                command.SetArm(self.arm, self.target.arm_length, self.target.arm_angle),
+                command.SetGrabber(self.grabber, self.target.wrist_angle, True),
             )
-        except RuntimeError:
-            utils.logger.debug("TARGETING", "Failed to generate trajectory.")
-            print("Failed to generate trajectory.")
-            self.finished = True
+        elif self.target.scoring:
+            self.arm_sequence = SequentialCommandGroup(
+                ParallelCommandGroup(
+                    command.SetArm(
+                        self.arm, self.target.arm_length, self.target.arm_angle
+                    ),
+                    command.SetGrabber(self.grabber, self.target.wrist_angle, False),
+                ),
+                InstantCommand(self.grabber.open_claw()),
+            )
+        else:
+            self.arm_sequence = ParallelCommandGroup(
+                command.SetArm(self.arm, self.target.arm_length, self.target.arm_angle),
+                command.SetGrabber(self.grabber, self.target.wrist_angle, False),
+            )
 
-        if not self.finished and self.drive_on:
+        if self.drive_on:
             commands2.CommandScheduler.getInstance().schedule(
                 SequentialCommandGroup(
                     ParallelCommandGroup(
@@ -80,13 +112,7 @@ class Target(SubsystemCommand[Drivetrain]):
                                 self.drivetrain, self.pose.rotation().radians()
                             ),
                         ),
-                        SequentialCommandGroup(
-                            command.SetArm(self.arm, self.arm_length, self.arm_angle),
-                            WaitCommand(0.1),
-                            command.SetGrabber(
-                                self.grabber, self.wrist_angle, self.wrist_enabled
-                            ),
-                        ),
+                        self.arm_sequence,
                     ),
                     InstantCommand(lambda: self.finish()),
                 ),
@@ -94,13 +120,7 @@ class Target(SubsystemCommand[Drivetrain]):
         else:
             commands2.CommandScheduler.getInstance().schedule(
                 SequentialCommandGroup(
-                    SequentialCommandGroup(
-                        command.SetArm(self.arm, self.arm_length, self.arm_angle),
-                        WaitCommand(0.1),
-                        command.SetGrabber(
-                            self.grabber, self.wrist_angle, self.wrist_enabled
-                        ),
-                    ),
+                    self.arm_sequence,
                     InstantCommand(lambda: self.finish()),
                 ),
             )

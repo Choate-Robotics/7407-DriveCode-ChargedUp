@@ -86,7 +86,13 @@ class Keymap:
             > 0.8
         )
 
-        ENGAGE_DOUBLE_STATION = (
-            Joysticks.joysticks[Controllers.DRIVER],
-            controllerOPERATOR.X,
+    class Targeting:
+        TARGETING_PICKUP = commands2.button.Button(
+            lambda: Controllers.OPERATOR_CONTROLLER.getRawAxis(-controllerOPERATOR.LT)
+            > 0.8
+        )
+
+        TARGETING_SCORING = commands2.button.Button(
+            lambda: Controllers.OPERATOR_CONTROLLER.getRawAxis(-controllerOPERATOR.RT)
+            > 0.8
         )

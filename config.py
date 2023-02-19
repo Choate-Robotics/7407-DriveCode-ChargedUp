@@ -1,3 +1,9 @@
+from wpimath.geometry import Pose2d
+
+from command.targeting import TargetData
+
+red_team: bool = True
+
 elevator_motor_extend_id = 17
 elevator_secondary_rotation_motor_id = 1
 elevator_main_rotation_motor_id = 2
@@ -19,4 +25,46 @@ kRobotVisionPoseWeight = 0.1
 # Dummy data
 claw_motor_extend_id = 0
 
-red_team: bool = True
+# SCORING LOCATIONS
+scoring_locations = {
+    "low": TargetData(
+        target_pose=Pose2d(0, 0, 0),
+        arm_angle=0,
+        arm_length=0,
+        wrist_angle=0,
+        scoring=True,
+        picking=False,
+    ),
+    "middle": TargetData(
+        target_pose=Pose2d(0, 0, 0),
+        arm_angle=-44.78,
+        arm_length=0.55,
+        wrist_angle=-27.09,
+        scoring=True,
+        picking=False,
+    ),
+    "high": TargetData(
+        target_pose=Pose2d(0, 0, 0),
+        arm_angle=-47.7,
+        arm_length=1.04,
+        wrist_angle=-18.61,
+        scoring=True,
+        picking=False,
+    ),
+    "picking": TargetData(
+        target_pose=None,
+        arm_angle=-100,
+        arm_length=0.099,
+        wrist_angle=-20.53,
+        scoring=False,
+        picking=True,
+    ),
+    "standard": TargetData(
+        target_pose=None,
+        arm_angle=0,
+        arm_length=0,
+        wrist_angle=0,
+        scoring=False,
+        picking=False,
+    ),
+}
