@@ -264,8 +264,8 @@ class setShoulderRotation(SubsystemCommand[Arm]):
         if self.subsystem.is_at_shoulder_rotation(math.pi / 2 - self.shoulder_angle):
             pid_voltage = 0
         desired_voltage = (
-                                  feed_forward + pid_voltage
-                          ) * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
+            feed_forward + pid_voltage
+        ) * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
         # print(self.shoulder_angle)
         print("SHOULDER: ", self.shoulder_angle)
         print("CURRENT: ", current_theta)
@@ -332,10 +332,10 @@ class SetGrabber(SubsystemCommand[Grabber]):
 
 class SetArm(SubsystemCommand[Arm]):
     def __init__(
-            self,
-            subsystem: Arm,
-            distance: meters,
-            shoulder_angle: radians,
+        self,
+        subsystem: Arm,
+        distance: meters,
+        shoulder_angle: radians,
     ):
         super().__init__(subsystem)
         self.real_desired = shoulder_angle
@@ -403,8 +403,8 @@ class SetArm(SubsystemCommand[Arm]):
             pid_voltage = 0
 
         desired_voltage = (
-                                  feed_forward + pid_voltage
-                          ) * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
+            feed_forward + pid_voltage
+        ) * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
         SmartDashboard.putNumber("PID_Voltage", pid_voltage)
         self.subsystem.arm_rotation_motor.pid_controller.setReference(
             min(maximum_power, abs(desired_voltage))
@@ -420,8 +420,8 @@ class SetArm(SubsystemCommand[Arm]):
 
     def isFinished(self) -> bool:
         return (
-                abs(self.subsystem.get_rotation() - self.real_desired) < math.radians(4)
-                and abs(self.subsystem.get_length() - self.distance) < 0.05
+            abs(self.subsystem.get_rotation() - self.real_desired) < math.radians(4)
+            and abs(self.subsystem.get_length() - self.distance) < 0.05
         )
 
     def end(self, interrupted: bool) -> None:

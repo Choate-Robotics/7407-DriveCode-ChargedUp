@@ -59,17 +59,17 @@ class Keymap:
     class Intake:
         INTAKE_ENABLE = commands2.button.Button(
             lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerOPERATOR.LT)
-                    > 0.8
+            > 0.8
         )
 
         PICK_UP_ARM = commands2.button.Button(
             lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerOPERATOR.LT)
-                    > 0.8
+            > 0.8
         )
 
         DROP_OFF_ARM = commands2.button.Button(
             lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerOPERATOR.RT)
-                    > 0.8
+            > 0.8
         )
 
         GRABBER_PICK = commands2.button.JoystickButton(
@@ -83,7 +83,10 @@ class Keymap:
     class Claw:
         ENGAGE_CLAW = commands2.button.Button(
             lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerOPERATOR.RT)
-                    > 0.8
+            > 0.8
         )
 
-        ENGAGE_DOUBLE_STATION = Joysticks.joysticks[Controllers.DRIVER], controllerOPERATOR.X
+        ENGAGE_DOUBLE_STATION = (
+            Joysticks.joysticks[Controllers.DRIVER],
+            controllerOPERATOR.X,
+        )

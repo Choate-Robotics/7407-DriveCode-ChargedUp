@@ -105,67 +105,47 @@ class OI:
         #
         # )
 
-        pick_up = (-103.5, 0.099, -20.53)
+        pick_up = (-100, 0.099, -20.53)
         score_mid = (-44.78, 0.55, -27.09)
         score_high = (-47.7, 1.04, -18.61)
 
         Keymap.Intake.PICK_UP_ARM.whenPressed(
             ParallelCommandGroup(
                 command.SetArm(
-                    Robot.arm,
-                    distance=.099,
-                    shoulder_angle=math.radians(-100)
+                    Robot.arm, distance=0.099, shoulder_angle=math.radians(-100)
                 ),
                 command.SetGrabber(
-                    Robot.grabber,
-                    wrist_angle=math.radians(-20.53),
-                    claw_active=True
-                )
+                    Robot.grabber, wrist_angle=math.radians(-20.53), claw_active=True
+                ),
             )
         )
 
         Keymap.Intake.PICK_UP_ARM.whenReleased(
             ParallelCommandGroup(
-                command.SetArm(
-                    Robot.arm,
-                    distance=0,
-                    shoulder_angle=math.radians(0)
-                ),
+                command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(0)),
                 command.SetGrabber(
-                    Robot.grabber,
-                    wrist_angle=math.radians(0),
-                    claw_active=False
-                )
+                    Robot.grabber, wrist_angle=math.radians(0), claw_active=False
+                ),
             )
         )
 
         Keymap.Intake.DROP_OFF_ARM.whenPressed(
             ParallelCommandGroup(
                 command.SetArm(
-                    Robot.arm,
-                    distance=.55,
-                    shoulder_angle=math.radians(-44.78)
+                    Robot.arm, distance=0.55, shoulder_angle=math.radians(-44.78)
                 ),
                 command.SetGrabber(
-                    Robot.grabber,
-                    wrist_angle=math.radians(-27.09),
-                    claw_active=False
-                )
+                    Robot.grabber, wrist_angle=math.radians(-27.09), claw_active=False
+                ),
             )
         )
 
         Keymap.Intake.DROP_OFF_ARM.whenReleased(
             ParallelCommandGroup(
-                command.SetArm(
-                    Robot.arm,
-                    distance=0,
-                    shoulder_angle=math.radians(0)
-                ),
+                command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(0)),
                 command.SetGrabber(
-                    Robot.grabber,
-                    wrist_angle=math.radians(0),
-                    claw_active=False
-                )
+                    Robot.grabber, wrist_angle=math.radians(0), claw_active=False
+                ),
             )
         )
 

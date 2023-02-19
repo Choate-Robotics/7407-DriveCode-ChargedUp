@@ -1,5 +1,10 @@
 import commands2
-from commands2 import InstantCommand, ParallelCommandGroup, SequentialCommandGroup, WaitCommand
+from commands2 import (
+    InstantCommand,
+    ParallelCommandGroup,
+    SequentialCommandGroup,
+    WaitCommand,
+)
 from robotpy_toolkit_7407 import SubsystemCommand
 from wpimath.geometry import Pose2d
 
@@ -14,16 +19,16 @@ from units.SI import meters, radians
 
 class Target(SubsystemCommand[Drivetrain]):
     def __init__(
-            self,
-            drivetrain: Drivetrain,
-            arm: Arm,
-            grabber: Grabber,
-            field_odometry: FieldOdometry,
-            pose: Pose2d,
-            arm_angle: radians,
-            arm_length: meters,
-            wrist_angle: radians,
-            wrist_enabled: bool,
+        self,
+        drivetrain: Drivetrain,
+        arm: Arm,
+        grabber: Grabber,
+        field_odometry: FieldOdometry,
+        pose: Pose2d,
+        arm_angle: radians,
+        arm_length: meters,
+        wrist_angle: radians,
+        wrist_enabled: bool,
     ):
         super().__init__(drivetrain)
         super().addRequirements(arm)
@@ -77,7 +82,7 @@ class Target(SubsystemCommand[Drivetrain]):
                         ),
                         SequentialCommandGroup(
                             command.SetArm(self.arm, self.arm_length, self.arm_angle),
-                            WaitCommand(.1),
+                            WaitCommand(0.1),
                             command.SetGrabber(
                                 self.grabber, self.wrist_angle, self.wrist_enabled
                             ),
@@ -91,7 +96,7 @@ class Target(SubsystemCommand[Drivetrain]):
                 SequentialCommandGroup(
                     SequentialCommandGroup(
                         command.SetArm(self.arm, self.arm_length, self.arm_angle),
-                        WaitCommand(.1),
+                        WaitCommand(0.1),
                         command.SetGrabber(
                             self.grabber, self.wrist_angle, self.wrist_enabled
                         ),

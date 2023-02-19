@@ -1,6 +1,8 @@
 import math
 import time
 
+import commands2
+from commands2 import InstantCommand, SequentialCommandGroup, WaitCommand
 from robotpy_toolkit_7407.command import SubsystemCommand
 from robotpy_toolkit_7407.subsystem_templates.drivetrain import SwerveDrivetrain
 from robotpy_toolkit_7407.utils.math import bounded_angle_diff, rotate_vector
@@ -11,11 +13,54 @@ from wpimath.controller import (
     PIDController,
     ProfiledPIDControllerRadians,
 )
-from wpimath.geometry import Rotation2d, Pose2d
-from wpimath.trajectory import TrapezoidProfileRadians, Trajectory
+from wpimath.geometry import Pose2d, Rotation2d
+from wpimath.trajectory import Trajectory, TrapezoidProfileRadians
 
 from autonomous.utils.trajectory import CustomTrajectory
 from robot_systems import Sensors
+from subsystem import Drivetrain
+
+
+class AutoBalance(SubsystemCommand[Drivetrain]):
+    def __init__(self, subsystem: Drivetrain, vx, vy, omega, gyro_threshold):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+        self.vx = vx
+        self.vy = vy
+        self.omega = omega
+        self.gyro_threshold = gyro_threshold
+        self.times_tipped = 0
+        self.currently_tipped = False
+
+    def initialize(self) -> None:
+        ...
+
+    def execute(self) -> None:
+        self.subsystem.set_driver_centric((-self.vx, -self.vy), self.omega)
+
+    def isFinished(self) -> bool:
+        if self.subsystem.gyro._gyro.getRawGyro()[1][1] < self.gyro_threshold:
+            if not self.currently_tipped:
+                self.times_tipped += 1
+            self.currently_tipped = True
+        else:
+            self.currently_tipped = False
+
+        return self.times_tipped > 1
+
+    def end(self, interrupted: bool = False) -> None:
+        if not interrupted:
+            commands2.CommandScheduler.getInstance().schedule(
+                command=SequentialCommandGroup(
+                    InstantCommand(
+                        lambda: self.subsystem.set_driver_centric((0.5, 0), 0)
+                    ),
+                    WaitCommand(0.3),
+                    InstantCommand(
+                        lambda: self.subsystem.set_driver_centric((0, 0), 0)
+                    ),
+                )
+            )
 
 
 class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):

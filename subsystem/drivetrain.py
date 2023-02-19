@@ -126,7 +126,7 @@ class Drivetrain(SwerveDrivetrain):
         absolute_encoder_zeroed_pos=math.radians(48.603 + 270),
     )
 
-    gyro = PigeonIMUGyro_Wrapper(20)
+    gyro: PigeonIMUGyro_Wrapper = PigeonIMUGyro_Wrapper(20)
     axis_dx = Keymap.Drivetrain.DRIVE_X_AXIS
     axis_dy = Keymap.Drivetrain.DRIVE_Y_AXIS
     axis_rotation = Keymap.Drivetrain.DRIVE_ROTATION_AXIS

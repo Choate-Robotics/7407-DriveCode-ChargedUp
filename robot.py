@@ -35,6 +35,11 @@ class _Robot(wpilib.TimedRobot):
         OI.map_controls()
 
     def robotPeriodic(self):
+        raw_pigeon = Robot.drivetrain.gyro._gyro.getRawGyro()
+        SmartDashboard.putNumber("GYRO A", raw_pigeon[1][0])
+        SmartDashboard.putNumber("GYRO B", raw_pigeon[1][1])
+        SmartDashboard.putNumber("GYRO C", raw_pigeon[1][2])
+
         Sensors.odometry.update()
         SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
         SmartDashboard.putString("FDOM", str(Sensors.odometry.getPose()))

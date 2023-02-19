@@ -70,9 +70,9 @@ class Grabber(Subsystem):
         :rtype: float
         """
         return (
-                (self.wrist.get_sensor_position() / constants.wrist_gear_ratio)
-                * math.pi
-                * 2
+            (self.wrist.get_sensor_position() / constants.wrist_gear_ratio)
+            * math.pi
+            * 2
         )
 
     def set_output(self, output: float):

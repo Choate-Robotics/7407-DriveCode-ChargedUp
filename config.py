@@ -6,7 +6,7 @@ elevator_brake_id = 3
 
 pneumatics_control_module = 31
 
-claw_motor_speed: float = 0.6
+claw_motor_speed: float = 0.4
 
 # Intake
 intake_motor_id = 11
