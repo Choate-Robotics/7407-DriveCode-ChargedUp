@@ -27,3 +27,5 @@ class OI:
         Keymap.Claw.ENGAGE_CLAW.onFalse(
             InstantCommand(lambda: Robot.arm.disengage_claw())
         )
+
+        Keymap.Scoring.CONFIRM.whenPressed(InstantCommand(lambda: print("CONFIRM pressed")))

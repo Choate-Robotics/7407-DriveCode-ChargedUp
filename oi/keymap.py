@@ -5,7 +5,6 @@ from robotpy_toolkit_7407.oi import (
     XBoxController,
 )
 from robotpy_toolkit_7407.oi.joysticks import Joysticks
-from wpilib import XboxController
 
 controllerDRIVER = XBoxController
 controllerOPERATOR = XBoxController
@@ -97,12 +96,12 @@ class Keymap:
         )
 
         TOP_LEFT = commands2.button.JoystickButton( # 7, Back
-            Joysticks.joysticks[Controllers.NUMPAD],
+            Controllers.NUMPAD_CONTROLLER,
             controllerNUMPAD.SELECT
         )
 
         TOP_MIDDLE = commands2.button.JoystickButton( # 8, Start
-            Joysticks.joysticks[Controllers.NUMPAD],
+            Controllers.NUMPAD_CONTROLLER,
             controllerNUMPAD.START
         )
 
@@ -112,7 +111,8 @@ class Keymap:
         )
 
         MIDDLE_LEFT = commands2.button.JoystickButton( # 4, Y
-            Joysticks.joysticks[Controllers.NUMPAD], controllerNUMPAD.Y
+            Controllers.NUMPAD_CONTROLLER, 
+            controllerNUMPAD.Y
         )
         
         MIDDLE_MIDDLE = commands2.button.Button( # 5, Left Bumper
@@ -125,17 +125,17 @@ class Keymap:
             > 0.8
         )
 
-        BOTTOM_LEFT = commands2.button.Button( # 1, A
-            Joysticks.joysticks[Controllers.NUMPAD], 
+        BOTTOM_LEFT = commands2.button.JoystickButton( # 1, A
+            Controllers.NUMPAD_CONTROLLER,
             controllerNUMPAD.A
         )
 
-        BOTTOM_MIDDLE = commands2.button.Button( # 2, B
-            Joysticks.joysticks[Controllers.NUMPAD], 
+        BOTTOM_MIDDLE = commands2.button.JoystickButton( # 2, B
+            Controllers.NUMPAD_CONTROLLER,
             controllerNUMPAD.B
         )
 
-        BOTTOM_RIGHT = commands2.button.Button( # 3, X
-            Joysticks.joysticks[Controllers.NUMPAD], 
+        BOTTOM_RIGHT = commands2.button.JoystickButton( # 3, X
+            Controllers.NUMPAD_CONTROLLER, 
             controllerNUMPAD.X
         )
