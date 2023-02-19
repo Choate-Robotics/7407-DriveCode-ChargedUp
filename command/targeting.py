@@ -14,7 +14,7 @@ import utils
 from autonomous.utils.custom_pathing import FollowPathCustom, RotateInPlace
 from autonomous.utils.trajectory import CustomTrajectory
 from sensors import FieldOdometry
-from subsystem import Arm, Drivetrain, Grabber
+from subsystem import Arm, Drivetrain, Grabber, Intake
 from units.SI import meters, meters_per_second, meters_per_second_squared, radians
 
 
@@ -24,8 +24,9 @@ class TargetData:
     arm_angle: radians
     arm_length: meters
     wrist_angle: radians
-    picking: bool = False
-    scoring: bool = False
+    intake_enabled: bool = False
+    claw_picking: bool = False
+    claw_scoring: bool = False
 
     max_velocity: meters_per_second = None
     max_acceleration: meters_per_second_squared = None
@@ -36,6 +37,7 @@ class Target(SubsystemCommand[Arm]):
         self,
         arm: Arm,
         grabber: Grabber,
+        intake: Intake,
         field_odometry: FieldOdometry,
         target: TargetData,
         drivetrain: Drivetrain | None = None,
@@ -46,6 +48,7 @@ class Target(SubsystemCommand[Arm]):
         self.drivetrain = drivetrain
         self.arm = arm
         self.grabber = grabber
+        self.intake = intake
         self.field_odometry = field_odometry
 
         self.target = target
@@ -56,11 +59,21 @@ class Target(SubsystemCommand[Arm]):
         self.drive_on = False
 
         self.arm_sequence: SequentialCommandGroup | None = None
+        self.intake_command: InstantCommand | None = None
 
     def finish(self) -> None:
         self.finished = True
 
     def initialize(self) -> None:
+        if self.target.intake_enabled:
+            self.intake_command = InstantCommand(
+                lambda: self.intake.set_intake_enabled(True)
+            )
+        else:
+            self.intake_command = InstantCommand(
+                lambda: self.intake.set_intake_enabled(False)
+            )
+
         initial_pose = self.field_odometry.getPose()
 
         if self.target.target_pose and self.drivetrain:
@@ -81,12 +94,12 @@ class Target(SubsystemCommand[Arm]):
         else:
             self.drive_on = False
 
-        if self.target.picking:
+        if self.target.claw_picking:
             self.arm_sequence = ParallelCommandGroup(
                 command.SetArm(self.arm, self.target.arm_length, self.target.arm_angle),
                 command.SetGrabber(self.grabber, self.target.wrist_angle, True),
             )
-        elif self.target.scoring:
+        elif self.target.claw_scoring:
             self.arm_sequence = SequentialCommandGroup(
                 ParallelCommandGroup(
                     command.SetArm(
@@ -113,6 +126,7 @@ class Target(SubsystemCommand[Arm]):
                             ),
                         ),
                         self.arm_sequence,
+                        self.intake_command,
                     ),
                     InstantCommand(lambda: self.finish()),
                 ),
@@ -120,7 +134,7 @@ class Target(SubsystemCommand[Arm]):
         else:
             commands2.CommandScheduler.getInstance().schedule(
                 SequentialCommandGroup(
-                    self.arm_sequence,
+                    ParallelCommandGroup(self.arm_sequence, self.intake_command),
                     InstantCommand(lambda: self.finish()),
                 ),
             )

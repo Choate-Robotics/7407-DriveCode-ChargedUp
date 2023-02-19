@@ -138,8 +138,8 @@ class Drivetrain(SwerveDrivetrain):
     deadzone_angular_velocity: radians_per_second = math.radians(5)
     start_angle: degrees = 0
     start_pose: Pose2d = Pose2d(
-        0.0254 * (40.45 + 17.625) + constants.track_width / 2,
-        0.0254 * 42.19,
+        0,
+        0,
         math.radians(start_angle),
     )
     gyro_start_angle: radians = math.radians(start_angle)

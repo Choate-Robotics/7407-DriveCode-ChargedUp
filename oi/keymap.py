@@ -28,7 +28,7 @@ class Keymap:
         RESET_GYRO = commands2.button.JoystickButton(
             Joysticks.joysticks[Controllers.DRIVER], controllerDRIVER.A
         )
-        REZERO_MOTORS = commands2.button.JoystickButton(
+        RESET_ODOMETRY = commands2.button.JoystickButton(
             Joysticks.joysticks[Controllers.DRIVER], controllerOPERATOR.X
         )
 

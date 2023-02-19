@@ -18,60 +18,6 @@ class OI:
     def map_controls():
         logger.info("Mapping controls...")
 
-        # Keymap.Arm.REZERO_ELEVATOR.whenPressed(command.ZeroArm())
-
-        # Keymap.Arm.ENGAGE_CLAW().whenPressed(engageClaw()).whenReleased(disEngageClaw())
-
-        # Keymap.Intake.INTAKE_ENABLE.whenPressed(
-        #     command.SetArm(Robot.Arm, 0, math.radians(0), math.radians(0), False)
-        #     # command.IntakeEnable(Robot.intake).andThen(
-        #     #     WaitCommand(0).andThen(command.SetArm(Robot.Arm, 0, math.radians(45), math.radians(45), False))
-        #     # )
-        # )
-
-        # Keymap.Intake.INTAKE_ENABLE.whenPressed(
-        #     command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(45))
-        # )
-        #
-        # Keymap.Intake.INTAKE_ENABLE.whenReleased(
-        #     command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(0))
-        # )
-        #
-        # Keymap.Claw.ENGAGE_CLAW.whenPressed(
-        #     command.Target(
-        #         Robot.drivetrain,
-        #         Robot.arm,
-        #         Robot.grabber,
-        #         Sensors.odometry,
-        #         pose=Pose2d(14.44, 1.05, 0),  # 8.4 2.3 0
-        #         arm_angle=math.radians(-44.78),
-        #         arm_length=0.55,
-        #         wrist_angle=math.radians(-27.09),
-        #         wrist_enabled=True,
-        #     )
-        # )
-        #
-        # pick_up = (-103.5, 0.099, -20.53)
-        # score_mid = (-44.78, 0.55, -27.09)
-        # score_high = (-47.7, 1.04, -18.61)
-        #
-        # Keymap.Claw.ENGAGE_CLAW.whenReleased(
-        #     InstantCommand(
-        #         lambda: commands2.CommandScheduler.getInstance().schedule(
-        #             commands=[
-        #                 command.DriveSwerveCustom(Robot.drivetrain),
-        #                 SequentialCommandGroup(
-        #                     command.SetGrabber(Robot.grabber, 0, False),
-        #                     WaitCommand(0.4),
-        #                     InstantCommand(lambda: Robot.grabber.set_output(0)),
-        #                     command.SetArm(Robot.arm, 0, 0),
-        #                 ),
-        #                 command.IntakeDisable(Robot.intake),
-        #             ]
-        #         )
-        #     )
-        # )
-
         # Keymap.Intake.INTAKE_ENABLE.whenReleased(
         #     command.SetArm(Robot.Arm, 0, 0, 0).andThen(
         #         WaitCommand(0).andThen(command.IntakeDisable(Robot.intake))
@@ -164,12 +110,23 @@ class OI:
         #     InstantCommand(lambda: Robot.grabber.disengage_claw())
         # )
 
-        # TARGETING
+        # DRIVETRAIN
+        Keymap.Drivetrain.RESET_GYRO.whenPressed(
+            InstantCommand(lambda: Robot.drivetrain.gyro.reset_angle(0))
+        )
 
+        Keymap.Drivetrain.RESET_ODOMETRY.whenPressed(
+            InstantCommand(
+                lambda: Robot.drivetrain.reset_odometry(Robot.drivetrain.start_pose)
+            )
+        )
+
+        # TARGETING
         Keymap.Targeting.TARGETING_PICKUP.whenPressed(
             command.Target(
                 Robot.arm,
                 Robot.grabber,
+                Robot.intake,
                 Sensors.odometry,
                 drivetrain=Robot.drivetrain,
                 target=config.scoring_locations["pickup"],
@@ -184,6 +141,7 @@ class OI:
                 command.Target(
                     Robot.arm,
                     Robot.grabber,
+                    Robot.intake,
                     Sensors.odometry,
                     drivetrain=None,
                     target=config.scoring_locations["standard"],
@@ -195,6 +153,7 @@ class OI:
             command.Target(
                 Robot.arm,
                 Robot.grabber,
+                Robot.intake,
                 Sensors.odometry,
                 drivetrain=Robot.drivetrain,
                 target=config.scoring_locations["middle"],
@@ -207,6 +166,7 @@ class OI:
                 command.Target(
                     Robot.arm,
                     Robot.grabber,
+                    Robot.intake,
                     Sensors.odometry,
                     drivetrain=None,
                     target=config.scoring_locations["standard"],
