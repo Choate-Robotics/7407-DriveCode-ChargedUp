@@ -28,4 +28,21 @@ class OI:
             InstantCommand(lambda: Robot.arm.disengage_claw())
         )
 
-        Keymap.Scoring.CONFIRM.whenPressed(InstantCommand(lambda: print("CONFIRM pressed")))
+        Keymap.Scoring.CONFIRM.onTrue(InstantCommand(lambda: print("CONFIRM")))
+        Keymap.Scoring.DELETE.onTrue(InstantCommand(lambda: print("DELETE")))
+
+        Keymap.Scoring.LEFT_GRID.onTrue(InstantCommand(lambda: print("LEFT GRID")))
+        Keymap.Scoring.MIDDLE_GRID.onTrue(InstantCommand(lambda: print("MIDDLE GRID")))
+        Keymap.Scoring.RIGHT_GRID.onTrue(InstantCommand(lambda: print("RIGHT GRID")))
+
+        Keymap.Scoring.TOP_LEFT.onTrue(InstantCommand(lambda: print("TOP LEFT")))
+        Keymap.Scoring.TOP_MIDDLE.onTrue(InstantCommand(lambda: print("TOP MIDDLE")))
+        Keymap.Scoring.TOP_RIGHT.onTrue(InstantCommand(lambda: print("TOP RIGHT")))
+
+        Keymap.Scoring.MIDDLE_LEFT.onTrue(InstantCommand(lambda: print("MIDDLE LEFT")))
+        Keymap.Scoring.MIDDLE_MIDDLE.onTrue(InstantCommand(lambda: print("MIDDLE MIDDLE")))
+        Keymap.Scoring.MIDDLE_RIGHT.onTrue(InstantCommand(lambda: print("MIDDLE RIGHT")))
+        
+        Keymap.Scoring.BOTTOM_LEFT.onTrue(InstantCommand(lambda: print("BOTTOM LEFT")))
+        Keymap.Scoring.BOTTOM_MIDDLE.onTrue(InstantCommand(lambda: print("BOTTOM MIDDLE")))
+        Keymap.Scoring.BOTTOM_RIGHT.onTrue(InstantCommand(lambda: print("BOTTOM RIGHT")))
