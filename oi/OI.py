@@ -162,28 +162,28 @@ class OI:
                 ),
             )
         )
-        #
-        # Keymap.Targeting.TARGETING_SCORING.whenPressed(
-        #     command.Target(
-        #         Robot.arm,
-        #         Robot.grabber,
-        #         Robot.intake,
-        #         Sensors.odometry,
-        #         drivetrain=Robot.drivetrain,
-        #         target=config.scoring_locations["middle"],
-        #     )
-        # )
-        #
-        # Keymap.Targeting.TARGETING_PICKUP.whenReleased(
-        #     SequentialCommandGroup(
-        #         command.DriveSwerveCustom(Robot.drivetrain),
-        #         command.Target(
-        #             Robot.arm,
-        #             Robot.grabber,
-        #             Robot.intake,
-        #             Sensors.odometry,
-        #             drivetrain=None,
-        #             target=config.scoring_locations["standard"],
-        #         ),
-        #     )
-        # )
+
+        Keymap.Targeting.TARGETING_SCORING.whenPressed(
+            command.Target(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Sensors.odometry,
+                drivetrain=Robot.drivetrain,
+                target=config.scoring_locations["middle"],
+            )
+        )
+
+        Keymap.Targeting.TARGETING_PICKUP.whenReleased(
+            SequentialCommandGroup(
+                command.DriveSwerveCustom(Robot.drivetrain),
+                command.Target(
+                    Robot.arm,
+                    Robot.grabber,
+                    Robot.intake,
+                    Sensors.odometry,
+                    drivetrain=None,
+                    target=config.scoring_locations["standard"],
+                ),
+            )
+        )
