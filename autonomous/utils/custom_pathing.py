@@ -131,15 +131,15 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
 
         self.subsystem.set_driver_centric((-vx, -vy), speeds.omega)
 
+    def isFinished(self) -> bool:
+        return self.finished
+
     def end(self, interrupted: bool) -> None:
         self.subsystem.set_driver_centric((0, 0), 0)
         SmartDashboard.putString("POSE", str(self.subsystem.odometry.getPose()))
         SmartDashboard.putString(
             "POSD", str(Sensors.odometry.getPose().rotation().degrees())
         )
-
-    def isFinished(self) -> bool:
-        return self.finished
 
     def runsWhenDisabled(self) -> bool:
         return False

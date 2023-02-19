@@ -15,7 +15,7 @@ from sensors import FieldOdometry
 from subsystem import Arm, Drivetrain, Grabber, Intake
 
 
-class Target(SubsystemCommand[Arm]):
+class Target(SubsystemCommand[Drivetrain]):
     def __init__(
         self,
         arm: Arm,
@@ -25,9 +25,10 @@ class Target(SubsystemCommand[Arm]):
         field_odometry: FieldOdometry,
         target: TargetData,
     ):
-        super().__init__(arm)
+        super().__init__(drivetrain)
         super().addRequirements(grabber)
         super().addRequirements(intake)
+        super().addRequirements(arm)
 
         self.drivetrain = drivetrain
         self.arm = arm
@@ -55,7 +56,6 @@ class Target(SubsystemCommand[Arm]):
             self.intake_command = InstantCommand(lambda: self.intake.intake_disable())
 
         if self.target.target_pose:
-            self.addRequirements(self.drivetrain)
             initial_pose = self.field_odometry.getPose()
             try:
                 self.trajectory = CustomTrajectory(
@@ -113,6 +113,9 @@ class Target(SubsystemCommand[Arm]):
                 ),
             )
         else:
+            commands2.CommandScheduler.getInstance().schedule(
+                command.DriveSwerveCustom(self.drivetrain)
+            )
             commands2.CommandScheduler.getInstance().schedule(
                 SequentialCommandGroup(
                     ParallelCommandGroup(self.arm_sequence, self.intake_command),
