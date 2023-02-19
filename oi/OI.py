@@ -1,4 +1,11 @@
-from commands2 import InstantCommand, SequentialCommandGroup, WaitCommand
+import math
+
+from commands2 import (
+    InstantCommand,
+    ParallelCommandGroup,
+    SequentialCommandGroup,
+    WaitCommand,
+)
 from robotpy_toolkit_7407.utils import logger
 
 import command
@@ -52,25 +59,27 @@ class OI:
 
         # STAND ALONE SCORING/PLACING COMMANDS
 
-        # Keymap.Intake.PICK_UP_ARM.whenPressed(
-        #     ParallelCommandGroup(
-        #         command.SetArm(
-        #             Robot.arm, distance=0.099, shoulder_angle=math.radians(-100)
-        #         ),
-        #         command.SetGrabber(
-        #             Robot.grabber, wrist_angle=math.radians(-20.53), claw_active=True
-        #         ),
-        #     )
-        # )
+        Keymap.Intake.PICK_UP_ARM.whenPressed(
+            ParallelCommandGroup(
+                command.SetArm(
+                    Robot.arm,
+                    distance=0,
+                    shoulder_angle=math.radians(-30),  # .099, -100
+                ),
+                command.SetGrabber(
+                    Robot.grabber, wrist_angle=math.radians(-20.53), claw_active=True
+                ),
+            )
+        )
         #
-        # Keymap.Intake.PICK_UP_ARM.whenReleased(
-        #     ParallelCommandGroup(
-        #         command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(0)),
-        #         command.SetGrabber(
-        #             Robot.grabber, wrist_angle=math.radians(0), claw_active=False
-        #         ),
-        #     )
-        # )
+        Keymap.Intake.PICK_UP_ARM.whenReleased(
+            ParallelCommandGroup(
+                command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(0)),
+                command.SetGrabber(
+                    Robot.grabber, wrist_angle=math.radians(0), claw_active=False
+                ),
+            )
+        )
         #
         # Keymap.Intake.DROP_OFF_ARM.whenPressed(
         #     ParallelCommandGroup(
@@ -132,7 +141,7 @@ class OI:
                 target=config.scoring_locations["pickup"],
             )
         )
-
+        #
         Keymap.Targeting.TARGETING_PICKUP.whenReleased(
             SequentialCommandGroup(
                 command.DriveSwerveCustom(Robot.drivetrain),
@@ -148,28 +157,28 @@ class OI:
                 ),
             )
         )
-
-        Keymap.Targeting.TARGETING_SCORING.whenPressed(
-            command.Target(
-                Robot.arm,
-                Robot.grabber,
-                Robot.intake,
-                Sensors.odometry,
-                drivetrain=Robot.drivetrain,
-                target=config.scoring_locations["middle"],
-            )
-        )
-
-        Keymap.Targeting.TARGETING_PICKUP.whenReleased(
-            SequentialCommandGroup(
-                command.DriveSwerveCustom(Robot.drivetrain),
-                command.Target(
-                    Robot.arm,
-                    Robot.grabber,
-                    Robot.intake,
-                    Sensors.odometry,
-                    drivetrain=None,
-                    target=config.scoring_locations["standard"],
-                ),
-            )
-        )
+        #
+        # Keymap.Targeting.TARGETING_SCORING.whenPressed(
+        #     command.Target(
+        #         Robot.arm,
+        #         Robot.grabber,
+        #         Robot.intake,
+        #         Sensors.odometry,
+        #         drivetrain=Robot.drivetrain,
+        #         target=config.scoring_locations["middle"],
+        #     )
+        # )
+        #
+        # Keymap.Targeting.TARGETING_PICKUP.whenReleased(
+        #     SequentialCommandGroup(
+        #         command.DriveSwerveCustom(Robot.drivetrain),
+        #         command.Target(
+        #             Robot.arm,
+        #             Robot.grabber,
+        #             Robot.intake,
+        #             Sensors.odometry,
+        #             drivetrain=None,
+        #             target=config.scoring_locations["standard"],
+        #         ),
+        #     )
+        # )

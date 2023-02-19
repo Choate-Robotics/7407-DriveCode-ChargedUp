@@ -1,6 +1,7 @@
 from robotpy_toolkit_7407 import SubsystemCommand
 from wpilib import SmartDashboard
 
+import utils
 from subsystem import Grabber
 from units.SI import radians
 
@@ -37,3 +38,21 @@ class SetGrabber(SubsystemCommand[Grabber]):
     def end(self, interrupted: bool) -> None:
         print("FINISHED GRABBER SET")
         ...
+
+
+class ZeroWrist(SubsystemCommand[Grabber]):
+    def __init__(self, subsystem: Grabber):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+
+    def initialize(self):
+        self.subsystem.zero_wrist()
+
+    def execute(self):
+        ...
+
+    def isFinished(self):
+        return abs(self.subsystem.wrist.get_sensor_position()) < 0.1
+
+    def end(self, interrupted=False):
+        utils.logger.debug("Wrist", "Wrist Successfully Zeroed.")

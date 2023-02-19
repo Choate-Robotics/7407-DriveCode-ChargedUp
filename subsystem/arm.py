@@ -167,7 +167,6 @@ class Arm(Subsystem):
         """stops the elevator"""
         self.motor_extend.set_raw_output(0)
         self.arm_rotation_motor.set_raw_output(0)
-        self.claw_motor.set_raw_output(0)
 
     def hard_stop(self) -> None:
         """stops the elevator and enables the brake"""

@@ -35,6 +35,8 @@ class _Robot(wpilib.TimedRobot):
         OI.map_controls()
 
     def robotPeriodic(self):
+        SmartDashboard.putNumber("ARM_REAL", math.degrees(Robot.arm.get_rotation()))
+
         raw_pigeon = Robot.drivetrain.gyro._gyro.getRawGyro()
         SmartDashboard.putNumber("GYRO A", raw_pigeon[1][0])
         SmartDashboard.putNumber("GYRO B", raw_pigeon[1][1])

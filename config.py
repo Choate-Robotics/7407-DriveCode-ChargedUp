@@ -1,6 +1,23 @@
+from dataclasses import dataclass
+
 from wpimath.geometry import Pose2d
 
-from command.targeting import TargetData
+from units.SI import meters, meters_per_second, meters_per_second_squared, radians
+
+
+@dataclass
+class TargetData:
+    target_pose: Pose2d | None
+    arm_angle: radians
+    arm_length: meters
+    wrist_angle: radians
+    intake_enabled: bool = False
+    claw_picking: bool = False
+    claw_scoring: bool = False
+
+    max_velocity: meters_per_second = None
+    max_acceleration: meters_per_second_squared = None
+
 
 red_team: bool = True
 
@@ -54,10 +71,10 @@ scoring_locations = {
         claw_scoring=True,
         claw_picking=False,
     ),
-    "picking": TargetData(
+    "pickup": TargetData(
         target_pose=None,
-        arm_angle=-100,
-        arm_length=0.099,
+        arm_angle=-30,
+        arm_length=0,
         wrist_angle=-20.53,
         intake_enabled=False,
         claw_scoring=False,
