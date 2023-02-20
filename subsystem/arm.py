@@ -34,7 +34,7 @@ class Arm(Subsystem):
         config=SHOULDER_CONFIG,
     )
     brake: wpilib.DoubleSolenoid = wpilib.DoubleSolenoid(
-        31, wpilib.PneumaticsModuleType.REVPH, 15, 14
+        31, wpilib.PneumaticsModuleType.REVPH, 3, 2
     )
 
     initialized: bool = False
@@ -183,6 +183,7 @@ class Arm(Subsystem):
             lol = meters
             print(lol)
             length = lol * (1 / constants.elevator_length_per_rotation)
+            #finalLength = min()
             self.motor_extend.set_target_position(length)
             # self.motor_extend.pid_controller.setReference(length, self.motor_extend.motor.ControlType.kPosition, arbFeedforward=)
             # self.rotation_PID.setSmartMotionMaxAccel(0.01)

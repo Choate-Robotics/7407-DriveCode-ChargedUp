@@ -77,7 +77,7 @@ max_elevator_height: meters = (
     59.5 * inches_to_meters
 )  # the maximum height of the elevator
 max_elevator_height_delta: meters = (
-    45 * inches_to_meters
+    40 * inches_to_meters
 )  # the maximum height of the elevator
 pivot_point_height: meters = 17 * inches_to_meters  # the height of the pivot point
 # --------------------------------------------------------------
