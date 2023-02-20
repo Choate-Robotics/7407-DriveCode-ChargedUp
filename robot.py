@@ -106,7 +106,11 @@ class _Robot(wpilib.TimedRobot):
         logger.debug("TELEOP", "Teleop Initialized")
         commands2.CommandScheduler.getInstance().schedule(
             command.ZeroElevator(Robot.arm).andThen(
-                command.SetArm(Robot.arm, distance=0, shoulder_angle=math.radians(0))
+                command.ZeroShoulder(Robot.arm).andThen(
+                    command.SetArm(
+                        Robot.arm, distance=0, shoulder_angle=math.radians(0)
+                    )
+                )
             )
         )
         commands2.CommandScheduler.getInstance().schedule(

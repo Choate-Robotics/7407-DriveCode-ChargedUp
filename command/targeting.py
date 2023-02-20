@@ -59,7 +59,7 @@ class Target(SubsystemCommand[Drivetrain]):
         else:
             self.intake_command = InstantCommand(lambda: None)
 
-        if self.target.target_pose:
+        if self.target.target_pose and self.drive_on:
             initial_pose = self.field_odometry.getPose()
             try:
                 self.trajectory = CustomTrajectory(

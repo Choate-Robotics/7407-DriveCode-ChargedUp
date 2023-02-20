@@ -32,54 +32,6 @@ class Keymap:
             Joysticks.joysticks[Controllers.DRIVER], controllerOPERATOR.X
         )
 
-    class Arm:
-        ELEVATOR_ROTATION_AXIS = JoystickAxis(
-            Controllers.OPERATOR, controllerOPERATOR.L_JOY[0]
-        )
-        ELEVATOR_EXTENSION_AXIS = JoystickAxis(
-            Controllers.OPERATOR, controllerOPERATOR.L_JOY[1]
-        )
-        CLAW_ROTATION_AXIS = JoystickAxis(
-            Controllers.OPERATOR, controllerOPERATOR.R_JOY[0]
-        )
-        REZERO_ELEVATOR = commands2.button.JoystickButton(
-            Joysticks.joysticks[Controllers.OPERATOR], controllerOPERATOR.A
-        )
-        EXTEND_ELEVATOR_MAX = commands2.button.JoystickButton(
-            Joysticks.joysticks[Controllers.OPERATOR], controllerOPERATOR.B
-        )
-        RETRACT_ELEVATOR_MIN = commands2.button.JoystickButton(
-            Joysticks.joysticks[Controllers.OPERATOR], controllerOPERATOR.X
-        )
-
-        ARM_BRAKE = commands2.button.JoystickButton(
-            Joysticks.joysticks[Controllers.OPERATOR], controllerOPERATOR.Y
-        )
-
-    class Intake:
-        INTAKE_ENABLE = commands2.button.Button(
-            lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerOPERATOR.LT)
-            > 0.8
-        )
-
-        PICK_UP_ARM = commands2.button.Button(
-            lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerOPERATOR.LT)
-            > 0.8
-        )
-
-        DROP_OFF_ARM = commands2.button.Button(
-            lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerOPERATOR.RT)
-            > 0.8
-        )
-
-        GRABBER_PICK = commands2.button.JoystickButton(
-            Controllers.DRIVER_CONTROLLER, controllerOPERATOR.Y
-        )
-
-        GRABBER_SCORE = commands2.button.JoystickButton(
-            Controllers.DRIVER_CONTROLLER, controllerOPERATOR.X
-        )
-
     class Claw:
         OPEN_CLAW = GRABBER = commands2.button.JoystickButton(
             Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.A
