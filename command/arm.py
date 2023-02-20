@@ -4,6 +4,8 @@ import time
 import rev
 from robotpy_toolkit_7407.command import SubsystemCommand
 from wpilib import SmartDashboard
+from wpimath._controls._controls.controller import ProfiledPIDControllerRadians
+from wpimath._controls._controls.trajectory import TrapezoidProfileRadians
 from wpimath.controller import ArmFeedforward, PIDController
 
 import constants
@@ -40,6 +42,7 @@ class ZeroShoulder(SubsystemCommand[Arm]):
         self.subsystem = subsystem
 
     def initialize(self):
+        print("ZEROING SHOULDER")
         self.subsystem.disable_brake()
         self.subsystem.zero_elevator_rotation()
 
@@ -73,181 +76,6 @@ class HardStop(SubsystemCommand[Arm]):
             self.subsystem.stop()
 
 
-class EngageClaw(SubsystemCommand[Arm]):
-    def initialize(self) -> None:
-        self.subsystem.engage_claw()
-
-    def execute(self) -> None:
-        pass
-
-    def isFinished(self) -> bool:
-        return True
-
-    def end(self, interrupted=False) -> None:
-        ...
-
-
-class DisengageClaw(SubsystemCommand[Arm]):
-    def initialize(self) -> None:
-        self.subsystem.disengage_claw()
-
-    def execute(self) -> None:
-        pass
-
-    def isFinished(self) -> bool:
-        return True
-
-    def end(self, interrupted=False) -> None:
-        ...
-
-
-class CubeIntakeExtend(SubsystemCommand[Arm]):
-    def initialize(self) -> None:
-        self.subsystem.set_rotation(math.radians(45))
-        self.subsystem.set_angle_wrist(math.radians(45))
-        self.subsystem.engage_claw()
-
-    def execute(self) -> None:
-        pass
-
-    def isFinished(self) -> bool:
-        return True
-
-    def end(self, interrupted=False) -> None:
-        pass
-
-
-class CubeIntakeRetract(SubsystemCommand[Arm]):
-    def initialize(self) -> None:
-        self.subsystem.set_rotation(math.radians(0))
-        self.subsystem.set_angle_wrist(math.radians(0))
-        self.subsystem.disengage_claw()
-
-    def execute(self) -> None:
-        pass
-
-    def isFinished(self) -> bool:
-        return True
-
-    def end(self, interrupted=False) -> None:
-        pass
-
-
-class setShoulderRotation(SubsystemCommand[Arm]):
-    def __init__(self, subsystem: Arm, shoulder_angle):
-        super().__init__(subsystem)
-        self.shoulder_angle = (math.pi / 2) - shoulder_angle
-        self.arm_controller: PIDController | None = None
-        self.arm_ff: ArmFeedforward | None = None
-        self.start_time = None
-        self.theta_i = 0
-        self.theta_f = 0
-        self.theta_diff = 0
-        self.threshold = math.radians(1)
-        self.desired_time = 3
-
-    def initialize(self) -> None:
-        self.arm_controller = PIDController(1, 0, 0.03)
-
-        self.arm_ff = ArmFeedforward(kG=0.045, kS=0, kV=0, kA=0)  # perfect dont touch
-
-        self.start_time = time.perf_counter()
-        self.theta_i = self.subsystem.get_rotation()
-        self.theta_f = self.shoulder_angle
-
-        if not self.subsystem.is_at_shoulder_rotation(self.shoulder_angle):
-            self.subsystem.disable_brake()
-
-    def execute(self) -> None:
-        current_theta = self.subsystem.get_rotation()
-
-        maximum_power = 0.5 * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
-        # print(math.pi/2 - self.theta_f)
-        # print("Actual Theta:", current_theta)
-        # print("Theta:", math.pi/2 - current_theta)
-
-        feed_forward = -self.arm_ff.calculate(
-            angle=(math.pi / 2 - current_theta), velocity=0.1, acceleration=0
-        )
-        # print("Voltage", desired_voltage)
-        pid_voltage = -(
-            self.arm_controller.calculate(
-                math.pi / 2 - current_theta,  # sets correct origin
-                self.theta_f,
-            )
-        )
-        # if abs(pid_voltage) < .0005:
-        #     pid_voltage = 0
-        # print(self.subsystem.is_at_shoulder_rotation(math.pi/2 - self.shoulder_angle))
-        if self.subsystem.is_at_shoulder_rotation(math.pi / 2 - self.shoulder_angle):
-            pid_voltage = 0
-        desired_voltage = (
-            feed_forward + pid_voltage
-        ) * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
-        # print(self.shoulder_angle)
-        print("SHOULDER: ", self.shoulder_angle)
-        print("CURRENT: ", current_theta)
-
-        SmartDashboard.putNumber("PID_Voltage", pid_voltage)
-        self.subsystem.arm_rotation_motor.pid_controller.setReference(
-            min(maximum_power, abs(desired_voltage))
-            * (1 if desired_voltage > 0 else -1),
-            rev.CANSparkMax.ControlType.kVoltage,
-            pidSlot=1,
-        )
-
-    def isFinished(self) -> bool:
-        return self.subsystem.is_at_shoulder_rotation(self.shoulder_angle)
-
-    def end(self, interrupted: bool) -> None:
-        pass
-
-
-class setElevator(SubsystemCommand[Arm]):
-    def __init__(self, subsystem: Arm, length):
-        super().__init__(subsystem)
-        self.length = length
-
-    def initialize(self) -> None:
-        self.subsystem.set_length(self.length)
-
-    def execute(self) -> None:
-        if self.subsystem.get_length() < 0.2 * constants.max_elevator_height_delta:
-            self.subsystem.motor_extend.pid_controller.setOutputRange(-0.1, 1)
-        else:
-            self.subsystem.motor_extend.pid_controller.setOutputRange(-1, 1)
-
-    def isFinished(self) -> bool:
-        return self.subsystem.is_at_length(self.length)
-
-    def end(self, interrupted: bool) -> None:
-        pass
-
-
-class SetGrabber(SubsystemCommand[Grabber]):
-    def __init__(self, subsystem: Grabber, wrist_angle: radians, claw_active: bool):
-        super().__init__(subsystem)
-        self.subsystem = subsystem
-        self.wrist_angle = wrist_angle
-        self.claw_active = claw_active
-
-    def initialize(self) -> None:
-        self.subsystem.set_angle(self.wrist_angle)
-        if self.claw_active:
-            self.subsystem.engage_claw()
-        else:
-            self.subsystem.disengage_claw()
-
-    def execute(self) -> None:
-        ...
-
-    def isFinished(self) -> bool:
-        return self.subsystem.is_at_angle(self.wrist_angle)
-
-    def end(self, interrupted: bool) -> None:
-        ...
-
-
 class SetArm(SubsystemCommand[Arm]):
     def __init__(
         self,
@@ -268,12 +96,17 @@ class SetArm(SubsystemCommand[Arm]):
         self.theta_diff = 0
         self.threshold = math.radians(0.5)
 
+        self.elevator_controller = None
+        self.arm_controller_profiled = None
+        self.arm_ff_constant = None
+        self.elevator_ff = None
+
         self.desired_time = 3
 
     def initialize(self):
 
         elevator_p = SmartDashboard.getNumber("ELEVATOR_P_VALUE", 0)
-        self.arm_controller = PIDController(5, 0, 0.1)
+        self.arm_controller = PIDController(6, 0, 0.1)
         self.elevator_controller = PIDController(0.9, 0, 0.0)
         self.arm_controller_profiled = ProfiledPIDControllerRadians(
             3,
@@ -320,7 +153,7 @@ class SetArm(SubsystemCommand[Arm]):
 
         # ------------ ARM ------------
 
-        arm_maximum_power = 6
+        arm_maximum_power = 8
 
         arm_feed_forward = -math.sin(current_theta) * self.arm_ff_constant
 
@@ -334,8 +167,7 @@ class SetArm(SubsystemCommand[Arm]):
         if abs(self.subsystem.get_rotation() - self.real_desired) < self.threshold:
             pid_voltage = 0
 
-        arm_desired_voltage = arm_feed_forward  # + arm_pid_output
-        # ) * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
+        arm_desired_voltage = arm_feed_forward + arm_pid_output
         SmartDashboard.putNumber("ARM_Voltage", arm_desired_voltage)
         SmartDashboard.putNumber("ARM_PID_Voltage", arm_pid_output)
         self.subsystem.arm_rotation_motor.pid_controller.setReference(
@@ -371,7 +203,7 @@ class SetArm(SubsystemCommand[Arm]):
 
         SmartDashboard.putNumber("PID_Voltage", elevator_pid_output)
 
-        elevator_desired_voltage = elevator_feed_forward  # + elevator_pid_output
+        elevator_desired_voltage = elevator_feed_forward + elevator_pid_output
 
         SmartDashboard.putNumber("ELEVATOR_Voltage", elevator_desired_voltage)
         test_voltage = SmartDashboard.getNumber("Test_ELEVATOR_Voltage", 0)
@@ -397,20 +229,18 @@ class SetArm(SubsystemCommand[Arm]):
             )
 
     def isFinished(self) -> bool:
-        return (
-            abs(self.subsystem.get_rotation() - self.real_desired) < math.radians(4)
-            and abs(self.subsystem.get_length() - self.distance) < 0.05
-        )
+        # return (
+        #         abs(self.subsystem.get_rotation() - self.real_desired) < self.threshold
+        #         and abs(self.subsystem.get_length() - self.distance) < 0.05
+        # )
+        return False
 
     def end(self, interrupted: bool) -> None:
         if not interrupted:
             print("FINISHED ARM SET")
             self.subsystem.enable_brake()
             self.subsystem.arm_rotation_motor.pid_controller.setReference(
-                0, rev.CANSparkMax.ControlType.kVoltage, 0
-            )
-            self.subsystem.motor_extend.pid_controller.setReference(
-                0, rev.CANSparkMax.ControlType.kVoltage, pidSlot=1
+                0, rev.CANSparkMax.ControlType.kVoltage, pidSlot=0
             )
         else:
             print("FINISHED ARM SET BUT INTERRUPTED")

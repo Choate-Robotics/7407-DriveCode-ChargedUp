@@ -34,7 +34,7 @@ class Arm(Subsystem):
         config=SHOULDER_CONFIG,
     )
     brake: wpilib.DoubleSolenoid = wpilib.DoubleSolenoid(
-        31, wpilib.PneumaticsModuleType.REVPH, 3, 2
+        31, wpilib.PneumaticsModuleType.REVPH, 2, 3
     )
 
     initialized: bool = False
@@ -180,9 +180,8 @@ class Arm(Subsystem):
             return True
         else:
             return (
-                constants.shoulder_max_rotation
-                >= angle
-                >= -constants.shoulder_min_rotation
+                constants.shoulder_max_rotation >= angle
+                and angle >= -constants.shoulder_min_rotation
             )
 
     def set_rotation(self, angle: radians):  # set arm rotation
@@ -198,18 +197,9 @@ class Arm(Subsystem):
 
         # if the rotation is within the soft limits, set the rotation to the given angle
         if not self.disable_rotation:
-            if self.shoulder_rotation_limits(angle):
-                # print("In LIMITS")
-                set_arm_angle(angle)
-                return True
-            else:
-                # print("NOT IN LIMITS")
-                if angle > 0:
-                    y = constants.shoulder_max_rotation
-                else:
-                    y = -constants.shoulder_min_rotation
-                set_arm_angle(y)
-                return y
+            set_arm_angle(angle)
+            return True
+        return False
 
     def get_length(self) -> float:  # returns arm extension
         """Gets the length of the elevator in meters"""
