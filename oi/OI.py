@@ -160,7 +160,7 @@ class OI:
             )
         )
 
-        Keymap.Targeting.TARGETING_SCORING.whenPressed(
+        Keymap.Targeting.TARGETING_MIDDLE.whenPressed(
             command.Target(
                 Robot.arm,
                 Robot.grabber,
@@ -171,7 +171,7 @@ class OI:
             )
         )
 
-        Keymap.Targeting.TARGETING_SCORING.whenReleased(
+        Keymap.Targeting.TARGETING_MIDDLE.whenReleased(
             SequentialCommandGroup(
                 InstantCommand(
                     lambda: commands2.CommandScheduler.getInstance().schedule(
@@ -189,4 +189,43 @@ class OI:
                     target=config.scoring_locations["standard"],
                 ),
             )
+        )
+
+        Keymap.Targeting.TARGETING_MIDDLE.whenPressed(
+            command.Target(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Robot.drivetrain,
+                Sensors.odometry,
+                target=config.scoring_locations["middle"],
+            )
+        )
+
+        Keymap.Targeting.TARGETING_HIGH.whenReleased(
+            SequentialCommandGroup(
+                InstantCommand(
+                    lambda: commands2.CommandScheduler.getInstance().schedule(
+                        command.DriveSwerveCustom(Robot.drivetrain)
+                    )
+                ),
+                InstantCommand(lambda: Robot.grabber.close_claw()),
+                WaitCommand(config.scoring_locations["high"].claw_wait_time),
+                command.Target(
+                    Robot.arm,
+                    Robot.grabber,
+                    Robot.intake,
+                    Robot.drivetrain,
+                    Sensors.odometry,
+                    target=config.scoring_locations["standard"],
+                ),
+            )
+        )
+
+        Keymap.Claw.OPEN_CLAW.whenPressed(
+            InstantCommand(lambda: Robot.grabber.open_claw())
+        )
+
+        Keymap.Claw.OPEN_CLAW.whenReleased(
+            InstantCommand(lambda: Robot.grabber.close_claw())
         )

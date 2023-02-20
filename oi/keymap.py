@@ -81,9 +81,8 @@ class Keymap:
         )
 
     class Claw:
-        ENGAGE_CLAW = commands2.button.Button(
-            lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerOPERATOR.RT)
-            > 0.8
+        OPEN_CLAW = GRABBER = commands2.button.JoystickButton(
+            Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.A
         )
 
     class Targeting:
@@ -92,7 +91,15 @@ class Keymap:
             > 0.8
         )
 
-        TARGETING_SCORING = commands2.button.Button(
+        TARGETING_DOUBLE_STATION = commands2.button.JoystickButton(
+            Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.LB
+        )
+
+        TARGETING_MIDDLE = commands2.button.Button(
             lambda: Controllers.OPERATOR_CONTROLLER.getRawAxis(-controllerOPERATOR.RT)
             > 0.8
+        )
+
+        TARGETING_HIGH = commands2.button.JoystickButton(
+            Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.RB
         )

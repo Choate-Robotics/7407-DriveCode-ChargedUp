@@ -62,7 +62,7 @@ scoring_locations = {
         arm_length=0.55,
         wrist_angle=math.radians(-27.09),
         intake_enabled=False,
-        claw_scoring=True,
+        claw_scoring=False,
         claw_picking=False,
     ),
     "high": TargetData(
@@ -82,7 +82,7 @@ scoring_locations = {
         intake_enabled=True,
         claw_scoring=False,
         claw_picking=True,
-        claw_wait_time=0.2,
+        claw_wait_time=0.35,
     ),
     "standard": TargetData(
         target_pose=None,

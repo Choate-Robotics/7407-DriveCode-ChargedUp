@@ -41,7 +41,9 @@ class Target(SubsystemCommand[Drivetrain]):
         self.trajectory: CustomTrajectory | None = None
 
         self.finished = False
-        self.drive_on = True
+        self.drive_on = False
+        self.arm_on = True
+        self.intake_on = False
 
         self.arm_sequence: SequentialCommandGroup | None = None
         self.intake_command: InstantCommand | None = None
@@ -50,10 +52,12 @@ class Target(SubsystemCommand[Drivetrain]):
         self.finished = True
 
     def initialize(self) -> None:
-        if self.target.intake_enabled:
+        if self.target.intake_enabled and self.intake_on:
             self.intake_command = InstantCommand(lambda: self.intake.intake_enable())
-        else:
+        elif self.intake_on:
             self.intake_command = InstantCommand(lambda: self.intake.intake_disable())
+        else:
+            self.intake_command = InstantCommand(lambda: None)
 
         if self.target.target_pose:
             initial_pose = self.field_odometry.getPose()
@@ -74,12 +78,12 @@ class Target(SubsystemCommand[Drivetrain]):
         else:
             self.drive_on = False
 
-        if self.target.claw_picking:
+        if self.target.claw_picking and self.arm_on:
             self.arm_sequence = ParallelCommandGroup(
                 command.SetArm(self.arm, self.target.arm_length, self.target.arm_angle),
                 command.SetGrabber(self.grabber, self.target.wrist_angle, True),
             )
-        elif self.target.claw_scoring:
+        elif self.target.claw_scoring and self.arm_on:
             self.arm_sequence = SequentialCommandGroup(
                 ParallelCommandGroup(
                     command.SetArm(
@@ -89,11 +93,13 @@ class Target(SubsystemCommand[Drivetrain]):
                 ),
                 InstantCommand(self.grabber.open_claw()),
             )
-        else:
+        elif self.arm_on:
             self.arm_sequence = ParallelCommandGroup(
                 command.SetArm(self.arm, self.target.arm_length, self.target.arm_angle),
                 command.SetGrabber(self.grabber, self.target.wrist_angle, False),
             )
+        else:
+            self.arm_sequence = InstantCommand(lambda: None)
 
         if self.drive_on:
             commands2.CommandScheduler.getInstance().schedule(
