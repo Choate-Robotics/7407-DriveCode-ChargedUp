@@ -142,10 +142,6 @@ class Arm(Subsystem):
         """checks if the arm is at the desired position"""
         return self.is_at_length(length) and self.is_at_shoulder_rotation(angle)
 
-    def is_at_length(self, length: float) -> bool:
-        """checks if the arm is at the desired length"""
-        return length == self.get_length()
-
     @staticmethod
     def shoulder_angle_to_motor_rotations(angle: float):
         """returns the scale of angle in radians to the shoulder motor rotations
