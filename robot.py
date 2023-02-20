@@ -31,6 +31,11 @@ class _Robot(wpilib.TimedRobot):
         Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
         Sensors.gyro = Robot.drivetrain.gyro
 
+        SmartDashboard.putNumber("ELEVATOR_Voltage", 0)
+        SmartDashboard.putNumber("Test_ELEVATOR_Voltage", 0)
+        SmartDashboard.getNumber("ELEVATOR_P_VALUE", 0)
+        SmartDashboard.putNumber("ARM_Voltage", 0)
+
         OI.init()
         OI.map_controls()
 
@@ -45,6 +50,7 @@ class _Robot(wpilib.TimedRobot):
         Sensors.odometry.update()
         SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
         SmartDashboard.putString("FDOM", str(Sensors.odometry.getPose()))
+        SmartDashboard.putNumber("Current_length_meters", Robot.arm.get_length())
         SmartDashboard.putString(
             "EDOM", str(Robot.drivetrain.odometry_estimator.getEstimatedPosition())
         )
