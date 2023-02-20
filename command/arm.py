@@ -50,9 +50,10 @@ class ZeroShoulder(SubsystemCommand[Arm]):
     def isFinished(self):
         # return not self.subsystem.elevator_bottom_sensor and \
         # self.subsystem.main_rotation_motor.get_sensor_position() == 0
-        return abs(self.subsystem.arm_rotation_motor.get_sensor_position()) < 0.1
+        return True
 
     def end(self, interrupted=False):
+        print("SHOULDER ZEROED")
         utils.logger.debug("Shoulder", "Shoulder Successfully Zeroed.")
         if not interrupted:
             self.subsystem.enable_brake()
@@ -98,6 +99,7 @@ class SetArm(SubsystemCommand[Arm]):
         self.desired_time = 3
 
     def initialize(self):
+        print("RUNNING ARM SET")
         self.arm_controller = PIDController(1, 0, 0.03)
 
         self.arm_ff = ArmFeedforward(kG=0.045, kS=0, kV=0, kA=0)  # perfect don't touch
@@ -152,7 +154,7 @@ class SetArm(SubsystemCommand[Arm]):
         ) * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
         SmartDashboard.putNumber("PID_Voltage", pid_voltage)
         self.subsystem.arm_rotation_motor.pid_controller.setOutputRange(
-            -0.1, 0.1, slotID=1
+            -0.2, 0.2, slotID=1
         )
         self.subsystem.arm_rotation_motor.pid_controller.setReference(
             min(maximum_power, abs(desired_voltage))

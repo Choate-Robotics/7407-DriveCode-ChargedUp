@@ -79,12 +79,14 @@ class OI:
 
         Keymap.Targeting.TARGETING_MIDDLE.whenReleased(
             SequentialCommandGroup(
+                InstantCommand(lambda: print("Starting released command.")),
                 InstantCommand(
                     lambda: commands2.CommandScheduler.getInstance().schedule(
                         command.DriveSwerveCustom(Robot.drivetrain)
                     )
                 ),
                 InstantCommand(lambda: Robot.grabber.close_claw()),
+                InstantCommand(lambda: print("ABOUT TO PICK UP")),
                 WaitCommand(config.scoring_locations["middle"].claw_wait_time),
                 command.Target(
                     Robot.arm,

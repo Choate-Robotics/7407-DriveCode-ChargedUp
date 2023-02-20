@@ -269,8 +269,7 @@ class Arm(Subsystem):
         )
 
         self.arm_rotation_motor.set_sensor_position(motor_position)
-
-        self.arm_rotation_motor.set_target_position(0)
+        self.arm_rotation_motor.set_target_position(motor_position)
 
     def extend_max_elevator(self) -> None:
         """Sets the elevator to the max position (no rotation)"""

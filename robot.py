@@ -104,6 +104,7 @@ class _Robot(wpilib.TimedRobot):
 
     def teleopInit(self):
         logger.debug("TELEOP", "Teleop Initialized")
+        Robot.arm.arm_rotation_motor.pid_controller.setOutputRange(-0.2, 0.2, slotID=1)
         commands2.CommandScheduler.getInstance().schedule(
             command.ZeroElevator(Robot.arm).andThen(
                 command.ZeroShoulder(Robot.arm).andThen(

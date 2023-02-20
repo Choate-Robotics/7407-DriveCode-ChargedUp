@@ -52,6 +52,7 @@ class Target(SubsystemCommand[Drivetrain]):
         self.finished = True
 
     def initialize(self) -> None:
+        print("STARTING TARGETING COMMAND")
         if self.target.intake_enabled and self.intake_on:
             self.intake_command = InstantCommand(lambda: self.intake.intake_enable())
         elif self.intake_on:
