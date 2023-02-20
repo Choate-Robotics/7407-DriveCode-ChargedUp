@@ -356,7 +356,7 @@ class SetArm(SubsystemCommand[Arm]):
     def initialize(self):
 
         elevator_p = SmartDashboard.getNumber("ELEVATOR_P_VALUE",0)
-        self.arm_controller = PIDController(10, 0, 0.1)
+        self.arm_controller = PIDController(5, 0, 0.1)
         self.elevator_controller = PIDController(0.9, 0, 0.0)
         self.arm_controller_profiled = ProfiledPIDControllerRadians(3,0,0, TrapezoidProfileRadians.Constraints(math.radians(45),math.radians(45)))
         
@@ -401,16 +401,16 @@ class SetArm(SubsystemCommand[Arm]):
 
         arm_feed_forward = -math.sin(current_theta) * self.arm_ff_constant
 
-        # arm_pid_output = -(
-        #     self.arm_controller.calculate(
-        #         math.pi / 2 - current_theta,
-        #         self.theta_f,
-        #     )
-        # )
-
-        arm_pid_output = -( #PROFILED
-            self.arm_controller_profiled.calculate(math.pi / 2 - current_theta)
+        arm_pid_output = -(
+            self.arm_controller.calculate(
+                math.pi / 2 - current_theta,
+                self.theta_f,
+            )
         )
+
+        # arm_pid_output = -( #PROFILED
+        #     self.arm_controller_profiled.calculate(math.pi / 2 - current_theta)
+        # )
 
 
         if abs(self.subsystem.get_rotation() - self.real_desired) < self.threshold:
@@ -421,12 +421,12 @@ class SetArm(SubsystemCommand[Arm]):
                           #) * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
         SmartDashboard.putNumber("ARM_Voltage", arm_desired_voltage)
         SmartDashboard.putNumber("ARM_PID_Voltage", arm_pid_output)
-        # self.subsystem.arm_rotation_motor.pid_controller.setReference(
-        #     min(arm_maximum_power, abs(arm_desired_voltage))
-        #     * (1 if arm_desired_voltage > 0 else -1),
-        #     rev.CANSparkMax.ControlType.kVoltage,
-        #     1,
-        # )
+        self.subsystem.arm_rotation_motor.pid_controller.setReference(
+            min(arm_maximum_power, abs(arm_desired_voltage))
+            * (1 if arm_desired_voltage > 0 else -1),
+            rev.CANSparkMax.ControlType.kVoltage,
+            1,
+        )
         # ^^------------ ARM ------------^^
 
 
@@ -462,12 +462,12 @@ class SetArm(SubsystemCommand[Arm]):
 
         #SmartDashboard.putNumber("")
 
-        # self.subsystem.motor_extend.pid_controller.setReference(
-        #     min(elevator_maximum_power, abs(elevator_desired_voltage))
-        #     * (1 if elevator_desired_voltage > 0 else -1),
-        #     rev.CANSparkMax.ControlType.kVoltage,
-        #     pidSlot=1,
-        # )
+        self.subsystem.motor_extend.pid_controller.setReference(
+            min(elevator_maximum_power, abs(elevator_desired_voltage))
+            * (1 if elevator_desired_voltage > 0 else -1),
+            rev.CANSparkMax.ControlType.kVoltage,
+            pidSlot=1,
+        )
 
         # ------------ ELEVATOR ------------^^
 
