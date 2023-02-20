@@ -19,7 +19,6 @@ class ZeroElevator(SubsystemCommand[Arm]):
 
     def initialize(self):
         ...
-        self.subsystem.motor_extend.set_sensor_position(0)
 
     def execute(self):
         self.subsystem.motor_extend.set_raw_output(-0.05)
@@ -31,7 +30,7 @@ class ZeroElevator(SubsystemCommand[Arm]):
 
     def end(self, interrupted=False):
         self.subsystem.motor_extend.set_sensor_position(0)
-        print("Zeroed MEOW")
+        print("Elevator successfully zeroed.")
         utils.logger.debug("Elevator", "Elevator Successfully Zeroed.")
 
 
@@ -48,8 +47,6 @@ class ZeroShoulder(SubsystemCommand[Arm]):
         ...
 
     def isFinished(self):
-        # return not self.subsystem.elevator_bottom_sensor and \
-        # self.subsystem.main_rotation_motor.get_sensor_position() == 0
         return True
 
     def end(self, interrupted=False):

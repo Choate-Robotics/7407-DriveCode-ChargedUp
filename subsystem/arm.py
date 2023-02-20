@@ -78,16 +78,6 @@ class Arm(Subsystem):
             rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle
         )
 
-        self.arm_rotation_motor.motor.setSoftLimit(
-            rev.CANSparkMax.SoftLimitDirection.kForward,
-            self.shoulder_angle_to_motor_rotations(constants.shoulder_max_rotation),
-        )
-
-        self.arm_rotation_motor.motor.setSoftLimit(
-            rev.CANSparkMax.SoftLimitDirection.kReverse,
-            -self.shoulder_angle_to_motor_rotations(constants.shoulder_min_rotation),
-        )
-
     def enable_brake(self) -> bool:
         """enables the brake"""
         if self.brake_override:
@@ -225,7 +215,6 @@ class Arm(Subsystem):
         return self.motor_extend.get_sensor_position() / (
             1 / constants.elevator_length_per_rotation
         )
-        # return (self.motor_extend.get_sensor_position() * constants.elevator_extend_gear_ratio * constants.max_elevator_height_delta) + constants.elevator_zero_length
 
     def get_rotation(self) -> float:
         """Gets the rotation of the shoulder in radians"""
@@ -242,7 +231,6 @@ class Arm(Subsystem):
         """Gets the rotation of the shoulder in rotations from the absolute encoder"""
         return self.abs_encoder.getPosition()
 
-    # brings elevator to zero position (no extension, no rotation)
     def zero_elevator_length(self) -> None:
         """Sets the elevator to the zero position (no rotation)"""
         self.motor_extend.set_target_position(
@@ -267,15 +255,21 @@ class Arm(Subsystem):
         self.arm_rotation_motor.set_sensor_position(motor_position)
         self.arm_rotation_motor.set_target_position(motor_position)
 
+        self.arm_rotation_motor.motor.setSoftLimit(
+            rev.CANSparkMax.SoftLimitDirection.kForward,
+            self.shoulder_angle_to_motor_rotations(constants.shoulder_max_rotation),
+        )
+
+        self.arm_rotation_motor.motor.setSoftLimit(
+            rev.CANSparkMax.SoftLimitDirection.kReverse,
+            -self.shoulder_angle_to_motor_rotations(constants.shoulder_min_rotation),
+        )
+
     def extend_max_elevator(self) -> None:
         """Sets the elevator to the max position (no rotation)"""
         self.set_length(constants.max_elevator_height_delta)
 
     def update_pose(self) -> None:
         """Updates the pose of the arm using the encoder values and rotation of the elevator"""
-        angle = self.get_rotation()
-        # print("POSE ANGLE: " + str(angle))
-        length = self.get_length()
-        # print("POSE LENGTH: " + str(length))
-        self.length = length
-        self.angle = angle
+        self.angle = self.get_rotation()
+        self.length = self.get_length()

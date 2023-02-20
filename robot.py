@@ -108,14 +108,13 @@ class _Robot(wpilib.TimedRobot):
         commands2.CommandScheduler.getInstance().schedule(
             command.ZeroElevator(Robot.arm).andThen(
                 command.ZeroShoulder(Robot.arm).andThen(
-                    command.SetArm(
-                        Robot.arm, distance=0, shoulder_angle=math.radians(0)
+                    command.ZeroWrist(Robot.grabber).andThen(
+                        command.SetArm(
+                            Robot.arm, distance=0, shoulder_angle=math.radians(0)
+                        )
                     )
                 )
             )
-        )
-        commands2.CommandScheduler.getInstance().schedule(
-            command.ZeroWrist(Robot.grabber)
         )
         commands2.CommandScheduler.getInstance().schedule(
             command.DriveSwerveCustom(Robot.drivetrain)
@@ -136,6 +135,14 @@ class _Robot(wpilib.TimedRobot):
         ...
 
     def autonomousInit(self):
+        Robot.arm.arm_rotation_motor.pid_controller.setOutputRange(-0.2, 0.2, slotID=1)
+        commands2.CommandScheduler.getInstance().schedule(
+            command.ZeroElevator(Robot.arm).andThen(
+                command.ZeroShoulder(Robot.arm).andThen(
+                    command.ZeroWrist(Robot.grabber)
+                )
+            )
+        )
         routine.run()
 
     def autonomousPeriodic(self):
