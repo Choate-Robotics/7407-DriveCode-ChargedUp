@@ -2,7 +2,8 @@ import commands2
 from commands2 import (
     InstantCommand,
     ParallelCommandGroup,
-    SequentialCommandGroup, WaitCommand,
+    SequentialCommandGroup,
+    WaitCommand,
 )
 from robotpy_toolkit_7407 import SubsystemCommand
 
@@ -11,6 +12,7 @@ import utils
 from autonomous.utils.custom_pathing import FollowPathCustom, RotateInPlace
 from autonomous.utils.trajectory import CustomTrajectory
 from config import TargetData
+from robot_systems import Sensors
 from sensors import FieldOdometry
 from subsystem import Arm, Drivetrain, Grabber, Intake
 
@@ -53,6 +55,13 @@ class Target(SubsystemCommand[Drivetrain]):
 
     def initialize(self) -> None:
         print("STARTING TARGETING COMMAND")
+        if self.target.arm_scoring:
+            gyro_angle = Sensors.odometry.getPose().rotation().degrees()
+            if -90 < gyro_angle < 90:
+                self.target.arm_angle = abs(self.target.arm_angle)
+            else:
+                self.target.arm_angle = -1 * abs(self.target.arm_angle)
+
         if self.target.intake_enabled and self.intake_on:
             self.intake_command = InstantCommand(lambda: self.intake.intake_enable())
         elif self.intake_on:
@@ -85,7 +94,7 @@ class Target(SubsystemCommand[Drivetrain]):
                 SequentialCommandGroup(
                     WaitCommand(self.target.claw_wait_time),
                     command.SetGrabber(self.grabber, self.target.wrist_angle, True),
-                )
+                ),
             )
         elif self.target.claw_scoring and self.arm_on:
             self.arm_sequence = SequentialCommandGroup(
@@ -95,8 +104,10 @@ class Target(SubsystemCommand[Drivetrain]):
                     ),
                     SequentialCommandGroup(
                         WaitCommand(self.target.claw_wait_time),
-                        command.SetGrabber(self.grabber, self.target.wrist_angle, False),
-                    )
+                        command.SetGrabber(
+                            self.grabber, self.target.wrist_angle, False
+                        ),
+                    ),
                 ),
                 InstantCommand(self.grabber.open_claw()),
             )
@@ -106,7 +117,7 @@ class Target(SubsystemCommand[Drivetrain]):
                 SequentialCommandGroup(
                     WaitCommand(self.target.claw_wait_time),
                     command.SetGrabber(self.grabber, self.target.wrist_angle, False),
-                )
+                ),
             )
         else:
             self.arm_sequence = InstantCommand(lambda: None)

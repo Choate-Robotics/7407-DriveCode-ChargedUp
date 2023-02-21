@@ -15,6 +15,7 @@ class TargetData:
     intake_enabled: bool = False
     claw_picking: bool = False
     claw_scoring: bool = False
+    arm_scoring: bool = False
 
     claw_wait_time: float = 0
 
@@ -55,6 +56,7 @@ scoring_locations = {
         intake_enabled=False,
         claw_scoring=True,
         claw_picking=False,
+        arm_scoring=True
     ),
     "middle": TargetData(
         target_pose=Pose2d(1, 1, 0),
@@ -64,6 +66,7 @@ scoring_locations = {
         intake_enabled=False,
         claw_scoring=True,
         claw_picking=False,
+        arm_scoring=True
     ),
     "high": TargetData(
         target_pose=Pose2d(0, 0, 0),
@@ -73,6 +76,7 @@ scoring_locations = {
         intake_enabled=False,
         claw_scoring=True,
         claw_picking=False,
+        arm_scoring=True
     ),
     "pickup": TargetData(
         target_pose=None,
