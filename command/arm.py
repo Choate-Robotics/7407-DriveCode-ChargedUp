@@ -4,9 +4,9 @@ import time
 import rev
 from robotpy_toolkit_7407.command import SubsystemCommand
 from wpilib import SmartDashboard
-from wpimath._controls._controls.controller import ProfiledPIDControllerRadians
-from wpimath._controls._controls.trajectory import TrapezoidProfileRadians
 from wpimath.controller import ArmFeedforward, PIDController
+from wpimath.controller import ProfiledPIDControllerRadians
+from wpimath.trajectory import TrapezoidProfileRadians
 
 import constants
 import utils
