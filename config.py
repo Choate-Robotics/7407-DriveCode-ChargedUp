@@ -36,8 +36,8 @@ claw_motor_speed: float = 0.4
 
 # Intake
 intake_motor_id = 11
-intake_piston_forwardChannel = 5
-intake_piston_reverseChannel = 4
+intake_piston_forwardChannel = 4
+intake_piston_reverseChannel = 5
 
 default_intake_speed = 0.5
 

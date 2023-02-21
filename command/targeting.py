@@ -17,13 +17,13 @@ from subsystem import Arm, Drivetrain, Grabber, Intake
 
 class Target(SubsystemCommand[Drivetrain]):
     def __init__(
-        self,
-        arm: Arm,
-        grabber: Grabber,
-        intake: Intake,
-        drivetrain: Drivetrain,
-        field_odometry: FieldOdometry,
-        target: TargetData,
+            self,
+            arm: Arm,
+            grabber: Grabber,
+            intake: Intake,
+            drivetrain: Drivetrain,
+            field_odometry: FieldOdometry,
+            target: TargetData,
     ):
         super().__init__(drivetrain)
         super().addRequirements(grabber)
@@ -43,7 +43,7 @@ class Target(SubsystemCommand[Drivetrain]):
         self.finished = False
         self.drive_on = False
         self.arm_on = True
-        self.intake_on = False
+        self.intake_on = True
 
         self.arm_sequence: SequentialCommandGroup | None = None
         self.intake_command: InstantCommand | None = None
