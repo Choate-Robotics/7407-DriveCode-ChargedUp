@@ -17,5 +17,8 @@
     "types": {
       "/FMSInfo": "FMSInfo"
     }
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }
