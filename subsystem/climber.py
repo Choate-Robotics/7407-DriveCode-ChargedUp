@@ -25,7 +25,7 @@ class Climber(Subsystem):
 
     def init(self):
         self.climber_motor.init()
-
+        self.climber_motor.motor.setOpenLoopRampRate(.2)
         self.pneumatics = DoubleSolenoidPiston(config.compressor, config.climber_forwardChannel, config.climber_reverseChannel)
         self.latch = DoubleSolenoidPiston(config.compressor, config.latch_forwardChannel, config.latch_reverseChannel)
 
