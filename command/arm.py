@@ -356,12 +356,16 @@ class SetArm(SubsystemCommand[Arm]):
     def initialize(self):
 
         elevator_p = SmartDashboard.getNumber("ELEVATOR_P_VALUE",0)
-        self.arm_controller = PIDController(5, 0, 0.1)
+        self.arm_controller = PIDController(6, 0, 0.1)
         self.elevator_controller = PIDController(0.9, 0, 0.0)
-        self.arm_controller_profiled = ProfiledPIDControllerRadians(3,0,0, TrapezoidProfileRadians.Constraints(math.radians(45),math.radians(45)))
-        
+        self.arm_controller_profiled = ProfiledPIDControllerRadians(16,0,0.2, TrapezoidProfileRadians.Constraints(math.radians(100000),math.radians(400)))
+        self.arm_controller_profiled.reset(math.pi/2 - self.subsystem.get_rotation())
         self.arm_controller_profiled.setGoal(self.shoulder_angle)
-        self.arm_ff_constant = 0.25
+        self.arm_controller_profiled.disableContinuousInput()
+
+        self.arm_ff_constant_retracted = 0.25
+        self.arm_ff_constant_extended = 0.55
+
         #self.arm_ff = ArmFeedforward(kG=0.045, kS=0, kV=0, kA=0)  # perfect don't touch
         self.elevator_ff = ArmFeedforward(kG=0.145, kS=0, kV=0, kA=0)  # perfect don't touch
 
@@ -393,34 +397,38 @@ class SetArm(SubsystemCommand[Arm]):
         )
         self.subsystem.update_pose()
         current_theta = self.subsystem.get_rotation()
-        current_length = self.subsystem.motor_extend.get_sensor_position()
+        current_length_rotations = self.subsystem.motor_extend.get_sensor_position()
 
         # ------------ ARM ------------
 
-        arm_maximum_power = 6
+        arm_maximum_power = 8
 
-        arm_feed_forward = -math.sin(current_theta) * self.arm_ff_constant
+        arm_feed_forward_test = ((self.arm_ff_constant_extended - self.arm_ff_constant_retracted)*self.distance +self.arm_ff_constant_retracted) * -math.sin(current_theta) 
+        arm_feed_forward = self.arm_ff_constant_retracted * -math.sin(current_theta) 
 
-        arm_pid_output = -(
-            self.arm_controller.calculate(
-                math.pi / 2 - current_theta,
-                self.theta_f,
-            )
-        )
-
-        # arm_pid_output = -( #PROFILED
-        #     self.arm_controller_profiled.calculate(math.pi / 2 - current_theta)
+        # arm_pid_output_normal = -(
+        #     self.arm_controller.calculate(
+        #         math.pi / 2 - current_theta,
+        #         self.theta_f,
+        #     )
         # )
+
+        arm_pid_output = -( #PROFILED
+            self.arm_controller_profiled.calculate(math.pi / 2 - current_theta)
+        )
 
 
         if abs(self.subsystem.get_rotation() - self.real_desired) < self.threshold:
              arm_pid_output = 0
 
         
-        arm_desired_voltage = arm_feed_forward #+ arm_pid_output
+        arm_desired_voltage = arm_feed_forward + arm_pid_output
                           #) * self.subsystem.arm_rotation_motor.motor.getBusVoltage()
         SmartDashboard.putNumber("ARM_Voltage", arm_desired_voltage)
         SmartDashboard.putNumber("ARM_PID_Voltage", arm_pid_output)
+        # SmartDashboard.putNumber("ARM_PID_Voltage_normal", arm_pid_output_normal)
+        SmartDashboard.putNumber("ARM_ff_test", arm_feed_forward_test)
+
         self.subsystem.arm_rotation_motor.pid_controller.setReference(
             min(arm_maximum_power, abs(arm_desired_voltage))
             * (1 if arm_desired_voltage > 0 else -1),
@@ -441,19 +449,22 @@ class SetArm(SubsystemCommand[Arm]):
         #--PID STUFF--
         meters_ceiling = min(self.distance, constants.max_elevator_height_delta)
         calculated_motor_rotations = meters_ceiling * (1 / constants.elevator_length_per_rotation)
-        elevator_pid_output = self.elevator_controller.calculate(current_length,calculated_motor_rotations)
+        elevator_pid_output = self.elevator_controller.calculate(current_length_rotations,calculated_motor_rotations)
         #--PID STUFF--
 
-        SmartDashboard.putNumber("Current_motor_length", current_length)
+        SmartDashboard.putNumber("Current_motor_length", current_length_rotations)
         SmartDashboard.putNumber("calculated_motor_length", calculated_motor_rotations)
         SmartDashboard.putNumber("PID_Voltage", elevator_pid_output)
 
-        if abs(current_length - calculated_motor_rotations) < 0.1:
+        if (abs(self.subsystem.get_rotation() - self.real_desired) > math.radians(25) and elevator_pid_output > .0):
+            elevator_pid_output = 0 
+
+        if (abs(current_length_rotations - calculated_motor_rotations)*constants.elevator_length_per_rotation) < 0.03:
             elevator_pid_output = 0
 
         SmartDashboard.putNumber("PID_Voltage", elevator_pid_output)
 
-        elevator_desired_voltage = elevator_feed_forward #+ elevator_pid_output
+        elevator_desired_voltage = elevator_feed_forward + elevator_pid_output
 
         SmartDashboard.putNumber("ELEVATOR_Voltage", elevator_desired_voltage)
         test_voltage = SmartDashboard.getNumber("Test_ELEVATOR_Voltage",0)

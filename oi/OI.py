@@ -112,7 +112,7 @@ class OI:
         Keymap.Intake.PICK_UP_ARM.whenPressed(
             command.SetArm(
                     Robot.arm,
-                    distance=1,
+                    distance=1.00,
                     shoulder_angle=math.radians(-45.0)
             ),
             # ParallelCommandGroup(
@@ -131,7 +131,7 @@ class OI:
         Keymap.Intake.PICK_UP_ARM.whenReleased(
                 command.SetArm(
                     Robot.arm,
-                    distance=0.05,
+                    distance=0.00,
                     shoulder_angle=math.radians(0)
                     #shoulder_angle=math.radians(-5)
                 ),

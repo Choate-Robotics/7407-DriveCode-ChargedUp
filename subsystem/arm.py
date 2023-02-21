@@ -34,7 +34,7 @@ class Arm(Subsystem):
         config=SHOULDER_CONFIG,
     )
     brake: wpilib.DoubleSolenoid = wpilib.DoubleSolenoid(
-        31, wpilib.PneumaticsModuleType.REVPH, 3, 2
+        31, wpilib.PneumaticsModuleType.REVPH, 2, 3
     )
 
     initialized: bool = False
