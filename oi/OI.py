@@ -59,7 +59,7 @@ class OI:
                     Robot.intake,
                     Robot.drivetrain,
                     Sensors.odometry,
-                    target=config.scoring_locations["standard"],
+                    target=config.scoring_locations["standard_pickup"],
                 ),
             )
         )
@@ -118,6 +118,37 @@ class OI:
                 # ),
                 InstantCommand(lambda: Robot.grabber.disengage_claw()),
                 # WaitCommand(config.scoring_locations["high"].claw_wait_time),
+                command.Target(
+                    Robot.arm,
+                    Robot.grabber,
+                    Robot.intake,
+                    Robot.drivetrain,
+                    Sensors.odometry,
+                    target=config.scoring_locations["standard"],
+                ),
+            )
+        )
+
+        Keymap.Targeting.TARGETING_DOUBLE_STATION.whenPressed(
+            command.Target(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Robot.drivetrain,
+                Sensors.odometry,
+                target=config.scoring_locations["double_station"],
+            )
+        )
+
+        Keymap.Targeting.TARGETING_DOUBLE_STATION.whenReleased(
+            SequentialCommandGroup(
+                # InstantCommand(
+                #     lambda: commands2.CommandScheduler.getInstance().schedule(
+                #         command.DriveSwerveCustom(Robot.drivetrain)
+                #     )
+                # ),
+                InstantCommand(lambda: Robot.grabber.disengage_claw()),
+                # WaitCommand(config.scoring_locations["pickup"].claw_wait_time),
                 command.Target(
                     Robot.arm,
                     Robot.grabber,

@@ -2,7 +2,7 @@ import commands2
 from commands2 import (
     InstantCommand,
     ParallelCommandGroup,
-    SequentialCommandGroup,
+    SequentialCommandGroup, WaitCommand,
 )
 from robotpy_toolkit_7407 import SubsystemCommand
 
@@ -82,7 +82,10 @@ class Target(SubsystemCommand[Drivetrain]):
         if self.target.claw_picking and self.arm_on:
             self.arm_sequence = ParallelCommandGroup(
                 command.SetArm(self.arm, self.target.arm_length, self.target.arm_angle),
-                command.SetGrabber(self.grabber, self.target.wrist_angle, True),
+                SequentialCommandGroup(
+                    WaitCommand(self.target.claw_wait_time),
+                    command.SetGrabber(self.grabber, self.target.wrist_angle, True),
+                )
             )
         elif self.target.claw_scoring and self.arm_on:
             self.arm_sequence = SequentialCommandGroup(
@@ -90,14 +93,20 @@ class Target(SubsystemCommand[Drivetrain]):
                     command.SetArm(
                         self.arm, self.target.arm_length, self.target.arm_angle
                     ),
-                    command.SetGrabber(self.grabber, self.target.wrist_angle, False),
+                    SequentialCommandGroup(
+                        WaitCommand(self.target.claw_wait_time),
+                        command.SetGrabber(self.grabber, self.target.wrist_angle, False),
+                    )
                 ),
                 InstantCommand(self.grabber.open_claw()),
             )
         elif self.arm_on:
             self.arm_sequence = ParallelCommandGroup(
                 command.SetArm(self.arm, self.target.arm_length, self.target.arm_angle),
-                command.SetGrabber(self.grabber, self.target.wrist_angle, False),
+                SequentialCommandGroup(
+                    WaitCommand(self.target.claw_wait_time),
+                    command.SetGrabber(self.grabber, self.target.wrist_angle, False),
+                )
             )
         else:
             self.arm_sequence = InstantCommand(lambda: None)
