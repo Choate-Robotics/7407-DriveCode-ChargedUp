@@ -66,7 +66,7 @@ class ClimberDeploy(SubsystemCommand[Climber]):
     def end(self, interrupted=False):
         pass
 
-class ClimberDiable(SubsystemCommand[Climber]):
+class ClimberDisable(SubsystemCommand[Climber]):
     def __init__(self, subsystem: Climber):
         super().__init__(subsystem)
         self.subsystem = subsystem
@@ -91,7 +91,6 @@ class ClimberPivot(SubsystemCommand[Climber]):
     
     def initialize(self):
         # self.turn_reversed = Robot.climber.pivot_threshold < Robot.climber.get_angle()
-        Robot.climber.latch_disable()
         Robot.climber.climber_motor.set_raw_output(Robot.climber.pivot_speed)
 
     def execute(self):
@@ -105,6 +104,26 @@ class ClimberPivot(SubsystemCommand[Climber]):
         Robot.climber.latch_enable()
 
 class ClimberUnpivot(SubsystemCommand[Climber]):
+    def __init__(self, subsystem: Climber):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+    
+    def initialize(self):
+        # self.turn_reversed = Robot.climber.pivot_threshold < Robot.climber.get_angle()
+        Robot.climber.latch_disable()
+        Robot.climber.climber_motor.set_target_position(0)
+
+    def execute(self):
+        pass
+
+    def isFinished(self) -> bool:
+        return True
+    
+    def end(self, interrupted=False):
+        pass
+    
+    
+class ClimberToZero(SubsystemCommand[Climber]):
     def __init__(self, subsystem: Climber):
         super().__init__(subsystem)
         self.subsystem = subsystem
