@@ -97,3 +97,5 @@ kCameras = {
 # Climber:
 
 climber_motor_gear_ratio = 0.0
+climber_pivot_speed = 0.0
+climber_pivot_threshold = 0.0
