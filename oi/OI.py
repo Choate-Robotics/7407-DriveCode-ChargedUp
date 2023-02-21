@@ -22,16 +22,18 @@ class OI:
         # Keymap.Arm.ENGAGE_CLAW().whenPressed(engageClaw()).whenReleased(disEngageClaw())
 
         Keymap.Intake.INTAKE_ENABLE.whenPressed(command.IntakeEnable(Robot.intake))
-        Keymap.Intake.INTAKE_ENABLE.onFalse(command.IntakeDisable(Robot.intake))
-        Keymap.Claw.ENGAGE_CLAW.onTrue(InstantCommand(lambda: Robot.arm.engage_claw()))
-        Keymap.Claw.ENGAGE_CLAW.onFalse(
-            InstantCommand(lambda: Robot.arm.disengage_claw())
-        )
+        # Keymap.Intake.INTAKE_ENABLE.onFalse(command.IntakeDisable(Robot.intake))
+        # Keymap.Claw.ENGAGE_CLAW.onTrue(InstantCommand(lambda: Robot.arm.engage_claw()))
+        # Keymap.Claw.ENGAGE_CLAW.onFalse(
+            # InstantCommand(lambda: Robot.arm.disengage_claw())
+        # )
 
-        Keymap.Scoring.CONFIRM.onTrue(InstantCommand(lambda: print("CONFIRM")))
-        Keymap.Scoring.DELETE.onTrue(InstantCommand(lambda: print("DELETE")))
+        Keymap.Drivetrain.RESET_GYRO.onTrue(InstantCommand(lambda: command.TestCommand()))
 
-        Keymap.Scoring.LEFT_GRID.onTrue(InstantCommand(lambda: print("LEFT GRID")))
+        Keymap.Scoring.CONFIRM.whenPressed(InstantCommand(lambda: print("CONFIRM")))
+        Keymap.Scoring.DELETE.whenPressed(InstantCommand(lambda: print("DELETE")))
+
+        Keymap.Scoring.LEFT_GRID.whenPressed(InstantCommand(lambda: print("LEFT GRID")))
         Keymap.Scoring.MIDDLE_GRID.onTrue(InstantCommand(lambda: print("MIDDLE GRID")))
         Keymap.Scoring.RIGHT_GRID.onTrue(InstantCommand(lambda: print("RIGHT GRID")))
 
