@@ -17,7 +17,7 @@ class TargetData:
     claw_scoring: bool = False
     arm_scoring: bool = False
 
-    claw_wait_time: float = 0
+    claw_wait: bool = False
 
     max_velocity: meters_per_second = None
     max_acceleration: meters_per_second_squared = None
@@ -96,6 +96,15 @@ scoring_locations = {
         claw_scoring=False,
         claw_picking=True,
     ),
+    "cube_intake": TargetData(
+        target_pose=None,
+        arm_angle=math.radians(67.5),
+        arm_length=0,
+        wrist_angle=math.radians(94.8),
+        intake_enabled=True,
+        claw_scoring=False,
+        claw_picking=True,
+    ),
     "standard": TargetData(
         target_pose=None,
         arm_angle=math.radians(0),
@@ -113,6 +122,6 @@ scoring_locations = {
         intake_enabled=False,
         claw_scoring=False,
         claw_picking=False,
-        claw_wait_time=1,
+        claw_wait=True,
     ),
 }

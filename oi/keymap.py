@@ -55,3 +55,7 @@ class Keymap:
         TARGETING_HIGH = commands2.button.JoystickButton(
             Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.RB
         )
+
+        TARGETING_CUBE_INTAKE = commands2.button.JoystickButton(
+            Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.X
+        )

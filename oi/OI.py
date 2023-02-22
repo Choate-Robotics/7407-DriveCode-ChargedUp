@@ -136,6 +136,31 @@ class OI:
             )
         )
 
+        Keymap.Targeting.TARGETING_CUBE_INTAKE.whenPressed(
+            command.Target(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Robot.drivetrain,
+                Sensors.odometry,
+                target=config.scoring_locations["cube_intake"],
+            )
+        )
+
+        Keymap.Targeting.TARGETING_CUBE_INTAKE.whenReleased(
+            SequentialCommandGroup(
+                InstantCommand(lambda: Robot.grabber.disengage_claw()),
+                command.Target(
+                    Robot.arm,
+                    Robot.grabber,
+                    Robot.intake,
+                    Robot.drivetrain,
+                    Sensors.odometry,
+                    target=config.scoring_locations["standard_pickup"],
+                ),
+            )
+        )
+
         Keymap.Claw.OPEN_CLAW.whenPressed(
             InstantCommand(lambda: Robot.grabber.open_claw()).andThen(
                 lambda: print("DONE")

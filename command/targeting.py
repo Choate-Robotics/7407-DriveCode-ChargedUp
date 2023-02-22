@@ -3,7 +3,6 @@ from commands2 import (
     InstantCommand,
     ParallelCommandGroup,
     SequentialCommandGroup,
-    WaitCommand,
 )
 from robotpy_toolkit_7407 import SubsystemCommand
 
@@ -74,9 +73,9 @@ class Target(SubsystemCommand[Drivetrain]):
                 )
 
         if self.target.intake_enabled and self.intake_on:
-            self.intake_command = InstantCommand(lambda: self.intake.intake_enable())
+            self.intake_command = command.IntakeEnable(self.intake)
         elif self.intake_on:
-            self.intake_command = InstantCommand(lambda: self.intake.intake_disable())
+            self.intake_command = command.IntakeDisable(self.intake)
         else:
             self.intake_command = InstantCommand(lambda: None)
 
@@ -99,39 +98,60 @@ class Target(SubsystemCommand[Drivetrain]):
         else:
             self.drive_on = False
 
-        if self.target.claw_picking and self.arm_on:
-            self.arm_sequence = ParallelCommandGroup(
-                command.SetArm(self.arm, self.target.arm_length, self.target.arm_angle),
-                SequentialCommandGroup(
-                    WaitCommand(self.target.claw_wait_time),
-                    command.SetGrabber(self.grabber, self.target.wrist_angle, True),
-                ),
-            )
-        elif self.target.claw_scoring and self.arm_on:
-            self.arm_sequence = SequentialCommandGroup(
-                ParallelCommandGroup(
+        if self.target.claw_wait:
+            if self.target.claw_picking and self.arm_on:
+                self.arm_sequence = SequentialCommandGroup(
                     command.SetArm(
                         self.arm, self.target.arm_length, self.target.arm_angle
                     ),
-                    SequentialCommandGroup(
-                        WaitCommand(self.target.claw_wait_time),
+                    command.SetGrabber(self.grabber, self.target.wrist_angle, True),
+                )
+            elif self.target.claw_scoring and self.arm_on:
+                self.arm_sequence = SequentialCommandGroup(
+                    command.SetArm(
+                        self.arm, self.target.arm_length, self.target.arm_angle
+                    ),
+                    command.SetGrabber(self.grabber, self.target.wrist_angle, False),
+                    InstantCommand(self.grabber.open_claw()),
+                )
+            elif self.arm_on:
+                self.arm_sequence = SequentialCommandGroup(
+                    command.SetArm(
+                        self.arm, self.target.arm_length, self.target.arm_angle
+                    ),
+                    command.SetGrabber(self.grabber, self.target.wrist_angle, False),
+                )
+            else:
+                self.arm_sequence = InstantCommand(lambda: None)
+        else:
+            if self.target.claw_picking and self.arm_on:
+                self.arm_sequence = ParallelCommandGroup(
+                    command.SetArm(
+                        self.arm, self.target.arm_length, self.target.arm_angle
+                    ),
+                    command.SetGrabber(self.grabber, self.target.wrist_angle, True),
+                )
+            elif self.target.claw_scoring and self.arm_on:
+                self.arm_sequence = SequentialCommandGroup(
+                    ParallelCommandGroup(
+                        command.SetArm(
+                            self.arm, self.target.arm_length, self.target.arm_angle
+                        ),
                         command.SetGrabber(
                             self.grabber, self.target.wrist_angle, False
                         ),
                     ),
-                ),
-                InstantCommand(self.grabber.open_claw()),
-            )
-        elif self.arm_on:
-            self.arm_sequence = ParallelCommandGroup(
-                command.SetArm(self.arm, self.target.arm_length, self.target.arm_angle),
-                SequentialCommandGroup(
-                    WaitCommand(self.target.claw_wait_time),
+                    InstantCommand(self.grabber.open_claw()),
+                )
+            elif self.arm_on:
+                self.arm_sequence = ParallelCommandGroup(
+                    command.SetArm(
+                        self.arm, self.target.arm_length, self.target.arm_angle
+                    ),
                     command.SetGrabber(self.grabber, self.target.wrist_angle, False),
-                ),
-            )
-        else:
-            self.arm_sequence = InstantCommand(lambda: None)
+                )
+            else:
+                self.arm_sequence = InstantCommand(lambda: None)
 
         if self.drive_on:
             commands2.CommandScheduler.getInstance().schedule(

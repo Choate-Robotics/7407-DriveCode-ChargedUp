@@ -1,3 +1,5 @@
+import math
+
 from robotpy_toolkit_7407.command import SubsystemCommand
 
 from robot_systems import Robot
@@ -24,18 +26,22 @@ class IntakeEnable(SubsystemCommand[Intake]):
 
 
 class IntakeDisable(SubsystemCommand[Intake]):
-    def __init__(self, subsystem: Intake):
+    def __init__(self, subsystem: Intake, arm_angle_threshold=math.radians(60)):
         super().__init__(subsystem)
         self.subsystem = subsystem
+        self.arm_angle_threshold = arm_angle_threshold
+        self.finished = False
 
     def initialize(self):
-        Robot.intake.intake_disable()
-
-    def execute(self):
         pass
 
+    def execute(self):
+        if Robot.arm.get_rotation() < self.arm_angle_threshold:
+            Robot.intake.intake_disable()
+            self.finished = True
+
     def isFinished(self) -> bool:
-        return True
+        return self.finished
 
     def end(self, interrupted=False):
         pass
