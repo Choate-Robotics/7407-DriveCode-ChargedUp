@@ -78,10 +78,10 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
     """
 
     def __init__(
-        self,
-        subsystem: SwerveDrivetrain,
-        trajectory: CustomTrajectory,
-        period: float = 0.02,
+            self,
+            subsystem: SwerveDrivetrain,
+            trajectory: CustomTrajectory,
+            period: float = 0.02,
     ):
         super().__init__(subsystem)
         self.trajectory: Trajectory = trajectory.trajectory
@@ -162,12 +162,12 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
     """
 
     def __init__(
-        self,
-        subsystem: SwerveDrivetrain,
-        theta_f: radians,
-        threshold: float = math.radians(1),
-        max_angular_vel: float | None = None,
-        period: float = 0.02,
+            self,
+            subsystem: SwerveDrivetrain,
+            theta_f: radians,
+            threshold: float = math.radians(1),
+            max_angular_vel: float | None = None,
+            period: float = 0.02,
     ):
         super().__init__(subsystem)
 
@@ -207,8 +207,8 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
 
     def isFinished(self) -> bool:
         return (
-            abs(Sensors.odometry.getPose().rotation().radians() - self.theta_f)
-            < self.threshold
+                abs(Sensors.odometry.getPose().rotation().radians() - self.theta_f)
+                < self.threshold
         )
 
     def runsWhenDisabled(self) -> bool:
@@ -230,12 +230,12 @@ class RotateInPlaceTeleOp(SubsystemCommand[SwerveDrivetrain]):
     """
 
     def __init__(
-        self,
-        subsystem: SwerveDrivetrain,
-        theta_f: radians,
-        threshold: float = math.radians(2),
-        max_angular_vel: float | None = None,
-        period: float = 0.02,
+            self,
+            subsystem: SwerveDrivetrain,
+            theta_f: radians,
+            threshold: float = math.radians(2),
+            max_angular_vel: float | None = None,
+            period: float = 0.02,
     ):
         super().__init__(subsystem)
 
@@ -271,20 +271,18 @@ class RotateInPlaceTeleOp(SubsystemCommand[SwerveDrivetrain]):
 
     def isFinished(self) -> bool:
         return (
-            abs(Sensors.odometry.getPose().rotation().radians() - self.theta_f)
-            < self.threshold
+                abs(Sensors.odometry.getPose().rotation().radians() - self.theta_f)
+                < self.threshold
         )
 
     def end(self, interrupted: bool) -> None:
-        print("ENDED ROTATE MAUHA")
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11ENDED ROTATION SEQUENCE")
         if not interrupted:
             print("r1")
             utils.logger.log("ROTATE_IN_PLACE", "Starting Drive Swerve Custom Command.")
             commands2.CommandScheduler.getInstance().schedule(
                 command.DriveSwerveCustom(self.subsystem)
             )
-            self.getRequirements().clear()
-            self.cancel()
         else:
             print("r2")
             utils.logger.log("ROTATE_IN_PLACE", "Interrupted Command.")

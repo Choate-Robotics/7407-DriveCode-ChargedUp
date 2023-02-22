@@ -105,6 +105,9 @@ class _Robot(wpilib.TimedRobot):
 
     def teleopInit(self):
         logger.debug("TELEOP", "Teleop Initialized")
+        commands2.CommandScheduler.getInstance().schedule(
+            command.DriveSwerveCustom(Robot.drivetrain)
+        )
         Robot.arm.arm_rotation_motor.pid_controller.setOutputRange(-0.2, 0.2, slotID=1)
         commands2.CommandScheduler.getInstance().schedule(
             command.ZeroElevator(Robot.arm).andThen(
@@ -116,9 +119,6 @@ class _Robot(wpilib.TimedRobot):
                     )
                 )
             )
-        )
-        commands2.CommandScheduler.getInstance().schedule(
-            command.DriveSwerveCustom(Robot.drivetrain)
         )
 
         Robot.arm.enable_brake()

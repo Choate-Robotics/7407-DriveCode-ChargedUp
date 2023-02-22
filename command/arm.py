@@ -2,6 +2,7 @@ import math
 import time
 
 import rev
+import wpilib
 from robotpy_toolkit_7407.command import SubsystemCommand
 from wpilib import SmartDashboard
 from wpimath.controller import ArmFeedforward, PIDController
@@ -78,10 +79,10 @@ class HardStop(SubsystemCommand[Arm]):
 
 class SetArm(SubsystemCommand[Arm]):
     def __init__(
-        self,
-        subsystem: Arm,
-        distance: meters,
-        shoulder_angle: radians,
+            self,
+            subsystem: Arm,
+            distance: meters,
+            shoulder_angle: radians,
     ):
         super().__init__(subsystem)
         self.real_desired = shoulder_angle
@@ -105,6 +106,7 @@ class SetArm(SubsystemCommand[Arm]):
         self.desired_time = 3
 
     def initialize(self):
+        wpilib.SmartDashboard.putBoolean("Arm/IsMoving", True)
 
         elevator_p = SmartDashboard.getNumber("ELEVATOR_P_VALUE", 0)
         self.arm_controller = PIDController(6, 0, 0.1)
@@ -161,10 +163,10 @@ class SetArm(SubsystemCommand[Arm]):
         arm_maximum_power = 8
 
         arm_feed_forward_test = (
-            (self.arm_ff_constant_extended - self.arm_ff_constant_retracted)
-            * self.distance
-            + self.arm_ff_constant_retracted
-        ) * -math.sin(current_theta)
+                                        (self.arm_ff_constant_extended - self.arm_ff_constant_retracted)
+                                        * self.distance
+                                        + self.arm_ff_constant_retracted
+                                ) * -math.sin(current_theta)
         arm_feed_forward = self.arm_ff_constant_retracted * -math.sin(current_theta)
 
         # arm_pid_output_normal = -(
@@ -205,7 +207,7 @@ class SetArm(SubsystemCommand[Arm]):
         # --PID STUFF--
         meters_ceiling = min(self.distance, constants.max_elevator_height_delta)
         calculated_motor_rotations = meters_ceiling * (
-            1 / constants.elevator_length_per_rotation
+                1 / constants.elevator_length_per_rotation
         )
         elevator_pid_output = self.elevator_controller.calculate(
             current_length_rotations, calculated_motor_rotations
@@ -217,14 +219,14 @@ class SetArm(SubsystemCommand[Arm]):
         SmartDashboard.putNumber("PID_Voltage", elevator_pid_output)
 
         if (
-            abs(self.subsystem.get_rotation() - self.real_desired) > math.radians(25)
-            and elevator_pid_output > 0.0
+                abs(self.subsystem.get_rotation() - self.real_desired) > math.radians(25)
+                and elevator_pid_output > 0.0
         ):
             elevator_pid_output = 0
 
         if (
-            abs(current_length_rotations - calculated_motor_rotations)
-            * constants.elevator_length_per_rotation
+                abs(current_length_rotations - calculated_motor_rotations)
+                * constants.elevator_length_per_rotation
         ) < 0.03:
             elevator_pid_output = 0
 
@@ -257,11 +259,12 @@ class SetArm(SubsystemCommand[Arm]):
 
     def isFinished(self) -> bool:
         return (
-            abs(self.subsystem.get_rotation() - self.real_desired) < self.threshold
-            and abs(self.subsystem.get_length() - self.distance) < 0.05
+                abs(self.subsystem.get_rotation() - self.real_desired) < self.threshold
+                and abs(self.subsystem.get_length() - self.distance) < 0.05
         )
 
     def end(self, interrupted: bool) -> None:
+        wpilib.SmartDashboard.putBoolean("Arm/IsMoving", False)
         if not interrupted:
             print("FINISHED ARM SET")
             self.subsystem.enable_brake()

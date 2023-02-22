@@ -60,7 +60,7 @@ scoring_locations = {
         arm_scoring=True,
     ),
     "middle": TargetData(
-        target_pose=Pose2d(10, 10, 0),
+        target_pose=Pose2d(2.43, .94, 3.12),  # 2.43 .94
         arm_angle=math.radians(-44.78),
         arm_length=0.55,
         wrist_angle=math.radians(-27.09),
@@ -70,7 +70,7 @@ scoring_locations = {
         arm_scoring=True,
     ),
     "high": TargetData(
-        target_pose=Pose2d(1, 1, 0),
+        target_pose=None,
         arm_angle=math.radians(-47.7),
         arm_length=1.04,
         wrist_angle=math.radians(-18.61),
@@ -135,5 +135,5 @@ scoring_locations = {
         claw_picking=False,
         claw_wait=False,
         intake_reversed=True,
-    ),
+    )
 }
