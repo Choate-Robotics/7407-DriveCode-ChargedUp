@@ -13,6 +13,7 @@ class TargetData:
     arm_length: meters
     wrist_angle: radians
     intake_enabled: bool = False
+    intake_reversed: bool = False
     claw_picking: bool = False
     claw_scoring: bool = False
     arm_scoring: bool = False
@@ -123,5 +124,16 @@ scoring_locations = {
         claw_scoring=False,
         claw_picking=False,
         claw_wait=True,
+    ),
+    "eject": TargetData(
+        target_pose=None,
+        arm_angle=math.radians(-45),
+        arm_length=0,
+        wrist_angle=math.radians(0),
+        intake_enabled=True,
+        claw_scoring=False,
+        claw_picking=False,
+        claw_wait=False,
+        intake_reversed=True,
     ),
 }

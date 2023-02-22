@@ -59,3 +59,7 @@ class Keymap:
         TARGETING_CUBE_INTAKE = commands2.button.JoystickButton(
             Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.X
         )
+
+        TARGETING_EJECT = commands2.button.JoystickButton(
+            Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.Y
+        )

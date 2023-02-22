@@ -22,10 +22,12 @@ class Intake(Subsystem):
     def init(self):
         self.intake_motor.init()
 
-    def intake_enable(self):
+    def intake_enable(self, intake_reversed: bool = False):
         self.intake_piston.extend()
         self.intake_active = True
-        self.intake_motor.set_raw_output(self.intake_speed)
+        self.intake_motor.set_raw_output(
+            self.intake_speed * (-1 if intake_reversed else 1)
+        )
 
     def intake_disable(self):
         self.intake_piston.retract()

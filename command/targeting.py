@@ -73,7 +73,9 @@ class Target(SubsystemCommand[Drivetrain]):
                 )
 
         if self.target.intake_enabled and self.intake_on:
-            self.intake_command = command.IntakeEnable(self.intake)
+            self.intake_command = command.IntakeEnable(
+                self.intake, intake_reversed=self.target.intake_reversed
+            )
         elif self.intake_on:
             self.intake_command = command.IntakeDisable(self.intake)
         else:

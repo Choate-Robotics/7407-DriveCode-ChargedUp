@@ -7,12 +7,13 @@ from subsystem import Intake
 
 
 class IntakeEnable(SubsystemCommand[Intake]):
-    def __init__(self, subsystem: Intake):
+    def __init__(self, subsystem: Intake, intake_reversed: bool = False):
         super().__init__(subsystem)
         self.subsystem = subsystem
+        self.reversed = intake_reversed
 
     def initialize(self):
-        Robot.intake.intake_enable()
+        Robot.intake.intake_enable(intake_reversed=self.reversed)
 
     def execute(self):
         pass
