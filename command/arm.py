@@ -459,7 +459,7 @@ class SetArm(SubsystemCommand[Arm]):
         if (abs(self.subsystem.get_rotation() - self.real_desired) > math.radians(25) and elevator_pid_output > .0):
             elevator_pid_output = 0 
 
-        if (abs(current_length_rotations - calculated_motor_rotations)*constants.elevator_length_per_rotation) < 0.03:
+        if (current_length_rotations - calculated_motor_rotations) < 0.05:
             elevator_pid_output = 0
 
         SmartDashboard.putNumber("PID_Voltage", elevator_pid_output)
