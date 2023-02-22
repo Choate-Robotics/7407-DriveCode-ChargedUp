@@ -56,7 +56,7 @@ scoring_locations = {
         intake_enabled=False,
         claw_scoring=True,
         claw_picking=False,
-        arm_scoring=True
+        arm_scoring=True,
     ),
     "middle": TargetData(
         target_pose=Pose2d(1, 1, 0),
@@ -66,7 +66,7 @@ scoring_locations = {
         intake_enabled=False,
         claw_scoring=True,
         claw_picking=False,
-        arm_scoring=True
+        arm_scoring=True,
     ),
     "high": TargetData(
         target_pose=Pose2d(0, 0, 0),
@@ -76,7 +76,7 @@ scoring_locations = {
         intake_enabled=False,
         claw_scoring=True,
         claw_picking=False,
-        arm_scoring=True
+        arm_scoring=True,
     ),
     "pickup": TargetData(
         target_pose=None,

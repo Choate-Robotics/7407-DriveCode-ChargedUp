@@ -43,7 +43,7 @@ class Target(SubsystemCommand[Drivetrain]):
         self.trajectory: CustomTrajectory | None = None
 
         self.finished = False
-        self.drive_on = False
+        self.drive_on = True
         self.arm_on = True
         self.intake_on = True
 
