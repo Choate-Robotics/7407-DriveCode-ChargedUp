@@ -18,34 +18,55 @@ class OI:
     def map_controls():
         logger.info("Mapping controls...")
 
-        # Keymap.Arm.REZERO_ELEVATOR.whenPressed(command.ZeroArm())
+        def edit_current_scoring_position(key: str, changing: str):
+            scoring_pos = list(config.current_scoring_position)
 
-        # Keymap.Arm.ENGAGE_CLAW().whenPressed(engageClaw()).whenReleased(disEngageClaw())
+            code = {
+                "LG": 1,
+                "MG": 2,
+                "RG": 3,
+                "TL": 7,
+                "TM": 8,
+                "TR": 9,
+                "ML": 4,
+                "MM": 5,
+                "MR": 6,
+                "BL": 1,
+                "BM": 2,
+                "BR": 3
+            }
 
-        Keymap.Intake.INTAKE_ENABLE.whenPressed(command.IntakeEnable(Robot.intake))
-        # Keymap.Intake.INTAKE_ENABLE.onFalse(command.IntakeDisable(Robot.intake))
-        # Keymap.Claw.ENGAGE_CLAW.onTrue(InstantCommand(lambda: Robot.arm.engage_claw()))
-        # Keymap.Claw.ENGAGE_CLAW.onFalse(
-            # InstantCommand(lambda: Robot.arm.disengage_claw())
-        # )
+            if changing == "g":
+                scoring_pos[0] = code[key]
+            elif changing == "p":
+                scoring_pos[1] = code[key]
+                
+            config.current_scoring_position = ''.join(scoring_pos)
 
-        Keymap.Drivetrain.RESET_GYRO.onTrue(InstantCommand(lambda: command.TestCommand()))
+            if key == "DELETE":
+                config.current_scoring_position = ""
+            elif key == "CONFIRM":
+                config.real_scoring_position = config.current_scoring_position
+                config.current_scoring_position = ""
+            
+            print("CURRENT SCORING POSITION: ", config.current_scoring_position)
+            print("REAL SCORING POSITION: ", config.real_scoring_position)
 
-        Keymap.Scoring.CONFIRM.whenPressed(InstantCommand(lambda: print("CONFIRM")))
-        Keymap.Scoring.DELETE.whenPressed(InstantCommand(lambda: print("DELETE")))
+        Keymap.Scoring.CONFIRM.onTrue(InstantCommand(edit_current_scoring_position("CONFIRM", "")))
+        Keymap.Scoring.DELETE.onTrue(InstantCommand(edit_current_scoring_position("DELETE", "")))
 
-        Keymap.Scoring.LEFT_GRID.whenPressed(InstantCommand(lambda: print("LEFT GRID")))
-        Keymap.Scoring.MIDDLE_GRID.onTrue(InstantCommand(lambda: print("MIDDLE GRID")))
-        Keymap.Scoring.RIGHT_GRID.onTrue(InstantCommand(lambda: print("RIGHT GRID")))
+        Keymap.Scoring.LEFT_GRID.onTrue(InstantCommand(edit_current_scoring_position("LG", "g")))
+        Keymap.Scoring.MIDDLE_GRID.onTrue(InstantCommand(edit_current_scoring_position("MG", "g")))
+        Keymap.Scoring.RIGHT_GRID.onTrue(InstantCommand(edit_current_scoring_position("RG", "g")))
 
-        Keymap.Scoring.TOP_LEFT.onTrue(InstantCommand(lambda: print("TOP LEFT")))
-        Keymap.Scoring.TOP_MIDDLE.onTrue(InstantCommand(lambda: print("TOP MIDDLE")))
-        Keymap.Scoring.TOP_RIGHT.onTrue(InstantCommand(lambda: print("TOP RIGHT")))
+        Keymap.Scoring.TOP_LEFT.onTrue(InstantCommand(edit_current_scoring_position("TL", "p")))
+        Keymap.Scoring.TOP_MIDDLE.onTrue(InstantCommand(edit_current_scoring_position("TM", "p")))
+        Keymap.Scoring.TOP_RIGHT.onTrue(InstantCommand(edit_current_scoring_position("TR", "p")))
 
-        Keymap.Scoring.MIDDLE_LEFT.onTrue(InstantCommand(lambda: print("MIDDLE LEFT")))
-        Keymap.Scoring.MIDDLE_MIDDLE.onTrue(InstantCommand(lambda: print("MIDDLE MIDDLE")))
-        Keymap.Scoring.MIDDLE_RIGHT.onTrue(InstantCommand(lambda: print("MIDDLE RIGHT")))
+        Keymap.Scoring.MIDDLE_LEFT.onTrue(InstantCommand(edit_current_scoring_position("ML", "p")))
+        Keymap.Scoring.MIDDLE_MIDDLE.onTrue(InstantCommand(edit_current_scoring_position("MM", "p")))
+        Keymap.Scoring.MIDDLE_RIGHT.onTrue(InstantCommand(edit_current_scoring_position("MR", "p")))
         
-        Keymap.Scoring.BOTTOM_LEFT.onTrue(InstantCommand(lambda: print("BOTTOM LEFT")))
-        Keymap.Scoring.BOTTOM_MIDDLE.onTrue(InstantCommand(lambda: print("BOTTOM MIDDLE")))
-        Keymap.Scoring.BOTTOM_RIGHT.onTrue(InstantCommand(lambda: print("BOTTOM RIGHT")))
+        Keymap.Scoring.BOTTOM_LEFT.onTrue(InstantCommand(edit_current_scoring_position("BL", "p")))
+        Keymap.Scoring.BOTTOM_MIDDLE.onTrue(InstantCommand(edit_current_scoring_position("BM", "p")))
+        Keymap.Scoring.BOTTOM_RIGHT.onTrue(InstantCommand(edit_current_scoring_position("BR", "p")))
