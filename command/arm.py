@@ -358,7 +358,7 @@ class SetArm(SubsystemCommand[Arm]):
         elevator_p = SmartDashboard.getNumber("ELEVATOR_P_VALUE",0)
         self.arm_controller = PIDController(6, 0, 0.1)
         self.elevator_controller = PIDController(0.9, 0, 0.0)
-        self.arm_controller_profiled = ProfiledPIDControllerRadians(16,0,0.2, TrapezoidProfileRadians.Constraints(math.radians(100000),math.radians(400)))
+        self.arm_controller_profiled = ProfiledPIDControllerRadians(16,0,0.2, TrapezoidProfileRadians.Constraints(math.radians(100000),math.radians(500)))
         self.arm_controller_profiled.reset(math.pi/2 - self.subsystem.get_rotation())
         self.arm_controller_profiled.setGoal(self.shoulder_angle)
         self.arm_controller_profiled.disableContinuousInput()
