@@ -19,13 +19,13 @@ from subsystem import Arm, Drivetrain, Grabber, Intake
 
 class Target(SubsystemCommand[Arm]):
     def __init__(
-            self,
-            arm: Arm,
-            grabber: Grabber,
-            intake: Intake,
-            drivetrain: Drivetrain,
-            field_odometry: FieldOdometry,
-            target: TargetData,
+        self,
+        arm: Arm,
+        grabber: Grabber,
+        intake: Intake,
+        drivetrain: Drivetrain,
+        field_odometry: FieldOdometry,
+        target: TargetData,
     ):
         super().__init__(arm)
         super().addRequirements(grabber)
@@ -71,10 +71,10 @@ class Target(SubsystemCommand[Arm]):
                 )
             else:
                 self.target.arm_angle = (
-                        -1 * abs(self.target.arm_angle) * (1 if config.red_team else -1)
+                    -1 * abs(self.target.arm_angle) * (1 if config.red_team else -1)
                 )
                 self.target.wrist_angle = (
-                        -1 * abs(self.target.wrist_angle) * (1 if config.red_team else -1)
+                    -1 * abs(self.target.wrist_angle) * (1 if config.red_team else -1)
                 )
 
         if self.target.intake_enabled and self.intake_on:
@@ -183,10 +183,7 @@ class Target(SubsystemCommand[Arm]):
         else:
             commands2.CommandScheduler.getInstance().schedule(
                 SequentialCommandGroup(
-                    ParallelCommandGroup(
-                        self.arm_sequence,
-                        self.intake_command
-                    ),
+                    ParallelCommandGroup(self.arm_sequence, self.intake_command),
                     InstantCommand(lambda: self.finish()),
                 )
             )
