@@ -8,8 +8,9 @@ from commands2 import (
 from robotpy_toolkit_7407 import SubsystemCommand
 
 import command
+import config
 import utils
-from autonomous.utils.custom_pathing import FollowPathCustom, RotateInPlace
+from autonomous.utils.custom_pathing import FollowPathCustom, RotateInPlaceTeleOp
 from autonomous.utils.trajectory import CustomTrajectory
 from config import TargetData
 from robot_systems import Sensors
@@ -19,13 +20,13 @@ from subsystem import Arm, Drivetrain, Grabber, Intake
 
 class Target(SubsystemCommand[Drivetrain]):
     def __init__(
-            self,
-            arm: Arm,
-            grabber: Grabber,
-            intake: Intake,
-            drivetrain: Drivetrain,
-            field_odometry: FieldOdometry,
-            target: TargetData,
+        self,
+        arm: Arm,
+        grabber: Grabber,
+        intake: Intake,
+        drivetrain: Drivetrain,
+        field_odometry: FieldOdometry,
+        target: TargetData,
     ):
         super().__init__(drivetrain)
         super().addRequirements(grabber)
@@ -58,9 +59,19 @@ class Target(SubsystemCommand[Drivetrain]):
         if self.target.arm_scoring:
             gyro_angle = Sensors.odometry.getPose().rotation().degrees()
             if -90 < gyro_angle < 90:
-                self.target.arm_angle = abs(self.target.arm_angle)
+                self.target.arm_angle = abs(self.target.arm_angle) * (
+                    1 if config.red_team else -1
+                )
+                self.target.wrist_angle = abs(self.target.wrist_angle) * (
+                    1 if config.red_team else -1
+                )
             else:
-                self.target.arm_angle = -1 * abs(self.target.arm_angle)
+                self.target.arm_angle = (
+                    -1 * abs(self.target.arm_angle) * (1 if config.red_team else -1)
+                )
+                self.target.wrist_angle = (
+                    -1 * abs(self.target.wrist_angle) * (1 if config.red_team else -1)
+                )
 
         if self.target.intake_enabled and self.intake_on:
             self.intake_command = InstantCommand(lambda: self.intake.intake_enable())
@@ -128,7 +139,7 @@ class Target(SubsystemCommand[Drivetrain]):
                     ParallelCommandGroup(
                         SequentialCommandGroup(
                             FollowPathCustom(self.drivetrain, self.trajectory),
-                            RotateInPlace(
+                            RotateInPlaceTeleOp(
                                 self.drivetrain,
                                 self.target.target_pose.rotation().radians(),
                             ),

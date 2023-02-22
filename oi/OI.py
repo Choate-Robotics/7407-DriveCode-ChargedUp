@@ -46,13 +46,7 @@ class OI:
 
         Keymap.Targeting.TARGETING_PICKUP.whenReleased(
             SequentialCommandGroup(
-                # InstantCommand(
-                #     lambda: commands2.CommandScheduler.getInstance().schedule(
-                #         command.DriveSwerveCustom(Robot.drivetrain)
-                #     )
-                # ),
                 InstantCommand(lambda: Robot.grabber.disengage_claw()),
-                # WaitCommand(config.scoring_locations["pickup"].claw_wait_time),
                 command.Target(
                     Robot.arm,
                     Robot.grabber,
@@ -78,15 +72,9 @@ class OI:
         Keymap.Targeting.TARGETING_MIDDLE.whenReleased(
             SequentialCommandGroup(
                 InstantCommand(lambda: print("Starting released command.")),
-                # InstantCommand(
-                #     lambda: commands2.CommandScheduler.getInstance().schedule(
-                #         command.DriveSwerveCustom(Robot.drivetrain)
-                #     )
-                # ),
                 InstantCommand(lambda: print("ABOUT TO PICK UP 1")),
                 InstantCommand(lambda: Robot.grabber.disengage_claw()),
                 InstantCommand(lambda: print("ABOUT TO PICK UP")),
-                # WaitCommand(config.scoring_locations["middle"].claw_wait_time),
                 command.Target(
                     Robot.arm,
                     Robot.grabber,
@@ -111,13 +99,7 @@ class OI:
 
         Keymap.Targeting.TARGETING_HIGH.whenReleased(
             SequentialCommandGroup(
-                # InstantCommand(
-                #     lambda: commands2.CommandScheduler.getInstance().schedule(
-                #         command.DriveSwerveCustom(Robot.drivetrain)
-                #     )
-                # ),
                 InstantCommand(lambda: Robot.grabber.disengage_claw()),
-                # WaitCommand(config.scoring_locations["high"].claw_wait_time),
                 command.Target(
                     Robot.arm,
                     Robot.grabber,
@@ -142,13 +124,7 @@ class OI:
 
         Keymap.Targeting.TARGETING_DOUBLE_STATION.whenReleased(
             SequentialCommandGroup(
-                # InstantCommand(
-                #     lambda: commands2.CommandScheduler.getInstance().schedule(
-                #         command.DriveSwerveCustom(Robot.drivetrain)
-                #     )
-                # ),
                 InstantCommand(lambda: Robot.grabber.disengage_claw()),
-                # WaitCommand(config.scoring_locations["pickup"].claw_wait_time),
                 command.Target(
                     Robot.arm,
                     Robot.grabber,

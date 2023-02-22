@@ -21,6 +21,7 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
     driver_centric_reversed = False
 
     def initialize(self) -> None:
+        print("STARTED DRIVE SWERVE")
         pass
 
     def execute(self) -> None:

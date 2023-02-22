@@ -16,6 +16,8 @@ from wpimath.controller import (
 from wpimath.geometry import Pose2d, Rotation2d
 from wpimath.trajectory import Trajectory, TrapezoidProfileRadians
 
+import command
+import utils
 from autonomous.utils.trajectory import CustomTrajectory
 from robot_systems import Sensors
 from subsystem import Drivetrain
@@ -208,6 +210,84 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
             abs(Sensors.odometry.getPose().rotation().radians() - self.theta_f)
             < self.threshold
         )
+
+    def runsWhenDisabled(self) -> bool:
+        return False
+
+
+class RotateInPlaceTeleOp(SubsystemCommand[SwerveDrivetrain]):
+    """
+    Rotates the robot in place.
+
+    :param subsystem: The subsystem to run this command on
+    :type subsystem: SwerveDrivetrain
+    :param theta_f: The final angle in radians
+    :type theta_f: radians
+    :param threshold: The angle threshold for the controller, defaults to .1
+    :type threshold: radians, optional
+    :param period: The period of the controller, defaults to 0.02
+    :type period: seconds, optional
+    """
+
+    def __init__(
+        self,
+        subsystem: SwerveDrivetrain,
+        theta_f: radians,
+        threshold: float = math.radians(2),
+        max_angular_vel: float | None = None,
+        period: float = 0.02,
+    ):
+        super().__init__(subsystem)
+
+        max_angular_vel = max_angular_vel or subsystem.max_angular_vel
+
+        self.controller = HolonomicDriveController(
+            PIDController(1, 0, 0, period),
+            PIDController(1, 0, 0, period),
+            ProfiledPIDControllerRadians(
+                4,
+                0,
+                0,
+                TrapezoidProfileRadians.Constraints(
+                    max_angular_vel, max_angular_vel / 0.001
+                ),
+                period,
+            ),
+        )
+        self.theta_f = theta_f
+        self.threshold = threshold
+
+        self.theta_i: float | None = None
+        self.theta_diff: float | None = None
+
+    def initialize(self) -> None:
+        self.theta_i = Sensors.odometry.getPose().rotation().radians()
+        self.theta_diff = bounded_angle_diff(self.theta_i, self.theta_f)
+
+    def execute(self) -> None:
+        goal = Sensors.odometry.getPose()
+        speeds = self.controller.calculate(goal, goal, 0, Rotation2d(self.theta_f))
+        self.subsystem.set_driver_centric((0, 0), speeds.omega)
+
+    def isFinished(self) -> bool:
+        return (
+            abs(Sensors.odometry.getPose().rotation().radians() - self.theta_f)
+            < self.threshold
+        )
+
+    def end(self, interrupted: bool) -> None:
+        print("ENDED ROTATE MAUHA")
+        if not interrupted:
+            print("r1")
+            utils.logger.log("ROTATE_IN_PLACE", "Starting Drive Swerve Custom Command.")
+            commands2.CommandScheduler.getInstance().schedule(
+                command.DriveSwerveCustom(self.subsystem)
+            )
+            self.getRequirements().clear()
+            self.cancel()
+        else:
+            print("r2")
+            utils.logger.log("ROTATE_IN_PLACE", "Interrupted Command.")
 
     def runsWhenDisabled(self) -> bool:
         return False
