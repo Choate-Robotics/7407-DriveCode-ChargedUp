@@ -23,7 +23,9 @@ class OI:
 
         # DRIVETRAIN
         Keymap.Drivetrain.RESET_GYRO.whenPressed(
-            InstantCommand(lambda: Robot.drivetrain.gyro.reset_angle(0))
+            InstantCommand(
+                lambda: Robot.drivetrain.gyro.reset_angle(Robot.drivetrain.start_angle)
+            )
         )
 
         Keymap.Drivetrain.RESET_ODOMETRY.whenPressed(

@@ -1,17 +1,18 @@
 import math
 from dataclasses import dataclass
 
-from wpimath.geometry import Pose2d
+from wpimath.geometry import Pose2d, Translation2d
 
 from units.SI import meters, meters_per_second, meters_per_second_squared, radians
 
 
 @dataclass
 class TargetData:
-    target_pose: Pose2d | None
     arm_angle: radians
     arm_length: meters
     wrist_angle: radians
+    target_pose: Pose2d | None
+    target_waypoints: list[Translation2d] | None = None
     intake_enabled: bool = False
     intake_reversed: bool = False
     claw_picking: bool = False
@@ -24,7 +25,7 @@ class TargetData:
     max_acceleration: meters_per_second_squared = None
 
 
-red_team: bool = True
+red_team: bool = False
 
 elevator_motor_extend_id = 17
 elevator_secondary_rotation_motor_id = 1
@@ -60,7 +61,8 @@ scoring_locations = {
         arm_scoring=True,
     ),
     "middle": TargetData(
-        target_pose=Pose2d(2.43, 0.94, math.pi),  # 2.43 .94
+        target_pose=Pose2d(1.55, 1.55, 0),  # 2.43 .94
+        target_waypoints=[Translation2d(1.81, 1.55)],
         arm_angle=math.radians(-44.78),
         arm_length=0.55,
         wrist_angle=math.radians(-27.09),
@@ -83,7 +85,7 @@ scoring_locations = {
         target_pose=None,
         arm_angle=math.radians(-100),
         arm_length=0.099,
-        wrist_angle=math.radians(-20.53),
+        wrist_angle=math.radians(-25.53),
         intake_enabled=False,
         claw_scoring=False,
         claw_picking=True,

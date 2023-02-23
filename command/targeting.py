@@ -54,14 +54,15 @@ class Target(SubsystemCommand[Arm]):
         self.finished = True
 
     def initialize(self) -> None:
-        self.drive_on = True
+        self.drive_on = False
 
         print("STARTING TARGETING COMMAND")
         if self.target.arm_scoring:
-            if self.target.target_pose:
+            if self.target.target_pose and self.drive_on:
                 gyro_angle = self.target.target_pose.rotation().degrees()
             else:
                 gyro_angle = Sensors.odometry.getPose().rotation().degrees()
+
             if -90 < gyro_angle < 90:
                 self.target.arm_angle = abs(self.target.arm_angle) * (
                     1 if config.red_team else -1
@@ -92,15 +93,17 @@ class Target(SubsystemCommand[Arm]):
             try:
                 self.trajectory = CustomTrajectory(
                     initial_pose,
-                    [],
+                    self.target.target_waypoints,
                     self.target.target_pose,
                     self.target.max_velocity or self.drivetrain.max_vel,
                     self.target.max_acceleration or self.drivetrain.max_target_accel,
                     0,
                     0,
                 )
-            except:
-                print("Failed to generate trajectory.")
+                print("SUCESSSFULLY MADE TRAJECTORY!!!!!!!!!!!!")
+            except Exception as e:
+                print("Failed to generate trajectory!!!!!!!!!!!!!!")
+                print(e)
                 self.trajectory = None
                 self.drive_on = False
         else:
@@ -195,7 +198,7 @@ class Target(SubsystemCommand[Arm]):
 
     def isFinished(self) -> bool:
         ...
-        return self.finished
+        return False
 
     def end(self, interrupted: bool = False) -> None:
         ...

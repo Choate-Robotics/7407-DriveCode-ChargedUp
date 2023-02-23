@@ -105,7 +105,7 @@ class FieldOdometry:
                     )
                     angle_diff_rev = 360 - angle_diff
 
-                    if (2 > angle_diff > -2) or (2 > angle_diff_rev > -2):
+                    if (5 > angle_diff > -5) or (5 > angle_diff_rev > -5):
                         self.drivetrain.odometry_estimator.addVisionMeasurement(
                             vision_robot_pose.toPose2d(), vision_time
                         )

@@ -206,7 +206,7 @@ track_width: meters = 0.60325
 robot_length: meters = 0.7366
 
 # TODO Maybe change these
-drivetrain_max_vel: meters_per_second = (3 * mile / hour).asNumber(m / s)  # 20
+drivetrain_max_vel: meters_per_second = (20 * mile / hour).asNumber(m / s)  # 20
 drivetrain_max_target_accel: meters_per_second_squared = (
     2 * mile / hour
 ).asNumber(  # 10
@@ -268,25 +268,25 @@ ApriltagPositionDict = {
 }
 
 kCameras = {
-    "Global_Shutter_Camera_1": [
+    "Arducam_OV9281_USB_Camera": [
         Transform3d(
             Pose3d(),
             Pose3d(
                 6.43 * inches_to_meters,
                 -7 * inches_to_meters,
                 22.5 * inches_to_meters,
-                Rotation3d(0, 0, math.radians(0)),
+                Rotation3d(0, 0, math.radians(180)),
             ),
         )
     ],
-    "Global_Shutter_Camera_2": [
+    "Arducam_OV9281_USB_Camera_2": [
         Transform3d(
             Pose3d(),
             Pose3d(
                 -6.43 * inches_to_meters,
                 -7 * inches_to_meters,
                 22.5 * inches_to_meters,
-                Rotation3d(0, 0, math.radians(180)),
+                Rotation3d(0, 0, math.radians(0)),
             ),
         )
     ],
