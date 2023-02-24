@@ -194,7 +194,11 @@ class Target(SubsystemCommand[Arm]):
                                 )
                             )
                         ),
-                        InstantCommand(lambda: None),
+                        InstantCommand(
+                            lambda: commands2.CommandScheduler.getInstance().schedule(
+                                self.drivetrain
+                            )
+                        ),
                         lambda: self.trajectory_final is not None,
                     ),
                 ),
