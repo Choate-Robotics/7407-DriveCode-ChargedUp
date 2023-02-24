@@ -39,7 +39,8 @@ class Target(SubsystemCommand[Arm]):
 
         self.target = target
 
-        self.trajectory: CustomTrajectory | None = None
+        self.trajectory_initial: CustomTrajectory | None = None
+        self.trajectory_final: CustomTrajectory | None = None
 
         self.finished = False
         self.arm_on = True
@@ -58,8 +59,8 @@ class Target(SubsystemCommand[Arm]):
 
         print("STARTING TARGETING COMMAND")
         if self.target.arm_scoring:
-            if self.target.target_pose and self.drive_on:
-                gyro_angle = self.target.target_pose.rotation().degrees()
+            if self.target.target_pose_initial and self.drive_on:
+                gyro_angle = self.target.target_pose_initial.rotation().degrees()
             else:
                 gyro_angle = Sensors.odometry.getPose().rotation().degrees()
 
@@ -87,24 +88,35 @@ class Target(SubsystemCommand[Arm]):
         else:
             self.intake_command = InstantCommand(lambda: None)
 
-        if self.target.target_pose is not None and self.drive_on:
+        if self.target.target_pose_initial is not None and self.drive_on:
             print("!!!TESTING TRAJECTORY")
             initial_pose = self.field_odometry.getPose()
             try:
-                self.trajectory = CustomTrajectory(
+                self.trajectory_initial = CustomTrajectory(
                     initial_pose,
-                    self.target.target_waypoints,
-                    self.target.target_pose,
+                    [],
+                    self.target.target_pose_initial,
                     self.target.max_velocity or self.drivetrain.max_vel,
                     self.target.max_acceleration or self.drivetrain.max_target_accel,
                     0,
                     0,
                 )
-                print("SUCESSSFULLY MADE TRAJECTORY!!!!!!!!!!!!")
+                if self.trajectory_final is not None:
+                    self.trajectory_final = CustomTrajectory(
+                        initial_pose,
+                        [],
+                        self.target.target_pose_final,
+                        self.target.max_velocity or self.drivetrain.max_vel,
+                        self.target.max_acceleration
+                        or self.drivetrain.max_target_accel,
+                        0,
+                        0,
+                    )
+                print("SUCCESSFULLY MADE TRAJECTORY!!!!!!!!!!!!")
             except Exception as e:
                 print("Failed to generate trajectory!!!!!!!!!!!!!!")
                 print(e)
-                self.trajectory = None
+                self.trajectory_initial = None
                 self.drive_on = False
         else:
             self.drive_on = False
@@ -167,10 +179,23 @@ class Target(SubsystemCommand[Arm]):
         if self.drive_on:
             commands2.CommandScheduler.getInstance().schedule(
                 SequentialCommandGroup(
-                    FollowPathCustom(self.drivetrain, self.trajectory),
+                    FollowPathCustom(self.drivetrain, self.trajectory_initial),
                     RotateInPlaceTeleOp(
                         self.drivetrain,
-                        self.target.target_pose.rotation().radians(),
+                        self.target.target_pose_initial.rotation().radians(),
+                    ),
+                    commands2.ConditionalCommand(
+                        FollowPathCustom(
+                            self.drivetrain, self.trajectory_final
+                        ).andThen(
+                            InstantCommand(
+                                lambda: commands2.CommandScheduler.getInstance().schedule(
+                                    self.drivetrain
+                                )
+                            )
+                        ),
+                        InstantCommand(lambda: None),
+                        lambda: self.trajectory_final is not None,
                     ),
                 ),
             )
@@ -201,4 +226,7 @@ class Target(SubsystemCommand[Arm]):
         return False
 
     def end(self, interrupted: bool = False) -> None:
+        commands2.CommandScheduler.getInstance().schedule(
+            command.DriveSwerveCustom(self.drivetrain)
+        )
         ...

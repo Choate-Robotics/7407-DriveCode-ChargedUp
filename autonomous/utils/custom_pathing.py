@@ -16,7 +16,6 @@ from wpimath.controller import (
 from wpimath.geometry import Pose2d, Rotation2d
 from wpimath.trajectory import Trajectory, TrapezoidProfileRadians
 
-import command
 import utils
 from autonomous.utils.trajectory import CustomTrajectory
 from robot_systems import Sensors
@@ -279,10 +278,10 @@ class RotateInPlaceTeleOp(SubsystemCommand[SwerveDrivetrain]):
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11ENDED ROTATION SEQUENCE")
         if not interrupted:
             print("r1")
-            utils.logger.log("ROTATE_IN_PLACE", "Starting Drive Swerve Custom Command.")
-            commands2.CommandScheduler.getInstance().schedule(
-                command.DriveSwerveCustom(self.subsystem)
-            )
+            # utils.logger.log("ROTATE_IN_PLACE", "Starting Drive Swerve Custom Command.")
+            # commands2.CommandScheduler.getInstance().schedule(
+            #     command.DriveSwerveCustom(self.subsystem)
+            # )
         else:
             print("r2")
             utils.logger.log("ROTATE_IN_PLACE", "Interrupted Command.")
