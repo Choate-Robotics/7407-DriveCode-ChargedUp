@@ -18,6 +18,13 @@ class OI:
     def map_controls():
         logger.info("Mapping controls...")
 
+        def valid_current_scoring_position(pos: str):
+            grid = "123"
+            position = "123456789"
+            if len(pos) == 2 and grid.find(pos[0]) >= 0 and position.find(pos[1]) >= 0:
+                return True
+            return False
+
         def edit_current_scoring_position(key: str, changing: str):
             scoring_pos = list(config.current_scoring_position)
 
@@ -46,7 +53,8 @@ class OI:
             if key == "DELETE":
                 config.current_scoring_position = ""
             elif key == "CONFIRM":
-                config.real_scoring_position = config.current_scoring_position
+                if valid_current_scoring_position(config.current_scoring_position):
+                    config.real_scoring_position = config.current_scoring_position
                 config.current_scoring_position = ""
             
             print("CURRENT SCORING POSITION: ", config.current_scoring_position)
