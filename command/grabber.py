@@ -2,17 +2,27 @@ from robotpy_toolkit_7407 import SubsystemCommand
 from wpilib import SmartDashboard
 
 import utils
-from subsystem import Grabber
+from subsystem import Grabber, Intake
 from units.SI import radians
 
 
 class SetGrabber(SubsystemCommand[Grabber]):
-    def __init__(self, subsystem: Grabber, wrist_angle: radians, claw_active: bool):
+    def __init__(
+        self,
+        subsystem: Grabber,
+        intake: Intake,
+        wrist_angle: radians,
+        claw_active: bool,
+        auto_claw: bool = False,
+    ):
         super().__init__(subsystem)
         self.subsystem = subsystem
+        self.intake = intake
         self.wrist_angle = wrist_angle
         self.claw_active = claw_active
         self.wait_for_arm = False
+        self.auto_claw = auto_claw
+        self.finished = not self.auto_claw
 
     def initialize(self) -> None:
         print("RUNNING GRABBER")
@@ -30,10 +40,17 @@ class SetGrabber(SubsystemCommand[Grabber]):
         SmartDashboard.putNumber(
             "WRIST_ERROR", self.wrist_angle - self.subsystem.get_angle()
         )
+
+        if self.subsystem.get_detected_farther_away() and self.auto_claw:
+            self.intake.intake_motor.set_raw_output(0)
+
+        if self.subsystem.get_detected() and self.auto_claw:
+            self.subsystem.disengage_claw()
+            self.finished = True
         ...
 
     def isFinished(self) -> bool:
-        return self.subsystem.is_at_angle(self.wrist_angle)
+        return self.subsystem.is_at_angle(self.wrist_angle) and self.finished
 
     def end(self, interrupted: bool) -> None:
         print("FINISHED GRABBER SET")

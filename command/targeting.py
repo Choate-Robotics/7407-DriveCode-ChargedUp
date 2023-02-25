@@ -80,14 +80,18 @@ class Target(SubsystemCommand[Arm]):
                     command.SetArm(
                         self.arm, self.target.arm_length, self.target.arm_angle
                     ),
-                    command.SetGrabber(self.grabber, self.target.wrist_angle, True),
+                    command.SetGrabber(
+                        self.grabber, self.intake, self.target.wrist_angle, True
+                    ),
                 )
             elif self.target.claw_scoring and self.arm_on:
                 self.arm_sequence = SequentialCommandGroup(
                     command.SetArm(
                         self.arm, self.target.arm_length, self.target.arm_angle
                     ),
-                    command.SetGrabber(self.grabber, self.target.wrist_angle, False),
+                    command.SetGrabber(
+                        self.grabber, self.intake, self.target.wrist_angle, False
+                    ),
                     InstantCommand(self.grabber.open_claw()),
                 )
             elif self.arm_on:
@@ -95,7 +99,9 @@ class Target(SubsystemCommand[Arm]):
                     command.SetArm(
                         self.arm, self.target.arm_length, self.target.arm_angle
                     ),
-                    command.SetGrabber(self.grabber, self.target.wrist_angle, False),
+                    command.SetGrabber(
+                        self.grabber, self.intake, self.target.wrist_angle, False
+                    ),
                 )
             else:
                 self.arm_sequence = InstantCommand(lambda: None)
@@ -105,7 +111,13 @@ class Target(SubsystemCommand[Arm]):
                     command.SetArm(
                         self.arm, self.target.arm_length, self.target.arm_angle
                     ),
-                    command.SetGrabber(self.grabber, self.target.wrist_angle, True),
+                    command.SetGrabber(
+                        self.grabber,
+                        self.intake,
+                        self.target.wrist_angle,
+                        True,
+                        auto_claw=True,
+                    ),
                 )
             elif self.target.claw_scoring and self.arm_on:
                 self.arm_sequence = SequentialCommandGroup(
@@ -114,7 +126,7 @@ class Target(SubsystemCommand[Arm]):
                             self.arm, self.target.arm_length, self.target.arm_angle
                         ),
                         command.SetGrabber(
-                            self.grabber, self.target.wrist_angle, False
+                            self.grabber, self.intake, self.target.wrist_angle, False
                         ),
                     ),
                     InstantCommand(self.grabber.open_claw()),
@@ -124,7 +136,9 @@ class Target(SubsystemCommand[Arm]):
                     command.SetArm(
                         self.arm, self.target.arm_length, self.target.arm_angle
                     ),
-                    command.SetGrabber(self.grabber, self.target.wrist_angle, False),
+                    command.SetGrabber(
+                        self.grabber, self.intake, self.target.wrist_angle, False
+                    ),
                 )
             else:
                 self.arm_sequence = InstantCommand(lambda: None)

@@ -74,10 +74,7 @@ class OI:
 
         Keymap.Targeting.TARGETING_MIDDLE.whenReleased(
             SequentialCommandGroup(
-                InstantCommand(lambda: print("Starting released command.")),
-                InstantCommand(lambda: print("ABOUT TO PICK UP 1")),
                 InstantCommand(lambda: Robot.grabber.disengage_claw()),
-                InstantCommand(lambda: print("ABOUT TO PICK UP")),
                 command.Target(
                     Robot.arm,
                     Robot.grabber,
@@ -146,6 +143,7 @@ class OI:
 
         Keymap.Targeting.TARGETING_CUBE_INTAKE.whenReleased(
             SequentialCommandGroup(
+                InstantCommand(lambda: Robot.intake.intake_motor.set_raw_output(0)),
                 InstantCommand(lambda: Robot.grabber.disengage_claw()),
                 command.Target(
                     Robot.arm,

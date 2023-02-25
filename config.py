@@ -102,7 +102,7 @@ scoring_locations = {
     ),
     "double_station": TargetData(
         target_pose=Pose2d(1, 1, 0),
-        arm_angle=math.radians(-48.78),
+        arm_angle=math.radians(-50),
         arm_length=0.55,
         wrist_angle=math.radians(-27.09),
         intake_enabled=False,

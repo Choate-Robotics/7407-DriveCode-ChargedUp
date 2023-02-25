@@ -52,6 +52,12 @@ class Grabber(Subsystem):
 
         self.zero_wrist()
 
+    def get_detected(self):
+        return 0.3 < self.distance_sensor.getVoltage() < 0.7
+
+    def get_detected_farther_away(self):
+        return 0.3 < self.distance_sensor.getVoltage() < 0.9
+
     def set_angle(self, pos: float):
         """
         Set the angle of the claw
@@ -100,7 +106,7 @@ class Grabber(Subsystem):
 
     def disengage_claw(self):
         self.close_claw()
-        self.claw_motor.set_target_position(self.claw_motor.get_sensor_position())
+        self.claw_motor.set_target_velocity(0)
 
     def is_at_angle(self, angle: radians):
         wrist_threshold = math.radians(2)

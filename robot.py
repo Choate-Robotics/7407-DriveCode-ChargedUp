@@ -104,6 +104,9 @@ class _Robot(wpilib.TimedRobot):
 
         commands2.CommandScheduler.getInstance().run()
 
+        SmartDashboard.putBoolean("CLAW DETECTED", Robot.grabber.get_detected())
+        print(Robot.grabber.get_detected())
+
     def teleopInit(self):
         logger.debug("TELEOP", "Teleop Initialized")
         commands2.CommandScheduler.getInstance().schedule(
