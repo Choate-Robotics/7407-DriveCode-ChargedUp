@@ -53,10 +53,10 @@ class Grabber(Subsystem):
         self.zero_wrist()
 
     def get_detected(self):
-        return 0.3 < self.distance_sensor.getVoltage() < 0.7
+        return 0.5 < self.distance_sensor.getVoltage() < 0.9
 
     def get_detected_farther_away(self):
-        return 0.3 < self.distance_sensor.getVoltage() < 0.9
+        return 0.4 < self.distance_sensor.getVoltage() < 0.9
 
     def set_angle(self, pos: float):
         """
