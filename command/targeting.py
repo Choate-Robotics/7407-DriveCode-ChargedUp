@@ -8,10 +8,11 @@ from robotpy_toolkit_7407 import SubsystemCommand
 
 import command
 import config
+import constants
 from config import TargetData
-from robot_systems import Sensors
+from robot_systems import Robot, Sensors
 from sensors import FieldOdometry
-from subsystem import Arm, Grabber, Intake
+from subsystem import Arm, Drivetrain, Grabber, Intake
 
 
 class Target(SubsystemCommand[Arm]):
@@ -20,16 +21,19 @@ class Target(SubsystemCommand[Arm]):
         arm: Arm,
         grabber: Grabber,
         intake: Intake,
+        drivetrain: Drivetrain,
         field_odometry: FieldOdometry,
         target: TargetData,
     ):
         super().__init__(arm)
         super().addRequirements(grabber)
         super().addRequirements(intake)
+        super().addRequirements(drivetrain)
 
         self.arm = arm
         self.grabber = grabber
         self.intake = intake
+        self.drivetrain = drivetrain
         self.field_odometry = field_odometry
 
         self.target = target
@@ -46,6 +50,20 @@ class Target(SubsystemCommand[Arm]):
         self.finished = True
 
     def initialize(self) -> None:
+        Robot.drivetrain.max_vel = (
+            self.target.max_velocity or constants.drivetrain_max_vel
+        )
+        Robot.drivetrain.max_target_accel = (
+            self.target.max_acceleration or constants.drivetrain_max_target_accel
+        )
+        Robot.drivetrain.max_angular_vel = (
+            self.target.max_angular_velocity or constants.drivetrain_max_angular_vel
+        )
+
+        commands2.CommandScheduler.getInstance().schedule(
+            command.DriveSwerveCustom(self.drivetrain)
+        )
+
         print("STARTING TARGETING COMMAND")
         if self.target.arm_scoring:
             gyro_angle = Sensors.odometry.getPose().rotation().degrees()

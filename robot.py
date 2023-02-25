@@ -118,6 +118,7 @@ class _Robot(wpilib.TimedRobot):
                             Robot.arm,
                             Robot.grabber,
                             Robot.intake,
+                            Robot.drivetrain,
                             Sensors.odometry,
                             config.scoring_locations["standard"],
                         )

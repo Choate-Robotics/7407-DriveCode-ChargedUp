@@ -23,6 +23,7 @@ class TargetData:
 
     max_velocity: meters_per_second = None
     max_acceleration: meters_per_second_squared = None
+    max_angular_velocity: meters_per_second = None
 
 
 red_team: bool = False
@@ -70,6 +71,9 @@ scoring_locations = {
         claw_scoring=True,
         claw_picking=False,
         arm_scoring=True,
+        max_velocity=1,
+        max_acceleration=0.5,
+        max_angular_velocity=1,
     ),
     "high": TargetData(
         target_pose=None,
@@ -80,12 +84,15 @@ scoring_locations = {
         claw_scoring=True,
         claw_picking=False,
         arm_scoring=True,
+        max_velocity=1,
+        max_acceleration=0.5,
+        max_angular_velocity=1,
     ),
     "pickup": TargetData(
         target_pose=None,
         arm_angle=math.radians(-100),
         arm_length=0.099,
-        wrist_angle=math.radians(-25.53),
+        wrist_angle=math.radians(-50.53),
         intake_enabled=False,
         claw_scoring=False,
         claw_picking=True,
