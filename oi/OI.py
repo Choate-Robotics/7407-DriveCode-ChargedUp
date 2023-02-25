@@ -34,13 +34,16 @@ class OI:
             )
         )
 
+        Keymap.Drivetrain.LIMIT_VELOCITY.whenPressed(
+            command.DrivetrainScore(Robot.drivetrain, Sensors.odometry)
+        ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
+
         # TARGETING
         Keymap.Targeting.TARGETING_PICKUP.whenPressed(
             command.Target(
                 Robot.arm,
                 Robot.grabber,
                 Robot.intake,
-                Robot.drivetrain,
                 Sensors.odometry,
                 target=config.scoring_locations["pickup"],
             )
@@ -53,7 +56,6 @@ class OI:
                     Robot.arm,
                     Robot.grabber,
                     Robot.intake,
-                    Robot.drivetrain,
                     Sensors.odometry,
                     target=config.scoring_locations["standard_pickup"],
                 ),
@@ -65,7 +67,6 @@ class OI:
                 Robot.arm,
                 Robot.grabber,
                 Robot.intake,
-                Robot.drivetrain,
                 Sensors.odometry,
                 target=config.scoring_locations["middle"],
             )
@@ -81,7 +82,6 @@ class OI:
                     Robot.arm,
                     Robot.grabber,
                     Robot.intake,
-                    Robot.drivetrain,
                     Sensors.odometry,
                     target=config.scoring_locations["standard"],
                 ),
@@ -93,7 +93,6 @@ class OI:
                 Robot.arm,
                 Robot.grabber,
                 Robot.intake,
-                Robot.drivetrain,
                 Sensors.odometry,
                 target=config.scoring_locations["high"],
             )
@@ -106,7 +105,6 @@ class OI:
                     Robot.arm,
                     Robot.grabber,
                     Robot.intake,
-                    Robot.drivetrain,
                     Sensors.odometry,
                     target=config.scoring_locations["standard"],
                 ),
@@ -118,7 +116,6 @@ class OI:
                 Robot.arm,
                 Robot.grabber,
                 Robot.intake,
-                Robot.drivetrain,
                 Sensors.odometry,
                 target=config.scoring_locations["double_station"],
             )
@@ -131,7 +128,6 @@ class OI:
                     Robot.arm,
                     Robot.grabber,
                     Robot.intake,
-                    Robot.drivetrain,
                     Sensors.odometry,
                     target=config.scoring_locations["standard"],
                 ),
@@ -143,7 +139,6 @@ class OI:
                 Robot.arm,
                 Robot.grabber,
                 Robot.intake,
-                Robot.drivetrain,
                 Sensors.odometry,
                 target=config.scoring_locations["cube_intake"],
             )
@@ -156,7 +151,6 @@ class OI:
                     Robot.arm,
                     Robot.grabber,
                     Robot.intake,
-                    Robot.drivetrain,
                     Sensors.odometry,
                     target=config.scoring_locations["standard_pickup"],
                 ),
@@ -168,7 +162,6 @@ class OI:
                 Robot.arm,
                 Robot.grabber,
                 Robot.intake,
-                Robot.drivetrain,
                 Sensors.odometry,
                 target=config.scoring_locations["eject"],
             )
@@ -181,7 +174,6 @@ class OI:
                     Robot.arm,
                     Robot.grabber,
                     Robot.intake,
-                    Robot.drivetrain,
                     Sensors.odometry,
                     target=config.scoring_locations["standard"],
                 ),

@@ -1,8 +1,15 @@
 import logging
+import math
 
+import commands2
+from commands2 import SequentialCommandGroup
 from robotpy_toolkit_7407.command import SubsystemCommand
 
+import autonomous.utils.custom_pathing
+import command
 import config
+import constants
+from sensors import FieldOdometry
 from subsystem import Drivetrain
 
 
@@ -94,3 +101,57 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
 
         logging.info("Successfully re-zeroed swerve pods.")
         ...
+
+
+class DrivetrainScore(SubsystemCommand[Drivetrain]):
+    def __init__(self, subsystem: Drivetrain, odometry: FieldOdometry):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+        self.odometry = odometry
+
+    def initialize(self) -> None:
+        current_theta = self.odometry.getPose().rotation().degrees()
+
+        if -90 < current_theta < 90:
+            desired_theta = 0
+        else:
+            desired_theta = math.radians(180)
+
+        self.subsystem.max_vel = config.drivetrain_scoring_velocity
+        self.subsystem.max_angular_vel = config.drivetrain_scoring_angular_velocity
+
+        commands2.CommandScheduler.getInstance().schedule(
+            SequentialCommandGroup(
+                autonomous.utils.custom_pathing.RotateInPlaceTeleOp(
+                    self.subsystem,
+                    theta_f=desired_theta,
+                    max_angular_vel=config.drivetrain_scoring_angular_velocity,
+                ),
+                command.DriveSwerveCustom(self.subsystem),
+            )
+        )
+
+    def isFinished(self) -> bool:
+        return True
+
+    def end(self, interrupted: bool) -> None:
+        ...
+
+
+class DrivetrainRegular(SubsystemCommand[Drivetrain]):
+    def __init__(self, subsystem: Drivetrain, odometry: FieldOdometry):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+        self.odometry = odometry
+
+    def initialize(self) -> None:
+        self.subsystem.max_vel = constants.drivetrain_max_vel
+        self.subsystem.max_angular_vel = constants.drivetrain_max_angular_vel
+
+    def isFinished(self) -> bool:
+        return True
+
+    def end(self, interrupted: bool) -> None:
+        commands2.CommandScheduler.getInstance().schedule(
+            command.DriveSwerveCustom(self.subsystem)
+        )

@@ -9,7 +9,7 @@ import config
 from autonomous import routine
 from oi.OI import OI
 from robot_systems import Pneumatics, Robot, Sensors
-from sensors import FieldOdometry, PV_Cameras
+from sensors import FieldOdometry
 from utils import logger
 
 
@@ -27,9 +27,9 @@ class _Robot(wpilib.TimedRobot):
         Robot.intake.init()
         Robot.grabber.init()
 
-        Sensors.pv_controller = PV_Cameras()
+        # Sensors.pv_controller = PV_Cameras()
 
-        Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
+        Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
         Sensors.gyro = Robot.drivetrain.gyro
 
         SmartDashboard.putNumber("ELEVATOR_Voltage", 0)
@@ -118,7 +118,6 @@ class _Robot(wpilib.TimedRobot):
                             Robot.arm,
                             Robot.grabber,
                             Robot.intake,
-                            Robot.drivetrain,
                             Sensors.odometry,
                             config.scoring_locations["standard"],
                         )
