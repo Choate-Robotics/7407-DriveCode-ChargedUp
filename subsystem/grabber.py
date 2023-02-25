@@ -100,7 +100,7 @@ class Grabber(Subsystem):
 
     def disengage_claw(self):
         self.close_claw()
-        self.set_output(0)
+        self.claw_motor.set_target_position(self.claw_motor.get_sensor_position())
 
     def is_at_angle(self, angle: radians):
         wrist_threshold = math.radians(2)

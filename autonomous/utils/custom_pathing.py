@@ -233,7 +233,7 @@ class RotateInPlaceTeleOp(SubsystemCommand[SwerveDrivetrain]):
         self,
         subsystem: SwerveDrivetrain,
         theta_f: radians,
-        threshold: float = math.radians(2),
+        threshold: float = math.radians(5),
         max_angular_vel: float | None = None,
         period: float = 0.02,
     ):

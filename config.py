@@ -67,7 +67,7 @@ scoring_locations = {
     "middle": TargetData(
         target_pose=Pose2d(1.55, 1.55, 0),  # 2.43 .94
         target_waypoints=[Translation2d(1.81, 1.55)],
-        arm_angle=math.radians(-44.78),
+        arm_angle=math.radians(-46.78),
         arm_length=0.55,
         wrist_angle=math.radians(-27.09),
         intake_enabled=False,
@@ -80,7 +80,7 @@ scoring_locations = {
     ),
     "high": TargetData(
         target_pose=None,
-        arm_angle=math.radians(-47.7),
+        arm_angle=math.radians(-49.7),
         arm_length=1.04,
         wrist_angle=math.radians(-18.61),
         intake_enabled=False,
@@ -102,7 +102,7 @@ scoring_locations = {
     ),
     "double_station": TargetData(
         target_pose=Pose2d(1, 1, 0),
-        arm_angle=math.radians(-44.78),
+        arm_angle=math.radians(-48.78),
         arm_length=0.55,
         wrist_angle=math.radians(-27.09),
         intake_enabled=False,
@@ -111,7 +111,7 @@ scoring_locations = {
     ),
     "cube_intake": TargetData(
         target_pose=None,
-        arm_angle=math.radians(67.5),
+        arm_angle=math.radians(76.5),
         arm_length=0,
         wrist_angle=math.radians(94.8),
         intake_enabled=True,
