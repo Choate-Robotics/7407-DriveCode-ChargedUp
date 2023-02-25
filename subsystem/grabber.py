@@ -108,14 +108,13 @@ class Grabber(Subsystem):
 
     def zero_wrist(self):
         """Sets the shoulder to the zero position (no extension)"""
-        self.wrist.set_sensor_position(0)
         abs_encoder_position: float = self.wrist_abs_encoder.getPosition()
         if abs_encoder_position > 0.5:
             abs_encoder_position = -(1 - abs_encoder_position)
         encoder_difference: float = abs_encoder_position - 0
         motor_position: float = encoder_difference * constants.wrist_gear_ratio
         self.wrist.set_sensor_position(-motor_position)
-        self.wrist.set_target_position(0)
+        self.wrist.set_target_position(-motor_position)
 
     @staticmethod
     def wrist_angle_to_motor_rotations(angle: radians):

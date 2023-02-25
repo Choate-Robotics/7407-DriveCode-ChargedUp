@@ -52,7 +52,8 @@ class ZeroWrist(SubsystemCommand[Grabber]):
         ...
 
     def isFinished(self):
-        return abs(self.subsystem.wrist.get_sensor_position()) < 0.1
+        return True
 
     def end(self, interrupted=False):
         utils.logger.debug("Wrist", "Wrist Successfully Zeroed.")
+        print("WRIST ZEROED")

@@ -5,6 +5,7 @@ import wpilib
 from wpilib import SmartDashboard
 
 import command
+import config
 from autonomous import routine
 from oi.OI import OI
 from robot_systems import Pneumatics, Robot, Sensors
@@ -113,8 +114,12 @@ class _Robot(wpilib.TimedRobot):
             command.ZeroElevator(Robot.arm).andThen(
                 command.ZeroShoulder(Robot.arm).andThen(
                     command.ZeroWrist(Robot.grabber).andThen(
-                        command.SetArm(
-                            Robot.arm, distance=0, shoulder_angle=math.radians(0)
+                        command.Target(
+                            Robot.arm,
+                            Robot.grabber,
+                            Robot.intake,
+                            Sensors.odometry,
+                            config.scoring_locations["standard"],
                         )
                     )
                 )
