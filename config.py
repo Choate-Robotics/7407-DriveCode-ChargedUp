@@ -93,7 +93,7 @@ scoring_locations = {
     ),
     "pickup": TargetData(
         target_pose=None,
-        arm_angle=math.radians(-100),
+        arm_angle=math.radians(-98),
         arm_length=0.099,
         wrist_angle=math.radians(-50.53),
         intake_enabled=False,

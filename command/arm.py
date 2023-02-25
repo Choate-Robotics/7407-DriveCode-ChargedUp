@@ -96,7 +96,7 @@ class SetArm(SubsystemCommand[Arm]):
         self.theta_i = 0
         self.theta_f = 0
         self.theta_diff = 0
-        self.threshold = math.radians(0.5)
+        self.threshold = math.radians(1.5)
 
         self.elevator_controller = None
         self.arm_controller_profiled = None
