@@ -191,6 +191,7 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
         self.theta_diff: float | None = None
 
     def initialize(self) -> None:
+        print("DESIRED FINAL THETA: ", math.degrees(self.theta_f))
         self.theta_i = Sensors.odometry.getPose().rotation().radians()
         self.theta_diff = bounded_angle_diff(self.theta_i, self.theta_f)
 
