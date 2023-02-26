@@ -1,6 +1,5 @@
 from commands2 import (
     InstantCommand,
-    SequentialCommandGroup,
 )
 from robotpy_toolkit_7407.utils import logger
 
@@ -50,16 +49,13 @@ class OI:
         )
 
         Keymap.Targeting.TARGETING_PICKUP.whenReleased(
-            SequentialCommandGroup(
-                InstantCommand(lambda: Robot.grabber.disengage_claw()),
-                command.Target(
-                    Robot.arm,
-                    Robot.grabber,
-                    Robot.intake,
-                    Sensors.odometry,
-                    target=config.scoring_locations["standard_pickup"],
-                ),
-            )
+            command.Target(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Sensors.odometry,
+                target=config.scoring_locations["standard_pickup"],
+            ),
         )
 
         Keymap.Targeting.TARGETING_MIDDLE.whenPressed(
@@ -73,16 +69,13 @@ class OI:
         )
 
         Keymap.Targeting.TARGETING_MIDDLE.whenReleased(
-            SequentialCommandGroup(
-                InstantCommand(lambda: Robot.grabber.disengage_claw()),
-                command.Target(
-                    Robot.arm,
-                    Robot.grabber,
-                    Robot.intake,
-                    Sensors.odometry,
-                    target=config.scoring_locations["standard"],
-                ),
-            )
+            command.Target(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Sensors.odometry,
+                target=config.scoring_locations["standard"],
+            ),
         )
 
         Keymap.Targeting.TARGETING_HIGH.whenPressed(
@@ -96,16 +89,13 @@ class OI:
         )
 
         Keymap.Targeting.TARGETING_HIGH.whenReleased(
-            SequentialCommandGroup(
-                InstantCommand(lambda: Robot.grabber.disengage_claw()),
-                command.Target(
-                    Robot.arm,
-                    Robot.grabber,
-                    Robot.intake,
-                    Sensors.odometry,
-                    target=config.scoring_locations["standard"],
-                ),
-            )
+            command.Target(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Sensors.odometry,
+                target=config.scoring_locations["standard"],
+            ),
         )
 
         Keymap.Targeting.TARGETING_DOUBLE_STATION.whenPressed(
@@ -119,16 +109,13 @@ class OI:
         )
 
         Keymap.Targeting.TARGETING_DOUBLE_STATION.whenReleased(
-            SequentialCommandGroup(
-                InstantCommand(lambda: Robot.grabber.disengage_claw()),
-                command.Target(
-                    Robot.arm,
-                    Robot.grabber,
-                    Robot.intake,
-                    Sensors.odometry,
-                    target=config.scoring_locations["standard"],
-                ),
-            )
+            command.Target(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Sensors.odometry,
+                target=config.scoring_locations["standard"],
+            ),
         )
 
         Keymap.Targeting.TARGETING_CUBE_INTAKE.whenPressed(
@@ -142,17 +129,13 @@ class OI:
         )
 
         Keymap.Targeting.TARGETING_CUBE_INTAKE.whenReleased(
-            SequentialCommandGroup(
-                InstantCommand(lambda: Robot.intake.intake_motor.set_raw_output(0)),
-                InstantCommand(lambda: Robot.grabber.disengage_claw()),
-                command.Target(
-                    Robot.arm,
-                    Robot.grabber,
-                    Robot.intake,
-                    Sensors.odometry,
-                    target=config.scoring_locations["standard_pickup"],
-                ),
-            )
+            command.Target(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Sensors.odometry,
+                target=config.scoring_locations["standard_pickup"],
+            ),
         )
 
         Keymap.Targeting.TARGETING_EJECT.whenPressed(
@@ -166,26 +149,19 @@ class OI:
         )
 
         Keymap.Targeting.TARGETING_EJECT.whenReleased(
-            SequentialCommandGroup(
-                InstantCommand(lambda: Robot.grabber.disengage_claw()),
-                command.Target(
-                    Robot.arm,
-                    Robot.grabber,
-                    Robot.intake,
-                    Sensors.odometry,
-                    target=config.scoring_locations["standard"],
-                ),
-            )
+            command.Target(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Sensors.odometry,
+                target=config.scoring_locations["standard"],
+            ),
         )
 
         Keymap.Claw.OPEN_CLAW.whenPressed(
-            InstantCommand(lambda: Robot.grabber.open_claw()).andThen(
-                lambda: print("DONE")
-            )
+            InstantCommand(lambda: Robot.grabber.open_claw())
         )
 
         Keymap.Claw.OPEN_CLAW.whenReleased(
-            InstantCommand(lambda: Robot.grabber.close_claw()).andThen(
-                lambda: print("DONE")
-            )
+            InstantCommand(lambda: Robot.grabber.close_claw())
         )
