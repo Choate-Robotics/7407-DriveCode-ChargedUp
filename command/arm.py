@@ -258,10 +258,11 @@ class SetArm(SubsystemCommand[Arm]):
             )
 
     def isFinished(self) -> bool:
-        return (
-            abs(self.subsystem.get_rotation() - self.real_desired) < self.threshold
-            and abs(self.subsystem.get_length() - self.distance) < 0.05
-        )
+        # return (
+        #     abs(self.subsystem.get_rotation() - self.real_desired) < self.threshold
+        #     and abs(self.subsystem.get_length() - self.distance) < 0.05
+        # )
+        return False
 
     def end(self, interrupted: bool) -> None:
         wpilib.SmartDashboard.putBoolean("Arm/IsMoving", False)

@@ -9,8 +9,8 @@ red_team: bool = False
 
 drivetrain_scoring_velocity = 1
 drivetrain_scoring_angular_velocity = 1
-drivetrain_routing_velocity = 4
-drivetrain_routing_acceleration = 2
+drivetrain_routing_velocity = 2
+drivetrain_routing_acceleration = 1
 drivetrain_routing_angular_velocity = 3
 current_scoring_location = "double_station"
 
@@ -105,10 +105,10 @@ scoring_locations: dict[str, TargetData] = {
         claw_picking=True,
     ),
     "double_station": TargetData(
-        target_pose=Pose2d(15.67, 6.67, math.radians(0)),
-        arm_angle=math.radians(49),
-        arm_length=0.55,
-        wrist_angle=math.radians(27.09),
+        target_pose=Pose2d(16, 6.7, math.radians(0)),
+        arm_angle=math.radians(23.66),
+        arm_length=0.29,
+        wrist_angle=math.radians(83.37),
         intake_enabled=False,
         claw_scoring=False,
         claw_picking=True,
