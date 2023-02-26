@@ -34,8 +34,8 @@ class OI:
             )
         )
 
-        Keymap.Drivetrain.LIMIT_VELOCITY.whenPressed(
-            command.DrivetrainScore(Robot.drivetrain, Sensors.odometry)
+        Keymap.Drivetrain.ROUTE.whenPressed(
+            command.DrivetrainRoute(Robot.drivetrain, Sensors.odometry)
         ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
 
         # TARGETING

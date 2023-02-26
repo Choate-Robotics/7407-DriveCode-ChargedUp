@@ -5,8 +5,13 @@ from wpimath.geometry import Pose2d, Translation2d
 
 from units.SI import meters, meters_per_second, meters_per_second_squared, radians
 
+red_team: bool = False
+
 drivetrain_scoring_velocity = 1
 drivetrain_scoring_angular_velocity = 1
+drivetrain_routing_velocity = 2
+drivetrain_routing_acceleration = 1
+current_scoring_location = "middle"
 
 
 @dataclass
@@ -28,8 +33,6 @@ class TargetData:
     max_acceleration: meters_per_second_squared = None
     max_angular_velocity: meters_per_second = None
 
-
-red_team: bool = False
 
 elevator_motor_extend_id = 17
 elevator_secondary_rotation_motor_id = 1
@@ -53,7 +56,7 @@ kRobotVisionPoseWeight = 0.1
 claw_motor_extend_id = 0
 
 # SCORING LOCATIONS
-scoring_locations = {
+scoring_locations: dict[str, TargetData] = {
     "low": TargetData(
         target_pose=Pose2d(0, 0, 0),
         arm_angle=math.radians(0),

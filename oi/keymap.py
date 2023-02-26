@@ -31,7 +31,7 @@ class Keymap:
         RESET_ODOMETRY = commands2.button.JoystickButton(
             Joysticks.joysticks[Controllers.DRIVER], controllerOPERATOR.X
         )
-        LIMIT_VELOCITY = commands2.button.Button(
+        ROUTE = commands2.button.Button(
             lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.RT) > 0.5
         )
 

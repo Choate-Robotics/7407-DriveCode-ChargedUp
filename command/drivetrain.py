@@ -9,6 +9,7 @@ import autonomous.utils.custom_pathing
 import command
 import config
 import constants
+from autonomous import CustomTrajectory
 from sensors import FieldOdometry
 from subsystem import Drivetrain
 
@@ -100,6 +101,47 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         self.subsystem.n_back_right.m_move.set_sensor_position(0)
 
         logging.info("Successfully re-zeroed swerve pods.")
+        ...
+
+
+class DrivetrainRoute(SubsystemCommand[Drivetrain]):
+    def __init__(self, subsystem: Drivetrain, odometry: FieldOdometry):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+        self.odometry = odometry
+        self.drive_on = True
+
+    def initialize(self) -> None:
+        current_pose = self.odometry.getPose()
+        if self.drive_on and config.current_scoring_location != "":
+            try:
+                desired_target = config.scoring_locations[
+                    config.current_scoring_location
+                ]
+                trajectory = CustomTrajectory(
+                    current_pose,
+                    desired_target.target_waypoints,
+                    desired_target.target_pose,
+                    max_velocity=config.drivetrain_routing_velocity,
+                    max_accel=config.drivetrain_routing_acceleration,
+                    start_velocity=0,
+                    end_velocity=0,
+                )
+
+                commands2.CommandScheduler.getInstance().schedule(
+                    autonomous.utils.custom_pathing.FollowPathCustom(
+                        self.subsystem, trajectory
+                    ).andThen(DrivetrainScore(self.subsystem, self.odometry))
+                )
+            except:
+                commands2.CommandScheduler.getInstance().schedule(
+                    DrivetrainScore(self.subsystem, self.odometry)
+                )
+
+    def isFinished(self) -> bool:
+        return True
+
+    def end(self, interrupted: bool) -> None:
         ...
 
 
