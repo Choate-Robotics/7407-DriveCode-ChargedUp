@@ -1,5 +1,3 @@
-import math
-
 import commands2
 import wpilib
 from wpilib import SmartDashboard
@@ -41,68 +39,71 @@ class _Robot(wpilib.TimedRobot):
         OI.map_controls()
 
     def robotPeriodic(self):
-        SmartDashboard.putNumber("ARM_REAL", math.degrees(Robot.arm.get_rotation()))
+        # SmartDashboard.putNumber("ARM_REAL", math.degrees(Robot.arm.get_rotation()))
+        #
+        # Sensors.odometry.update()
+        # SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
+        # SmartDashboard.putString("FDOM", str(Sensors.odometry.getPose()))
+        # SmartDashboard.putNumber("Current_length_meters", Robot.arm.get_length())
+        # SmartDashboard.putString(
+        #     "EDOM", str(Robot.drivetrain.odometry_estimator.getEstimatedPosition())
+        # )
+        # try:
+        #     SmartDashboard.putString(
+        #         "PHOTON", str(Sensors.pv_controller.get_estimated_robot_pose())
+        #     )
+        #     SmartDashboard.putString(
+        #         "PHOTON ANGLE",
+        #         str(
+        #             Sensors.pv_controller.get_estimated_robot_pose()[0][0]
+        #             .rotation()
+        #             .toRotation2d()
+        #             .degrees()
+        #         ),
+        #     )
+        # except Exception:
+        #     pass
+        #
+        # pose = Robot.drivetrain.odometry_estimator.getEstimatedPosition()
+        # pose2 = Sensors.odometry.getPose()
+        #
+        # SmartDashboard.putNumberArray(
+        #     "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]
+        # )
+        #
+        # SmartDashboard.putNumberArray(
+        #     "RobotPoseOrig", [pose2.X(), pose2.Y(), pose2.rotation().radians()]
+        # )
+        #
+        # try:
+        #     pv_pose = Sensors.pv_controller.get_estimated_robot_pose()
+        #     SmartDashboard.putNumberArray(
+        #         "PVPoseAdvantage",
+        #         [
+        #             pv_pose[0][0].toPose2d().X(),
+        #             pv_pose[0][0].toPose2d().Y(),
+        #             pv_pose[0][0].rotation().toRotation2d().radians(),
+        #         ],
+        #     )
+        # except Exception:
+        #     pass
+        #
+        # SmartDashboard.putNumber(
+        #     "gyro_angle: ", math.degrees(Robot.drivetrain.gyro.get_robot_heading())
+        # )
+        #
+        # SmartDashboard.putNumber(
+        #     "SHOULDER ANGLE: ", math.degrees(Robot.arm.get_rotation())
+        # )
+        # SmartDashboard.putNumber(
+        #     "WRIST ANGLE: ", math.degrees(Robot.grabber.get_angle())
+        # )
+        # SmartDashboard.putNumber("SHOULDER DIST: ", Robot.arm.get_length())
 
-        Sensors.odometry.update()
-        SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
-        SmartDashboard.putString("FDOM", str(Sensors.odometry.getPose()))
-        SmartDashboard.putNumber("Current_length_meters", Robot.arm.get_length())
-        SmartDashboard.putString(
-            "EDOM", str(Robot.drivetrain.odometry_estimator.getEstimatedPosition())
-        )
         try:
-            SmartDashboard.putString(
-                "PHOTON", str(Sensors.pv_controller.get_estimated_robot_pose())
-            )
-            SmartDashboard.putString(
-                "PHOTON ANGLE",
-                str(
-                    Sensors.pv_controller.get_estimated_robot_pose()[0][0]
-                    .rotation()
-                    .toRotation2d()
-                    .degrees()
-                ),
-            )
-        except Exception:
-            pass
-
-        pose = Robot.drivetrain.odometry_estimator.getEstimatedPosition()
-        pose2 = Sensors.odometry.getPose()
-
-        SmartDashboard.putNumberArray(
-            "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]
-        )
-
-        SmartDashboard.putNumberArray(
-            "RobotPoseOrig", [pose2.X(), pose2.Y(), pose2.rotation().radians()]
-        )
-
-        try:
-            pv_pose = Sensors.pv_controller.get_estimated_robot_pose()
-            SmartDashboard.putNumberArray(
-                "PVPoseAdvantage",
-                [
-                    pv_pose[0][0].toPose2d().X(),
-                    pv_pose[0][0].toPose2d().Y(),
-                    pv_pose[0][0].rotation().toRotation2d().radians(),
-                ],
-            )
-        except Exception:
-            pass
-
-        SmartDashboard.putNumber(
-            "gyro_angle: ", math.degrees(Robot.drivetrain.gyro.get_robot_heading())
-        )
-
-        SmartDashboard.putNumber(
-            "SHOULDER ANGLE: ", math.degrees(Robot.arm.get_rotation())
-        )
-        SmartDashboard.putNumber(
-            "WRIST ANGLE: ", math.degrees(Robot.grabber.get_angle())
-        )
-        SmartDashboard.putNumber("SHOULDER DIST: ", Robot.arm.get_length())
-
-        commands2.CommandScheduler.getInstance().run()
+            commands2.CommandScheduler.getInstance().run()
+        except Exception as e:
+            ...
 
     def teleopInit(self):
         logger.debug("TELEOP", "Teleop Initialized")
@@ -129,9 +130,9 @@ class _Robot(wpilib.TimedRobot):
         Robot.arm.enable_brake()
 
     def teleopPeriodic(self):
-        SmartDashboard.putBoolean(
-            "Limit Switch", Robot.arm.elevator_bottom_sensor.get()
-        )
+        # SmartDashboard.putBoolean(
+        #     "Limit Switch", Robot.arm.elevator_bottom_sensor.get()
+        # )
         # print("Limit Switch: ", Robot.arm.elevator_bottom_sensor.get())
 
         # print(Robot.arm.elevator_bottom_sensor.get())

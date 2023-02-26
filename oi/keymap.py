@@ -32,10 +32,10 @@ class Keymap:
             Joysticks.joysticks[Controllers.DRIVER], controllerOPERATOR.X
         )
         ROUTE = commands2.button.Button(
-            lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.RT) > 0.5
+            lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.LT) > 0.5
         )
         LIMIT = commands2.button.Button(
-            lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.LT) > 0.5
+            lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.RT) > 0.5
         )
 
     class Claw:
@@ -46,7 +46,7 @@ class Keymap:
     class Targeting:
         TARGETING_PICKUP = commands2.button.Button(
             lambda: Controllers.OPERATOR_CONTROLLER.getRawAxis(-controllerOPERATOR.LT)
-            > 0.8
+            > 0.5
         )
 
         TARGETING_DOUBLE_STATION = commands2.button.JoystickButton(
@@ -55,7 +55,7 @@ class Keymap:
 
         TARGETING_MIDDLE = commands2.button.Button(
             lambda: Controllers.OPERATOR_CONTROLLER.getRawAxis(-controllerOPERATOR.RT)
-            > 0.8
+            > 0.5
         )
 
         TARGETING_HIGH = commands2.button.JoystickButton(

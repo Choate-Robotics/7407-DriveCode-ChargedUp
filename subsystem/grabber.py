@@ -52,6 +52,9 @@ class Grabber(Subsystem):
 
         self.zero_wrist()
 
+    def get_detected(self):
+        return 0.5 < self.distance_sensor.getVoltage() < 0.9
+
     def set_angle(self, pos: float):
         """
         Set the angle of the claw

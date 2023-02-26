@@ -105,7 +105,9 @@ class Target(SubsystemCommand[Arm]):
                     command.SetArm(
                         self.arm, self.target.arm_length, self.target.arm_angle
                     ),
-                    command.SetGrabber(self.grabber, self.target.wrist_angle, True),
+                    command.SetGrabber(
+                        self.grabber, self.target.wrist_angle, True, auto_claw=True
+                    ),
                 )
             elif self.target.claw_scoring and self.arm_on:
                 self.arm_sequence = SequentialCommandGroup(
