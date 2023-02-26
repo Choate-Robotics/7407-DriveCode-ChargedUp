@@ -12,12 +12,14 @@ class SetGrabber(SubsystemCommand[Grabber]):
         wrist_angle: radians,
         claw_active: bool,
         auto_claw: bool = False,
+        auto_cube: bool = False,
     ):
         super().__init__(subsystem)
         self.subsystem = subsystem
         self.wrist_angle = wrist_angle
         self.claw_active = claw_active
         self.auto_claw = auto_claw
+        self.auto_cube = auto_cube
 
         self.finished = not auto_claw
 
@@ -30,9 +32,13 @@ class SetGrabber(SubsystemCommand[Grabber]):
             self.subsystem.disengage_claw()
 
     def execute(self) -> None:
-        if self.auto_claw and self.subsystem.get_detected():
-            self.subsystem.disengage_claw()
-            self.finished = True
+        if self.auto_claw:
+            if self.auto_cube and self.subsystem.get_cube_detected():
+                self.subsystem.disengage_claw()
+                self.finished = True
+            elif not self.auto_cube and self.subsystem.get_cone_detected():
+                self.subsystem.disengage_claw()
+                self.finished = True
         ...
 
     def isFinished(self) -> bool:

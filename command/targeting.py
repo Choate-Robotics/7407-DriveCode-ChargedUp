@@ -106,7 +106,11 @@ class Target(SubsystemCommand[Arm]):
                         self.arm, self.target.arm_length, self.target.arm_angle
                     ),
                     command.SetGrabber(
-                        self.grabber, self.target.wrist_angle, True, auto_claw=True
+                        self.grabber,
+                        self.target.wrist_angle,
+                        True,
+                        auto_claw=True,
+                        auto_cube=self.target.cube_picking,
                     ),
                 )
             elif self.target.claw_scoring and self.arm_on:

@@ -52,8 +52,11 @@ class Grabber(Subsystem):
 
         self.zero_wrist()
 
-    def get_detected(self):
-        return 0.5 < self.distance_sensor.getVoltage() < 0.9
+    def get_cube_detected(self):
+        return 0.5 < self.distance_sensor.getVoltage()
+
+    def get_cone_detected(self):
+        return 0.3 < self.distance_sensor.getVoltage()
 
     def set_angle(self, pos: float):
         """

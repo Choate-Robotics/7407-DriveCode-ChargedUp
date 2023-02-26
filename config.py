@@ -24,7 +24,10 @@ class TargetData:
     target_waypoints: list[Translation2d] = None
     intake_enabled: bool = False
     intake_reversed: bool = False
+
     claw_picking: bool = False
+    cube_picking: bool = False
+
     claw_scoring: bool = False
     arm_scoring: bool = False
 
@@ -121,6 +124,7 @@ scoring_locations: dict[str, TargetData] = {
         intake_enabled=True,
         claw_scoring=False,
         claw_picking=True,
+        cube_picking=True,
     ),
     "standard": TargetData(
         target_pose=None,
