@@ -4,6 +4,7 @@ import math
 import commands2
 from commands2 import SequentialCommandGroup
 from robotpy_toolkit_7407.command import SubsystemCommand
+from wpimath.geometry import Pose2d
 
 import autonomous.utils.custom_pathing
 import command
@@ -112,15 +113,23 @@ class DrivetrainRoute(SubsystemCommand[Drivetrain]):
         self.drive_on = True
 
     def initialize(self) -> None:
+        self.odometry.vision_on = False
         current_pose = self.odometry.getPose()
         if self.drive_on and config.current_scoring_location != "":
             try:
                 desired_target = config.scoring_locations[
                     config.current_scoring_location
                 ]
+                current_pose = Pose2d(
+                    current_pose.x,
+                    current_pose.y,
+                    desired_target.target_pose.rotation().radians(),
+                )
                 trajectory = CustomTrajectory(
                     current_pose,
-                    desired_target.target_waypoints,
+                    desired_target.target_waypoints
+                    if desired_target.target_waypoints is not None
+                    else [],
                     desired_target.target_pose,
                     max_velocity=config.drivetrain_routing_velocity,
                     max_accel=config.drivetrain_routing_acceleration,
@@ -129,11 +138,19 @@ class DrivetrainRoute(SubsystemCommand[Drivetrain]):
                 )
 
                 commands2.CommandScheduler.getInstance().schedule(
-                    autonomous.utils.custom_pathing.FollowPathCustom(
-                        self.subsystem, trajectory
-                    ).andThen(DrivetrainScore(self.subsystem, self.odometry))
+                    autonomous.utils.custom_pathing.RotateInPlace(
+                        self.subsystem,
+                        desired_target.target_pose.rotation().radians(),
+                        threshold=math.radians(4),
+                        max_angular_vel=config.drivetrain_routing_angular_velocity,
+                    ).andThen(
+                        autonomous.utils.custom_pathing.FollowPathCustom(
+                            self.subsystem, trajectory
+                        ).andThen(DrivetrainScore(self.subsystem, self.odometry))
+                    )
                 )
             except:
+                print("COULD NOT GENERATE TRAJECTORY")
                 commands2.CommandScheduler.getInstance().schedule(
                     DrivetrainScore(self.subsystem, self.odometry)
                 )
@@ -152,6 +169,7 @@ class DrivetrainScore(SubsystemCommand[Drivetrain]):
         self.odometry = odometry
 
     def initialize(self) -> None:
+        self.odometry.vision_on = False
         current_theta = self.odometry.getPose().rotation().degrees()
 
         if -90 < current_theta < 90:
@@ -164,8 +182,9 @@ class DrivetrainScore(SubsystemCommand[Drivetrain]):
 
         commands2.CommandScheduler.getInstance().schedule(
             SequentialCommandGroup(
-                autonomous.utils.custom_pathing.RotateInPlaceTeleOp(
+                autonomous.utils.custom_pathing.RotateInPlace(
                     self.subsystem,
+                    threshold=math.radians(4),
                     theta_f=desired_theta,
                     max_angular_vel=config.drivetrain_scoring_angular_velocity,
                 ),
@@ -187,6 +206,7 @@ class DrivetrainRegular(SubsystemCommand[Drivetrain]):
         self.odometry = odometry
 
     def initialize(self) -> None:
+        self.odometry.vision_on = True
         self.subsystem.max_vel = constants.drivetrain_max_vel
         self.subsystem.max_angular_vel = constants.drivetrain_max_angular_vel
 

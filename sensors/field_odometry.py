@@ -64,6 +64,8 @@ class FieldOdometry:
         self.vision_estimator_pose_weight: float = 0.1
         self.robot_pose_weight: float = 1 - self.vision_estimator_pose_weight
 
+        self.vision_on = True
+
     def update(self) -> Pose2d:
         """
         Updates the robot's pose relative to the field. This should be called periodically.
@@ -80,50 +82,51 @@ class FieldOdometry:
 
         vision_robot_pose_list: list[Pose3d] | None = None
 
-        current_time = time.time()
-        if self.last_update_time is None or (
-            current_time - self.last_update_time >= self.min_update_wait_time
-        ):
-            vision_robot_pose_list = (
-                self.vision_estimator.get_estimated_robot_pose()
-                if self.vision_estimator
-                else None
-            )
+        if self.vision_on:
+            current_time = time.time()
+            if self.last_update_time is None or (
+                current_time - self.last_update_time >= self.min_update_wait_time
+            ):
+                vision_robot_pose_list = (
+                    self.vision_estimator.get_estimated_robot_pose()
+                    if self.vision_estimator
+                    else None
+                )
 
-        if vision_robot_pose_list:
-            for vision_robot_pose in vision_robot_pose_list:
-                if vision_robot_pose[0] and vision_robot_pose[1]:
-                    vision_time = vision_robot_pose[1]
-                    vision_robot_pose = vision_robot_pose[0]
+            if vision_robot_pose_list:
+                for vision_robot_pose in vision_robot_pose_list:
+                    if vision_robot_pose[0] and vision_robot_pose[1]:
+                        vision_time = vision_robot_pose[1]
+                        vision_robot_pose = vision_robot_pose[0]
 
-                    angle_diff = (
-                        math.degrees(
-                            vision_robot_pose.toPose2d().rotation().radians()
-                            - self.drivetrain.gyro.get_robot_heading()
+                        angle_diff = (
+                            math.degrees(
+                                vision_robot_pose.toPose2d().rotation().radians()
+                                - self.drivetrain.gyro.get_robot_heading()
+                            )
+                            % 360
                         )
-                        % 360
-                    )
-                    angle_diff_rev = 360 - angle_diff
+                        angle_diff_rev = 360 - angle_diff
 
-                    if (5 > angle_diff > -5) or (5 > angle_diff_rev > -5):
-                        self.drivetrain.odometry_estimator.addVisionMeasurement(
-                            vision_robot_pose.toPose2d(), vision_time
-                        )
+                        if (5 > angle_diff > -5) or (5 > angle_diff_rev > -5):
+                            self.drivetrain.odometry_estimator.addVisionMeasurement(
+                                vision_robot_pose.toPose2d(), vision_time
+                            )
 
-                        weighted_pose = weighted_pose_average(
-                            self.drivetrain.odometry.getPose(),
-                            vision_robot_pose,
-                            self.robot_pose_weight,
-                            self.vision_estimator_pose_weight,
-                        )
+                            weighted_pose = weighted_pose_average(
+                                self.drivetrain.odometry.getPose(),
+                                vision_robot_pose,
+                                self.robot_pose_weight,
+                                self.vision_estimator_pose_weight,
+                            )
 
-                        self.drivetrain.odometry.resetPosition(
-                            self.drivetrain.get_heading(),
-                            weighted_pose,
-                            *self.drivetrain.node_positions
-                        )
+                            self.drivetrain.odometry.resetPosition(
+                                self.drivetrain.get_heading(),
+                                weighted_pose,
+                                *self.drivetrain.node_positions
+                            )
 
-                    self.last_update_time = current_time
+                        self.last_update_time = current_time
 
         return self.getPose()
 

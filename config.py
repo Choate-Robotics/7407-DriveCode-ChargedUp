@@ -11,7 +11,8 @@ drivetrain_scoring_velocity = 1
 drivetrain_scoring_angular_velocity = 1
 drivetrain_routing_velocity = 2
 drivetrain_routing_acceleration = 1
-current_scoring_location = "middle"
+drivetrain_routing_angular_velocity = 3
+current_scoring_location = "double_station"
 
 
 @dataclass
@@ -20,7 +21,7 @@ class TargetData:
     arm_length: meters
     wrist_angle: radians
     target_pose: Pose2d | None
-    target_waypoints: list[Translation2d] | None = None
+    target_waypoints: list[Translation2d] = None
     intake_enabled: bool = False
     intake_reversed: bool = False
     claw_picking: bool = False
@@ -104,7 +105,7 @@ scoring_locations: dict[str, TargetData] = {
         claw_picking=True,
     ),
     "double_station": TargetData(
-        target_pose=Pose2d(1, 1, 0),
+        target_pose=Pose2d(14.7, 6.8, math.radians(0)),
         arm_angle=math.radians(-48.78),
         arm_length=0.55,
         wrist_angle=math.radians(-27.09),
