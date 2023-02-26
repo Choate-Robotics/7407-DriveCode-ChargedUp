@@ -34,6 +34,9 @@ class Keymap:
         ROUTE = commands2.button.Button(
             lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.RT) > 0.5
         )
+        LIMIT = commands2.button.Button(
+            lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.LT) > 0.5
+        )
 
     class Claw:
         OPEN_CLAW = GRABBER = commands2.button.JoystickButton(

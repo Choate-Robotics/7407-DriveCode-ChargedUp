@@ -105,8 +105,8 @@ scoring_locations: dict[str, TargetData] = {
         claw_picking=True,
     ),
     "double_station": TargetData(
-        target_pose=Pose2d(15.65, 6.67, math.radians(0)),
-        arm_angle=math.radians(48.78),
+        target_pose=Pose2d(15.67, 6.67, math.radians(0)),
+        arm_angle=math.radians(49),
         arm_length=0.55,
         wrist_angle=math.radians(27.09),
         intake_enabled=False,

@@ -38,6 +38,10 @@ class OI:
             command.DrivetrainRoute(Robot.drivetrain, Sensors.odometry)
         ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
 
+        Keymap.Drivetrain.LIMIT.whenPressed(
+            command.DrivetrainScore(Robot.drivetrain, Sensors.odometry)
+        ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
+
         # TARGETING
         Keymap.Targeting.TARGETING_PICKUP.whenPressed(
             command.Target(
