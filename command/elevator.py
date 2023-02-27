@@ -33,11 +33,7 @@ class ZeroElevator(SubsystemCommand[Elevator]):
 
 
 class SetElevator(SubsystemCommand[Elevator]):
-    def __init__(
-            self,
-            subsystem: Elevator,
-            distance: meters
-    ):
+    def __init__(self, subsystem: Elevator, distance: meters):
         super().__init__(subsystem)
         self.distance = distance
         self.elevator_controller = None
@@ -46,9 +42,7 @@ class SetElevator(SubsystemCommand[Elevator]):
     def initialize(self) -> None:
         self.elevator_controller = PIDController(0.9, 0, 0.0)
 
-        self.elevator_ff = ArmFeedforward(
-            kG=0.145, kS=0, kV=0, kA=0
-        )
+        self.elevator_ff = ArmFeedforward(kG=0.145, kS=0, kV=0, kA=0)
 
     def execute(self) -> None:
         current_length_rotations = self.subsystem.motor_extend.get_sensor_position()
@@ -60,21 +54,21 @@ class SetElevator(SubsystemCommand[Elevator]):
 
         meters_ceiling = min(self.distance, constants.max_elevator_height_delta)
         calculated_motor_rotations = meters_ceiling * (
-                1 / constants.elevator_length_per_rotation
+            1 / constants.elevator_length_per_rotation
         )
         elevator_pid_output = self.elevator_controller.calculate(
             current_length_rotations, calculated_motor_rotations
         )
 
         if (
-                abs(self.subsystem.get_rotation() - self.real_desired) > math.radians(25)
-                and elevator_pid_output > 0.0
+            abs(self.subsystem.get_rotation() - self.real_desired) > math.radians(25)
+            and elevator_pid_output > 0.0
         ):
             elevator_pid_output = 0
 
         if (
-                abs(current_length_rotations - calculated_motor_rotations)
-                * constants.elevator_length_per_rotation
+            abs(current_length_rotations - calculated_motor_rotations)
+            * constants.elevator_length_per_rotation
         ) < 0.03:
             elevator_pid_output = 0
 

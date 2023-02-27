@@ -53,5 +53,5 @@ class Elevator(Subsystem):
     def get_length(self) -> float:  # returns arm extension
         """Gets the length of the elevator in meters"""
         return self.motor_extend.get_sensor_position() / (
-                1 / constants.elevator_length_per_rotation
+            1 / constants.elevator_length_per_rotation
         )

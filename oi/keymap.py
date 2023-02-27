@@ -47,6 +47,14 @@ class Keymap:
             Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.B
         )
 
+        RUN_CLAW_UP = commands2.button.Button(
+            lambda: Controllers.OPERATOR_CONTROLLER.getPOV() == 0
+        )
+
+        RUN_CLAW_DOWN = commands2.button.Button(
+            lambda: Controllers.OPERATOR_CONTROLLER.getPOV() == 180
+        )
+
     class Targeting:
         TARGETING_PICKUP = commands2.button.Button(
             lambda: Controllers.OPERATOR_CONTROLLER.getRawAxis(-controllerOPERATOR.LT)

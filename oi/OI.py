@@ -214,3 +214,11 @@ class OI:
                 lambda: print("DONE")
             )
         )
+
+        Keymap.Claw.RUN_CLAW_UP.whenPressed(
+            InstantCommand(lambda: Robot.grabber.set_output(0.3))
+        ).whenReleased(InstantCommand(lambda: Robot.grabber.set_output(0)))
+
+        Keymap.Claw.RUN_CLAW_DOWN.whenPressed(
+            InstantCommand(lambda: Robot.grabber.set_output(-0.3))
+        ).whenReleased(InstantCommand(lambda: Robot.grabber.set_output(0)))

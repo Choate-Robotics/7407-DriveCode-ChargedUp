@@ -46,7 +46,7 @@ elevator_brake_id = 3
 
 pneumatics_control_module = 31
 
-claw_motor_speed: float = 0.4
+claw_motor_speed: float = 0.7
 
 # Intake
 intake_motor_id = 11
@@ -101,9 +101,9 @@ scoring_locations: dict[str, TargetData] = {
     ),
     "pickup": TargetData(
         target_pose=None,
-        arm_angle=math.radians(-98),
-        arm_length=0.099,
-        wrist_angle=math.radians(-50.53),
+        arm_angle=math.radians(-108),
+        arm_length=0.199,
+        wrist_angle=math.radians(0),
         intake_enabled=False,
         claw_scoring=False,
         claw_picking=True,
