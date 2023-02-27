@@ -14,17 +14,20 @@ from utils import logger
 max_vel: meters_per_second = 2
 max_accel: meters_per_second_squared = 4
 
+initial_x: meters = 6.6
+initial_y: meters = 1.2
+
 field_length: meters = (2.896 - constants.robot_length) * 2
 field_width: meters = (2.629 - constants.robot_length) * 2
 
 path_1 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(0, 0, math.radians(0)),
+        start_pose=Pose2d(initial_x, initial_y, math.radians(0)),
         waypoints=[
             # Translation2d(.5 * (2.896 - constants.robot_length), .5 * (2.629 - constants.robot_length)),
         ],
-        end_pose=Pose2d(field_length, 0, math.radians(90)),
+        end_pose=Pose2d(initial_x + field_length, initial_y, math.radians(90)),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=0,
@@ -36,11 +39,11 @@ path_1 = FollowPathCustom(
 path_2 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(field_length, 0, math.radians(90)),
+        start_pose=Pose2d(initial_x + field_length, initial_y, math.radians(90)),
         waypoints=[
             # Translation2d(.5 * (2.896 - constants.robot_length), .5 * (2.629 - constants.robot_length)),
         ],
-        end_pose=Pose2d(field_length, field_width, math.radians(180)),
+        end_pose=Pose2d(initial_x + field_length, initial_y + field_width, math.radians(180)),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=max_vel,
@@ -52,11 +55,11 @@ path_2 = FollowPathCustom(
 path_3 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(field_length, field_width, math.radians(180)),
+        start_pose=Pose2d(initial_x + field_length, initial_y + field_width, math.radians(180)),
         waypoints=[
             # Translation2d(.5 * (2.896 - constants.robot_length), .5 * (2.629 - constants.robot_length)),
         ],
-        end_pose=Pose2d(0, field_width, math.radians(270)),
+        end_pose=Pose2d(initial_x, initial_y + field_width, math.radians(270)),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=max_vel,
@@ -68,11 +71,11 @@ path_3 = FollowPathCustom(
 path_4 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(0, field_width, math.radians(270)),
+        start_pose=Pose2d(initial_x, initial_y + field_width, math.radians(270)),
         waypoints=[
             # Translation2d(.5 * (2.896 - constants.robot_length), .5 * (2.629 - constants.robot_length)),
         ],
-        end_pose=Pose2d(0, 0, math.radians(0)),
+        end_pose=Pose2d(initial_x, initial_y, math.radians(0)),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=max_vel,
@@ -84,11 +87,11 @@ path_4 = FollowPathCustom(
 path_5 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(0, 0, math.radians(0)),
+        start_pose=Pose2d(initial_x, initial_y, math.radians(0)),
         waypoints=[
             # Translation2d(.5 * (2.896 - constants.robot_length), .5 * (2.629 - constants.robot_length)),
         ],
-        end_pose=Pose2d(0, field_width, math.radians(0)),
+        end_pose=Pose2d(initial_x, initial_y + field_width, math.radians(0)),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=max_vel,
@@ -100,11 +103,11 @@ path_5 = FollowPathCustom(
 path_6 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(0, field_width, math.radians(0)),
+        start_pose=Pose2d(initial_x, initial_y + field_width, math.radians(0)),
         waypoints=[
             # Translation2d(.5 * (2.896 - constants.robot_length), .5 * (2.629 - constants.robot_length)),
         ],
-        end_pose=Pose2d(field_length, field_width, math.radians(270)),
+        end_pose=Pose2d(initial_x + field_length, initial_y + field_width, math.radians(270)),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=max_vel,
@@ -116,11 +119,11 @@ path_6 = FollowPathCustom(
 path_7 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(field_length, field_width, math.radians(270)),
+        start_pose=Pose2d(initial_x + field_length, initial_y + field_width, math.radians(270)),
         waypoints=[
             # Translation2d(.5 * (2.896 - constants.robot_length), .5 * (2.629 - constants.robot_length)),
         ],
-        end_pose=Pose2d(field_length, 0, math.radians(180)),
+        end_pose=Pose2d(initial_x + field_length, initial_y, math.radians(180)),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=max_vel,
@@ -132,11 +135,11 @@ path_7 = FollowPathCustom(
 path_8 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(field_length, 0, math.radians(180)),
+        start_pose=Pose2d(initial_x + field_length, initial_y, math.radians(180)),
         waypoints=[
             # Translation2d(.5 * (2.896 - constants.robot_length), .5 * (2.629 - constants.robot_length)),
         ],
-        end_pose=Pose2d(0, 0, math.radians(90)),
+        end_pose=Pose2d(initial_x, initial_y, math.radians(90)),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=max_vel,
@@ -164,4 +167,4 @@ auto = SequentialCommandGroup(
     ),
 )
 
-routine = AutoRoutine(Pose2d(0, 0, math.radians(0)), auto)
+routine = AutoRoutine(Pose2d(initial_x, initial_y, math.radians(0)), auto)

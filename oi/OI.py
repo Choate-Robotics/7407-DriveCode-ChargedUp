@@ -108,14 +108,14 @@ class OI:
             command.SetGrabber(
                 Robot.grabber,
                 wrist_angle=math.radians(25)
-                * (-1 if (config.scoring_locations["high"].arm_angle > 0) else 1),
+                            * (-1 if (config.scoring_locations["high"].arm_angle > 0) else 1),
                 claw_active=False,
             )
         ).whenReleased(
             command.SetGrabber(
                 Robot.grabber,
                 wrist_angle=math.radians(25)
-                * (1 if (config.scoring_locations["high"].arm_angle > 0) else -1),
+                            * (1 if (config.scoring_locations["high"].arm_angle > 0) else -1),
                 claw_active=False,
             )
         )
@@ -216,9 +216,9 @@ class OI:
         )
 
         Keymap.Claw.RUN_CLAW_UP.whenPressed(
-            InstantCommand(lambda: Robot.grabber.set_output(0.3))
+            InstantCommand(lambda: Robot.grabber.set_output(-0.3))
         ).whenReleased(InstantCommand(lambda: Robot.grabber.set_output(0)))
 
         Keymap.Claw.RUN_CLAW_DOWN.whenPressed(
-            InstantCommand(lambda: Robot.grabber.set_output(-0.3))
+            InstantCommand(lambda: Robot.grabber.set_output(0.3))
         ).whenReleased(InstantCommand(lambda: Robot.grabber.set_output(0)))

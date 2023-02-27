@@ -66,29 +66,30 @@ class _Robot(wpilib.TimedRobot):
         # except Exception:
         #     pass
         #
-        # pose = Robot.drivetrain.odometry_estimator.getEstimatedPosition()
+        Sensors.odometry.update()
+        pose = Robot.drivetrain.odometry_estimator.getEstimatedPosition()
         # pose2 = Sensors.odometry.getPose()
         #
-        # SmartDashboard.putNumberArray(
-        #     "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]
-        # )
+        SmartDashboard.putNumberArray(
+            "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]
+        )
         #
         # SmartDashboard.putNumberArray(
         #     "RobotPoseOrig", [pose2.X(), pose2.Y(), pose2.rotation().radians()]
         # )
         #
-        # try:
-        #     pv_pose = Sensors.pv_controller.get_estimated_robot_pose()
-        #     SmartDashboard.putNumberArray(
-        #         "PVPoseAdvantage",
-        #         [
-        #             pv_pose[0][0].toPose2d().X(),
-        #             pv_pose[0][0].toPose2d().Y(),
-        #             pv_pose[0][0].rotation().toRotation2d().radians(),
-        #         ],
-        #     )
-        # except Exception:
-        #     pass
+        try:
+            pv_pose = Sensors.pv_controller.get_estimated_robot_pose()
+            SmartDashboard.putNumberArray(
+                "PVPoseAdvantage",
+                [
+                    pv_pose[0][0].toPose2d().X(),
+                    pv_pose[0][0].toPose2d().Y(),
+                    pv_pose[0][0].rotation().toRotation2d().radians(),
+                ],
+            )
+        except Exception:
+            pass
         #
         # SmartDashboard.putNumber(
         #     "gyro_angle: ", math.degrees(Robot.drivetrain.gyro.get_robot_heading())

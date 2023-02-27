@@ -76,10 +76,10 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
     """
 
     def __init__(
-        self,
-        subsystem: SwerveDrivetrain,
-        trajectory: CustomTrajectory,
-        period: float = 0.02,
+            self,
+            subsystem: SwerveDrivetrain,
+            trajectory: CustomTrajectory,
+            period: float = 0.02,
     ):
         super().__init__(subsystem)
         self.trajectory: Trajectory = trajectory.trajectory
@@ -87,9 +87,9 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
             PIDController(1, 0, 0, period),
             PIDController(1, 0, 0, period),
             ProfiledPIDControllerRadians(
-                7.3,  # 7.3
+                8,  # 7.3
                 0,
-                0.005,  # .005
+                0.05,  # .005
                 TrapezoidProfileRadians.Constraints(
                     subsystem.max_angular_vel, subsystem.max_angular_vel / 0.001  # .001
                 ),
@@ -160,12 +160,12 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
     """
 
     def __init__(
-        self,
-        subsystem: SwerveDrivetrain,
-        theta_f: radians,
-        threshold: float = math.radians(1),
-        max_angular_vel: float | None = None,
-        period: float = 0.02,
+            self,
+            subsystem: SwerveDrivetrain,
+            theta_f: radians,
+            threshold: float = math.radians(1),
+            max_angular_vel: float | None = None,
+            period: float = 0.02,
     ):
         super().__init__(subsystem)
 
@@ -206,8 +206,8 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
 
     def isFinished(self) -> bool:
         return (
-            abs(Sensors.odometry.getPose().rotation().radians() - self.theta_f)
-            < self.threshold
+                abs(Sensors.odometry.getPose().rotation().radians() - self.theta_f)
+                < self.threshold
         )
 
     def runsWhenDisabled(self) -> bool:
