@@ -88,8 +88,8 @@ scoring_locations: dict[str, TargetData] = {
     "high": TargetData(
         target_pose=None,
         arm_angle=math.radians(-49.7),
-        arm_length=1.04,
-        wrist_angle=math.radians(-18.61),
+        arm_length=1.03,
+        wrist_angle=math.radians(25),
         intake_enabled=False,
         claw_scoring=True,
         claw_picking=False,
@@ -97,10 +97,11 @@ scoring_locations: dict[str, TargetData] = {
         max_velocity=1,
         max_acceleration=0.5,
         max_angular_velocity=1,
+        claw_wait=True,
     ),
     "pickup": TargetData(
         target_pose=None,
-        arm_angle=math.radians(-100),
+        arm_angle=math.radians(-98),
         arm_length=0.099,
         wrist_angle=math.radians(-50.53),
         intake_enabled=False,

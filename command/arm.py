@@ -34,6 +34,7 @@ class ZeroElevator(SubsystemCommand[Arm]):
     def end(self, interrupted=False):
         self.subsystem.motor_extend.set_sensor_position(0)
         print("Elevator successfully zeroed.")
+        print("ELEVATOR ZEROED")
         utils.logger.debug("Elevator", "Elevator Successfully Zeroed.")
 
 
@@ -259,8 +260,8 @@ class SetArm(SubsystemCommand[Arm]):
 
     def isFinished(self) -> bool:
         # return (
-        #     abs(self.subsystem.get_rotation() - self.real_desired) < self.threshold
-        #     and abs(self.subsystem.get_length() - self.distance) < 0.05
+        #         abs(self.subsystem.get_rotation() - self.real_desired) < self.threshold
+        #         and abs(self.subsystem.get_length() - self.distance) < 0.05
         # )
         return False
 

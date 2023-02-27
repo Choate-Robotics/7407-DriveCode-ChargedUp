@@ -1,3 +1,5 @@
+import math
+
 import commands2
 import wpilib
 from wpilib import SmartDashboard
@@ -92,13 +94,13 @@ class _Robot(wpilib.TimedRobot):
         #     "gyro_angle: ", math.degrees(Robot.drivetrain.gyro.get_robot_heading())
         # )
         #
-        # SmartDashboard.putNumber(
-        #     "SHOULDER ANGLE: ", math.degrees(Robot.arm.get_rotation())
-        # )
-        # SmartDashboard.putNumber(
-        #     "WRIST ANGLE: ", math.degrees(Robot.grabber.get_angle())
-        # )
-        # SmartDashboard.putNumber("SHOULDER DIST: ", Robot.arm.get_length())
+        SmartDashboard.putNumber(
+            "SHOULDER ANGLE: ", math.degrees(Robot.arm.get_rotation())
+        )
+        SmartDashboard.putNumber(
+            "WRIST ANGLE: ", math.degrees(Robot.grabber.get_angle())
+        )
+        SmartDashboard.putNumber("SHOULDER DIST: ", Robot.arm.get_length())
 
         try:
             commands2.CommandScheduler.getInstance().run()

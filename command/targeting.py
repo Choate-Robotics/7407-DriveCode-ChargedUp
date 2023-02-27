@@ -1,3 +1,5 @@
+import math
+
 import commands2
 from commands2 import (
     InstantCommand,
@@ -22,6 +24,7 @@ class Target(SubsystemCommand[Arm]):
         intake: Intake,
         field_odometry: FieldOdometry,
         target: TargetData,
+        grabber_back_first=False,
     ):
         super().__init__(arm)
         super().addRequirements(grabber)
@@ -37,6 +40,8 @@ class Target(SubsystemCommand[Arm]):
         self.finished = False
         self.arm_on = True
         self.intake_on = True
+
+        self.grabber_back_first = grabber_back_first
 
         self.arm_sequence: SequentialCommandGroup | None = None
         self.intake_command: InstantCommand | None = None
@@ -83,12 +88,24 @@ class Target(SubsystemCommand[Arm]):
                     command.SetGrabber(self.grabber, self.target.wrist_angle, True),
                 )
             elif self.target.claw_scoring and self.arm_on:
-                self.arm_sequence = SequentialCommandGroup(
+                self.arm_sequence = ParallelCommandGroup(
                     command.SetArm(
                         self.arm, self.target.arm_length, self.target.arm_angle
                     ),
-                    command.SetGrabber(self.grabber, self.target.wrist_angle, False),
-                    InstantCommand(self.grabber.open_claw()),
+                    SequentialCommandGroup(
+                        command.SetGrabber(
+                            self.grabber,
+                            math.radians(90)
+                            * (-1 if self.target.wrist_angle > 0 else 1),
+                            False,
+                        ),
+                        command.SetGrabber(
+                            self.grabber,
+                            math.radians(25)
+                            * (-1 if self.target.wrist_angle > 0 else 1),
+                            False,
+                        ),
+                    ),
                 )
             elif self.arm_on:
                 self.arm_sequence = SequentialCommandGroup(

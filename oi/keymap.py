@@ -39,8 +39,12 @@ class Keymap:
         )
 
     class Claw:
-        OPEN_CLAW = GRABBER = commands2.button.JoystickButton(
+        OPEN_CLAW = commands2.button.JoystickButton(
             Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.A
+        )
+
+        DROP_CLAW = commands2.button.JoystickButton(
+            Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.B
         )
 
     class Targeting:

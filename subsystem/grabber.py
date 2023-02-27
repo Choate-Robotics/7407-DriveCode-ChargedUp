@@ -28,13 +28,15 @@ class Grabber(Subsystem):
 
     wrist_abs_encoder = None
 
-    distance_sensor: rev.AnalogInput = None
+    distance_sensor_front: wpilib.AnalogInput = None
+    distance_sensor_back: rev.AnalogInput = None
 
     def init(self):
         self.wrist.init()
         self.claw_motor.init()
         self.claw_motor_initialized = True
-        self.distance_sensor = self.claw_motor.motor.getAnalog()
+        self.distance_sensor_back = self.claw_motor.motor.getAnalog()
+        self.distance_sensor_front = wpilib.AnalogInput(0)
 
         self.wrist_abs_encoder = self.wrist.motor.getAbsoluteEncoder(
             rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle
@@ -53,10 +55,13 @@ class Grabber(Subsystem):
         self.zero_wrist()
 
     def get_cube_detected(self):
-        return 0.5 < self.distance_sensor.getVoltage()
+        avg_voltage = self.distance_sensor_back.getVoltage()
+        return 0.5 < avg_voltage
 
     def get_cone_detected(self):
-        return 0.3 < self.distance_sensor.getVoltage()
+        avg_voltage = self.distance_sensor_back.getVoltage()
+        return 0.6 < avg_voltage
+        # return False
 
     def set_angle(self, pos: float):
         """
