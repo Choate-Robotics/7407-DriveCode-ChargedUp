@@ -5,8 +5,8 @@ from wpimath.geometry import Pose2d
 
 import constants
 from autonomous.auto_routine import AutoRoutine
-from autonomous.utils.custom_pathing import FollowPathCustom, RotateInPlace
-from autonomous.utils.trajectory import CustomTrajectory
+from command.autonomous.custom_pathing import FollowPathCustom, RotateInPlace
+from command.autonomous.trajectory import CustomTrajectory
 from robot_systems import Robot
 from units.SI import meters, meters_per_second, meters_per_second_squared
 from utils import logger
@@ -43,7 +43,9 @@ path_2 = FollowPathCustom(
         waypoints=[
             # Translation2d(.5 * (2.896 - constants.robot_length), .5 * (2.629 - constants.robot_length)),
         ],
-        end_pose=Pose2d(initial_x + field_length, initial_y + field_width, math.radians(180)),
+        end_pose=Pose2d(
+            initial_x + field_length, initial_y + field_width, math.radians(180)
+        ),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=max_vel,
@@ -55,7 +57,9 @@ path_2 = FollowPathCustom(
 path_3 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(initial_x + field_length, initial_y + field_width, math.radians(180)),
+        start_pose=Pose2d(
+            initial_x + field_length, initial_y + field_width, math.radians(180)
+        ),
         waypoints=[
             # Translation2d(.5 * (2.896 - constants.robot_length), .5 * (2.629 - constants.robot_length)),
         ],
@@ -107,7 +111,9 @@ path_6 = FollowPathCustom(
         waypoints=[
             # Translation2d(.5 * (2.896 - constants.robot_length), .5 * (2.629 - constants.robot_length)),
         ],
-        end_pose=Pose2d(initial_x + field_length, initial_y + field_width, math.radians(270)),
+        end_pose=Pose2d(
+            initial_x + field_length, initial_y + field_width, math.radians(270)
+        ),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=max_vel,
@@ -119,7 +125,9 @@ path_6 = FollowPathCustom(
 path_7 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(initial_x + field_length, initial_y + field_width, math.radians(270)),
+        start_pose=Pose2d(
+            initial_x + field_length, initial_y + field_width, math.radians(270)
+        ),
         waypoints=[
             # Translation2d(.5 * (2.896 - constants.robot_length), .5 * (2.629 - constants.robot_length)),
         ],

@@ -9,7 +9,7 @@ from units.SI import seconds
 
 
 def weighted_pose_average(
-        robot_pose: Pose2d, vision_pose: Pose3d, robot_weight: float, vision_weight: float
+    robot_pose: Pose2d, vision_pose: Pose3d, robot_weight: float, vision_weight: float
 ) -> Pose2d:
     """
     Returns a weighted average of two poses.
@@ -30,12 +30,12 @@ def weighted_pose_average(
     return Pose2d(
         Translation2d(
             (
-                    robot_pose.translation().X() * robot_weight
-                    + vision_pose.translation().X() * vision_weight
+                robot_pose.translation().X() * robot_weight
+                + vision_pose.translation().X() * vision_weight
             ),
             (
-                    robot_pose.translation().Y() * robot_weight
-                    + vision_pose.translation().Y() * vision_weight
+                robot_pose.translation().Y() * robot_weight
+                + vision_pose.translation().Y() * vision_weight
             ),
         ),
         Rotation2d(
@@ -51,7 +51,7 @@ class FieldOdometry:
     """
 
     def __init__(
-            self, drivetrain: Drivetrain, vision_estimator: VisionEstimator | None
+        self, drivetrain: Drivetrain, vision_estimator: VisionEstimator | None
     ):
         self.drivetrain: Drivetrain = drivetrain
 
@@ -85,7 +85,7 @@ class FieldOdometry:
         if self.vision_on:
             current_time = time.time()
             if self.last_update_time is None or (
-                    current_time - self.last_update_time >= self.min_update_wait_time
+                current_time - self.last_update_time >= self.min_update_wait_time
             ):
                 vision_robot_pose_list = (
                     self.vision_estimator.get_estimated_robot_pose()
@@ -100,11 +100,11 @@ class FieldOdometry:
                         vision_robot_pose = vision_robot_pose[0]
 
                         angle_diff = (
-                                math.degrees(
-                                    vision_robot_pose.toPose2d().rotation().radians()
-                                    - self.drivetrain.gyro.get_robot_heading()
-                                )
-                                % 360
+                            math.degrees(
+                                vision_robot_pose.toPose2d().rotation().radians()
+                                - self.drivetrain.gyro.get_robot_heading()
+                            )
+                            % 360
                         )
                         angle_diff_rev = 360 - angle_diff
 

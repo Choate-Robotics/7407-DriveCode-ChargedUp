@@ -80,10 +80,7 @@ class OI:
 
         Keymap.Targeting.TARGETING_MIDDLE.whenReleased(
             SequentialCommandGroup(
-                InstantCommand(lambda: print("Starting released command.")),
-                InstantCommand(lambda: print("ABOUT TO PICK UP 1")),
                 InstantCommand(lambda: Robot.grabber.disengage_claw()),
-                InstantCommand(lambda: print("ABOUT TO PICK UP")),
                 command.Target(
                     Robot.arm,
                     Robot.grabber,
@@ -108,14 +105,14 @@ class OI:
             command.SetGrabber(
                 Robot.grabber,
                 wrist_angle=math.radians(25)
-                            * (-1 if (config.scoring_locations["high"].arm_angle > 0) else 1),
+                * (-1 if (config.scoring_locations["high"].arm_angle > 0) else 1),
                 claw_active=False,
             )
         ).whenReleased(
             command.SetGrabber(
                 Robot.grabber,
                 wrist_angle=math.radians(25)
-                            * (1 if (config.scoring_locations["high"].arm_angle > 0) else -1),
+                * (1 if (config.scoring_locations["high"].arm_angle > 0) else -1),
                 claw_active=False,
             )
         )

@@ -5,8 +5,8 @@ from wpimath.geometry import Pose2d
 
 import constants
 from autonomous.auto_routine import AutoRoutine
-from autonomous.utils.custom_pathing import AutoBalance, FollowPathCustom
-from autonomous.utils.trajectory import CustomTrajectory
+from command.autonomous.custom_pathing import AutoBalance, FollowPathCustom
+from command.autonomous.trajectory import CustomTrajectory
 from robot_systems import Robot
 from units.SI import meters_per_second, meters_per_second_squared
 from utils import logger

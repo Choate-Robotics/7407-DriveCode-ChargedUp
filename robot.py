@@ -28,7 +28,6 @@ class _Robot(wpilib.TimedRobot):
         Robot.grabber.init()
 
         Sensors.pv_controller = PV_Cameras()
-
         Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
         Sensors.gyro = Robot.drivetrain.gyro
 

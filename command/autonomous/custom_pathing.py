@@ -16,7 +16,7 @@ from wpimath.controller import (
 from wpimath.geometry import Pose2d, Rotation2d
 from wpimath.trajectory import Trajectory, TrapezoidProfileRadians
 
-from autonomous.utils.trajectory import CustomTrajectory
+from command.autonomous.trajectory import CustomTrajectory
 from robot_systems import Sensors
 from subsystem import Drivetrain
 
@@ -76,10 +76,10 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
     """
 
     def __init__(
-            self,
-            subsystem: SwerveDrivetrain,
-            trajectory: CustomTrajectory,
-            period: float = 0.02,
+        self,
+        subsystem: SwerveDrivetrain,
+        trajectory: CustomTrajectory,
+        period: float = 0.02,
     ):
         super().__init__(subsystem)
         self.trajectory: Trajectory = trajectory.trajectory
@@ -160,12 +160,12 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
     """
 
     def __init__(
-            self,
-            subsystem: SwerveDrivetrain,
-            theta_f: radians,
-            threshold: float = math.radians(1),
-            max_angular_vel: float | None = None,
-            period: float = 0.02,
+        self,
+        subsystem: SwerveDrivetrain,
+        theta_f: radians,
+        threshold: float = math.radians(1),
+        max_angular_vel: float | None = None,
+        period: float = 0.02,
     ):
         super().__init__(subsystem)
 
@@ -206,8 +206,8 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
 
     def isFinished(self) -> bool:
         return (
-                abs(Sensors.odometry.getPose().rotation().radians() - self.theta_f)
-                < self.threshold
+            abs(Sensors.odometry.getPose().rotation().radians() - self.theta_f)
+            < self.threshold
         )
 
     def runsWhenDisabled(self) -> bool:

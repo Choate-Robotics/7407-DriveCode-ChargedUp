@@ -6,11 +6,11 @@ from commands2 import SequentialCommandGroup
 from robotpy_toolkit_7407.command import SubsystemCommand
 from wpimath.geometry import Pose2d
 
-import autonomous.utils.custom_pathing
 import command
+import command.autonomous.custom_pathing
 import config
 import constants
-from autonomous import CustomTrajectory
+from command.autonomous import CustomTrajectory
 from sensors import FieldOdometry
 from subsystem import Drivetrain
 
@@ -138,13 +138,13 @@ class DrivetrainRoute(SubsystemCommand[Drivetrain]):
                 )
 
                 commands2.CommandScheduler.getInstance().schedule(
-                    autonomous.utils.custom_pathing.RotateInPlace(
+                    command.autonomous.custom_pathing.RotateInPlace(
                         self.subsystem,
                         desired_target.target_pose.rotation().radians(),
                         threshold=math.radians(4),
                         max_angular_vel=config.drivetrain_routing_angular_velocity,
                     ).andThen(
-                        autonomous.utils.custom_pathing.FollowPathCustom(
+                        command.autonomous.custom_pathing.FollowPathCustom(
                             self.subsystem, trajectory
                         ).andThen(DrivetrainScore(self.subsystem, self.odometry))
                     )
@@ -182,7 +182,7 @@ class DrivetrainScore(SubsystemCommand[Drivetrain]):
 
         commands2.CommandScheduler.getInstance().schedule(
             SequentialCommandGroup(
-                autonomous.utils.custom_pathing.RotateInPlace(
+                command.autonomous.custom_pathing.RotateInPlace(
                     self.subsystem,
                     threshold=math.radians(4),
                     theta_f=desired_theta,

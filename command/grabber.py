@@ -1,6 +1,5 @@
 from robotpy_toolkit_7407 import SubsystemCommand
 
-import utils
 from subsystem import Grabber
 from units.SI import radians
 
@@ -24,7 +23,6 @@ class SetGrabber(SubsystemCommand[Grabber]):
         self.finished = not auto_claw
 
     def initialize(self) -> None:
-        print("RUNNING GRABBER")
         self.subsystem.set_angle(self.wrist_angle)
         if self.claw_active:
             self.subsystem.engage_claw()
@@ -45,7 +43,6 @@ class SetGrabber(SubsystemCommand[Grabber]):
         return self.subsystem.is_at_angle(self.wrist_angle) and self.finished
 
     def end(self, interrupted: bool) -> None:
-        print("FINISHED GRABBER SET")
         ...
 
 
@@ -64,5 +61,4 @@ class ZeroWrist(SubsystemCommand[Grabber]):
         return True
 
     def end(self, interrupted=False):
-        utils.logger.debug("Wrist", "Wrist Successfully Zeroed.")
-        print("WRIST ZEROED")
+        ...

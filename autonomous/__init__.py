@@ -1,2 +1,1 @@
-from autonomous.routines.square_auto.square_auto import routine
-from autonomous.utils.trajectory import CustomTrajectory
+from autonomous.routines.basic_auto.basic_auto import routine
