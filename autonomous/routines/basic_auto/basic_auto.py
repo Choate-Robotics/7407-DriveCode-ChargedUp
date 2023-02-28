@@ -75,7 +75,7 @@ auto = SequentialCommandGroup(
         ],
     ),
     InstantCommand(lambda: SmartDashboard.putBoolean("GRABBER", True)),
-    command.SetGrabber(Robot.grabber, wrist_angle=math.radians(-50), claw_active=False),
+    command.SetGrabber(Robot.grabber, wrist_angle=math.radians(-25), claw_active=False),
     InstantCommand(lambda: SmartDashboard.putBoolean("CLAW", True)),
     InstantCommand(lambda: Robot.grabber.open_claw()),
 )
