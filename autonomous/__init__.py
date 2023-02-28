@@ -1,2 +1,2 @@
-from autonomous.routines.move_forward.move_forward import routine
+from autonomous.routines.around_charge_station.around_charge_station import routine
 from autonomous.utils.trajectory import CustomTrajectory

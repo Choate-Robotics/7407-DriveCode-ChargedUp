@@ -33,4 +33,4 @@ auto = SequentialCommandGroup(
     path_1
 )
 
-routine = AutoRoutine(Pose2d(0, 0, math.radians(270)), auto)
+routine = AutoRoutine(Pose2d(0, 0, math.radians(0)), auto)
