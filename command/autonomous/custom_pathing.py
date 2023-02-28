@@ -21,7 +21,7 @@ from subsystem import Drivetrain
 
 class AutoBalance(SubsystemCommand[Drivetrain]):
     def __init__(
-        self, subsystem: Drivetrain, vx, vy, omega, gyro_threshold=math.radians(20)
+        self, subsystem: Drivetrain, vx, vy, omega, gyro_threshold=math.radians(5)
     ):
         super().__init__(subsystem)
         self.subsystem = subsystem
@@ -41,18 +41,19 @@ class AutoBalance(SubsystemCommand[Drivetrain]):
         self.subsystem.set_driver_centric((-self.vx, -self.vy), self.omega)
 
     def isFinished(self) -> bool:
-        print("TIMES ZEROED: ", self.times_zeroed)
         pitch = self.subsystem.gyro.get_robot_pitch()
         if abs(pitch) < self.gyro_threshold:
-            if self.currently_zeroed == 2:
+            if self.currently_zeroed == 1:
                 self.times_zeroed += 1
                 self.currently_zeroed += 1
+                print("TIMES ZEROED: ", self.times_zeroed)
             else:
                 self.currently_zeroed += 1
         else:
+            print("RESET CURRENTLY ZEROED")
             self.currently_zeroed = 0
 
-        return self.times_zeroed > 1
+        return self.times_zeroed > 2
 
     def end(self, interrupted: bool = False) -> None:
         if not interrupted:

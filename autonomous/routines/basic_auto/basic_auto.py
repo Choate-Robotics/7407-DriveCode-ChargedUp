@@ -43,6 +43,9 @@ path_1 = FollowPathCustom(
 )
 
 auto = SequentialCommandGroup(
+    command.ZeroElevator(Robot.arm),
+    command.ZeroShoulder(Robot.arm),
+    command.ZeroWrist(Robot.grabber),
     InstantCommand(lambda: SmartDashboard.putBoolean("AUTO", False)),
     InstantCommand(lambda: SmartDashboard.putBoolean("GRABBER", False)),
     InstantCommand(lambda: SmartDashboard.putBoolean("CLAW", False)),
@@ -66,14 +69,14 @@ auto = SequentialCommandGroup(
     WaitCommand(0.3),
     ParallelCommandGroup(
         command.autonomous.custom_pathing.AutoBalance(
-            Robot.drivetrain, 2.5, 0, 0
+            Robot.drivetrain, 1, 0, 0
         ).andThen(InstantCommand(lambda: SmartDashboard.putBoolean("BAL", True))),
         command.TargetAuto(
             Robot.arm,
             Robot.grabber,
             Robot.intake,
             Sensors.odometry,
-            target=config.scoring_locations["standard"],
+            target=config.scoring_locations["middle_auto_back"],
         ).generate(),
     ),
     InstantCommand(lambda: SmartDashboard.putBoolean("AUTO", False)),
