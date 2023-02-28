@@ -21,7 +21,13 @@ from subsystem import Drivetrain
 
 class AutoBalance(SubsystemCommand[Drivetrain]):
     def __init__(
-        self, subsystem: Drivetrain, vx, vy, omega, gyro_threshold=math.radians(5)
+        self,
+        subsystem: Drivetrain,
+        vx,
+        vy,
+        omega,
+        gyro_threshold=math.radians(5),
+        times_before_stop=1,
     ):
         super().__init__(subsystem)
         self.subsystem = subsystem
@@ -31,6 +37,7 @@ class AutoBalance(SubsystemCommand[Drivetrain]):
         self.gyro_threshold = gyro_threshold
         self.times_zeroed = 0
         self.currently_zeroed = 0
+        self.times_before_stop = times_before_stop
 
     def initialize(self) -> None:
         self.times_zeroed = 0
@@ -53,7 +60,7 @@ class AutoBalance(SubsystemCommand[Drivetrain]):
             print("RESET CURRENTLY ZEROED")
             self.currently_zeroed = 0
 
-        return self.times_zeroed > 2
+        return self.times_zeroed > self.times_before_stop
 
     def end(self, interrupted: bool = False) -> None:
         if not interrupted:

@@ -2,7 +2,6 @@ import math
 
 from commands2 import (
     InstantCommand,
-    ParallelCommandGroup,
     ParallelDeadlineGroup,
     SequentialCommandGroup,
     WaitCommand,
@@ -31,9 +30,23 @@ field_width: meters = (2.629 - constants.robot_length) * 2
 path_1 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(initial_x, initial_y, math.radians(0)),
+        start_pose=Pose2d(4.88, 2.38, math.radians(0)),
         waypoints=[],
-        end_pose=Pose2d(initial_x + 2, initial_y, math.radians(0)),
+        end_pose=Pose2d(6.32, 2.5, math.radians(0)),
+        max_velocity=max_vel,
+        max_accel=max_accel,
+        start_velocity=0,
+        end_velocity=max_vel,
+    ),
+    period=constants.period,
+)
+
+path_2 = FollowPathCustom(
+    subsystem=Robot.drivetrain,
+    trajectory=CustomTrajectory(
+        start_pose=Pose2d(6.32, 2.5, math.radians(0)),
+        waypoints=[],
+        end_pose=Pose2d(4.88, 2.38, math.radians(0)),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=0,
@@ -52,7 +65,7 @@ auto = SequentialCommandGroup(
     InstantCommand(lambda: SmartDashboard.putBoolean("BAL", False)),
     InstantCommand(lambda: SmartDashboard.putBoolean("AUTO", True)),
     ParallelDeadlineGroup(
-        deadline=WaitCommand(1.15),
+        deadline=WaitCommand(1.4),
         commands=[
             command.TargetAuto(
                 Robot.arm,
@@ -67,17 +80,61 @@ auto = SequentialCommandGroup(
     InstantCommand(lambda: SmartDashboard.putBoolean("CLAW", True)),
     InstantCommand(lambda: Robot.grabber.open_claw()),
     WaitCommand(0.3),
-    ParallelCommandGroup(
-        command.autonomous.custom_pathing.AutoBalance(
-            Robot.drivetrain, 1, 0, 0
+    ParallelDeadlineGroup(
+        deadline=command.autonomous.custom_pathing.AutoBalance(
+            Robot.drivetrain, 1, 0, 0, times_before_stop=2
         ).andThen(InstantCommand(lambda: SmartDashboard.putBoolean("BAL", True))),
-        command.TargetAuto(
-            Robot.arm,
-            Robot.grabber,
-            Robot.intake,
-            Sensors.odometry,
-            target=config.scoring_locations["middle_auto_back"],
-        ).generate(),
+        commands=[
+            command.TargetAuto(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Sensors.odometry,
+                target=config.scoring_locations["middle_auto_back"],
+            ).generate()
+        ],
+    ),
+    ParallelDeadlineGroup(
+        deadline=WaitCommand(0.5),
+        commands=[
+            command.TargetAuto(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Sensors.odometry,
+                target=config.scoring_locations["standard"],
+            ).generate()
+        ],
+    ),
+    ParallelDeadlineGroup(
+        deadline=WaitCommand(1.5),
+        commands=[
+            path_1,
+            command.TargetAuto(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Sensors.odometry,
+                target=config.scoring_locations["cube_intake"],
+            ).generate(),
+        ],
+    ),
+    InstantCommand(lambda: Robot.grabber.close_claw()),
+    ParallelDeadlineGroup(
+        deadline=WaitCommand(1.5),
+        commands=[
+            path_2,
+            command.TargetAuto(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Sensors.odometry,
+                target=config.scoring_locations["middle_auto_front"],
+            ).generate(),
+        ],
+    ),
+    command.autonomous.custom_pathing.AutoBalance(
+        Robot.drivetrain, -1, 0, 0, times_before_stop=2
     ),
     InstantCommand(lambda: SmartDashboard.putBoolean("AUTO", False)),
 )

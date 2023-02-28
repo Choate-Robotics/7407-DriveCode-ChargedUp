@@ -69,7 +69,7 @@ class TargetAuto:
                     SequentialCommandGroup(
                         command.SetGrabber(
                             self.grabber,
-                            math.radians(90)
+                            math.radians(70)
                             * (-1 if self.target.wrist_angle > 0 else 1),
                             False,
                         ),
