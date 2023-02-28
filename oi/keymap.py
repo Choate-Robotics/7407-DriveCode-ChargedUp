@@ -1,9 +1,10 @@
+import commands2.button
+import wpilib
 from robotpy_toolkit_7407.oi import (
-    DefaultButton,
     JoystickAxis,
-    LogitechController,
     XBoxController,
 )
+from robotpy_toolkit_7407.oi.joysticks import Joysticks
 
 controllerDRIVER = XBoxController
 controllerOPERATOR = XBoxController
@@ -13,6 +14,9 @@ class Controllers:
     DRIVER = 0
     OPERATOR = 1
 
+    DRIVER_CONTROLLER = wpilib.Joystick(0)
+    OPERATOR_CONTROLLER = wpilib.Joystick(1)
+
 
 class Keymap:
     class Drivetrain:
@@ -20,19 +24,52 @@ class Keymap:
         DRIVE_Y_AXIS = JoystickAxis(Controllers.DRIVER, controllerDRIVER.L_JOY[1])
         DRIVE_ROTATION_AXIS = JoystickAxis(
             Controllers.DRIVER, controllerDRIVER.R_JOY[0]
-        ) 
-        DRIVE_Y2_AXIS = JoystickAxis(Controllers.DRIVER, controllerDRIVER.R_JOY[1])
-        RESET_GYRO = DefaultButton(Controllers.DRIVER, controllerDRIVER.A)
-        REZERO_MOTORS = DefaultButton(Controllers.DRIVER, controllerDRIVER.B)
-        AIM_SWERVE = DefaultButton(Controllers.DRIVER, controllerDRIVER.RT)
-        DRIVER_CENTRIC = DefaultButton(Controllers.DRIVER, controllerDRIVER.LB)
-        DRIVER_CENTRIC_REVERSED = DefaultButton(Controllers.DRIVER, controllerDRIVER.RB)
-        
-    class Arm:
-        ELEVATOR_ROTATION_AXIS = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.L_JOY[0])
-        ELEVATOR_EXTENSION_AXIS = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.L_JOY[1])
-        CLAW_ROTATION_AXIS = JoystickAxis(Controllers.OPERATOR, controllerOPERATOR.R_JOY[0])
-        REZERO_ELEVATOR = DefaultButton(Controllers.OPERATOR, controllerOPERATOR.A)
-        EXTEND_ELEVATOR_MAX = DefaultButton(Controllers.OPERATOR, controllerOPERATOR.B)
-        RETRACT_ELEVATOR_MIN = DefaultButton(Controllers.OPERATOR, controllerOPERATOR.X)
-        ENGAGE_CLAW = DefaultButton(Controllers.OPERATOR, controllerOPERATOR.RT)
+        )
+        RESET_GYRO = commands2.button.JoystickButton(
+            Joysticks.joysticks[Controllers.DRIVER], controllerDRIVER.A
+        )
+        RESET_ODOMETRY = commands2.button.JoystickButton(
+            Joysticks.joysticks[Controllers.DRIVER], controllerOPERATOR.X
+        )
+        ROUTE = commands2.button.Button(
+            lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.LT) > 0.5
+        )
+        LIMIT = commands2.button.Button(
+            lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.RT) > 0.5
+        )
+
+    class Claw:
+        OPEN_CLAW = commands2.button.JoystickButton(
+            Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.A
+        )
+
+        DROP_CLAW = commands2.button.JoystickButton(
+            Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.B
+        )
+
+    class Targeting:
+        TARGETING_PICKUP = commands2.button.Button(
+            lambda: Controllers.OPERATOR_CONTROLLER.getRawAxis(-controllerOPERATOR.LT)
+            > 0.5
+        )
+
+        TARGETING_DOUBLE_STATION = commands2.button.JoystickButton(
+            Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.LB
+        )
+
+        TARGETING_MIDDLE = commands2.button.Button(
+            lambda: Controllers.OPERATOR_CONTROLLER.getRawAxis(-controllerOPERATOR.RT)
+            > 0.5
+        )
+
+        TARGETING_HIGH = commands2.button.JoystickButton(
+            Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.RB
+        )
+
+        TARGETING_CUBE_INTAKE = commands2.button.JoystickButton(
+            Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.X
+        )
+
+        TARGETING_EJECT = commands2.button.JoystickButton(
+            Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.Y
+        )

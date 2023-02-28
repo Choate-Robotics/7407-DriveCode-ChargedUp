@@ -3,11 +3,11 @@ import math
 import constants
 
 
-def boundary_box(self, angle: float) -> float:  # RE_RUNNING DOES NOT WORK
+def boundary_box(Arm, angle: float) -> float:  # RE_RUNNING DOES NOT WORK
     """
     Returns a percentage of the max elevator height allowed at the given angle (limited by the robot extension limits)
     """
-    if self.extension_override:
+    if Arm.extension_override:
         # if the extension override is enabled, return 1, which will maximize the max elevator height
         return 1
     else:
@@ -33,17 +33,17 @@ def boundary_box(self, angle: float) -> float:  # RE_RUNNING DOES NOT WORK
 
         # Finds the length of each the dimensions for the boundary box using the constants
         top_vertical_boundary_from_pivot = (
-                constants.vertical_boundary
-                - constants.pivot_point_height
-                - constants.top_boundary_buffer_gap
+            constants.vertical_boundary
+            - constants.pivot_point_height
+            - constants.top_boundary_buffer_gap
         )  # positive z
         bottom_vertical_boundary_from_pivot = (
-                constants.pivot_point_height - constants.bottom_boundary_buffer_gap
+            constants.pivot_point_height - constants.bottom_boundary_buffer_gap
         )  # negative z
         horizontal_boundary_length_from_pivot = (
-                0.5 * (constants.robot_length)
-                + constants.horizontal_boundary
-                - constants.side_boundary_buffer_gap
+            0.5 * (constants.robot_length)
+            + constants.horizontal_boundary
+            - constants.side_boundary_buffer_gap
         )  # positive x
 
         # the max angle of the boundary dimsensions
@@ -58,9 +58,9 @@ def boundary_box(self, angle: float) -> float:  # RE_RUNNING DOES NOT WORK
         # the side boundry angle can be inferred from the top and bottom boundry angles
 
         # since we can only extend past our bumper in one direction at a time, if the intakes are down, we limit the angle to the side with the intake
-        if not self.intake_up:
+        if not Arm.intake_up:
             back_horizontal_boundary_length_from_pivot = (
-                    -0.5 * (constants.robot_length) - constants.side_boundary_buffer_gap
+                -0.5 * (constants.robot_length) - constants.side_boundary_buffer_gap
             )
             back_horizontal_boundary_max_angle = math.atan2(
                 top_vertical_boundary_from_pivot,

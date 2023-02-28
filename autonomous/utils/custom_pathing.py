@@ -1,6 +1,8 @@
 import math
 import time
 
+import commands2
+from commands2 import InstantCommand, SequentialCommandGroup, WaitCommand
 from robotpy_toolkit_7407.command import SubsystemCommand
 from robotpy_toolkit_7407.subsystem_templates.drivetrain import SwerveDrivetrain
 from robotpy_toolkit_7407.utils.math import bounded_angle_diff, rotate_vector
@@ -11,11 +13,54 @@ from wpimath.controller import (
     PIDController,
     ProfiledPIDControllerRadians,
 )
-from wpimath.geometry import Rotation2d, Pose2d
-from wpimath.trajectory import TrapezoidProfileRadians, Trajectory
+from wpimath.geometry import Pose2d, Rotation2d
+from wpimath.trajectory import Trajectory, TrapezoidProfileRadians
 
 from autonomous.utils.trajectory import CustomTrajectory
 from robot_systems import Sensors
+from subsystem import Drivetrain
+
+
+class AutoBalance(SubsystemCommand[Drivetrain]):
+    def __init__(self, subsystem: Drivetrain, vx, vy, omega, gyro_threshold):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+        self.vx = vx
+        self.vy = vy
+        self.omega = omega
+        self.gyro_threshold = gyro_threshold
+        self.times_tipped = 0
+        self.currently_tipped = False
+
+    def initialize(self) -> None:
+        ...
+
+    def execute(self) -> None:
+        self.subsystem.set_driver_centric((-self.vx, -self.vy), self.omega)
+
+    def isFinished(self) -> bool:
+        if self.subsystem.gyro._gyro.getRawGyro()[1][1] < self.gyro_threshold:
+            if not self.currently_tipped:
+                self.times_tipped += 1
+            self.currently_tipped = True
+        else:
+            self.currently_tipped = False
+
+        return self.times_tipped > 1
+
+    def end(self, interrupted: bool = False) -> None:
+        if not interrupted:
+            commands2.CommandScheduler.getInstance().schedule(
+                command=SequentialCommandGroup(
+                    InstantCommand(
+                        lambda: self.subsystem.set_driver_centric((0.5, 0), 0)
+                    ),
+                    WaitCommand(0.3),
+                    InstantCommand(
+                        lambda: self.subsystem.set_driver_centric((0, 0), 0)
+                    ),
+                )
+            )
 
 
 class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
@@ -86,15 +131,15 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
 
         self.subsystem.set_driver_centric((-vx, -vy), speeds.omega)
 
+    def isFinished(self) -> bool:
+        return self.finished
+
     def end(self, interrupted: bool) -> None:
         self.subsystem.set_driver_centric((0, 0), 0)
         SmartDashboard.putString("POSE", str(self.subsystem.odometry.getPose()))
         SmartDashboard.putString(
             "POSD", str(Sensors.odometry.getPose().rotation().degrees())
         )
-
-    def isFinished(self) -> bool:
-        return self.finished
 
     def runsWhenDisabled(self) -> bool:
         return False
@@ -146,6 +191,7 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
         self.theta_diff: float | None = None
 
     def initialize(self) -> None:
+        print("DESIRED FINAL THETA: ", math.degrees(self.theta_f))
         self.theta_i = Sensors.odometry.getPose().rotation().radians()
         self.theta_diff = bounded_angle_diff(self.theta_i, self.theta_f)
 
@@ -155,6 +201,7 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
         self.subsystem.set_driver_centric((0, 0), speeds.omega)
 
     def end(self, interrupted: bool) -> None:
+        print("ENDED ROTATE")
         self.subsystem.set_driver_centric((0, 0), 0)
 
     def isFinished(self) -> bool:

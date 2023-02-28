@@ -19,7 +19,7 @@ from wpimath.geometry import Pose2d
 
 import constants
 from oi.keymap import Keymap
-from units.SI import degrees
+from units.SI import degrees, meters_per_second_squared
 
 TURN_CONFIG = SparkMaxConfig(
     0.2, 0, 0.003, 0.00015, (-0.5, 0.5), rev.CANSparkMax.IdleMode.kBrake
@@ -126,19 +126,20 @@ class Drivetrain(SwerveDrivetrain):
         absolute_encoder_zeroed_pos=math.radians(48.603 + 270),
     )
 
-    gyro = PigeonIMUGyro_Wrapper(20)
+    gyro: PigeonIMUGyro_Wrapper = PigeonIMUGyro_Wrapper(20)
     axis_dx = Keymap.Drivetrain.DRIVE_X_AXIS
     axis_dy = Keymap.Drivetrain.DRIVE_Y_AXIS
     axis_rotation = Keymap.Drivetrain.DRIVE_ROTATION_AXIS
     track_width: meters = constants.track_width
     max_vel: meters_per_second = constants.drivetrain_max_vel
+    max_target_accel: meters_per_second_squared = constants.drivetrain_max_target_accel
     max_angular_vel: radians_per_second = constants.drivetrain_max_angular_vel
     deadzone_velocity: meters_per_second = 0.01
     deadzone_angular_velocity: radians_per_second = math.radians(5)
     start_angle: degrees = 0
     start_pose: Pose2d = Pose2d(
-        0.0254 * (40.45 + 17.625) + constants.track_width / 2,
-        0.0254 * 42.19,
+        0,
+        0,
         math.radians(start_angle),
     )
     gyro_start_angle: radians = math.radians(start_angle)
