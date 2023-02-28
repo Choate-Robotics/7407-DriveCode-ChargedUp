@@ -7,7 +7,6 @@ from commands2 import (
     SequentialCommandGroup,
 )
 from robotpy_toolkit_7407 import SubsystemCommand
-from wpimath.geometry import Pose2d
 
 import command
 import config
@@ -24,7 +23,6 @@ class TargetAuto:
         grabber: Grabber,
         intake: Intake,
         field_odometry: FieldOdometry,
-        pose: Pose2d,
         target: TargetData,
         grabber_back_first=False,
     ):
@@ -32,8 +30,6 @@ class TargetAuto:
         self.grabber = grabber
         self.intake = intake
         self.field_odometry = field_odometry
-
-        self.pose = pose
 
         self.target = target
 
@@ -48,24 +44,6 @@ class TargetAuto:
         self.command = None
 
     def generate(self) -> ParallelCommandGroup:
-        if self.target.arm_scoring:
-            gyro_angle = self.pose.rotation().degrees()
-
-            if -90 < gyro_angle < 90:
-                self.target.arm_angle = abs(self.target.arm_angle) * (
-                    1 if config.red_team else -1
-                )
-                self.target.wrist_angle = abs(self.target.wrist_angle) * (
-                    1 if config.red_team else -1
-                )
-            else:
-                self.target.arm_angle = (
-                    -1 * abs(self.target.arm_angle) * (1 if config.red_team else -1)
-                )
-                self.target.wrist_angle = (
-                    -1 * abs(self.target.wrist_angle) * (1 if config.red_team else -1)
-                )
-
         if self.target.intake_enabled and self.intake_on:
             self.intake_command = command.IntakeEnable(
                 self.intake, intake_reversed=self.target.intake_reversed

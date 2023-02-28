@@ -2,6 +2,7 @@ import math
 
 from commands2 import (
     InstantCommand,
+    ParallelCommandGroup,
     ParallelDeadlineGroup,
     SequentialCommandGroup,
     WaitCommand,
@@ -10,11 +11,11 @@ from wpilib import SmartDashboard
 from wpimath.geometry import Pose2d
 
 import command
+import config
 import constants
 from autonomous.auto_routine import AutoRoutine
 from command.autonomous.custom_pathing import FollowPathCustom
 from command.autonomous.trajectory import CustomTrajectory
-from config import TargetData
 from robot_systems import Robot, Sensors
 from units.SI import meters, meters_per_second, meters_per_second_squared
 
@@ -32,9 +33,7 @@ path_1 = FollowPathCustom(
     trajectory=CustomTrajectory(
         start_pose=Pose2d(initial_x, initial_y, math.radians(0)),
         waypoints=[],
-        end_pose=Pose2d(
-            initial_x + field_length, initial_y + field_width, math.radians(90)
-        ),
+        end_pose=Pose2d(initial_x + 2, initial_y, math.radians(0)),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=0,
@@ -47,37 +46,37 @@ auto = SequentialCommandGroup(
     InstantCommand(lambda: SmartDashboard.putBoolean("AUTO", False)),
     InstantCommand(lambda: SmartDashboard.putBoolean("GRABBER", False)),
     InstantCommand(lambda: SmartDashboard.putBoolean("CLAW", False)),
+    InstantCommand(lambda: SmartDashboard.putBoolean("BAL", False)),
     InstantCommand(lambda: SmartDashboard.putBoolean("AUTO", True)),
     ParallelDeadlineGroup(
-        deadline=WaitCommand(2),
+        deadline=WaitCommand(1.15),
         commands=[
             command.TargetAuto(
                 Robot.arm,
                 Robot.grabber,
                 Robot.intake,
                 Sensors.odometry,
-                pose=Pose2d(initial_x, initial_y, 0),
-                target=TargetData(
-                    target_pose=None,
-                    arm_angle=math.radians(-49.7),
-                    arm_length=1.03,
-                    wrist_angle=math.radians(25),
-                    intake_enabled=False,
-                    claw_scoring=True,
-                    claw_picking=False,
-                    arm_scoring=True,
-                    max_velocity=1,
-                    max_acceleration=0.5,
-                    max_angular_velocity=1,
-                    claw_wait=True,
-                ),
+                target=config.scoring_locations["high_auto_back"],
             ).generate()
         ],
     ),
     InstantCommand(lambda: SmartDashboard.putBoolean("GRABBER", True)),
-    command.SetGrabber(Robot.grabber, wrist_angle=math.radians(-25), claw_active=False),
     InstantCommand(lambda: SmartDashboard.putBoolean("CLAW", True)),
     InstantCommand(lambda: Robot.grabber.open_claw()),
+    WaitCommand(0.3),
+    ParallelCommandGroup(
+        command.autonomous.custom_pathing.AutoBalance(
+            Robot.drivetrain, 2.5, 0, 0
+        ).andThen(InstantCommand(lambda: SmartDashboard.putBoolean("BAL", True))),
+        command.TargetAuto(
+            Robot.arm,
+            Robot.grabber,
+            Robot.intake,
+            Sensors.odometry,
+            target=config.scoring_locations["standard"],
+        ).generate(),
+    ),
+    InstantCommand(lambda: SmartDashboard.putBoolean("AUTO", False)),
 )
 
 routine = AutoRoutine(Pose2d(initial_x, initial_y, math.radians(0)), auto)

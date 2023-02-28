@@ -113,9 +113,8 @@ class Grabber(Subsystem):
         self.close_claw()
         self.claw_motor.set_target_velocity(0)
 
-    def is_at_angle(self, angle: radians):
-        wrist_threshold = math.radians(2)
-        return abs(self.get_angle() - angle) < wrist_threshold
+    def is_at_angle(self, angle: radians, threshold=math.radians(2)):
+        return abs(self.get_angle() - angle) < threshold
 
     def zero_wrist(self):
         """Sets the shoulder to the zero position (no extension)"""

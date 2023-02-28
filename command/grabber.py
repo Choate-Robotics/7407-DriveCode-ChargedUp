@@ -12,6 +12,7 @@ class SetGrabber(SubsystemCommand[Grabber]):
         claw_active: bool,
         auto_claw: bool = False,
         auto_cube: bool = False,
+        threshold: float | None = None,
     ):
         super().__init__(subsystem)
         self.subsystem = subsystem
@@ -19,6 +20,7 @@ class SetGrabber(SubsystemCommand[Grabber]):
         self.claw_active = claw_active
         self.auto_claw = auto_claw
         self.auto_cube = auto_cube
+        self.threshold = threshold
 
         self.finished = not auto_claw
 
@@ -40,7 +42,12 @@ class SetGrabber(SubsystemCommand[Grabber]):
         ...
 
     def isFinished(self) -> bool:
-        return self.subsystem.is_at_angle(self.wrist_angle) and self.finished
+        if self.threshold is not None:
+            self.subsystem.is_at_angle(
+                self.wrist_angle, threshold=self.threshold
+            ) and self.finished
+        else:
+            return self.subsystem.is_at_angle(self.wrist_angle) and self.finished
 
     def end(self, interrupted: bool) -> None:
         ...

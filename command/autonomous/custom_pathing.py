@@ -1,8 +1,6 @@
 import math
 import time
 
-import commands2
-from commands2 import InstantCommand, SequentialCommandGroup, WaitCommand
 from robotpy_toolkit_7407.command import SubsystemCommand
 from robotpy_toolkit_7407.subsystem_templates.drivetrain import SwerveDrivetrain
 from robotpy_toolkit_7407.utils.math import bounded_angle_diff, rotate_vector
@@ -22,45 +20,44 @@ from subsystem import Drivetrain
 
 
 class AutoBalance(SubsystemCommand[Drivetrain]):
-    def __init__(self, subsystem: Drivetrain, vx, vy, omega, gyro_threshold):
+    def __init__(
+        self, subsystem: Drivetrain, vx, vy, omega, gyro_threshold=math.radians(20)
+    ):
         super().__init__(subsystem)
         self.subsystem = subsystem
         self.vx = vx
         self.vy = vy
         self.omega = omega
         self.gyro_threshold = gyro_threshold
-        self.times_tipped = 0
-        self.currently_tipped = False
+        self.times_zeroed = 0
+        self.currently_zeroed = 0
 
     def initialize(self) -> None:
+        self.times_zeroed = 0
+        self.currently_zeroed = 0
         ...
 
     def execute(self) -> None:
         self.subsystem.set_driver_centric((-self.vx, -self.vy), self.omega)
 
     def isFinished(self) -> bool:
-        if self.subsystem.gyro._gyro.getRawGyro()[1][1] < self.gyro_threshold:
-            if not self.currently_tipped:
-                self.times_tipped += 1
-            self.currently_tipped = True
+        print("TIMES ZEROED: ", self.times_zeroed)
+        pitch = self.subsystem.gyro.get_robot_pitch()
+        if abs(pitch) < self.gyro_threshold:
+            if self.currently_zeroed == 2:
+                self.times_zeroed += 1
+                self.currently_zeroed += 1
+            else:
+                self.currently_zeroed += 1
         else:
-            self.currently_tipped = False
+            self.currently_zeroed = 0
 
-        return self.times_tipped > 1
+        return self.times_zeroed > 1
 
     def end(self, interrupted: bool = False) -> None:
         if not interrupted:
-            commands2.CommandScheduler.getInstance().schedule(
-                command=SequentialCommandGroup(
-                    InstantCommand(
-                        lambda: self.subsystem.set_driver_centric((0.5, 0), 0)
-                    ),
-                    WaitCommand(0.3),
-                    InstantCommand(
-                        lambda: self.subsystem.set_driver_centric((0, 0), 0)
-                    ),
-                )
-            )
+            self.subsystem.set_driver_centric((0, 0), 0)
+        ...
 
 
 class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
