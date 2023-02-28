@@ -5,7 +5,7 @@ from wpimath.geometry import Pose2d
 
 import constants
 from autonomous.auto_routine import AutoRoutine
-from command.autonomous.custom_pathing import AutoBalance, FollowPathCustom
+from command.autonomous.custom_pathing import DriveOverChargeStation, FollowPathCustom
 from command.autonomous.trajectory import CustomTrajectory
 from robot_systems import Robot
 from units.SI import meters_per_second, meters_per_second_squared
@@ -30,7 +30,7 @@ path_1 = FollowPathCustom(
 
 auto = SequentialCommandGroup(
     InstantCommand(lambda: logger.debug("AUTONOMOUS", "Starting autonomous")),
-    AutoBalance(Robot.drivetrain, -1, 0, 0, -10),
+    DriveOverChargeStation(Robot.drivetrain, -1, 0, 0, -10),
 )
 
 routine = AutoRoutine(Pose2d(14.92, 3.35, math.radians(0)), auto)

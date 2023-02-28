@@ -81,7 +81,7 @@ auto = SequentialCommandGroup(
     InstantCommand(lambda: Robot.grabber.open_claw()),
     WaitCommand(0.3),
     ParallelDeadlineGroup(
-        deadline=command.autonomous.custom_pathing.AutoBalance(
+        deadline=command.autonomous.custom_pathing.DriveOverChargeStation(
             Robot.drivetrain, 1, 0, 0, times_before_stop=2
         ).andThen(InstantCommand(lambda: SmartDashboard.putBoolean("BAL", True))),
         commands=[
@@ -134,7 +134,7 @@ auto = SequentialCommandGroup(
         ],
     ),
     command.autonomous.custom_pathing.AutoBalance(
-        Robot.drivetrain, -1, 0, 0, times_before_stop=2
+        Robot.drivetrain, -1, 0, 0, times_before_stop=1
     ),
     InstantCommand(lambda: SmartDashboard.putBoolean("AUTO", False)),
 )

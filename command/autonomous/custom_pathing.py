@@ -26,8 +26,60 @@ class AutoBalance(SubsystemCommand[Drivetrain]):
         vx,
         vy,
         omega,
-        gyro_threshold=math.radians(5),
+        gyro_threshold=math.radians(8),
         times_before_stop=1,
+    ):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+        self.vx = vx
+        self.vy = vy
+        self.omega = omega
+        self.gyro_threshold = gyro_threshold
+        self.times_zeroed = 0
+        self.currently_zeroed = 0
+        self.times_before_stop = times_before_stop
+
+    def initialize(self) -> None:
+        self.times_zeroed = 0
+        self.currently_zeroed = 0
+        ...
+
+    def execute(self) -> None:
+        self.subsystem.set_driver_centric((-self.vx, -self.vy), self.omega)
+        if self.times_zeroed > 1:
+            self.vx *= 0.5
+            self.vy *= 0.5
+
+    def isFinished(self) -> bool:
+        pitch = self.subsystem.gyro.get_robot_pitch()
+        if abs(pitch) < self.gyro_threshold:
+            if self.currently_zeroed == 1:
+                self.times_zeroed += 1
+                self.currently_zeroed += 1
+                print("TIMES ZEROED: ", self.times_zeroed)
+            else:
+                self.currently_zeroed += 1
+        else:
+            print("RESET CURRENTLY ZEROED")
+            self.currently_zeroed = 0
+
+        return self.times_zeroed > self.times_before_stop
+
+    def end(self, interrupted: bool = False) -> None:
+        if not interrupted:
+            self.subsystem.set_driver_centric((0, 0), 0)
+        ...
+
+
+class DriveOverChargeStation(SubsystemCommand[Drivetrain]):
+    def __init__(
+        self,
+        subsystem: Drivetrain,
+        vx,
+        vy,
+        omega,
+        gyro_threshold=math.radians(5),
+        times_before_stop=2,
     ):
         super().__init__(subsystem)
         self.subsystem = subsystem
