@@ -58,8 +58,8 @@ class AutoBalance(SubsystemCommand[Drivetrain]):
             and abs(self.subsystem.gyro.get_robot_pitch()) > self.gyro_threshold_2
             and not self.reduced_speed
         ):
-            self.vx *= 0.5
-            self.vy *= 0.5
+            self.vx *= 0.4
+            self.vy *= 0.4
             self.reduced_speed = True
 
     def isFinished(self) -> bool:

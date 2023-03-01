@@ -102,14 +102,7 @@ auto = SequentialCommandGroup(
             ).generate()
         ],
     ),
-    command.autonomous.custom_pathing.AutoBalance(
-        Robot.drivetrain,
-        -0.5,
-        0,
-        0,
-        times_before_stop=1,
-        gyro_threshold=math.radians(3),
-    ),
+    InstantCommand(lambda: Robot.drivetrain.x_mode()),
     InstantCommand(lambda: SmartDashboard.putBoolean("BAL", True)),
     InstantCommand(lambda: SmartDashboard.putBoolean("AUTO", False)),
 )

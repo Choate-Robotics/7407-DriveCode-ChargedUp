@@ -144,3 +144,9 @@ class Drivetrain(SwerveDrivetrain):
     )
     gyro_start_angle: radians = math.radians(start_angle)
     gyro_offset: radians = math.radians(0)
+
+    def x_mode(self):
+        self.n_front_left.set_motor_angle(math.radians(-45))
+        self.n_front_right.set_motor_angle(math.radians(45))
+        self.n_back_left.set_motor_angle(math.radians(135))
+        self.n_back_right.set_motor_angle(math.radians(225))
