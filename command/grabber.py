@@ -6,13 +6,15 @@ from units.SI import radians
 
 class SetGrabber(SubsystemCommand[Grabber]):
     def __init__(
-        self,
-        subsystem: Grabber,
-        wrist_angle: radians,
-        claw_active: bool,
-        auto_claw: bool = False,
-        auto_cube: bool = False,
-        threshold: float | None = None,
+            self,
+            subsystem: Grabber,
+            wrist_angle: radians,
+            claw_active: bool,
+            auto_claw: bool = False,
+            auto_cube: bool = False,
+            auto_cone: bool = False,
+            auto_double: bool = False,
+            threshold: float | None = None,
     ):
         super().__init__(subsystem)
         self.subsystem = subsystem
@@ -20,6 +22,8 @@ class SetGrabber(SubsystemCommand[Grabber]):
         self.claw_active = claw_active
         self.auto_claw = auto_claw
         self.auto_cube = auto_cube
+        self.auto_cone = auto_cone
+        self.auto_double = auto_double
         self.threshold = threshold
 
         self.finished = not auto_claw
@@ -36,7 +40,10 @@ class SetGrabber(SubsystemCommand[Grabber]):
             if self.auto_cube and self.subsystem.get_cube_detected():
                 self.subsystem.disengage_claw()
                 self.finished = True
-            elif not self.auto_cube and self.subsystem.get_cone_detected():
+            elif self.auto_cone and self.subsystem.get_cone_detected():
+                self.subsystem.disengage_claw()
+                self.finished = True
+            elif self.auto_double and self.subsystem.get_double_station_detected():
                 self.subsystem.disengage_claw()
                 self.finished = True
         ...

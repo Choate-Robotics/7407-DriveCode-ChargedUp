@@ -240,6 +240,8 @@ class Target(SubsystemCommand[Arm]):
                         True,
                         auto_claw=True,
                         auto_cube=self.target.cube_picking,
+                        auto_cone=self.target.cone_picking,
+                        auto_double=self.target.double_station_picking
                     ),
                 )
             elif self.target.claw_scoring and self.arm_on:

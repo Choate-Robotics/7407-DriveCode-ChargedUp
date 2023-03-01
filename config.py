@@ -27,6 +27,8 @@ class TargetData:
 
     claw_picking: bool = False
     cube_picking: bool = False
+    cone_picking: bool = False
+    double_station_picking: bool = False
 
     claw_scoring: bool = False
     arm_scoring: bool = False
@@ -149,6 +151,7 @@ scoring_locations: dict[str, TargetData] = {
         intake_enabled=False,
         claw_scoring=False,
         claw_picking=True,
+        cone_picking=True
     ),
     "double_station": TargetData(
         target_pose=Pose2d(16, 7.51, math.radians(0)),
@@ -158,6 +161,7 @@ scoring_locations: dict[str, TargetData] = {
         intake_enabled=False,
         claw_scoring=False,
         claw_picking=True,
+        double_station_picking=True
     ),
     "cube_intake": TargetData(
         target_pose=None,
