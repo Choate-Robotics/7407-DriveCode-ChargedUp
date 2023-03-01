@@ -200,13 +200,17 @@ class OI:
             )
         )
 
-        Keymap.Claw.OPEN_CLAW.whenPressed(
+        Keymap.Claw.OPEN_CLAW_DRIVER.whenPressed(
             InstantCommand(lambda: Robot.grabber.open_claw()).andThen(
                 lambda: print("DONE")
             )
         )
 
-        Keymap.Claw.OPEN_CLAW.whenReleased(
+        Keymap.Claw.OPEN_CLAW_OPERATOR.whenPressed(
+            InstantCommand(lambda: Robot.grabber.open_claw()).andThen(
+                lambda: print("DONE")
+            )
+        ).whenReleased(
             InstantCommand(lambda: Robot.grabber.close_claw()).andThen(
                 lambda: print("DONE")
             )

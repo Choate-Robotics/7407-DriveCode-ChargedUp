@@ -59,13 +59,11 @@ auto = SequentialCommandGroup(
     command.ZeroElevator(Robot.arm),
     command.ZeroShoulder(Robot.arm),
     command.ZeroWrist(Robot.grabber),
-
     InstantCommand(lambda: SmartDashboard.putBoolean("AUTO", False)),
     InstantCommand(lambda: SmartDashboard.putBoolean("GRABBER", False)),
     InstantCommand(lambda: SmartDashboard.putBoolean("CLAW", False)),
     InstantCommand(lambda: SmartDashboard.putBoolean("BAL", False)),
     InstantCommand(lambda: SmartDashboard.putBoolean("AUTO", True)),
-    
     ParallelDeadlineGroup(
         deadline=WaitCommand(1.4),
         commands=[
@@ -97,7 +95,6 @@ auto = SequentialCommandGroup(
         ],
     ),
     InstantCommand(lambda: Robot.grabber.close_claw()),
-
     ParallelDeadlineGroup(
         deadline=WaitCommand(5),
         commands=[
@@ -108,9 +105,11 @@ auto = SequentialCommandGroup(
                 Robot.intake,
                 Sensors.odometry,
                 target=config.scoring_locations["standard"],
-            ).generate()
+            ).generate(),
         ],
     ),
+    command.IntakeDisable(Robot.intake),
+    WaitCommand(0.3),
     ParallelDeadlineGroup(
         deadline=WaitCommand(1.5),
         commands=[
@@ -124,7 +123,7 @@ auto = SequentialCommandGroup(
         ],
     ),
     InstantCommand(lambda: Robot.grabber.open_claw()),
-    WaitCommand(.3),
+    WaitCommand(0.3),
     ParallelDeadlineGroup(
         deadline=WaitCommand(1.5),
         commands=[
@@ -137,7 +136,6 @@ auto = SequentialCommandGroup(
             ).generate()
         ],
     ),
-
     InstantCommand(lambda: SmartDashboard.putBoolean("AUTO", False)),
 )
 

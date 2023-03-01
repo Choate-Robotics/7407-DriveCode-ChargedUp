@@ -26,10 +26,10 @@ class Keymap:
             Controllers.DRIVER, controllerDRIVER.R_JOY[0]
         )
         RESET_GYRO = commands2.button.JoystickButton(
-            Joysticks.joysticks[Controllers.DRIVER], controllerDRIVER.A
+            Joysticks.joysticks[Controllers.DRIVER], controllerDRIVER.B
         )
         RESET_ODOMETRY = commands2.button.JoystickButton(
-            Joysticks.joysticks[Controllers.DRIVER], controllerOPERATOR.X
+            Joysticks.joysticks[Controllers.DRIVER], controllerOPERATOR.Y
         )
         ROUTE = commands2.button.Button(
             lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.LT) > 0.5
@@ -39,7 +39,11 @@ class Keymap:
         )
 
     class Claw:
-        OPEN_CLAW = commands2.button.JoystickButton(
+        OPEN_CLAW_DRIVER = commands2.button.JoystickButton(
+            Controllers.DRIVER_CONTROLLER, controllerDRIVER.A
+        )
+
+        OPEN_CLAW_OPERATOR = commands2.button.JoystickButton(
             Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.A
         )
 
