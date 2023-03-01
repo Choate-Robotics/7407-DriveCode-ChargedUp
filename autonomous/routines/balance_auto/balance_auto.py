@@ -102,6 +102,9 @@ auto = SequentialCommandGroup(
             ).generate()
         ],
     ),
+    InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0.4, 0), 0)),
+    WaitCommand(0.4),
+    InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0, 0), 0)),
     InstantCommand(lambda: Robot.drivetrain.x_mode()),
     InstantCommand(lambda: SmartDashboard.putBoolean("BAL", True)),
     InstantCommand(lambda: SmartDashboard.putBoolean("AUTO", False)),
