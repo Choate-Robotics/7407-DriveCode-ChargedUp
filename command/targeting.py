@@ -164,9 +164,9 @@ class Target(SubsystemCommand[Arm]):
 
     def initialize(self) -> None:
         if self.target.arm_scoring:
-            gyro_angle = Sensors.odometry.getPose().rotation().degrees()
+            gyro_angle = (math.degrees(Sensors.gyro.get_robot_heading()) % 360) - 180
 
-            if -90 < gyro_angle < 90:
+            if not (-90 < gyro_angle < 90):
                 self.target.arm_angle = abs(self.target.arm_angle) * (
                     1 if config.red_team else -1
                 )
