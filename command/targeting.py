@@ -51,7 +51,7 @@ class TargetAuto:
         elif self.intake_on:
             self.intake_command = command.IntakeDisable(self.intake)
         else:
-            self.intake_command = InstantCommand(lambda: None)
+            self.intake_command = command.IntakeDisable(self.intake)
 
         if self.target.claw_wait:
             if self.target.claw_picking and self.arm_on:

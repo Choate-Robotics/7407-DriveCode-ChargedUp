@@ -2,11 +2,14 @@ import math
 
 import commands2
 import wpilib
+from commands2 import InstantCommand
 from wpilib import SmartDashboard
+from wpimath.geometry import Pose2d
 
+import autonomous
 import command
 import config
-from autonomous import routine
+from autonomous.auto_routine import AutoRoutine
 from oi.OI import OI
 from robot_systems import Pneumatics, Robot, Sensors
 from sensors import FieldOdometry, PV_Cameras
@@ -16,6 +19,7 @@ from utils import logger
 class _Robot(wpilib.TimedRobot):
     def __init__(self):
         super().__init__()
+        self.auto_selection: wpilib.SendableChooser | None = None
 
     def robotInit(self):
         period = 0.03
@@ -39,7 +43,18 @@ class _Robot(wpilib.TimedRobot):
         OI.init()
         OI.map_controls()
 
+        self.auto_selection = wpilib.SendableChooser()
+        self.auto_selection.setDefaultOption("Basic Auto", autonomous.BasicAuto)
+        self.auto_selection.addOption(
+            "Do Nothing", AutoRoutine(Pose2d(0, 0, 0), InstantCommand(lambda: None))
+        )
+        self.auto_selection.addOption("Square Auto", autonomous.SquareAuto)
+        self.auto_selection.addOption("Balance Auto", autonomous.BalanceAuto)
+
+        wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
+
     def robotPeriodic(self):
+        SmartDashboard.putNumber("PITCH", Robot.drivetrain.gyro.get_robot_pitch())
         # SmartDashboard.putNumber("ARM_REAL", math.degrees(Robot.arm.get_rotation()))
         #
         # Sensors.odometry.update()
@@ -137,7 +152,7 @@ class _Robot(wpilib.TimedRobot):
         # )
         # print("Limit Switch: ", Robot.arm.elevator_bottom_sensor.get())
 
-        # print(Robot.arm.elevator_bottom_sensor.get())
+        # SmartDashboard.putBoolean("ELEVATOR_BOTTOM_SENSOR", Robot.arm.elevator_bottom_sensor.get())
         # print(Pneumatics.compressor.getPressure())
         # print("I THINK I'm AT: ", math.degrees(Robot.Arm.get_rotation()))
         # Robot.Arm.disable_brake()
@@ -145,14 +160,7 @@ class _Robot(wpilib.TimedRobot):
 
     def autonomousInit(self):
         Robot.arm.arm_rotation_motor.pid_controller.setOutputRange(-0.2, 0.2, slotID=1)
-        commands2.CommandScheduler.getInstance().schedule(
-            command.ZeroElevator(Robot.arm).andThen(
-                command.ZeroShoulder(Robot.arm).andThen(
-                    command.ZeroWrist(Robot.grabber)
-                )
-            )
-        )
-        routine.run()
+        self.auto_selection.getSelected().run()
 
     def autonomousPeriodic(self):
         pass

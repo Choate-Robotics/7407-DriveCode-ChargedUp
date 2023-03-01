@@ -133,6 +133,7 @@ auto = SequentialCommandGroup(
             ).generate(),
         ],
     ),
+    command.IntakeDisable(Robot.intake),
     command.autonomous.custom_pathing.AutoBalance(
         Robot.drivetrain, -1, 0, 0, times_before_stop=1
     ),

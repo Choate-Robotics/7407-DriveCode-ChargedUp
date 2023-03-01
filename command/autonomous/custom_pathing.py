@@ -26,7 +26,8 @@ class AutoBalance(SubsystemCommand[Drivetrain]):
         vx,
         vy,
         omega,
-        gyro_threshold=math.radians(8),
+        gyro_threshold=math.radians(3),
+        gyro_threshold_2=0.195,
         times_before_stop=1,
     ):
         super().__init__(subsystem)
@@ -35,20 +36,31 @@ class AutoBalance(SubsystemCommand[Drivetrain]):
         self.vy = vy
         self.omega = omega
         self.gyro_threshold = gyro_threshold
+        self.gyro_threshold_2 = gyro_threshold_2
         self.times_zeroed = 0
         self.currently_zeroed = 0
         self.times_before_stop = times_before_stop
+        self.reduced_speed = False
 
     def initialize(self) -> None:
         self.times_zeroed = 0
         self.currently_zeroed = 0
+        self.reduced_speed = False
+        SmartDashboard.putBoolean("REDUCED SPEED", False)
         ...
 
     def execute(self) -> None:
+        SmartDashboard.putBoolean("REDUCED SPEED", self.reduced_speed)
         self.subsystem.set_driver_centric((-self.vx, -self.vy), self.omega)
-        if self.times_zeroed > 1:
+        if (
+            self.times_zeroed > 0
+            and self.currently_zeroed == 0
+            and abs(self.subsystem.gyro.get_robot_pitch()) > self.gyro_threshold_2
+            and not self.reduced_speed
+        ):
             self.vx *= 0.5
             self.vy *= 0.5
+            self.reduced_speed = True
 
     def isFinished(self) -> bool:
         pitch = self.subsystem.gyro.get_robot_pitch()
