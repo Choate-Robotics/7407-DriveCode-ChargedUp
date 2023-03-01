@@ -50,7 +50,8 @@ class _Robot(wpilib.TimedRobot):
         )
         self.auto_selection.addOption("Square Auto", autonomous.SquareAuto)
         self.auto_selection.addOption("Balance Auto", autonomous.BalanceAuto)
-        self.auto_selection.addOption("Cone Cube Score", autonomous.ConeCube)
+        self.auto_selection.addOption("Cone Cube Right", autonomous.ConeCubeRight)
+        self.auto_selection.addOption("Cone Cube Left", autonomous.ConeCubeLeft)
 
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
 

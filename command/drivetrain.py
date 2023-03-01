@@ -16,7 +16,7 @@ from subsystem import Drivetrain
 
 
 def curve_abs(x):
-    return x ** 2
+    return x**2
 
 
 def curve(x):
@@ -182,12 +182,12 @@ class DrivetrainScore(SubsystemCommand[Drivetrain]):
 
         commands2.CommandScheduler.getInstance().schedule(
             SequentialCommandGroup(
-                command.autonomous.custom_pathing.RotateInPlace(
-                    self.subsystem,
-                    threshold=math.radians(6),
-                    theta_f=desired_theta,
-                    max_angular_vel=config.drivetrain_scoring_angular_velocity,
-                ),
+                # command.autonomous.custom_pathing.RotateInPlace(
+                #     self.subsystem,
+                #     threshold=math.radians(6),
+                #     theta_f=desired_theta,
+                #     max_angular_vel=config.drivetrain_scoring_angular_velocity,
+                # ),
                 command.DriveSwerveCustom(self.subsystem),
             )
         )

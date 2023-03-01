@@ -36,6 +36,10 @@ class OI:
             )
         )
 
+        Keymap.Drivetrain.X_MODE.whenPressed(
+            InstantCommand(lambda: Robot.drivetrain.x_mode())
+        )
+
         Keymap.Drivetrain.ROUTE.whenPressed(
             command.DrivetrainRoute(Robot.drivetrain, Sensors.odometry)
         ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))

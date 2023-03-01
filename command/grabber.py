@@ -6,15 +6,15 @@ from units.SI import radians
 
 class SetGrabber(SubsystemCommand[Grabber]):
     def __init__(
-            self,
-            subsystem: Grabber,
-            wrist_angle: radians,
-            claw_active: bool,
-            auto_claw: bool = False,
-            auto_cube: bool = False,
-            auto_cone: bool = False,
-            auto_double: bool = False,
-            threshold: float | None = None,
+        self,
+        subsystem: Grabber,
+        wrist_angle: radians,
+        claw_active: bool,
+        auto_claw: bool = False,
+        auto_cube: bool = False,
+        auto_cone: bool = False,
+        auto_double: bool = False,
+        threshold: float | None = None,
     ):
         super().__init__(subsystem)
         self.subsystem = subsystem

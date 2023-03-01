@@ -151,7 +151,7 @@ scoring_locations: dict[str, TargetData] = {
         intake_enabled=False,
         claw_scoring=False,
         claw_picking=True,
-        cone_picking=True
+        cone_picking=True,
     ),
     "double_station": TargetData(
         target_pose=Pose2d(16, 7.51, math.radians(0)),
@@ -161,7 +161,7 @@ scoring_locations: dict[str, TargetData] = {
         intake_enabled=False,
         claw_scoring=False,
         claw_picking=True,
-        double_station_picking=True
+        double_station_picking=True,
     ),
     "cube_intake": TargetData(
         target_pose=None,

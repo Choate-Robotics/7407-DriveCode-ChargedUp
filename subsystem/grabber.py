@@ -64,7 +64,7 @@ class Grabber(Subsystem):
 
     def get_double_station_detected(self):
         avg_voltage = self.distance_sensor_back.getVoltage()
-        return .8 < avg_voltage
+        return 0.8 < avg_voltage
 
     def set_angle(self, pos: float):
         """
@@ -84,9 +84,9 @@ class Grabber(Subsystem):
         :rtype: float
         """
         return (
-                (self.wrist.get_sensor_position() / constants.wrist_gear_ratio)
-                * math.pi
-                * 2
+            (self.wrist.get_sensor_position() / constants.wrist_gear_ratio)
+            * math.pi
+            * 2
         )
 
     def set_output(self, output: float):
