@@ -18,13 +18,13 @@ from subsystem import Arm, Grabber, Intake
 
 class TargetAuto:
     def __init__(
-        self,
-        arm: Arm,
-        grabber: Grabber,
-        intake: Intake,
-        field_odometry: FieldOdometry,
-        target: TargetData,
-        grabber_back_first=False,
+            self,
+            arm: Arm,
+            grabber: Grabber,
+            intake: Intake,
+            field_odometry: FieldOdometry,
+            target: TargetData,
+            grabber_back_first=False,
     ):
         self.arm = arm
         self.grabber = grabber
@@ -131,13 +131,13 @@ class TargetAuto:
 
 class Target(SubsystemCommand[Arm]):
     def __init__(
-        self,
-        arm: Arm,
-        grabber: Grabber,
-        intake: Intake,
-        field_odometry: FieldOdometry,
-        target: TargetData,
-        grabber_back_first=False,
+            self,
+            arm: Arm,
+            grabber: Grabber,
+            intake: Intake,
+            field_odometry: FieldOdometry,
+            target: TargetData,
+            grabber_back_first=False,
     ):
         super().__init__(arm)
         super().addRequirements(grabber)
@@ -164,9 +164,10 @@ class Target(SubsystemCommand[Arm]):
 
     def initialize(self) -> None:
         if self.target.arm_scoring:
-            gyro_angle = (math.degrees(Sensors.gyro.get_robot_heading()) % 360) - 180
+            gyro_angle = Sensors.gyro.get_robot_heading() % (math.pi * 2)
+            gyro_angle = math.degrees(math.atan2(math.sin(gyro_angle), math.cos(gyro_angle)))
 
-            if not (-90 < gyro_angle < 90):
+            if -90 < gyro_angle < 90:
                 self.target.arm_angle = abs(self.target.arm_angle) * (
                     1 if config.red_team else -1
                 )
@@ -175,10 +176,10 @@ class Target(SubsystemCommand[Arm]):
                 )
             else:
                 self.target.arm_angle = (
-                    -1 * abs(self.target.arm_angle) * (1 if config.red_team else -1)
+                        -1 * abs(self.target.arm_angle) * (1 if config.red_team else -1)
                 )
                 self.target.wrist_angle = (
-                    -1 * abs(self.target.wrist_angle) * (1 if config.red_team else -1)
+                        -1 * abs(self.target.wrist_angle) * (1 if config.red_team else -1)
                 )
 
         if self.target.intake_enabled and self.intake_on:
