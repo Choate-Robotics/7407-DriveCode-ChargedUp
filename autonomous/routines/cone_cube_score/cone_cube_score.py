@@ -36,7 +36,21 @@ path_1 = FollowPathCustom(
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=0,
-        end_velocity=max_vel,
+        end_velocity=0,
+    ),
+    period=constants.period,
+)
+
+path_2 = FollowPathCustom(
+    subsystem=Robot.drivetrain,
+    trajectory=CustomTrajectory(
+        start_pose=Pose2d(6.45, 1, math.radians(0)),
+        waypoints=[],
+        end_pose=Pose2d(1.8, 1.06, math.radians(0)),
+        max_velocity=1.5,
+        max_accel=1,
+        start_velocity=0,
+        end_velocity=0,
     ),
     period=constants.period,
 )
@@ -68,8 +82,9 @@ auto = SequentialCommandGroup(
     InstantCommand(lambda: SmartDashboard.putBoolean("CLAW", True)),
     InstantCommand(lambda: Robot.grabber.open_claw()),
     WaitCommand(0.3),
+    InstantCommand(lambda: Robot.grabber.open_claw()),
     ParallelDeadlineGroup(
-        deadline=WaitCommand(6),
+        deadline=WaitCommand(3.5),
         commands=[
             path_1,
             command.TargetAuto(
@@ -84,7 +99,34 @@ auto = SequentialCommandGroup(
     InstantCommand(lambda: Robot.grabber.close_claw()),
 
     ParallelDeadlineGroup(
-        deadline=WaitCommand(0.5),
+        deadline=WaitCommand(5),
+        commands=[
+            path_2,
+            command.TargetAuto(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Sensors.odometry,
+                target=config.scoring_locations["standard"],
+            ).generate()
+        ],
+    ),
+    ParallelDeadlineGroup(
+        deadline=WaitCommand(1.5),
+        commands=[
+            command.TargetAuto(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Sensors.odometry,
+                target=config.scoring_locations["high_auto_back"],
+            ).generate()
+        ],
+    ),
+    InstantCommand(lambda: Robot.grabber.open_claw()),
+    WaitCommand(.3),
+    ParallelDeadlineGroup(
+        deadline=WaitCommand(1.5),
         commands=[
             command.TargetAuto(
                 Robot.arm,
@@ -95,6 +137,7 @@ auto = SequentialCommandGroup(
             ).generate()
         ],
     ),
+
     InstantCommand(lambda: SmartDashboard.putBoolean("AUTO", False)),
 )
 
