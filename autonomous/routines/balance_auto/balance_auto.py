@@ -90,7 +90,12 @@ auto = SequentialCommandGroup(
     WaitCommand(0.3),
     ParallelDeadlineGroup(
         deadline=command.autonomous.custom_pathing.AutoBalance(
-            Robot.drivetrain, 1.2, 0, 0, times_before_stop=1
+            Robot.drivetrain,
+            1.2,  # Initial velocity of drivetrain while balancing (m/s)
+            0,
+            0,
+            times_before_stop=1,
+            gyro_threshold_2=0.195,  # Threshold for reducing speed of drivetrain (pitch in radians)
         ).andThen(InstantCommand(lambda: SmartDashboard.putBoolean("BAL", True))),
         commands=[
             command.TargetAuto(
@@ -103,7 +108,9 @@ auto = SequentialCommandGroup(
         ],
     ),
     InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0.4, 0), 0)),
-    WaitCommand(0.4),
+    WaitCommand(
+        0.4
+    ),  # TUNE THIS AT SE MASS (HOW LONG TO MOVE BACKWARDS FOR AFTER TIPPING)
     InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0, 0), 0)),
     InstantCommand(lambda: Robot.drivetrain.x_mode()),
     InstantCommand(lambda: SmartDashboard.putBoolean("BAL", True)),
