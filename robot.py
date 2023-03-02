@@ -35,28 +35,42 @@ class _Robot(wpilib.TimedRobot):
         Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
         Sensors.gyro = Robot.drivetrain.gyro
 
-        SmartDashboard.putNumber("ELEVATOR_Voltage", 0)
-        SmartDashboard.putNumber("Test_ELEVATOR_Voltage", 0)
-        SmartDashboard.getNumber("ELEVATOR_P_VALUE", 0)
-        SmartDashboard.putNumber("ARM_Voltage", 0)
+        # SmartDashboard.putNumber("ELEVATOR_Voltage", 0)
+        # SmartDashboard.putNumber("Test_ELEVATOR_Voltage", 0)
+        # SmartDashboard.getNumber("ELEVATOR_P_VALUE", 0)
+        # SmartDashboard.putNumber("ARM_Voltage", 0)
 
         OI.init()
         OI.map_controls()
 
         self.auto_selection = wpilib.SendableChooser()
-        self.auto_selection.setDefaultOption("Basic Auto", autonomous.BasicAuto)
+        self.auto_selection.setDefaultOption(
+            "Blue Basic Auto", autonomous.BlueBasicAuto
+        )
+        self.auto_selection.addOption("Blue Balance Auto", autonomous.BlueBalanceAuto)
+        self.auto_selection.addOption(
+            "Blue Cone Cube Right", autonomous.BlueConeCubeScoreRight
+        )
+        self.auto_selection.addOption(
+            "Blue Cone Cube Left", autonomous.BlueConeCubeScoreLeft
+        )
+        self.auto_selection.addOption("Red Basic Auto", autonomous.RedBasicAuto)
+        self.auto_selection.addOption("Red Balance Auto", autonomous.RedBalanceAuto)
+        self.auto_selection.addOption(
+            "Red Cone Cube Right", autonomous.RedConeCubeScoreRight
+        )
+        self.auto_selection.addOption(
+            "Red Cone Cube Left", autonomous.RedConeCubeScoreLeft
+        )
+        self.auto_selection.addOption("Square Auto", autonomous.SquareAuto)
         self.auto_selection.addOption(
             "Do Nothing", AutoRoutine(Pose2d(0, 0, 0), InstantCommand(lambda: None))
         )
-        self.auto_selection.addOption("Square Auto", autonomous.SquareAuto)
-        self.auto_selection.addOption("Balance Auto", autonomous.BalanceAuto)
-        self.auto_selection.addOption("Cone Cube Right", autonomous.ConeCubeRight)
-        self.auto_selection.addOption("Cone Cube Left", autonomous.ConeCubeLeft)
 
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
 
     def robotPeriodic(self):
-        SmartDashboard.putNumber("PITCH", Robot.drivetrain.gyro.get_robot_pitch())
+        # SmartDashboard.putNumber("PITCH", Robot.drivetrain.gyro.get_robot_pitch())
         # SmartDashboard.putNumber("ARM_REAL", math.degrees(Robot.arm.get_rotation()))
         #
         # Sensors.odometry.update()

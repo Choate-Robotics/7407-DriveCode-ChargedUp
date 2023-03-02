@@ -7,6 +7,17 @@ from units.SI import meters, meters_per_second, meters_per_second_squared, radia
 
 red_team: bool = False
 
+
+def set_red():
+    red_team = True
+
+
+def set_blue():
+    red_team = False
+
+
+field_length = 16.541
+
 drivetrain_scoring_velocity = 1
 drivetrain_scoring_angular_velocity = 1
 drivetrain_routing_velocity = 2

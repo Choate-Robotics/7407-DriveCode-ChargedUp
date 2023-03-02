@@ -6,7 +6,6 @@ from commands2 import (
     SequentialCommandGroup,
     WaitCommand,
 )
-from wpilib import SmartDashboard
 from wpimath.geometry import Pose2d
 
 import command
@@ -16,23 +15,21 @@ from autonomous.auto_routine import AutoRoutine
 from command.autonomous.custom_pathing import FollowPathCustom
 from command.autonomous.trajectory import CustomTrajectory
 from robot_systems import Robot, Sensors
-from units.SI import meters, meters_per_second, meters_per_second_squared
+from units.SI import meters, meters_per_second, meters_per_second_squared, radians
 
 max_vel: meters_per_second = 2
 max_accel: meters_per_second_squared = 4
 
-initial_x: meters = 1.5
-initial_y: meters = 0.57
-
-field_length: meters = (2.896 - constants.robot_length) * 2
-field_width: meters = (2.629 - constants.robot_length) * 2
+initial_x: meters = config.field_length - 1.5
+initial_y: meters = 0.57 + 4.42
+initial_theta: radians = math.radians(180)
 
 path_1 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(1.5, 0.57, math.radians(0)),
+        start_pose=Pose2d(initial_x, initial_y, math.radians(180)),
         waypoints=[],
-        end_pose=Pose2d(6.45, 1, math.radians(0)),
+        end_pose=Pose2d(config.field_length - 6.45, 1 + 3.66, math.radians(180)),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=0,
@@ -44,9 +41,11 @@ path_1 = FollowPathCustom(
 path_2 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(6.45, 1, math.radians(0)),
+        start_pose=Pose2d(config.field_length - 6.45, 1 + 3.66, math.radians(180)),
         waypoints=[],
-        end_pose=Pose2d(1.8, 1.06, math.radians(0)),
+        end_pose=Pose2d(
+            config.field_length - 1.8, 0.57 + 4.42 - (1.06 - 0.57), math.radians(180)
+        ),
         max_velocity=1.5,
         max_accel=1,
         start_velocity=0,
@@ -59,11 +58,6 @@ auto = SequentialCommandGroup(
     command.ZeroElevator(Robot.arm),
     command.ZeroShoulder(Robot.arm),
     command.ZeroWrist(Robot.grabber),
-    InstantCommand(lambda: SmartDashboard.putBoolean("AUTO", False)),
-    InstantCommand(lambda: SmartDashboard.putBoolean("GRABBER", False)),
-    InstantCommand(lambda: SmartDashboard.putBoolean("CLAW", False)),
-    InstantCommand(lambda: SmartDashboard.putBoolean("BAL", False)),
-    InstantCommand(lambda: SmartDashboard.putBoolean("AUTO", True)),
     ParallelDeadlineGroup(
         deadline=WaitCommand(1.4),
         commands=[
@@ -76,8 +70,6 @@ auto = SequentialCommandGroup(
             ).generate()
         ],
     ),
-    InstantCommand(lambda: SmartDashboard.putBoolean("GRABBER", True)),
-    InstantCommand(lambda: SmartDashboard.putBoolean("CLAW", True)),
     InstantCommand(lambda: Robot.grabber.open_claw()),
     WaitCommand(0.3),
     InstantCommand(lambda: Robot.grabber.open_claw()),
@@ -136,7 +128,6 @@ auto = SequentialCommandGroup(
             ).generate()
         ],
     ),
-    InstantCommand(lambda: SmartDashboard.putBoolean("AUTO", False)),
 )
 
-routine = AutoRoutine(Pose2d(initial_x, initial_y, math.radians(0)), auto)
+routine = AutoRoutine(Pose2d(initial_x, initial_y, initial_theta), auto)
