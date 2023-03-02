@@ -43,6 +43,10 @@ class _Robot(wpilib.TimedRobot):
         OI.init()
         OI.map_controls()
 
+        self.team_selection = wpilib.SendableChooser()
+        self.team_selection.setDefaultOption("Blue", config.set_blue)
+        self.team_selection.addOption("Red", config.set_red)
+
         self.auto_selection = wpilib.SendableChooser()
         self.auto_selection.setDefaultOption(
             "Blue Basic Auto", autonomous.BlueBasicAuto
@@ -135,11 +139,13 @@ class _Robot(wpilib.TimedRobot):
 
         try:
             commands2.CommandScheduler.getInstance().run()
-        except Exception as e:
+        except Exception:
             ...
 
     def teleopInit(self):
         logger.debug("TELEOP", "Teleop Initialized")
+        self.team_selection.getSelected()()
+
         commands2.CommandScheduler.getInstance().schedule(
             command.DriveSwerveCustom(Robot.drivetrain)
         )
@@ -159,8 +165,6 @@ class _Robot(wpilib.TimedRobot):
                 )
             )
         )
-
-        Robot.arm.enable_brake()
 
     def teleopPeriodic(self):
         # SmartDashboard.putBoolean(
