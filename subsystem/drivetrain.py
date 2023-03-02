@@ -148,5 +148,5 @@ class Drivetrain(SwerveDrivetrain):
     def x_mode(self):
         self.n_front_left.set_motor_angle(math.radians(-45))
         self.n_front_right.set_motor_angle(math.radians(45))
-        self.n_back_left.set_motor_angle(math.radians(135))
-        self.n_back_right.set_motor_angle(math.radians(225))
+        self.n_back_left.set_motor_angle(math.radians(45))
+        self.n_back_right.set_motor_angle(math.radians(-45))
