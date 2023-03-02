@@ -2,7 +2,7 @@ import math
 
 import commands2
 import wpilib
-from commands2 import InstantCommand
+from commands2 import InstantCommand, SequentialCommandGroup
 from wpilib import SmartDashboard
 from wpimath.geometry import Pose2d
 
@@ -149,20 +149,20 @@ class _Robot(wpilib.TimedRobot):
         commands2.CommandScheduler.getInstance().schedule(
             command.DriveSwerveCustom(Robot.drivetrain)
         )
+
         Robot.arm.arm_rotation_motor.pid_controller.setOutputRange(-0.2, 0.2, slotID=1)
         commands2.CommandScheduler.getInstance().schedule(
-            command.ZeroElevator(Robot.arm).andThen(
-                command.ZeroShoulder(Robot.arm).andThen(
-                    command.ZeroWrist(Robot.grabber).andThen(
-                        command.Target(
-                            Robot.arm,
-                            Robot.grabber,
-                            Robot.intake,
-                            Sensors.odometry,
-                            config.scoring_locations["standard"],
-                        )
-                    )
-                )
+            SequentialCommandGroup(
+                command.ZeroElevator(Robot.arm),
+                command.ZeroShoulder(Robot.arm),
+                command.ZeroWrist(Robot.grabber),
+                command.Target(
+                    Robot.arm,
+                    Robot.grabber,
+                    Robot.intake,
+                    Sensors.odometry,
+                    config.scoring_locations["standard"],
+                ),
             )
         )
 
