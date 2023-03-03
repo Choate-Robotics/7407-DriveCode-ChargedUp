@@ -21,6 +21,6 @@ class Pneumatics:
 
 
 class Sensors:
-    pv_controller: PV_Cameras = PV_Cameras()
-    odometry: FieldOdometry = FieldOdometry(Robot.drivetrain, pv_controller)
+    pv_controller: PV_Cameras = None
+    odometry: FieldOdometry = FieldOdometry(Robot.drivetrain, None)
     gyro: SwerveGyro

@@ -23,7 +23,6 @@ initial_y: meters = 2.18
 initial_theta: radians = math.radians(0)
 
 auto = SequentialCommandGroup(
-    InstantCommand(lambda: config.set_blue()),
     command.ZeroElevator(Robot.arm),
     command.ZeroShoulder(Robot.arm),
     command.ZeroWrist(Robot.grabber),

@@ -20,10 +20,9 @@ max_accel: meters_per_second_squared = 4
 
 initial_x: meters = 1.55
 initial_y: meters = 2.18
-initial_theta: radians = math.radians(180)
+initial_theta: radians = math.radians(0)
 
 auto = SequentialCommandGroup(
-    InstantCommand(lambda: config.set_red()),
     command.ZeroElevator(Robot.arm),
     command.ZeroShoulder(Robot.arm),
     command.ZeroWrist(Robot.grabber),
@@ -44,7 +43,7 @@ auto = SequentialCommandGroup(
     ParallelDeadlineGroup(
         deadline=command.autonomous.custom_pathing.AutoBalance(
             Robot.drivetrain,
-            -1.2,  # Initial velocity of drivetrain while balancing (m/s)
+            1.2,  # Initial velocity of drivetrain while balancing (m/s)
             0,
             0,
             times_before_stop=1,
@@ -61,7 +60,7 @@ auto = SequentialCommandGroup(
         ],
     ),
     # The reason this is same sign vel is that in the auto balance code the drivetrain is set to negative
-    InstantCommand(lambda: Robot.drivetrain.set_robot_centric((-1 * 0.4, 0), 0)),
+    InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0.4, 0), 0)),
     WaitCommand(
         0.4
     ),  # TUNE THIS AT SE MASS (HOW LONG TO MOVE BACKWARDS FOR AFTER TIPPING)

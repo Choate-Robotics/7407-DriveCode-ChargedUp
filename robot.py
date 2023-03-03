@@ -19,20 +19,20 @@ from utils import logger
 class _Robot(wpilib.TimedRobot):
     def __init__(self):
         super().__init__()
+        self.team_selection: wpilib.SendableChooser | None = None
         self.auto_selection: wpilib.SendableChooser | None = None
 
     def robotInit(self):
         period = 0.03
         commands2.CommandScheduler.getInstance().setPeriod(period)
         Pneumatics.compressor.enableAnalog(90, 120)
-
         Robot.arm.init()
         Robot.drivetrain.init()
         Robot.intake.init()
         Robot.grabber.init()
 
-        Sensors.pv_controller = PV_Cameras()
-        Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
+        Sensors.pv_controller = None
+        Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
         Sensors.gyro = Robot.drivetrain.gyro
 
         # SmartDashboard.putNumber("ELEVATOR_Voltage", 0)
@@ -44,8 +44,9 @@ class _Robot(wpilib.TimedRobot):
         OI.map_controls()
 
         self.team_selection = wpilib.SendableChooser()
-        self.team_selection.setDefaultOption("Blue", config.set_blue)
-        self.team_selection.addOption("Red", config.set_red)
+        self.team_selection.setDefaultOption("Blue", "blue")
+        self.team_selection.addOption("Red", "red")
+        wpilib.SmartDashboard.putData("Team Selection", self.team_selection)
 
         self.auto_selection = wpilib.SendableChooser()
         self.auto_selection.setDefaultOption(
@@ -74,6 +75,7 @@ class _Robot(wpilib.TimedRobot):
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
 
     def robotPeriodic(self):
+        SmartDashboard.putBoolean("Team", config.red_team)
         # SmartDashboard.putNumber("PITCH", Robot.drivetrain.gyro.get_robot_pitch())
         # SmartDashboard.putNumber("ARM_REAL", math.degrees(Robot.arm.get_rotation()))
         #
@@ -144,7 +146,6 @@ class _Robot(wpilib.TimedRobot):
 
     def teleopInit(self):
         logger.debug("TELEOP", "Teleop Initialized")
-        self.team_selection.getSelected()()
 
         commands2.CommandScheduler.getInstance().schedule(
             command.DriveSwerveCustom(Robot.drivetrain)
@@ -167,6 +168,7 @@ class _Robot(wpilib.TimedRobot):
         )
 
     def teleopPeriodic(self):
+        config.red_team = False
         # SmartDashboard.putBoolean(
         #     "Limit Switch", Robot.arm.elevator_bottom_sensor.get()
         # )
@@ -179,6 +181,13 @@ class _Robot(wpilib.TimedRobot):
         ...
 
     def autonomousInit(self):
+        config.red_team = False
+        if self.team_selection.getSelected() == "blue":
+            Sensors.pv_controller = PV_Cameras()
+            Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
+        else:
+            Sensors.pv_controller = None
+            Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
         Robot.arm.arm_rotation_motor.pid_controller.setOutputRange(-0.2, 0.2, slotID=1)
         self.auto_selection.getSelected().run()
 

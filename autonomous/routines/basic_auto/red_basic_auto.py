@@ -20,16 +20,16 @@ from units.SI import meters, meters_per_second, meters_per_second_squared, radia
 max_vel: meters_per_second = 2
 max_accel: meters_per_second_squared = 4
 
-initial_x: meters = config.field_length - 1.55
+initial_x: meters = 1.55
 initial_y: meters = 2.18
-initial_theta: radians = math.radians(180)
+initial_theta: radians = math.radians(0)
 
 path_1 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(config.field_length - 4.88, 2.38, math.radians(180)),
+        start_pose=Pose2d(4.88, 2.38, math.radians(0)),
         waypoints=[],
-        end_pose=Pose2d(config.field_length - 6.32, 2.5, math.radians(180)),
+        end_pose=Pose2d(6.32, 2.5, math.radians(0)),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=0,
@@ -41,9 +41,9 @@ path_1 = FollowPathCustom(
 path_2 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(config.field_length - 6.32, 2.5, math.radians(180)),
+        start_pose=Pose2d(6.32, 2.5, math.radians(0)),
         waypoints=[],
-        end_pose=Pose2d(config.field_length - 4.88, 2.38, math.radians(180)),
+        end_pose=Pose2d(4.88, 2.38, math.radians(0)),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=0,
@@ -53,7 +53,6 @@ path_2 = FollowPathCustom(
 )
 
 auto = SequentialCommandGroup(
-    InstantCommand(lambda: config.set_red()),
     command.ZeroElevator(Robot.arm),
     command.ZeroShoulder(Robot.arm),
     command.ZeroWrist(Robot.grabber),
@@ -73,7 +72,7 @@ auto = SequentialCommandGroup(
     WaitCommand(0.3),
     ParallelDeadlineGroup(
         deadline=command.autonomous.custom_pathing.DriveOverChargeStation(
-            Robot.drivetrain, -1, 0, 0, times_before_stop=2
+            Robot.drivetrain, 1, 0, 0, times_before_stop=2
         ),
         commands=[
             command.TargetAuto(
@@ -126,7 +125,7 @@ auto = SequentialCommandGroup(
     ),
     command.IntakeDisable(Robot.intake),
     command.autonomous.custom_pathing.AutoBalance(
-        Robot.drivetrain, 1, 0, 0, times_before_stop=1
+        Robot.drivetrain, -1, 0, 0, times_before_stop=1
     ),
 )
 

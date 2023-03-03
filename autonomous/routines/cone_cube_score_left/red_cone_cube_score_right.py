@@ -20,16 +20,16 @@ from units.SI import meters, meters_per_second, meters_per_second_squared, radia
 max_vel: meters_per_second = 2
 max_accel: meters_per_second_squared = 4
 
-initial_x: meters = config.field_length - 1.5
-initial_y: meters = 0.57 + 4.42
-initial_theta: radians = math.radians(180)
+initial_x: meters = 1.5
+initial_y: meters = config.field_width - (0.57 + 4.42)
+initial_theta: radians = math.radians(0)
 
 path_1 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(initial_x, initial_y, math.radians(180)),
+        start_pose=Pose2d(initial_x, initial_y, math.radians(0)),
         waypoints=[],
-        end_pose=Pose2d(config.field_length - 6.45, 1 + 3.66, math.radians(180)),
+        end_pose=Pose2d(6.45, config.field_width - (1 + 3.66), math.radians(0)),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=0,
@@ -41,10 +41,10 @@ path_1 = FollowPathCustom(
 path_2 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(config.field_length - 6.45, 1 + 3.66, math.radians(180)),
+        start_pose=Pose2d(6.45, config.field_width - (1 + 3.66), math.radians(0)),
         waypoints=[],
         end_pose=Pose2d(
-            config.field_length - 1.8, 0.57 + 4.42 - (1.06 - 0.57), math.radians(180)
+            1.8, config.field_width - (0.57 + 4.42 - (1.06 - 0.57)), math.radians(0)
         ),
         max_velocity=1.5,
         max_accel=1,

@@ -53,7 +53,6 @@ path_2 = FollowPathCustom(
 )
 
 auto = SequentialCommandGroup(
-    InstantCommand(lambda: config.set_blue()),
     command.ZeroElevator(Robot.arm),
     command.ZeroShoulder(Robot.arm),
     command.ZeroWrist(Robot.grabber),
