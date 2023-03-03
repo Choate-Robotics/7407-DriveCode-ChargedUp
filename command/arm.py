@@ -115,13 +115,13 @@ class SetArm(SubsystemCommand[Arm]):
 
         elevator_p = SmartDashboard.getNumber("ELEVATOR_P_VALUE", 0)
         self.arm_controller = PIDController(6, 0, 0.1)
-        self.elevator_controller = PIDController(0.9, 0, 0.0)
+        self.elevator_controller = PIDController(1, 0, 0.0)
         self.arm_controller_profiled = ProfiledPIDControllerRadians(
-            16,
+            17,
             0,
             0.2,
             TrapezoidProfileRadians.Constraints(
-                math.radians(100000), math.radians(400)
+                math.radians(100000), math.radians(450)
             ),
         )
         self.arm_controller_profiled.reset(math.pi / 2 - self.subsystem.get_rotation())
@@ -167,7 +167,7 @@ class SetArm(SubsystemCommand[Arm]):
 
         # ------------ ARM ------------
 
-        arm_maximum_power = 8
+        arm_maximum_power = 9
 
         arm_feed_forward_test = (
             (self.arm_ff_constant_extended - self.arm_ff_constant_retracted)
@@ -214,7 +214,7 @@ class SetArm(SubsystemCommand[Arm]):
 
         # ------------ ELEVATOR ------------
 
-        elevator_maximum_power = 8
+        elevator_maximum_power = 9
 
         elevator_feed_forward = math.sin(math.pi / 2 - current_theta) * 1.1
 
