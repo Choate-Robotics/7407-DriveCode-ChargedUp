@@ -69,7 +69,7 @@ claw_motor_extend_id = 0
 scoring_locations: dict[str, TargetData] = {
     "low": TargetData(
         target_pose=None,
-        arm_angle=math.radians(-108),
+        arm_angle=math.radians(-98),
         arm_length=0.17,
         wrist_angle=math.radians(0),
         intake_enabled=False,
