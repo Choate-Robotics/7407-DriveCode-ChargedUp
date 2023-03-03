@@ -7,6 +7,7 @@ from units.SI import meters, meters_per_second, meters_per_second_squared, radia
 
 red_team: bool = False
 drivetrain_reversed: bool = False
+driver_centric: bool = True
 
 field_length = 16.541
 field_width = 16.688

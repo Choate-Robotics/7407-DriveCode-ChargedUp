@@ -41,21 +41,23 @@ class OI:
         )
 
         def drivetrain_reversed():
-            config.drivetrain_reversed = True
+            # config.drivetrain_reversed = True
+            config.driver_centric = False
 
         def drivetrain_normal():
-            config.drivetrain_reversed = False
+            config.driver_centric = True
+            # config.drivetrain_reversed = False
 
         # Keymap.Drivetrain.ROUTE.whenPressed(
         #     command.DrivetrainRoute(Robot.drivetrain, Sensors.odometry)
         # ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
 
         Keymap.Drivetrain.ROUTE.whenPressed(
-            InstantCommand(lambda: drivetrain_reversed())
-        ).whenReleased(InstantCommand(lambda: drivetrain_normal()))
+            command.DrivetrainScoreFront(Robot.drivetrain, Sensors.odometry)
+        ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
 
         Keymap.Drivetrain.LIMIT.whenPressed(
-            command.DrivetrainScore(Robot.drivetrain, Sensors.odometry)
+            command.DrivetrainScoreBack(Robot.drivetrain, Sensors.odometry)
         ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
 
         # TARGETING
