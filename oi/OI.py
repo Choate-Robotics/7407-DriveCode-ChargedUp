@@ -40,9 +40,19 @@ class OI:
             InstantCommand(lambda: Robot.drivetrain.x_mode())
         )
 
+        def drivetrain_reversed():
+            config.drivetrain_reversed = True
+
+        def drivetrain_normal():
+            config.drivetrain_reversed = False
+
+        # Keymap.Drivetrain.ROUTE.whenPressed(
+        #     command.DrivetrainRoute(Robot.drivetrain, Sensors.odometry)
+        # ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
+
         Keymap.Drivetrain.ROUTE.whenPressed(
-            command.DrivetrainRoute(Robot.drivetrain, Sensors.odometry)
-        ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
+            InstantCommand(lambda: drivetrain_reversed())
+        ).whenReleased(InstantCommand(lambda: drivetrain_normal()))
 
         Keymap.Drivetrain.LIMIT.whenPressed(
             command.DrivetrainScore(Robot.drivetrain, Sensors.odometry)
@@ -68,6 +78,26 @@ class OI:
                     Robot.intake,
                     Sensors.odometry,
                     target=config.scoring_locations["standard_pickup"],
+                ),
+            )
+        )
+
+        Keymap.Targeting.TARGETING_LOW.whenPressed(
+            command.Target(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Sensors.odometry,
+                target=config.scoring_locations["low"],
+            )
+        ).whenReleased(
+            SequentialCommandGroup(
+                command.Target(
+                    Robot.arm,
+                    Robot.grabber,
+                    Robot.intake,
+                    Sensors.odometry,
+                    target=config.scoring_locations["standard"],
                 ),
             )
         )

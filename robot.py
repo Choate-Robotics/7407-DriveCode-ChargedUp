@@ -19,7 +19,7 @@ from utils import logger
 class _Robot(wpilib.TimedRobot):
     def __init__(self):
         super().__init__()
-        self.team_selection: wpilib.SendableChooser | None = None
+        self.pv_selection: wpilib.SendableChooser | None = None
         self.auto_selection: wpilib.SendableChooser | None = None
 
     def robotInit(self):
@@ -43,10 +43,10 @@ class _Robot(wpilib.TimedRobot):
         OI.init()
         OI.map_controls()
 
-        self.team_selection = wpilib.SendableChooser()
-        self.team_selection.setDefaultOption("Blue", "blue")
-        self.team_selection.addOption("Red", "red")
-        wpilib.SmartDashboard.putData("Team Selection", self.team_selection)
+        self.pv_selection = wpilib.SendableChooser()
+        self.pv_selection.setDefaultOption("Off", "off")
+        self.pv_selection.addOption("On", "on")
+        wpilib.SmartDashboard.putData("Photonvision", self.pv_selection)
 
         self.auto_selection = wpilib.SendableChooser()
         self.auto_selection.setDefaultOption(
@@ -182,7 +182,7 @@ class _Robot(wpilib.TimedRobot):
 
     def autonomousInit(self):
         config.red_team = False
-        if self.team_selection.getSelected() == "blue":
+        if self.pv_selection.getSelected() == "on":
             Sensors.pv_controller = PV_Cameras()
             Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
         else:

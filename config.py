@@ -6,6 +6,7 @@ from wpimath.geometry import Pose2d, Translation2d
 from units.SI import meters, meters_per_second, meters_per_second_squared, radians
 
 red_team: bool = False
+drivetrain_reversed: bool = False
 
 field_length = 16.541
 field_width = 16.688
@@ -67,14 +68,14 @@ claw_motor_extend_id = 0
 # SCORING LOCATIONS
 scoring_locations: dict[str, TargetData] = {
     "low": TargetData(
-        target_pose=Pose2d(0, 0, 0),
-        arm_angle=math.radians(0),
-        arm_length=0,
+        target_pose=None,
+        arm_angle=math.radians(-108),
+        arm_length=0.17,
         wrist_angle=math.radians(0),
         intake_enabled=False,
-        claw_scoring=True,
+        claw_scoring=False,
         claw_picking=False,
-        arm_scoring=True,
+        cone_picking=False,
     ),
     "middle": TargetData(
         target_pose=Pose2d(1.55, 1.55, 0),  # 2.43 .94

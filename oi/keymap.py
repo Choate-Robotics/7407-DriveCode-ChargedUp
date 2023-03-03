@@ -72,6 +72,10 @@ class Keymap:
             Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.LB
         )
 
+        TARGETING_LOW = commands2.button.JoystickButton(
+            Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.START
+        )
+
         TARGETING_MIDDLE = commands2.button.Button(
             lambda: Controllers.OPERATOR_CONTROLLER.getRawAxis(-controllerOPERATOR.RT)
             > 0.5
