@@ -31,10 +31,10 @@ class Keymap:
         RESET_ODOMETRY = commands2.button.JoystickButton(
             Joysticks.joysticks[Controllers.DRIVER], controllerDRIVER.Y
         )
-        ROUTE = commands2.button.Button(
+        FRONT_CAM_CENTRIC = commands2.button.Button(
             lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.LT) > 0.5
         )
-        LIMIT = commands2.button.Button(
+        BACK_CAM_CENTRIC = commands2.button.Button(
             lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.RT) > 0.5
         )
         X_MODE = commands2.button.JoystickButton(

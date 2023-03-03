@@ -40,23 +40,11 @@ class OI:
             InstantCommand(lambda: Robot.drivetrain.x_mode())
         )
 
-        def drivetrain_reversed():
-            # config.drivetrain_reversed = True
-            config.driver_centric = False
-
-        def drivetrain_normal():
-            config.driver_centric = True
-            # config.drivetrain_reversed = False
-
-        # Keymap.Drivetrain.ROUTE.whenPressed(
-        #     command.DrivetrainRoute(Robot.drivetrain, Sensors.odometry)
-        # ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
-
-        Keymap.Drivetrain.ROUTE.whenPressed(
+        Keymap.Drivetrain.FRONT_CAM_CENTRIC.whenPressed(
             command.DrivetrainScoreFront(Robot.drivetrain, Sensors.odometry)
         ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
 
-        Keymap.Drivetrain.LIMIT.whenPressed(
+        Keymap.Drivetrain.BACK_CAM_CENTRIC.whenPressed(
             command.DrivetrainScoreBack(Robot.drivetrain, Sensors.odometry)
         ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
 
