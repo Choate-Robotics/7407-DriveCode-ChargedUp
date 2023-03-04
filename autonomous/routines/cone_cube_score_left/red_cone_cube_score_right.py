@@ -75,7 +75,7 @@ auto = SequentialCommandGroup(
     WaitCommand(0.3),
     InstantCommand(lambda: Robot.grabber.open_claw()),
     ParallelDeadlineGroup(
-        deadline=WaitCommand(3.5),
+        deadline=WaitCommand(4.5),
         commands=[
             path_1,
             command.TargetAuto(
