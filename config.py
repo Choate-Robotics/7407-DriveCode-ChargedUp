@@ -74,7 +74,7 @@ scoring_locations: dict[str, TargetData] = {
     "low": TargetData(
         target_pose=None,
         arm_angle=math.radians(-98),
-        arm_length=0.17,
+        arm_length=0,
         wrist_angle=math.radians(0),
         intake_enabled=False,
         claw_scoring=False,
