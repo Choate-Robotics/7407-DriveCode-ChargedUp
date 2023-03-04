@@ -44,8 +44,8 @@ auto = SequentialCommandGroup(
     ParallelDeadlineGroup(
         deadline=command.autonomous.custom_pathing.AutoBalance(
             Robot.drivetrain,
-            1.2,  # Initial velocity of drivetrain while balancing (m/s)
-            0,
+            1.4,  # Initial velocity of drivetrain while balancing (m/s)
+            0.6,  # Final velocity of drivetrain while balancing (m/s)
             0,
             times_before_stop=1,
             gyro_threshold_2=0.195,  # Threshold for reducing speed of drivetrain (pitch in radians)
