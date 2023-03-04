@@ -63,7 +63,7 @@ auto = SequentialCommandGroup(
     # The reason this is same sign vel is that in the auto balance code the drivetrain is set to negative
     InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0.6, 0), 0)),
     WaitCommand(
-        .77
+        0.77
     ),  # TUNE THIS AT SE MASS (HOW LONG TO MOVE BACKWARDS FOR AFTER TIPPING)
     InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0, 0), 0)),
     InstantCommand(lambda: Robot.drivetrain.x_mode()),
