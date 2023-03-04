@@ -173,7 +173,7 @@ class DrivetrainScoreBack(SubsystemCommand[Drivetrain]):
         self.odometry = odometry
 
     def initialize(self) -> None:
-        config.driver_centric = False
+        # config.driver_centric = False
         self.odometry.vision_on = False
         current_theta = self.odometry.getPose().rotation().degrees()
 
