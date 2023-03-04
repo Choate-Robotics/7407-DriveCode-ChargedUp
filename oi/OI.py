@@ -3,6 +3,7 @@ import math
 from commands2 import (
     InstantCommand,
     SequentialCommandGroup,
+    WaitCommand,
 )
 from robotpy_toolkit_7407.utils import logger
 
@@ -48,21 +49,13 @@ class OI:
             command.DrivetrainScoreBack(Robot.drivetrain, Sensors.odometry)
         ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
 
-        def activate_landing_gear():
-            if config.landing_gear_active_init:
-                Robot.drivetrain.deploy_landing_gear()
-            config.landing_gear_active_init = True
-
-        def deactivate_landing_gear():
-            config.landing_gear_active_init = False
-
-        Keymap.Drivetrain.LANDING_GEAR_LEFT.whenPressed(
-            InstantCommand(lambda: activate_landing_gear())
-        ).whenReleased(InstantCommand(lambda: deactivate_landing_gear()))
-
         Keymap.Drivetrain.LANDING_GEAR_RIGHT.whenPressed(
-            InstantCommand(lambda: activate_landing_gear())
-        ).whenReleased(InstantCommand(lambda: deactivate_landing_gear()))
+            SequentialCommandGroup(
+                InstantCommand(lambda: Robot.landing_gear.deploy()),
+                WaitCommand(0.5),
+                InstantCommand(lambda: Robot.landing_gear.release()),
+            )
+        )
 
         # TARGETING
         Keymap.Targeting.TARGETING_PICKUP.whenPressed(

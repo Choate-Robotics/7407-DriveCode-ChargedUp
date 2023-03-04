@@ -30,6 +30,7 @@ class _Robot(wpilib.TimedRobot):
         Robot.drivetrain.init()
         Robot.intake.init()
         Robot.grabber.init()
+        Robot.landing_gear.init()
 
         Sensors.pv_controller = None
         Sensors.odometry = FieldOdometry(Robot.drivetrain, None)

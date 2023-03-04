@@ -10,6 +10,7 @@ class Robot:
     drivetrain = subsystem.Drivetrain()
     intake = subsystem.Intake()
     grabber = subsystem.Grabber()
+    landing_gear = subsystem.LandingGear()
 
 
 class Pneumatics:

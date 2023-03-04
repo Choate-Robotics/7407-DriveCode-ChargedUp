@@ -151,19 +151,6 @@ class Drivetrain(SwerveDrivetrain):
     gyro_start_angle: radians = math.radians(start_angle)
     gyro_offset: radians = math.radians(0)
 
-    landing_gear: SparkMax = SparkMax(8, config=LANDING_CONFIG_BRAKE_ON)
-
-    def init(self):
-        super().init()
-
-        self.landing_gear.init()
-        self.landing_gear.set_sensor_position(0)
-
-    def deploy_landing_gear(self):
-        self.landing_gear.set_target_position(2)
-        self.landing_gear = SparkMax(8, config=LANDING_CONFIG_BRAKE_OFF)
-        self.landing_gear.init()
-
     def x_mode(self):
         self.n_front_left.set_motor_angle(math.radians(-45))
         self.n_front_right.set_motor_angle(math.radians(45))
