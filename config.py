@@ -9,6 +9,8 @@ red_team: bool = False
 drivetrain_reversed: bool = False
 driver_centric: bool = True
 
+landing_gear_active_init = False
+
 field_length = 16.541
 field_width = 16.688
 
