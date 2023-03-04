@@ -27,7 +27,7 @@ auto = SequentialCommandGroup(
     command.ZeroShoulder(Robot.arm),
     command.ZeroWrist(Robot.grabber),
     ParallelDeadlineGroup(
-        deadline=WaitCommand(1.4),
+        deadline=WaitCommand(1.5),
         commands=[
             command.TargetAuto(
                 Robot.arm,
@@ -38,6 +38,7 @@ auto = SequentialCommandGroup(
             ).generate()
         ],
     ),
+    command.SetGrabber(Robot.grabber, wrist_angle=math.radians(-25), claw_active=False),
     InstantCommand(lambda: Robot.grabber.open_claw()),
     WaitCommand(0.3),
     ParallelDeadlineGroup(
@@ -60,9 +61,9 @@ auto = SequentialCommandGroup(
         ],
     ),
     # The reason this is same sign vel is that in the auto balance code the drivetrain is set to negative
-    InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0.4, 0), 0)),
+    InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0.6, 0), 0)),
     WaitCommand(
-        0.4
+        .77
     ),  # TUNE THIS AT SE MASS (HOW LONG TO MOVE BACKWARDS FOR AFTER TIPPING)
     InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0, 0), 0)),
     InstantCommand(lambda: Robot.drivetrain.x_mode()),

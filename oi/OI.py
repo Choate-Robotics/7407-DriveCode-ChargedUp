@@ -129,14 +129,14 @@ class OI:
             command.SetGrabber(
                 Robot.grabber,
                 wrist_angle=math.radians(25)
-                * (-1 if (config.scoring_locations["high"].arm_angle > 0) else 1),
+                            * (-1 if (config.scoring_locations["high"].arm_angle > 0) else 1),
                 claw_active=False,
             )
         ).whenReleased(
             command.SetGrabber(
                 Robot.grabber,
                 wrist_angle=math.radians(25)
-                * (1 if (config.scoring_locations["high"].arm_angle > 0) else -1),
+                            * (1 if (config.scoring_locations["high"].arm_angle > 0) else -1),
                 claw_active=False,
             )
         )
@@ -179,12 +179,15 @@ class OI:
         )
 
         Keymap.Targeting.TARGETING_CUBE_INTAKE.whenPressed(
-            command.Target(
-                Robot.arm,
-                Robot.grabber,
-                Robot.intake,
-                Sensors.odometry,
-                target=config.scoring_locations["cube_intake"],
+            SequentialCommandGroup(
+                InstantCommand(lambda: Robot.grabber.engage_claw()),
+                command.Target(
+                    Robot.arm,
+                    Robot.grabber,
+                    Robot.intake,
+                    Sensors.odometry,
+                    target=config.scoring_locations["cube_intake"],
+                )
             )
         )
 

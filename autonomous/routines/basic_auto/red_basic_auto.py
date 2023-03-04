@@ -68,6 +68,7 @@ auto = SequentialCommandGroup(
             ).generate()
         ],
     ),
+    command.SetGrabber(Robot.grabber, wrist_angle=math.radians(-25), claw_active=False),
     InstantCommand(lambda: Robot.grabber.open_claw()),
     WaitCommand(0.3),
     ParallelDeadlineGroup(

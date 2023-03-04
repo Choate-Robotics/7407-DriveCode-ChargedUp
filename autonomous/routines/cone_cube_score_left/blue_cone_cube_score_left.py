@@ -29,7 +29,7 @@ path_1 = FollowPathCustom(
     trajectory=CustomTrajectory(
         start_pose=Pose2d(initial_x, initial_y, math.radians(0)),
         waypoints=[],
-        end_pose=Pose2d(6.45, 1 + 3.66, math.radians(0)),
+        end_pose=Pose2d(6.55, 1 + 3.66, math.radians(0)),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=0,
@@ -41,7 +41,7 @@ path_1 = FollowPathCustom(
 path_2 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(6.45, 1 + 3.66, math.radians(0)),
+        start_pose=Pose2d(6.55, 1 + 3.66, math.radians(0)),
         waypoints=[],
         end_pose=Pose2d(1.8, 0.57 + 4.42 - (1.06 - 0.57), math.radians(0)),
         max_velocity=1.5,
@@ -68,6 +68,7 @@ auto = SequentialCommandGroup(
             ).generate()
         ],
     ),
+    command.SetGrabber(Robot.grabber, wrist_angle=math.radians(-25), claw_active=False),
     InstantCommand(lambda: Robot.grabber.open_claw()),
     WaitCommand(0.3),
     InstantCommand(lambda: Robot.grabber.open_claw()),
