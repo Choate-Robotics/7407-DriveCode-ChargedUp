@@ -41,6 +41,13 @@ class Keymap:
             Joysticks.joysticks[Controllers.DRIVER], controllerDRIVER.X
         )
 
+        LANDING_GEAR_LEFT = commands2.button.JoystickButton(
+            Joysticks.joysticks[Controllers.DRIVER], controllerDRIVER.START
+        )
+        LANDING_GEAR_RIGHT = commands2.button.JoystickButton(
+            Joysticks.joysticks[Controllers.DRIVER], controllerDRIVER.SELECT
+        )
+
     class Claw:
         OPEN_CLAW_DRIVER = commands2.button.JoystickButton(
             Controllers.DRIVER_CONTROLLER, controllerDRIVER.A
