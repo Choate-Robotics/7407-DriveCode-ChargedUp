@@ -176,6 +176,7 @@ class OI:
         Keymap.Targeting.TARGETING_DOUBLE_STATION.whenReleased(
             SequentialCommandGroup(
                 InstantCommand(lambda: Robot.grabber.disengage_claw()),
+                WaitCommand(0.3),
                 command.SetGrabber(Robot.grabber, 0, False),
                 command.Target(
                     Robot.arm,

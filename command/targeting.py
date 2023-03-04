@@ -184,6 +184,10 @@ class Target(SubsystemCommand[Arm]):
                     -1 * abs(self.target.wrist_angle) * (1 if config.red_team else -1)
                 )
 
+            if self.target.arm_reversed:
+                self.target.arm_angle = -1 * self.target.arm_angle
+                self.target.wrist_angle = -1 * self.target.wrist_angle
+
         if self.target.intake_enabled and self.intake_on:
             self.intake_command = command.IntakeEnable(
                 self.intake, intake_reversed=self.target.intake_reversed

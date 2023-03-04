@@ -39,6 +39,7 @@ class TargetData:
 
     claw_scoring: bool = False
     arm_scoring: bool = False
+    arm_reversed: bool = False
 
     claw_wait: bool = False
 
@@ -162,12 +163,14 @@ scoring_locations: dict[str, TargetData] = {
     ),
     "double_station": TargetData(
         target_pose=Pose2d(16, 7.51, math.radians(0)),
-        arm_angle=math.radians(23.66),
-        arm_length=0.29,
-        wrist_angle=math.radians(83.37),
+        arm_angle=math.radians(32.84),
+        arm_length=0.322,
+        wrist_angle=math.radians(64.63),
         intake_enabled=False,
         claw_scoring=False,
         claw_picking=True,
+        arm_scoring=True,
+        arm_reversed=True,
         double_station_picking=True,
     ),
     "cube_intake": TargetData(
