@@ -16,7 +16,7 @@ from subsystem import Drivetrain
 
 
 def curve_abs(x):
-    return x**2
+    return x ** 2
 
 
 def curve(x):
@@ -211,7 +211,7 @@ class DrivetrainScoreFront(SubsystemCommand[Drivetrain]):
         self.odometry = odometry
 
     def initialize(self) -> None:
-        config.driver_centric = False
+        # config.driver_centric = False
         config.drivetrain_reversed = True
 
         self.odometry.vision_on = False
@@ -251,7 +251,7 @@ class DrivetrainRegular(SubsystemCommand[Drivetrain]):
         self.odometry = odometry
 
     def initialize(self) -> None:
-        config.driver_centric = True
+        # config.driver_centric = True
         config.drivetrain_reversed = False
 
         self.odometry.vision_on = True
