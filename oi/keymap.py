@@ -31,10 +31,10 @@ class Keymap:
         RESET_ODOMETRY = commands2.button.JoystickButton(
             Joysticks.joysticks[Controllers.DRIVER], controllerDRIVER.Y
         )
-        FRONT_CAM_CENTRIC = commands2.button.Button(
+        SLOW_REVERSE = commands2.button.Button(
             lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.LT) > 0.5
         )
-        BACK_CAM_CENTRIC = commands2.button.Button(
+        SLOW_FORWARD = commands2.button.Button(
             lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.RT) > 0.5
         )
         X_MODE = commands2.button.JoystickButton(
@@ -69,7 +69,7 @@ class Keymap:
     class Targeting:
         TARGETING_PICKUP = commands2.button.Button(
             lambda: Controllers.OPERATOR_CONTROLLER.getRawAxis(-controllerOPERATOR.LT)
-            > 0.5
+                    > 0.5
         )
 
         TARGETING_DOUBLE_STATION = commands2.button.JoystickButton(
@@ -82,7 +82,7 @@ class Keymap:
 
         TARGETING_MIDDLE = commands2.button.Button(
             lambda: Controllers.OPERATOR_CONTROLLER.getRawAxis(-controllerOPERATOR.RT)
-            > 0.5
+                    > 0.5
         )
 
         TARGETING_HIGH = commands2.button.JoystickButton(
