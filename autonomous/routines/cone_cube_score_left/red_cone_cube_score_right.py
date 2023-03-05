@@ -78,13 +78,14 @@ auto = SequentialCommandGroup(
     ParallelDeadlineGroup(
         deadline=WaitCommand(3.5),
         commands=[
+            InstantCommand(lambda: Robot.grabber.open_claw()),
             path_1,
             command.TargetAuto(
                 Robot.arm,
                 Robot.grabber,
                 Robot.intake,
                 Sensors.odometry,
-                target=config.scoring_locations["cube_intake"],
+                target=config.scoring_locations["cube_intake_auto"],
             ).generate(),
         ],
     ),

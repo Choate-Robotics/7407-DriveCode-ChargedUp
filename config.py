@@ -183,6 +183,16 @@ scoring_locations: dict[str, TargetData] = {
         claw_picking=True,
         cube_picking=True,
     ),
+    "cube_intake_auto": TargetData(
+        target_pose=None,
+        arm_angle=math.radians(76.5),
+        arm_length=0,
+        wrist_angle=math.radians(94.8),
+        intake_enabled=True,
+        claw_scoring=False,
+        claw_picking=True,
+        cube_picking=False,
+    ),
     "standard": TargetData(
         target_pose=None,
         arm_angle=math.radians(0),

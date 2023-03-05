@@ -260,3 +260,7 @@ class OI:
         Keymap.Claw.RUN_CLAW_DOWN.whenPressed(
             InstantCommand(lambda: Robot.grabber.set_output(0.3))
         ).whenReleased(InstantCommand(lambda: Robot.grabber.set_output(0)))
+
+        Keymap.Targeting.ZERO_ARM.whenPressed(
+            InstantCommand(lambda: Robot.arm.zero_elevator_rotation())
+        )

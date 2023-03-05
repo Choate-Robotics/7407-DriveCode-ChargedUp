@@ -29,7 +29,8 @@ class ZeroElevator(SubsystemCommand[Arm]):
         ...
 
     def isFinished(self):
-        return self.subsystem.elevator_bottom_sensor.get()
+        # return self.subsystem.elevator_bottom_sensor.get()
+        return True
 
     def end(self, interrupted=False):
         self.subsystem.motor_extend.set_sensor_position(0)

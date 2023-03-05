@@ -96,3 +96,7 @@ class Keymap:
         TARGETING_EJECT = commands2.button.JoystickButton(
             Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.Y
         )
+
+        ZERO_ARM = commands2.button.JoystickButton(
+            Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.SELECT
+        )

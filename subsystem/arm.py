@@ -171,6 +171,7 @@ class Arm(Subsystem):
             print(lol)
             length = lol * (1 / constants.elevator_length_per_rotation)
             # finalLength = min()
+            # SmartDashboard.putDouble("elevator target length", length)
             self.motor_extend.set_target_position(length)
             # self.motor_extend.pid_controller.setReference(length, self.motor_extend.motor.ControlType.kPosition, arbFeedforward=)
             # self.rotation_PID.setSmartMotionMaxAccel(0.01)
