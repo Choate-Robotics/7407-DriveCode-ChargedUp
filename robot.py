@@ -76,7 +76,9 @@ class _Robot(wpilib.TimedRobot):
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
 
     def robotPeriodic(self):
-        SmartDashboard.putBoolean("Zero Elevator", Robot.arm.elevator_bottom_sensor.get())
+        SmartDashboard.putBoolean(
+            "Zero Elevator", Robot.arm.elevator_bottom_sensor.get()
+        )
         SmartDashboard.putBoolean("Team", config.red_team)
         # SmartDashboard.putNumber("PITCH", Robot.drivetrain.gyro.get_robot_pitch())
         # SmartDashboard.putNumber("ARM_REAL", math.degrees(Robot.arm.get_rotation()))
