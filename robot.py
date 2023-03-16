@@ -156,7 +156,7 @@ class _Robot(wpilib.TimedRobot):
         Robot.arm.arm_rotation_motor.pid_controller.setOutputRange(-0.2, 0.2, slotID=1)
         commands2.CommandScheduler.getInstance().schedule(
             SequentialCommandGroup(
-                # command.ZeroElevator(Robot.arm),
+                command.ZeroElevator(Robot.arm),
                 command.ZeroShoulder(Robot.arm),
                 command.ZeroWrist(Robot.grabber),
                 command.Target(
