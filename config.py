@@ -175,7 +175,7 @@ scoring_locations: dict[str, TargetData] = {
     ),
     "cube_intake": TargetData(
         target_pose=None,
-        arm_angle=math.radians(76.5),
+        arm_angle=math.radians(69.5),
         arm_length=0,
         wrist_angle=math.radians(94.8),
         intake_enabled=True,

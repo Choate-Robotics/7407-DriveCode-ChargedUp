@@ -9,6 +9,7 @@ from wpimath.geometry import Pose2d
 import autonomous
 import command
 import config
+import constants
 from autonomous.auto_routine import AutoRoutine
 from oi.OI import OI
 from robot_systems import Pneumatics, Robot, Sensors
@@ -143,10 +144,10 @@ class _Robot(wpilib.TimedRobot):
         )
         SmartDashboard.putNumber("SHOULDER DIST: ", Robot.arm.get_length())
 
-        try:
-            commands2.CommandScheduler.getInstance().run()
-        except Exception:
-            ...
+        # try:
+        #     commands2.CommandScheduler.getInstance().run()
+        # except Exception:
+        #     ...
 
     def teleopInit(self):
         logger.debug("TELEOP", "Teleop Initialized")
@@ -187,7 +188,9 @@ class _Robot(wpilib.TimedRobot):
     def autonomousInit(self):
         config.red_team = False
         if self.pv_selection.getSelected() == "on":
-            Sensors.pv_controller = PV_Cameras()
+            Sensors.pv_controller = PV_Cameras(
+                constants.ApriltagPositionDictBlue if self.auto_selection.getSelected().blue_team
+                else constants.ApriltagPositionDictRed)
             Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
         else:
             Sensors.pv_controller = None

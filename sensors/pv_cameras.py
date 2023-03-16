@@ -6,7 +6,7 @@ import constants
 
 
 class PV_Cameras(VisionEstimator):
-    def __init__(self):
+    def __init__(self, april_tags):
         super().__init__()
         self.cameras = [
             (
@@ -15,6 +15,7 @@ class PV_Cameras(VisionEstimator):
             )
             for camera_name in constants.kCameras
         ]
+        self.april_tags = april_tags
 
     def get_estimated_robot_pose(self):
         """this function returns a list of the type (target_id, transformCameraToTarget) for every target"""
@@ -34,13 +35,13 @@ class PV_Cameras(VisionEstimator):
                     SmartDashboard.putNumberArray(
                         "OrigCamPose",
                         [
-                            (constants.ApriltagPositionDict[tag_id] + point.inverse())
+                            (self.april_tags[tag_id] + point.inverse())
                             .toPose2d()
                             .X(),
-                            (constants.ApriltagPositionDict[tag_id] + point.inverse())
+                            (self.april_tags[tag_id] + point.inverse())
                             .toPose2d()
                             .Y(),
-                            (constants.ApriltagPositionDict[tag_id] + point.inverse())
+                            (self.april_tags[tag_id] + point.inverse())
                             .toPose2d()
                             .rotation()
                             .radians(),
@@ -49,7 +50,7 @@ class PV_Cameras(VisionEstimator):
 
                 derivedRobotPoses += [
                     (
-                        constants.ApriltagPositionDict[tag_id]
+                        self.april_tags[tag_id]
                         + point.inverse()
                         + camera[1].inverse(),
                         Timer.getFPGATimestamp(),

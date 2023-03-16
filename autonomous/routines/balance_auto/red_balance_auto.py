@@ -69,4 +69,4 @@ auto = SequentialCommandGroup(
     InstantCommand(lambda: Robot.drivetrain.x_mode()),
 )
 
-routine = AutoRoutine(Pose2d(initial_x, initial_y, initial_theta), auto)
+routine = AutoRoutine(Pose2d(initial_x, initial_y, initial_theta), auto, blue_team=False)

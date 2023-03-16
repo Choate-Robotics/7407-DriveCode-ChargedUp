@@ -20,6 +20,7 @@ class AutoRoutine:
 
     initial_robot_pose: Pose2d
     command: CommandBase
+    blue_team: bool = True
 
     def run(self):
         """
