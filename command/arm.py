@@ -114,7 +114,7 @@ class SetArm(SubsystemCommand[Arm]):
 
         wpilib.SmartDashboard.putBoolean("Arm/IsMoving", True)
 
-        # elevator_p = SmartDashboard.getNumber("ELEVATOR_P_VALUE", 0)
+        elevator_p = SmartDashboard.getNumber("ELEVATOR_P_VALUE", 0)
         self.arm_controller = PIDController(6, 0, 0.1)
         self.elevator_controller = PIDController(1, 0, 0.0)
         self.arm_controller_profiled = ProfiledPIDControllerRadians(

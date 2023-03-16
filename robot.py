@@ -144,10 +144,10 @@ class _Robot(wpilib.TimedRobot):
         )
         SmartDashboard.putNumber("SHOULDER DIST: ", Robot.arm.get_length())
 
-        # try:
-        #     commands2.CommandScheduler.getInstance().run()
-        # except Exception:
-        #     ...
+        try:
+            commands2.CommandScheduler.getInstance().run()
+        except Exception:
+            ...
 
     def teleopInit(self):
         logger.debug("TELEOP", "Teleop Initialized")

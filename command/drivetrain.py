@@ -2,7 +2,6 @@ import logging
 import math
 
 import commands2
-import wpilib
 from commands2 import SequentialCommandGroup
 from robotpy_toolkit_7407.command import SubsystemCommand
 from wpimath.geometry import Pose2d
@@ -31,8 +30,6 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
     driver_centric_reversed = False
 
     def initialize(self) -> None:
-        wpilib.SmartDashboard.putBoolean("SWERVE CUSTOM RUNNING", True)
-
         print("STARTED DRIVE SWERVE")
         pass
 
@@ -72,8 +69,6 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
             )
 
     def end(self, interrupted: bool) -> None:
-        wpilib.SmartDashboard.putBoolean("SWERVE CUSTOM RUNNING", False)
-
         self.subsystem.n_front_left.set(0, 0)
         self.subsystem.n_front_right.set(0, 0)
         self.subsystem.n_back_left.set(0, 0)
