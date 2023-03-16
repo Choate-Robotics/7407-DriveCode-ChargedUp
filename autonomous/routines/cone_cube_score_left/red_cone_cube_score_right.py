@@ -44,7 +44,9 @@ path_2 = FollowPathCustom(
         start_pose=Pose2d(6.45, config.field_width - (1 + 3.66 - 0.3), math.radians(0)),
         waypoints=[],
         end_pose=Pose2d(
-            1.8, config.field_width - (0.57 + 4.42 - (1.06 - 0.57)) + 0.3, math.radians(0)
+            1.8,
+            config.field_width - (0.57 + 4.42 - (1.06 - 0.57)) + 0.3,
+            math.radians(0),
         ),
         max_velocity=1.5,
         max_accel=1,
@@ -134,4 +136,6 @@ auto = SequentialCommandGroup(
     ),
 )
 
-routine = AutoRoutine(Pose2d(initial_x, initial_y, initial_theta), auto, blue_team=False)
+routine = AutoRoutine(
+    Pose2d(initial_x, initial_y, initial_theta), auto, blue_team=False
+)

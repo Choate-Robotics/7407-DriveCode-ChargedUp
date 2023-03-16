@@ -129,4 +129,6 @@ auto = SequentialCommandGroup(
     ),
 )
 
-routine = AutoRoutine(Pose2d(initial_x, initial_y, initial_theta), auto, blue_team=False)
+routine = AutoRoutine(
+    Pose2d(initial_x, initial_y, initial_theta), auto, blue_team=False
+)

@@ -189,8 +189,10 @@ class _Robot(wpilib.TimedRobot):
         config.red_team = False
         if self.pv_selection.getSelected() == "on":
             Sensors.pv_controller = PV_Cameras(
-                constants.ApriltagPositionDictBlue if self.auto_selection.getSelected().blue_team
-                else constants.ApriltagPositionDictRed)
+                constants.ApriltagPositionDictBlue
+                if self.auto_selection.getSelected().blue_team
+                else constants.ApriltagPositionDictRed
+            )
             Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
         else:
             Sensors.pv_controller = None
