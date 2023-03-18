@@ -4,7 +4,13 @@ from dataclasses import dataclass
 from wpimath.geometry import Pose2d, Translation2d
 
 import units.SI
-from units.SI import meters, meters_per_second, meters_per_second_squared, radians
+from units.SI import (
+    inches_to_meters,
+    meters,
+    meters_per_second,
+    meters_per_second_squared,
+    radians,
+)
 
 red_team: bool = False
 drivetrain_reversed: bool = False
@@ -12,8 +18,11 @@ driver_centric: bool = True
 
 landing_gear_active_init = False
 
-field_length = 16.459
-field_width = 8.0137
+# field_length = 16.459
+# field_width = 8.0137
+
+field_length = 651.25 * inches_to_meters
+field_width = 315.5 * inches_to_meters
 
 drivetrain_scoring_velocity = 1
 drivetrain_scoring_angular_velocity = 1

@@ -347,6 +347,3 @@ kCameras = {
         )
     ],
 }
-
-print(ApriltagPositionDictBlue)
-print(ApriltagPositionDictRed)

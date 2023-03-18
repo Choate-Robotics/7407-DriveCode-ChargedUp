@@ -153,9 +153,6 @@ class _Robot(wpilib.TimedRobot):
             ...
 
     def teleopInit(self):
-        Sensors.pv_controller = PV_Cameras(constants.ApriltagPositionDictRed)
-        Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
-
         logger.debug("TELEOP", "Teleop Initialized")
 
         commands2.CommandScheduler.getInstance().schedule(
