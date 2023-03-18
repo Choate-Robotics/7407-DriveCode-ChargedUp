@@ -8,8 +8,7 @@ from wpimath.geometry import Pose3d
 
 import config
 import constants
-import utils
-from units.SI import radians
+from units.SI import meters, radians
 
 # importing packages
 
@@ -43,7 +42,6 @@ class Arm(Subsystem):
     rotation_override: bool = False  # if true, the rotation limits will be ignored
     extension_override: bool = False  # if true, the extension limits will be ignored
     brake_override: bool = False  # if true, the brake will not be enabled or disabled
-    disable_extension: bool = False
     disable_rotation: bool = False
     intake_up: bool = True
 
@@ -161,20 +159,10 @@ class Arm(Subsystem):
         self.stop()
         self.enable_brake()
 
-    def set_length(self, meters) -> None:  # set arm extension
+    def set_length(self, dist: meters) -> None:  # set arm extension
         """Sets the length of the elevator to the given meters, returns true if the elevator is at the given meters, float of the meters the elevator is at if it is not at the given meters"""
-        print(meters)
-        if not self.disable_extension:
-            length_ratio = utils.boundary_box(self, self.get_rotation())
-            # lol = min(length_ratio * constants.max_elevator_height, meters)
-            lol = meters
-            print(lol)
-            length = lol * (1 / constants.elevator_length_per_rotation)
-            # finalLength = min()
-            # SmartDashboard.putDouble("elevator target length", length)
-            self.motor_extend.set_target_position(length)
-            # self.motor_extend.pid_controller.setReference(length, self.motor_extend.motor.ControlType.kPosition, arbFeedforward=)
-            # self.rotation_PID.setSmartMotionMaxAccel(0.01)
+        length = 1 / constants.elevator_length_per_rotation
+        self.motor_extend.set_target_position(length)
 
     def shoulder_rotation_limits(self, angle: radians) -> bool:
         """Returns if the given radians are within the soft limits of the shoulder"""
@@ -183,8 +171,9 @@ class Arm(Subsystem):
             return True
         else:
             return (
-                constants.shoulder_max_rotation >= angle
-                and angle >= -constants.shoulder_min_rotation
+                constants.shoulder_max_rotation
+                >= angle
+                >= -constants.shoulder_min_rotation
             )
 
     def set_rotation(self, angle: radians):  # set arm rotation
