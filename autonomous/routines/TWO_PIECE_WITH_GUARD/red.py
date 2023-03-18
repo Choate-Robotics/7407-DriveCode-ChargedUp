@@ -12,6 +12,11 @@ import command
 import config
 import constants
 from autonomous.auto_routine import AutoRoutine
+from autonomous.routines.TWO_PIECE_WITH_GUARD.base_coords import (
+    base_initial_coords,
+    base_path_1,
+    base_path_2,
+)
 from command.autonomous.custom_pathing import FollowPathCustom
 from command.autonomous.trajectory import CustomTrajectory
 from robot_systems import Robot, Sensors
@@ -20,16 +25,24 @@ from units.SI import meters, meters_per_second, meters_per_second_squared, radia
 max_vel: meters_per_second = 2
 max_accel: meters_per_second_squared = 4
 
-initial_x: meters = 1.5
-initial_y: meters = config.field_width - 0.57
-initial_theta: radians = math.radians(0)
+initial_x: meters = base_initial_coords[0] + 0
+initial_y: meters = config.field_width - base_initial_coords[1] + 0
+initial_theta: radians = base_initial_coords[2] + 0
+
+path_1_end_x: meters = base_path_1[1][0] + 0
+path_1_end_y: meters = config.field_width - base_path_1[1][1] + 0
+path_1_end_theta: radians = base_path_1[1][2] + 0
+
+path_2_end_x: meters = base_path_2[1][0] + 0
+path_2_end_y: meters = config.field_width - base_path_2[1][1] + 0
+path_2_end_theta: radians = base_path_2[1][2] + 0
 
 path_1 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(1.5, config.field_width - 0.57, math.radians(0)),
+        start_pose=Pose2d(initial_x, initial_y, math.radians(0)),
         waypoints=[],
-        end_pose=Pose2d(6.65, config.field_width - 1, math.radians(0)),
+        end_pose=Pose2d(path_1_end_x, path_1_end_y, path_1_end_theta),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=0,
@@ -41,9 +54,9 @@ path_1 = FollowPathCustom(
 path_2 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(6.65, config.field_width - 1, math.radians(0)),
+        start_pose=Pose2d(path_1_end_x, path_1_end_y, path_1_end_theta),
         waypoints=[],
-        end_pose=Pose2d(1.7, config.field_width - 1.06 + 0.2, math.radians(0)),
+        end_pose=Pose2d(path_2_end_x, path_2_end_y, path_2_end_theta),
         max_velocity=1.5,
         max_accel=1,
         start_velocity=0,
@@ -71,21 +84,24 @@ auto = SequentialCommandGroup(
     command.SetGrabber(Robot.grabber, wrist_angle=math.radians(-25), claw_active=False),
     InstantCommand(lambda: Robot.grabber.open_claw()),
     WaitCommand(0.3),
+    # InstantCommand(lambda: Robot.grabber.close_claw()),
     InstantCommand(lambda: Robot.grabber.open_claw()),
     ParallelDeadlineGroup(
         deadline=WaitCommand(3.5),
         commands=[
+            InstantCommand(lambda: Robot.grabber.open_claw()),
             path_1,
             command.TargetAuto(
                 Robot.arm,
                 Robot.grabber,
                 Robot.intake,
                 Sensors.odometry,
-                target=config.scoring_locations["cube_intake"],
+                target=config.scoring_locations["cube_intake_auto"],
             ).generate(),
         ],
     ),
     InstantCommand(lambda: Robot.grabber.close_claw()),
+    WaitCommand(0.5),
     ParallelDeadlineGroup(
         deadline=WaitCommand(5),
         commands=[
