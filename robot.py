@@ -51,25 +51,24 @@ class _Robot(wpilib.TimedRobot):
         wpilib.SmartDashboard.putData("Photonvision", self.pv_selection)
 
         self.auto_selection = wpilib.SendableChooser()
+
         self.auto_selection.setDefaultOption(
-            "Blue Basic Auto", autonomous.BlueBasicAuto
+            "Blue Balance Auto", autonomous.BlueBalanceAuto
         )
-        self.auto_selection.addOption("Blue Balance Auto", autonomous.BlueBalanceAuto)
+
         self.auto_selection.addOption(
-            "Blue Cone Cube Right", autonomous.BlueConeCubeScoreRight
-        )
-        self.auto_selection.addOption(
-            "Blue Cone Cube Left", autonomous.BlueConeCubeScoreLeft
-        )
-        self.auto_selection.addOption("Red Basic Auto", autonomous.RedBasicAuto)
-        self.auto_selection.addOption("Red Balance Auto", autonomous.RedBalanceAuto)
-        self.auto_selection.addOption(
-            "Red Cone Cube Right", autonomous.RedConeCubeScoreRight
+            "Blue Two Piece No Guard", autonomous.TWO_PIECE_NO_GUARD_BLUE
         )
         self.auto_selection.addOption(
-            "Red Cone Cube Left", autonomous.RedConeCubeScoreLeft
+            "Red Two Piece No Guard", autonomous.TWO_PIECE_NO_GUARD_RED
         )
-        self.auto_selection.addOption("Square Auto", autonomous.SquareAuto)
+        self.auto_selection.addOption(
+            "Blue Two Piece With Guard", autonomous.TWO_PIECE_WITH_GUARD_BLUE
+        )
+        self.auto_selection.addOption(
+            "Red Two Piece With Guard", autonomous.TWO_PIECE_WITH_GUARD_RED
+        )
+
         self.auto_selection.addOption(
             "Do Nothing", AutoRoutine(Pose2d(0, 0, 0), InstantCommand(lambda: None))
         )
