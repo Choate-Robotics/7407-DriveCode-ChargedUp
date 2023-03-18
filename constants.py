@@ -6,6 +6,7 @@ import math
 from robotpy_toolkit_7407.utils.units import hour, m, mile, rad, rev, s
 from wpimath.geometry import Pose3d, Rotation3d, Transform3d
 
+from config import field_length, field_width
 from units.SI import (
     inches_to_meters,
     meters,
@@ -217,41 +218,57 @@ drivetrain_max_angular_vel: radians_per_second = (1 * rev / s).asNumber(rad / s)
 drivetrain_max_climb_vel: meters_per_second = (5 * mile / hour).asNumber(m / s)
 
 ApriltagPositionDictRed = {
+    1: Pose3d(
+        (field_length - inches_to_meters * 610.77),
+        (field_width - inches_to_meters * 42.19),
+        (inches_to_meters * 18.22),
+        Rotation3d(0.0, 0.0, 0),
+    ),
+    7: Pose3d(  # IMPORTANT IM SWITCHING WITH 7
+        (field_length - inches_to_meters * 610.77),
+        (field_width - inches_to_meters * 108.19),
+        (inches_to_meters * 18.22),
+        Rotation3d(0.0, 0.0, 0),
+    ),
+    3: Pose3d(
+        (field_length - inches_to_meters * 610.77),
+        (
+            field_width - inches_to_meters * 174.19
+        ),  # FIRST's diagram has a typo (it says 147.19)
+        (inches_to_meters * 18.22),
+        Rotation3d(0.0, 0.0, 0),
+    ),
+    4: Pose3d(
+        (field_length - inches_to_meters * 636.96),
+        (field_width - inches_to_meters * 265.74),
+        (inches_to_meters * 27.38),
+        Rotation3d(0.0, 0.0, 0),
+    ),
+    5: Pose3d(
+        (field_length - inches_to_meters * 14.25),
+        (field_width - inches_to_meters * 265.74),
+        (inches_to_meters * 27.38),
+        Rotation3d(0.0, 0.0, math.pi),
+    ),
     6: Pose3d(
-        (inches_to_meters * 610.77),
-        (inches_to_meters * 42.19),
+        (field_length - inches_to_meters * 40.45),
+        (
+            field_width - inches_to_meters * 174.19
+        ),  # FIRST's diagram has a typo (it says 147.19)
         (inches_to_meters * 18.22),
         Rotation3d(0.0, 0.0, math.pi),
     ),
-    2: Pose3d(  # IMPORTANT IM SWITCHING WITH 7
-        (inches_to_meters * 610.77),
-        (inches_to_meters * 108.19),
+    2: Pose3d(
+        (field_length - inches_to_meters * 40.45),
+        (field_width - inches_to_meters * 108.19),
         (inches_to_meters * 18.22),
         Rotation3d(0.0, 0.0, math.pi),
     ),
     8: Pose3d(
-        (inches_to_meters * 610.77),
-        (inches_to_meters * 174.19),  # FIRST's diagram has a typo (it says 147.19)
+        (field_length - inches_to_meters * 40.45),
+        (field_width - inches_to_meters * 42.19),
         (inches_to_meters * 18.22),
         Rotation3d(0.0, 0.0, math.pi),
-    ),
-    1: Pose3d(
-        (inches_to_meters * 40.45),
-        (inches_to_meters * 174.19),  # FIRST's diagram has a typo (it says 147.19)
-        (inches_to_meters * 18.22),
-        Rotation3d(),
-    ),
-    7: Pose3d(
-        (inches_to_meters * 40.45),
-        (inches_to_meters * 108.19),
-        (inches_to_meters * 18.22),
-        Rotation3d(),
-    ),
-    3: Pose3d(
-        (inches_to_meters * 40.45),
-        (inches_to_meters * 42.19),
-        (inches_to_meters * 18.22),
-        Rotation3d(),
     ),
 }
 
@@ -273,6 +290,18 @@ ApriltagPositionDictBlue = {
         (inches_to_meters * 174.19),  # FIRST's diagram has a typo (it says 147.19)
         (inches_to_meters * 18.22),
         Rotation3d(0.0, 0.0, math.pi),
+    ),
+    4: Pose3d(
+        (inches_to_meters * 636.96),
+        (inches_to_meters * 265.74),
+        (inches_to_meters * 27.38),
+        Rotation3d(0.0, 0.0, math.pi),
+    ),
+    5: Pose3d(
+        (inches_to_meters * 14.25),
+        (inches_to_meters * 265.74),
+        (inches_to_meters * 27.38),
+        Rotation3d(),
     ),
     6: Pose3d(
         (inches_to_meters * 40.45),
@@ -318,3 +347,6 @@ kCameras = {
         )
     ],
 }
+
+print(ApriltagPositionDictBlue)
+print(ApriltagPositionDictRed)

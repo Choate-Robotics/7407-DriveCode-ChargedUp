@@ -209,7 +209,7 @@ class OI:
                     Robot.grabber,
                     Robot.intake,
                     Sensors.odometry,
-                    target=config.scoring_locations["standard_pickup"],
+                    target=config.scoring_locations["standard"],
                 ),
             )
         )

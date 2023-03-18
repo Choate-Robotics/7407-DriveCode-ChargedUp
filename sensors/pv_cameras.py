@@ -1,6 +1,6 @@
 from photonvision import PhotonCamera
 from robotpy_toolkit_7407.sensors.odometry import VisionEstimator
-from wpilib import SmartDashboard, Timer
+from wpilib import Timer
 
 import constants
 
@@ -31,19 +31,6 @@ class PV_Cameras(VisionEstimator):
                 ]
 
             if cameraToTargets != 0:  # If we have any targets
-                for tag_id, point in cameraToTargets:
-                    SmartDashboard.putNumberArray(
-                        "OrigCamPose",
-                        [
-                            (self.april_tags[tag_id] + point.inverse()).toPose2d().X(),
-                            (self.april_tags[tag_id] + point.inverse()).toPose2d().Y(),
-                            (self.april_tags[tag_id] + point.inverse())
-                            .toPose2d()
-                            .rotation()
-                            .radians(),
-                        ],
-                    )
-
                 derivedRobotPoses += [
                     (
                         self.april_tags[tag_id] + point.inverse() + camera[1].inverse(),

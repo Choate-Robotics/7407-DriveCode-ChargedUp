@@ -77,7 +77,7 @@ class Arm(Subsystem):
         self.abs_encoder = self.arm_rotation_follower_motor.motor.getAbsoluteEncoder(
             rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle
         )
-        # assuem start zero, 
+        # assuem start zero,
         self.motor_extend.set_sensor_position(0)
 
     def enable_brake(self) -> bool:
@@ -249,15 +249,15 @@ class Arm(Subsystem):
         self.arm_rotation_motor.set_sensor_position(motor_position)
         self.arm_rotation_motor.set_target_position(motor_position)
 
-        self.arm_rotation_motor.motor.setSoftLimit(
-            rev.CANSparkMax.SoftLimitDirection.kForward,
-            self.shoulder_angle_to_motor_rotations(constants.shoulder_max_rotation),
-        )
-
-        self.arm_rotation_motor.motor.setSoftLimit(
-            rev.CANSparkMax.SoftLimitDirection.kReverse,
-            -self.shoulder_angle_to_motor_rotations(constants.shoulder_min_rotation),
-        )
+        # self.arm_rotation_motor.motor.setSoftLimit(
+        #     rev.CANSparkMax.SoftLimitDirection.kForward,
+        #     self.shoulder_angle_to_motor_rotations(constants.shoulder_max_rotation),
+        # )
+        #
+        # self.arm_rotation_motor.motor.setSoftLimit(
+        #     rev.CANSparkMax.SoftLimitDirection.kReverse,
+        #     -self.shoulder_angle_to_motor_rotations(constants.shoulder_min_rotation),
+        # )
 
     def extend_max_elevator(self) -> None:
         """Sets the elevator to the max position (no rotation)"""

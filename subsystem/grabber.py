@@ -42,15 +42,15 @@ class Grabber(Subsystem):
             rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle
         )
 
-        self.wrist.motor.setSoftLimit(
-            rev.CANSparkMax.SoftLimitDirection.kForward,
-            self.wrist_angle_to_motor_rotations(constants.wrist_max_rotation),
-        )
-
-        self.wrist.motor.setSoftLimit(
-            rev.CANSparkMax.SoftLimitDirection.kReverse,
-            -self.wrist_angle_to_motor_rotations(constants.wrist_min_rotation),
-        )
+        # self.wrist.motor.setSoftLimit(
+        #     rev.CANSparkMax.SoftLimitDirection.kForward,
+        #     self.wrist_angle_to_motor_rotations(constants.wrist_max_rotation),
+        # )
+        #
+        # self.wrist.motor.setSoftLimit(
+        #     rev.CANSparkMax.SoftLimitDirection.kReverse,
+        #     -self.wrist_angle_to_motor_rotations(constants.wrist_min_rotation),
+        # )
 
         self.zero_wrist()
 

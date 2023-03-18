@@ -264,16 +264,16 @@ class SetArm(SubsystemCommand[Arm]):
             pidSlot=1,
         )
 
-        SmartDashboard.putNumber(
-            "FINAL ELEVATOR VOLTAGE",
-            min(elevator_maximum_power, abs(elevator_desired_voltage))
-            * (1 if elevator_desired_voltage > 0 else -1),
-            rev.CANSparkMax.ControlType.kVoltage,
-        )
-
-        SmartDashboard.putNumber(
-            "ACTUAL ELEVATOR VOLTAGE", self.subsystem.motor_extend.motor.getBusVoltage()
-        )
+        # SmartDashboard.putNumber(
+        #     "FINAL ELEVATOR VOLTAGE",
+        #     min(elevator_maximum_power, abs(elevator_desired_voltage))
+        #     * (1 if elevator_desired_voltage > 0 else -1),
+        #     rev.CANSparkMax.ControlType.kVoltage,
+        # )
+        #
+        # SmartDashboard.putNumber(
+        #     "ACTUAL ELEVATOR VOLTAGE", self.subsystem.motor_extend.motor.getBusVoltage()
+        # )
 
         # ------------ ELEVATOR ------------^^
 

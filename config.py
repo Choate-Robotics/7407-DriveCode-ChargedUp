@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from wpimath.geometry import Pose2d, Translation2d
 
+import units.SI
 from units.SI import meters, meters_per_second, meters_per_second_squared, radians
 
 red_team: bool = False
@@ -11,8 +12,8 @@ driver_centric: bool = True
 
 landing_gear_active_init = False
 
-field_length = 16.541
-field_width = 16.688
+field_length = 16.459
+field_width = 8.0137
 
 drivetrain_scoring_velocity = 1
 drivetrain_scoring_angular_velocity = 1
@@ -176,8 +177,8 @@ scoring_locations: dict[str, TargetData] = {
     "cube_intake": TargetData(
         target_pose=None,
         arm_angle=math.radians(69.5),
-        arm_length=0,
-        wrist_angle=math.radians(94.8),
+        arm_length=1 * units.SI.inches_to_meters,
+        wrist_angle=math.radians(120),
         intake_enabled=True,
         claw_scoring=False,
         claw_picking=True,

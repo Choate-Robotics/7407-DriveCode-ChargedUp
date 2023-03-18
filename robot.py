@@ -114,6 +114,9 @@ class _Robot(wpilib.TimedRobot):
         SmartDashboard.putNumberArray(
             "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]
         )
+        SmartDashboard.putNumber(
+            "ELEVATOR CURRENT", Robot.arm.motor_extend.motor.getOutputCurrent()
+        )
         #
         # SmartDashboard.putNumberArray(
         #     "RobotPoseOrig", [pose2.X(), pose2.Y(), pose2.rotation().radians()]
@@ -150,6 +153,9 @@ class _Robot(wpilib.TimedRobot):
             ...
 
     def teleopInit(self):
+        Sensors.pv_controller = PV_Cameras(constants.ApriltagPositionDictRed)
+        Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
+
         logger.debug("TELEOP", "Teleop Initialized")
 
         commands2.CommandScheduler.getInstance().schedule(
