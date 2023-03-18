@@ -22,8 +22,8 @@ from command.autonomous.trajectory import CustomTrajectory
 from robot_systems import Robot, Sensors
 from units.SI import meters, meters_per_second, meters_per_second_squared, radians
 
-max_vel: meters_per_second = 2.7
-max_accel: meters_per_second_squared = 2.6
+max_vel: meters_per_second = 3.5
+max_accel: meters_per_second_squared = 2.8
 
 initial_x: meters = base_initial_coords[0] + 0
 initial_y: meters = base_initial_coords[1] + 0
@@ -57,8 +57,8 @@ path_2 = FollowPathCustom(
         start_pose=Pose2d(path_1_end_x, path_1_end_y, path_1_end_theta),
         waypoints=[Translation2d(3.92, 0.92)],
         end_pose=Pose2d(path_2_end_x, path_2_end_y, path_2_end_theta),
-        max_velocity=max_vel,
-        max_accel=max_accel,
+        max_velocity=2.7,
+        max_accel=1.7,
         start_velocity=0,
         end_velocity=0,
     ),
@@ -101,32 +101,33 @@ auto = SequentialCommandGroup(
     InstantCommand(lambda: Robot.grabber.close_claw()),
     WaitCommand(0.3),
     ParallelDeadlineGroup(
-        deadline=SequentialCommandGroup(path_2, WaitCommand(0.6)),
+        deadline=path_2,
         commands=[
             command.TargetAuto(
                 Robot.arm,
                 Robot.grabber,
                 Robot.intake,
                 Sensors.odometry,
-                target=config.scoring_locations["standard"],
+                target=config.scoring_locations["high_auto_back_cube"],
             ).generate(),
         ],
     ),
     command.IntakeDisable(Robot.intake),
-    ParallelDeadlineGroup(
-        deadline=WaitCommand(1),
-        commands=[
-            command.TargetAuto(
-                Robot.arm,
-                Robot.grabber,
-                Robot.intake,
-                Sensors.odometry,
-                target=config.scoring_locations["high_auto_back"],
-            ).generate()
-        ],
-    ),
+    # ParallelDeadlineGroup(
+    #     deadline=WaitCommand(1),
+    #     commands=[
+    #         command.TargetAuto(
+    #             Robot.arm,
+    #             Robot.grabber,
+    #             Robot.intake,
+    #             Sensors.odometry,
+    #             target=config.scoring_locations["high_auto_back"],
+    #         ).generate()
+    #     ],
+    # ),
     InstantCommand(lambda: Robot.grabber.open_claw()),
-    WaitCommand(0.1),
+    InstantCommand(lambda: Robot.grabber.set_output(-0.3)),
+    WaitCommand(0.5),
     ParallelDeadlineGroup(
         deadline=WaitCommand(0.8),
         commands=[

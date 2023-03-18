@@ -9,5 +9,5 @@ base_path_1: ((meters, meters, radians), (meters, meters, radians)) = (
 
 base_path_2: ((meters, meters, radians), (meters, meters, radians)) = (
     base_path_1[1],
-    (1.8, 1.26, 0),
+    (1.8, 1.18, 0),
 )
