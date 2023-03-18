@@ -70,7 +70,7 @@ auto = SequentialCommandGroup(
     command.ZeroShoulder(Robot.arm),
     command.ZeroWrist(Robot.grabber),
     ParallelDeadlineGroup(
-        deadline=WaitCommand(1.4),
+        deadline=WaitCommand(1),
         commands=[
             command.TargetAuto(
                 Robot.arm,
@@ -83,13 +83,10 @@ auto = SequentialCommandGroup(
     ),
     command.SetGrabber(Robot.grabber, wrist_angle=math.radians(-25), claw_active=False),
     InstantCommand(lambda: Robot.grabber.open_claw()),
-    WaitCommand(0.3),
-    # InstantCommand(lambda: Robot.grabber.close_claw()),
-    InstantCommand(lambda: Robot.grabber.open_claw()),
+    WaitCommand(0.1),
     ParallelDeadlineGroup(
         deadline=WaitCommand(3.5),
         commands=[
-            InstantCommand(lambda: Robot.grabber.open_claw()),
             path_1,
             command.TargetAuto(
                 Robot.arm,
@@ -101,7 +98,7 @@ auto = SequentialCommandGroup(
         ],
     ),
     InstantCommand(lambda: Robot.grabber.close_claw()),
-    WaitCommand(0.5),
+    WaitCommand(0.3),
     ParallelDeadlineGroup(
         deadline=WaitCommand(5),
         commands=[

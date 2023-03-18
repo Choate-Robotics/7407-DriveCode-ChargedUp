@@ -111,7 +111,7 @@ class Drivetrain(SwerveDrivetrain):
         SparkMax(16, config=MOVE_CONFIG),
         SparkMax(15, config=TURN_CONFIG),
         CANCoder(24),
-        absolute_encoder_zeroed_pos=math.radians(354.023 + 270 - 360),
+        absolute_encoder_zeroed_pos=math.radians(354.023 + 270 - 360 - 90),
     )
     n_front_right = SparkMaxSwerveNode(
         SparkMax(14, config=MOVE_CONFIG),
