@@ -152,7 +152,6 @@ class OI:
 
         Keymap.Targeting.TARGETING_HIGH.whenReleased(
             SequentialCommandGroup(
-                InstantCommand(lambda: Robot.grabber.disengage_claw()),
                 command.Target(
                     Robot.arm,
                     Robot.grabber,

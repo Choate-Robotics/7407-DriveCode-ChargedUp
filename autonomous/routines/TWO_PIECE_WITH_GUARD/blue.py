@@ -57,21 +57,39 @@ path_2 = FollowPathCustom(
         start_pose=Pose2d(path_1_end_x, path_1_end_y, path_1_end_theta),
         waypoints=[Translation2d(3.92, 0.92)],
         end_pose=Pose2d(path_2_end_x, path_2_end_y, path_2_end_theta),
-        max_velocity=2.7,
-        max_accel=1.7,
+        max_velocity=3,
+        max_accel=2,
         start_velocity=0,
         end_velocity=0,
     ),
     period=constants.period,
 )
+
+# path_3 = FollowPathCustom(
+#     subsystem=Robot.drivetrain,
+#     trajectory=CustomTrajectory(
+#         start_pose=Pose2d(path_2_end_x, path_2_end_y, path_2_end_theta),
+#         waypoints=[Translation2d(3.92, 0.92), Translation2d(5.12, 1.22), Translation2d(4.96, 2.3)],
+#         end_pose=Pose2d(6.32, 2.3, 0),
+#         max_velocity=2.7,
+#         max_accel=1.7,
+#         start_velocity=0,
+#         end_velocity=0,
+#     ),
+#     period=constants.period,
+# )
 
 path_3 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
         start_pose=Pose2d(path_2_end_x, path_2_end_y, path_2_end_theta),
-        waypoints=[Translation2d(5.12, 1.22), Translation2d(4.96, 2.3)],
-        end_pose=Pose2d(6.32, 2.3, 0),
-        max_velocity=2.7,
+        waypoints=[
+            Translation2d(3.92, 0.82),
+            Translation2d(4.8, 0.72),
+            Translation2d(5.6, 0.82),
+        ],
+        end_pose=Pose2d(6.6, 2.1, 0.91),
+        max_velocity=3,
         max_accel=1.7,
         start_velocity=0,
         end_velocity=0,
@@ -79,13 +97,31 @@ path_3 = FollowPathCustom(
     period=constants.period,
 )
 
+# path_4 = FollowPathCustom(
+#     subsystem=Robot.drivetrain,
+#     trajectory=CustomTrajectory(
+#         start_pose=Pose2d(6.32, 2.3, 0),
+#         waypoints=[Translation2d(5.12, 1.22), Translation2d(3.92, 0.92)],
+#         end_pose=Pose2d(path_2_end_x, path_2_end_y, path_2_end_theta),
+#         max_velocity=3.6,
+#         max_accel=2.5,
+#         start_velocity=0,
+#         end_velocity=0,
+#     ),
+#     period=constants.period,
+# )
+
 path_4 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(6.32, 2.3, 0),
-        waypoints=[Translation2d(5.12, 1.22), Translation2d(3.92, 0.92)],
+        start_pose=Pose2d(6.6, 2.1, 0.91),
+        waypoints=[
+            Translation2d(5.6, 0.82),
+            Translation2d(4.8, 0.72),
+            Translation2d(3.92, 0.82),
+        ],
         end_pose=Pose2d(path_2_end_x, path_2_end_y, path_2_end_theta),
-        max_velocity=3.6,
+        max_velocity=3.5,
         max_accel=2.5,
         start_velocity=0,
         end_velocity=0,
@@ -127,7 +163,6 @@ auto = SequentialCommandGroup(
         ],
     ),
     InstantCommand(lambda: Robot.grabber.close_claw()),
-    WaitCommand(0.1),
     ParallelDeadlineGroup(
         deadline=path_2,
         commands=[
@@ -142,8 +177,7 @@ auto = SequentialCommandGroup(
     ),
     command.IntakeEnable(Robot.intake),
     InstantCommand(lambda: Robot.grabber.open_claw()),
-    InstantCommand(lambda: Robot.grabber.set_output(-0.3)),
-    WaitCommand(0.3),
+    WaitCommand(0.25),
     ParallelDeadlineGroup(
         deadline=SequentialCommandGroup(path_3, WaitCommand(0)),
         commands=[
@@ -176,8 +210,7 @@ auto = SequentialCommandGroup(
         ],
     ),
     InstantCommand(lambda: Robot.grabber.open_claw()),
-    InstantCommand(lambda: Robot.grabber.set_output(-0.3)),
-    WaitCommand(0.3),
+    WaitCommand(0.25),
     command.TargetAuto(
         Robot.arm,
         Robot.grabber,

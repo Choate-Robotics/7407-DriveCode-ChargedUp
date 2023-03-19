@@ -188,9 +188,18 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
 
     def execute(self) -> None:
         self.t = time.perf_counter() - self.start_time
-        if self.t > self.duration:
+
+        relative = self.end_pose.relativeTo(Sensors.odometry.getPose())
+
+        if (
+            abs(relative.x) < 0.05
+            and abs(relative.y < 0.05)
+            and abs(relative.rotation().degrees()) < 3
+            or self.t > self.duration
+        ):
             self.t = self.duration
             self.finished = True
+
         goal = self.trajectory.sample(self.t)
         goal_theta = self.theta_i + self.omega * self.t
         speeds = self.controller.calculate(
