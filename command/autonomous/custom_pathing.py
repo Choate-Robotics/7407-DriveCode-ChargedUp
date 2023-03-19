@@ -71,11 +71,9 @@ class AutoBalance(SubsystemCommand[Drivetrain]):
             if self.currently_zeroed == 1:
                 self.times_zeroed += 1
                 self.currently_zeroed += 1
-                print("TIMES ZEROED: ", self.times_zeroed)
             else:
                 self.currently_zeroed += 1
         else:
-            print("RESET CURRENTLY ZEROED")
             self.currently_zeroed = 0
 
         return self.times_zeroed > self.times_before_stop
