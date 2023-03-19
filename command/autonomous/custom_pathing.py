@@ -161,7 +161,7 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
             ProfiledPIDControllerRadians(
                 7.3,  # 7.3
                 0,
-                0.005,  # .005
+                0.01,  # .005
                 TrapezoidProfileRadians.Constraints(
                     subsystem.max_angular_vel, subsystem.max_angular_vel / 0.001  # .001
                 ),

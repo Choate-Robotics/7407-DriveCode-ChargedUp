@@ -63,10 +63,10 @@ class _Robot(wpilib.TimedRobot):
             "Red Two Piece No Guard", autonomous.TWO_PIECE_NO_GUARD_RED
         )
         self.auto_selection.addOption(
-            "Blue Two Piece With Guard", autonomous.TWO_PIECE_WITH_GUARD_BLUE
+            "Blue Three Piece With Guard", autonomous.THREE_PIECE_WITH_GUARD_BLUE
         )
         self.auto_selection.addOption(
-            "Red Two Piece With Guard", autonomous.TWO_PIECE_WITH_GUARD_RED
+            "Red Three Piece With Guard", autonomous.THREE_PIECE_WITH_GUARD_RED
         )
 
         self.auto_selection.addOption(

@@ -12,42 +12,43 @@ import command
 import config
 import constants
 from autonomous.auto_routine import AutoRoutine
-from autonomous.routines.TWO_PIECE_WITH_GUARD.base_coords import (
+from autonomous.routines.THREE_PIECE_WITH_GUARD.blue_base_coords import (
     base_initial_coords,
     base_path_1,
     base_path_2,
+    base_path_3,
     base_path_4,
 )
 from command.autonomous.custom_pathing import FollowPathCustom
 from command.autonomous.trajectory import CustomTrajectory
 from robot_systems import Robot, Sensors
-from units.SI import meters, meters_per_second, meters_per_second_squared, radians
+from units.SI import meters_per_second, meters_per_second_squared
 
 max_vel: meters_per_second = 4
 max_accel: meters_per_second_squared = 3
 
-initial_x: meters = base_initial_coords[0] + 0
-initial_y: meters = base_initial_coords[1] + 0
-initial_theta: radians = base_initial_coords[2] + 0
-
-path_1_end_x: meters = base_path_1[1][0] + 0
-path_1_end_y: meters = base_path_1[1][1] + 0
-path_1_end_theta: radians = base_path_1[1][2] + 0
-
-path_2_end_x: meters = base_path_2[1][0] + 0
-path_2_end_y: meters = base_path_2[1][1] + 0
-path_2_end_theta: radians = base_path_2[1][2] + 0
-
-path_4_end_x: meters = base_path_4[1][0] + 0
-path_4_end_y: meters = base_path_4[1][1] + 0
-path_4_end_theta: radians = base_path_4[1][2] + 0
+# initial_x: meters = base_initial_coords[0] + 0
+# initial_y: meters = base_initial_coords[1] + 0
+# initial_theta: radians = base_initial_coords[2] + 0
+#
+# path_1_end_x: meters = base_path_1[1][0] + 0
+# path_1_end_y: meters = base_path_1[1][1] + 0
+# path_1_end_theta: radians = base_path_1[1][2] + 0
+#
+# path_2_end_x: meters = base_path_2[1][0] + 0
+# path_2_end_y: meters = base_path_2[1][1] + 0
+# path_2_end_theta: radians = base_path_2[1][2] + 0
+#
+# path_4_end_x: meters = base_path_4[1][0] + 0
+# path_4_end_y: meters = base_path_4[1][1] + 0
+# path_4_end_theta: radians = base_path_4[1][2] + 0
 
 path_1 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(initial_x, initial_y, math.radians(0)),
-        waypoints=[],
-        end_pose=Pose2d(path_1_end_x, path_1_end_y, path_1_end_theta),
+        start_pose=Pose2d(*base_path_1[0]),
+        waypoints=[Translation2d(*x) for x in base_path_2[1]],
+        end_pose=Pose2d(*base_path_1[2]),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=0,
@@ -59,9 +60,9 @@ path_1 = FollowPathCustom(
 path_2 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(path_1_end_x, path_1_end_y, path_1_end_theta),
-        waypoints=[Translation2d(3.92, 0.92)],
-        end_pose=Pose2d(path_2_end_x, path_2_end_y, path_2_end_theta),
+        start_pose=Pose2d(*base_path_2[0]),
+        waypoints=[Translation2d(*x) for x in base_path_2[1]],
+        end_pose=Pose2d(*base_path_2[2]),
         max_velocity=3,
         max_accel=2,
         start_velocity=0,
@@ -73,13 +74,9 @@ path_2 = FollowPathCustom(
 path_3 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(path_2_end_x, path_2_end_y, path_2_end_theta),
-        waypoints=[
-            Translation2d(3.92, 0.82),
-            Translation2d(4.8, 0.72),
-            Translation2d(5.6, 0.82),
-        ],
-        end_pose=Pose2d(6.6, 2.1, 0.91),
+        start_pose=Pose2d(*base_path_3[0]),
+        waypoints=[Translation2d(*x) for x in base_path_3[1]],
+        end_pose=Pose2d(*base_path_3[2]),
         max_velocity=3,
         max_accel=1.7,
         start_velocity=0,
@@ -91,13 +88,9 @@ path_3 = FollowPathCustom(
 path_4 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(6.6, 2.1, 0.91),
-        waypoints=[
-            Translation2d(5.6, 0.82),
-            Translation2d(4.8, 0.72),
-            Translation2d(3.92, 0.82),
-        ],
-        end_pose=Pose2d(path_4_end_x, path_4_end_y, path_4_end_theta),
+        start_pose=Pose2d(*base_path_4[0]),
+        waypoints=[Translation2d(*x) for x in base_path_4[1]],
+        end_pose=Pose2d(*base_path_4[2]),
         max_velocity=3.5,
         max_accel=2.5,
         start_velocity=0,
@@ -153,13 +146,26 @@ auto = SequentialCommandGroup(
             ).generate(),
         ],
     ),
-    command.IntakeEnable(Robot.intake),
     InstantCommand(lambda: Robot.grabber.open_claw()),
     WaitCommand(0.25),
     ParallelDeadlineGroup(
         deadline=SequentialCommandGroup(path_3, WaitCommand(0)),
         commands=[
             SequentialCommandGroup(
+                ParallelDeadlineGroup(
+                    deadline=WaitCommand(0.8),
+                    commands=[
+                        command.TargetAuto(
+                            Robot.arm,
+                            Robot.grabber,
+                            Robot.intake,
+                            Sensors.odometry,
+                            target=config.scoring_locations["standard"],
+                        ).generate()
+                    ],
+                ),
+                command.IntakeEnable(Robot.intake),
+                WaitCommand(0.7),
                 command.TargetAuto(
                     Robot.arm,
                     Robot.grabber,
@@ -188,7 +194,7 @@ auto = SequentialCommandGroup(
         ],
     ),
     InstantCommand(lambda: Robot.grabber.open_claw()),
-    WaitCommand(0.25),
+    WaitCommand(0.35),
     command.TargetAuto(
         Robot.arm,
         Robot.grabber,
@@ -198,4 +204,4 @@ auto = SequentialCommandGroup(
     ).generate(),
 )
 
-routine = AutoRoutine(Pose2d(initial_x, initial_y, initial_theta), auto)
+routine = AutoRoutine(Pose2d(*base_initial_coords), auto)
