@@ -16,6 +16,7 @@ from autonomous.routines.TWO_PIECE_WITH_GUARD.base_coords import (
     base_initial_coords,
     base_path_1,
     base_path_2,
+    base_path_4,
 )
 from command.autonomous.custom_pathing import FollowPathCustom
 from command.autonomous.trajectory import CustomTrajectory
@@ -36,6 +37,10 @@ path_1_end_theta: radians = base_path_1[1][2] + 0
 path_2_end_x: meters = base_path_2[1][0] + 0
 path_2_end_y: meters = base_path_2[1][1] + 0
 path_2_end_theta: radians = base_path_2[1][2] + 0
+
+path_4_end_x: meters = base_path_4[1][0] + 0
+path_4_end_y: meters = base_path_4[1][1] + 0
+path_4_end_theta: radians = base_path_4[1][2] + 0
 
 path_1 = FollowPathCustom(
     subsystem=Robot.drivetrain,
@@ -65,20 +70,6 @@ path_2 = FollowPathCustom(
     period=constants.period,
 )
 
-# path_3 = FollowPathCustom(
-#     subsystem=Robot.drivetrain,
-#     trajectory=CustomTrajectory(
-#         start_pose=Pose2d(path_2_end_x, path_2_end_y, path_2_end_theta),
-#         waypoints=[Translation2d(3.92, 0.92), Translation2d(5.12, 1.22), Translation2d(4.96, 2.3)],
-#         end_pose=Pose2d(6.32, 2.3, 0),
-#         max_velocity=2.7,
-#         max_accel=1.7,
-#         start_velocity=0,
-#         end_velocity=0,
-#     ),
-#     period=constants.period,
-# )
-
 path_3 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
@@ -97,20 +88,6 @@ path_3 = FollowPathCustom(
     period=constants.period,
 )
 
-# path_4 = FollowPathCustom(
-#     subsystem=Robot.drivetrain,
-#     trajectory=CustomTrajectory(
-#         start_pose=Pose2d(6.32, 2.3, 0),
-#         waypoints=[Translation2d(5.12, 1.22), Translation2d(3.92, 0.92)],
-#         end_pose=Pose2d(path_2_end_x, path_2_end_y, path_2_end_theta),
-#         max_velocity=3.6,
-#         max_accel=2.5,
-#         start_velocity=0,
-#         end_velocity=0,
-#     ),
-#     period=constants.period,
-# )
-
 path_4 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
@@ -120,7 +97,7 @@ path_4 = FollowPathCustom(
             Translation2d(4.8, 0.72),
             Translation2d(3.92, 0.82),
         ],
-        end_pose=Pose2d(path_2_end_x, path_2_end_y, path_2_end_theta),
+        end_pose=Pose2d(path_4_end_x, path_4_end_y, path_4_end_theta),
         max_velocity=3.5,
         max_accel=2.5,
         start_velocity=0,
@@ -133,6 +110,7 @@ auto = SequentialCommandGroup(
     command.ZeroElevator(Robot.arm),
     command.ZeroShoulder(Robot.arm),
     command.ZeroWrist(Robot.grabber),
+    command.IntakeEnable(Robot.intake),
     ParallelDeadlineGroup(
         deadline=WaitCommand(0.8),
         commands=[
