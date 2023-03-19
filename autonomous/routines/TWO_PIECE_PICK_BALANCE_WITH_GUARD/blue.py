@@ -73,8 +73,8 @@ path_4 = FollowPathCustom(
     trajectory=CustomTrajectory(
         start_pose=Pose2d(*base_path_3[2]),
         waypoints=[],
-        end_pose=Pose2d(3.15, 2.29, 0),
-        max_velocity=2,
+        end_pose=Pose2d(3.21, 2.29, 0),
+        max_velocity=2.5,
         max_accel=1.5,
         start_velocity=0,
         end_velocity=0,
@@ -164,23 +164,43 @@ auto = SequentialCommandGroup(
     ParallelDeadlineGroup(
         deadline=path_4,
         commands=[
-            command.TargetAuto(
-                Robot.arm,
-                Robot.grabber,
-                Robot.intake,
-                Sensors.odometry,
-                target=config.scoring_locations["standard"],
-            ).generate(),
+            SequentialCommandGroup(
+                WaitCommand(2),
+                ParallelDeadlineGroup(
+                    deadline=WaitCommand(2),
+                    commands=[
+                        command.SetArm(Robot.arm, 0.95, math.radians(-50)),
+                        command.SetGrabber(
+                            Robot.grabber, math.radians(-50), claw_active=False
+                        ),
+                        SequentialCommandGroup(
+                            WaitCommand(0.5),
+                            command.IntakeDisable(Robot.intake),
+                        ),
+                        SequentialCommandGroup(
+                            WaitCommand(0.9),
+                            InstantCommand(lambda: Robot.grabber.open_claw()),
+                        ),
+                    ],
+                ),
+                command.TargetAuto(
+                    Robot.arm,
+                    Robot.grabber,
+                    Robot.intake,
+                    Sensors.odometry,
+                    target=config.scoring_locations["standard"],
+                ).generate(),
+            )
         ],
     ),
-    InstantCommand(lambda: Robot.intake.intake_disable()),
     InstantCommand(lambda: Robot.drivetrain.x_mode()),
-    # InstantCommand(lambda: Robot.drivetrain.set_robot_centric((-0.7, 0), 0)),
-    # WaitCommand(
-    #     0.77
-    # ),  # TUNE THIS AT SE MASS (HOW LONG TO MOVE BACKWARDS FOR AFTER TIPPING)
-    # InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0, 0), 0)),
-    # InstantCommand(lambda: Robot.drivetrain.x_mode()),
+    command.TargetAuto(
+        Robot.arm,
+        Robot.grabber,
+        Robot.intake,
+        Sensors.odometry,
+        target=config.scoring_locations["standard"],
+    ).generate(),
 )
 
 routine = AutoRoutine(Pose2d(*base_initial_coords), auto)
