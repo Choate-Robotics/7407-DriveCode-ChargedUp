@@ -134,20 +134,26 @@ class OI:
             )
         )
 
+        def gyro_angle_calc():
+            gyro_angle = Sensors.gyro.get_robot_heading() % (math.pi * 2)
+            gyro_angle = math.degrees(
+                math.atan2(math.sin(gyro_angle), math.cos(gyro_angle))
+            )
+
+            if -90 < gyro_angle < 90:
+                return 1
+            else:
+                return -1
+
+        def set_claw_angle(angle):
+            config.grabber_target_angle = angle
+
         Keymap.Claw.DROP_CLAW.whenPressed(
-            command.SetGrabber(
-                Robot.grabber,
-                wrist_angle=math.radians(25)
-                * (-1 if (config.scoring_locations["high"].arm_angle > 0) else 1),
-                claw_active=False,
+            InstantCommand(
+                lambda: set_claw_angle(math.radians(25) * gyro_angle_calc() * -1)
             )
         ).whenReleased(
-            command.SetGrabber(
-                Robot.grabber,
-                wrist_angle=math.radians(25)
-                * (1 if (config.scoring_locations["high"].arm_angle > 0) else -1),
-                claw_active=False,
-            )
+            InstantCommand(lambda: set_claw_angle(math.radians(25) * gyro_angle_calc()))
         )
 
         Keymap.Targeting.TARGETING_HIGH.whenReleased(

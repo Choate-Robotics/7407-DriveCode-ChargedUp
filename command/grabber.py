@@ -1,5 +1,6 @@
 from robotpy_toolkit_7407 import SubsystemCommand
 
+import config
 from subsystem import Grabber
 from units.SI import radians
 
@@ -15,6 +16,7 @@ class SetGrabber(SubsystemCommand[Grabber]):
         auto_cone: bool = False,
         auto_double: bool = False,
         threshold: float | None = None,
+        finish: bool = True,
     ):
         super().__init__(subsystem)
         self.subsystem = subsystem
@@ -27,15 +29,19 @@ class SetGrabber(SubsystemCommand[Grabber]):
         self.threshold = threshold
 
         self.finished = not auto_claw
+        self.finish = finish
 
     def initialize(self) -> None:
         self.subsystem.set_angle(self.wrist_angle)
+        config.grabber_target_angle = self.wrist_angle
         if self.claw_active:
             self.subsystem.engage_claw()
         else:
             self.subsystem.disengage_claw()
 
     def execute(self) -> None:
+        self.subsystem.set_angle(config.grabber_target_angle)
+
         if self.auto_claw:
             if self.auto_cube and self.subsystem.get_cube_detected():
                 self.subsystem.disengage_claw()
@@ -52,9 +58,13 @@ class SetGrabber(SubsystemCommand[Grabber]):
         if self.threshold is not None:
             self.subsystem.is_at_angle(
                 self.wrist_angle, threshold=self.threshold
-            ) and self.finished
+            ) and self.finished and self.finish
         else:
-            return self.subsystem.is_at_angle(self.wrist_angle) and self.finished
+            return (
+                self.subsystem.is_at_angle(self.wrist_angle)
+                and self.finished
+                and self.finish
+            )
 
     def end(self, interrupted: bool) -> None:
         ...

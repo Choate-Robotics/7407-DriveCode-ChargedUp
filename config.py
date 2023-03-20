@@ -12,6 +12,8 @@ from units.SI import (
     radians,
 )
 
+grabber_target_angle = 0
+
 red_team: bool = False
 drivetrain_reversed: bool = False
 driver_centric: bool = True

@@ -78,6 +78,7 @@ class TargetAuto:
                             math.radians(25)
                             * (-1 if self.target.wrist_angle > 0 else 1),
                             False,
+                            finish=False,
                         ),
                     ),
                 )
@@ -203,7 +204,9 @@ class Target(SubsystemCommand[Arm]):
                     command.SetArm(
                         self.arm, self.target.arm_length, self.target.arm_angle
                     ),
-                    command.SetGrabber(self.grabber, self.target.wrist_angle, True),
+                    command.SetGrabber(
+                        self.grabber, self.target.wrist_angle, True, finish=False
+                    ),
                 )
             elif self.target.claw_scoring and self.arm_on:
                 self.arm_sequence = ParallelCommandGroup(
@@ -222,6 +225,7 @@ class Target(SubsystemCommand[Arm]):
                             math.radians(25)
                             * (-1 if self.target.wrist_angle > 0 else 1),
                             False,
+                            finish=False,
                         ),
                     ),
                 )
@@ -230,7 +234,9 @@ class Target(SubsystemCommand[Arm]):
                     command.SetArm(
                         self.arm, self.target.arm_length, self.target.arm_angle
                     ),
-                    command.SetGrabber(self.grabber, self.target.wrist_angle, False),
+                    command.SetGrabber(
+                        self.grabber, self.target.wrist_angle, False, finish=False
+                    ),
                 )
             else:
                 self.arm_sequence = InstantCommand(lambda: None)
@@ -248,6 +254,7 @@ class Target(SubsystemCommand[Arm]):
                         auto_cube=self.target.cube_picking,
                         auto_cone=self.target.cone_picking,
                         auto_double=self.target.double_station_picking,
+                        finish=False,
                     ),
                 )
             elif self.target.claw_scoring and self.arm_on:
@@ -257,7 +264,7 @@ class Target(SubsystemCommand[Arm]):
                             self.arm, self.target.arm_length, self.target.arm_angle
                         ),
                         command.SetGrabber(
-                            self.grabber, self.target.wrist_angle, False
+                            self.grabber, self.target.wrist_angle, False, finish=False
                         ),
                     ),
                     InstantCommand(self.grabber.open_claw()),
@@ -267,7 +274,9 @@ class Target(SubsystemCommand[Arm]):
                     command.SetArm(
                         self.arm, self.target.arm_length, self.target.arm_angle
                     ),
-                    command.SetGrabber(self.grabber, self.target.wrist_angle, False),
+                    command.SetGrabber(
+                        self.grabber, self.target.wrist_angle, False, finish=False
+                    ),
                 )
             else:
                 self.arm_sequence = InstantCommand(lambda: None)
