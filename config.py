@@ -96,7 +96,7 @@ scoring_locations: dict[str, TargetData] = {
     "middle": TargetData(
         target_pose=Pose2d(1.55, 1.55, 0),  # 2.43 .94
         target_waypoints=[Translation2d(1.81, 1.55)],
-        arm_angle=math.radians(-46.78),
+        arm_angle=math.radians(-53.78),
         arm_length=0.55,
         wrist_angle=math.radians(-27.09),
         intake_enabled=False,
@@ -106,6 +106,7 @@ scoring_locations: dict[str, TargetData] = {
         max_velocity=1,
         max_acceleration=0.5,
         max_angular_velocity=1,
+        claw_wait=True,
     ),
     "high": TargetData(
         target_pose=None,
