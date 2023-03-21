@@ -1,6 +1,8 @@
+import wpilib
 from robotpy_toolkit_7407 import SubsystemCommand
 
 import config
+from oi.keymap import Controllers
 from subsystem import Grabber
 from units.SI import radians
 
@@ -46,9 +48,15 @@ class SetGrabber(SubsystemCommand[Grabber]):
             if self.auto_cube and self.subsystem.get_cube_detected():
                 self.subsystem.disengage_claw()
                 self.finished = True
+                Controllers.OPERATOR_CONTROLLER.setRumble(
+                    wpilib.Joystick.RumbleType.kBothRumble, 0.3
+                )
             elif self.auto_cone and self.subsystem.get_cone_detected():
                 self.subsystem.disengage_claw()
                 self.finished = True
+                Controllers.OPERATOR_CONTROLLER.setRumble(
+                    wpilib.Joystick.RumbleType.kBothRumble, 0.3
+                )
             elif self.auto_double and self.subsystem.get_double_station_detected():
                 self.subsystem.disengage_claw()
                 self.finished = True

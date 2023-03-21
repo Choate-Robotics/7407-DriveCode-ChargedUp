@@ -1,5 +1,6 @@
 import math
 
+import wpilib
 from commands2 import (
     InstantCommand,
     SequentialCommandGroup,
@@ -9,7 +10,7 @@ from robotpy_toolkit_7407.utils import logger
 
 import command
 import config
-from oi.keymap import Keymap
+from oi.keymap import Controllers, Keymap
 from robot_systems import Robot, Sensors
 
 logger.info("Hi, I'm OI!")
@@ -71,6 +72,11 @@ class OI:
         Keymap.Targeting.TARGETING_PICKUP.whenReleased(
             SequentialCommandGroup(
                 InstantCommand(lambda: Robot.grabber.disengage_claw()),
+                InstantCommand(
+                    lambda: Controllers.OPERATOR_CONTROLLER.setRumble(
+                        wpilib.Joystick.RumbleType.kBothRumble, 0
+                    )
+                ),
                 command.Target(
                     Robot.arm,
                     Robot.grabber,
@@ -208,6 +214,11 @@ class OI:
         Keymap.Targeting.TARGETING_CUBE_INTAKE.whenReleased(
             SequentialCommandGroup(
                 InstantCommand(lambda: Robot.grabber.disengage_claw()),
+                InstantCommand(
+                    lambda: Controllers.OPERATOR_CONTROLLER.setRumble(
+                        wpilib.Joystick.RumbleType.kBothRumble, 0
+                    )
+                ),
                 command.Target(
                     Robot.arm,
                     Robot.grabber,
