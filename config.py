@@ -9,11 +9,11 @@ red_team = True
 climber_motor_id = 9
 
 compressor = 31
-climber_forwardChannel = 0
-climber_reverseChannel = 0
+climber_forwardChannel = 10
+climber_reverseChannel = 11
 
-latch_forwardChannel = 0
-latch_reverseChannel = 0
+latch_forwardChannel = 8
+latch_reverseChannel = 9
 
 
 
