@@ -1,38 +1,33 @@
 from dataclasses import dataclass
-from subsystem.drivetrain import Drivetrain
 
 import commands2
 from commands2 import CommandBase
 from wpimath.geometry import Pose2d
 
 from robot_systems import Robot
-import command
 
 
 @dataclass
 class AutoRoutine:
+    """
+    Base auto-routine class.
+
+    :param initial_robot_pose: Initial robot pose.
+    :type initial_robot_pose: Pose2d
+    :param command: Command to run.
+    :type command: CommandBase
+    """
+
     initial_robot_pose: Pose2d
     command: CommandBase
-    subsystem: Drivetrain = Robot.drivetrain
+    blue_team: bool = True
 
     def run(self):
-        self.subsystem.n_front_left.zero()
-        self.subsystem.n_front_right.zero()
-        self.subsystem.n_back_left.zero()
-        self.subsystem.n_back_right.zero()
-        self.subsystem.n_front_left.m_move.set_sensor_position(0)
-        self.subsystem.n_front_right.m_move.set_sensor_position(0)
-        self.subsystem.n_back_left.m_move.set_sensor_position(0)
-        self.subsystem.n_back_right.m_move.set_sensor_position(0)
-        self.subsystem.gyro.reset_angle(self.initial_robot_pose.rotation().degrees())
+        """
+        Runs the autonomous routine
+        """
 
-        self.subsystem.odometry.resetPosition(
-            self.initial_robot_pose.rotation(),
-            self.initial_robot_pose,
-            self.subsystem.n_front_left.get_node_position(),
-            self.subsystem.n_front_right.get_node_position(),
-            self.subsystem.n_back_left.get_node_position(),
-            self.subsystem.n_back_right.get_node_position()
-        )
+        Robot.drivetrain.gyro.reset_angle(self.initial_robot_pose.rotation().radians())
+        Robot.drivetrain.reset_odometry(self.initial_robot_pose)
 
         commands2.CommandScheduler.getInstance().schedule(self.command)

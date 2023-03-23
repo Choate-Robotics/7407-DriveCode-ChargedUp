@@ -2,77 +2,143 @@ import math
 
 import commands2
 import wpilib
+from commands2 import InstantCommand, SequentialCommandGroup
 from wpilib import SmartDashboard
+from wpimath.geometry import Pose2d
 
+import autonomous
 import command
+import config
+import constants
+from autonomous.auto_routine import AutoRoutine
 from oi.OI import OI
-from robot_systems import Robot, Sensors
+from robot_systems import Pneumatics, Robot, Sensors
 from sensors import FieldOdometry, PV_Cameras
-
-from autonomous import routine
+from utils import logger
 
 
 class _Robot(wpilib.TimedRobot):
     def __init__(self):
         super().__init__()
+        self.pv_selection: wpilib.SendableChooser | None = None
+        self.auto_selection: wpilib.SendableChooser | None = None
 
     def robotInit(self):
-        # Initialize Operator Interface
+        period = 0.05
+        commands2.CommandScheduler.getInstance().setPeriod(period)
+        Pneumatics.compressor.enableAnalog(90, 120)
+        Robot.arm.init()
+        Robot.drivetrain.init()
+        Robot.intake.init()
+        Robot.grabber.init()
+        Robot.landing_gear.init()
+
+        Sensors.pv_controller = None
+        Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
+        Sensors.gyro = Robot.drivetrain.gyro
+
+        # SmartDashboard.putNumber("ELEVATOR_Voltage", 0)
+        # SmartDashboard.putNumber("Test_ELEVATOR_Voltage", 0)
+        # SmartDashboard.getNumber("ELEVATOR_P_VALUE", 0)
+        # SmartDashboard.putNumber("ARM_Voltage", 0)
+
         OI.init()
         OI.map_controls()
-        period = 0.03
-        commands2.CommandScheduler.getInstance().setPeriod(period)
 
-        # Sensors.limelight_front = Limelight(
-        #     cam_height=0, cam_angle=0, robot_ip="10.74.07.2"
-        # )
-        # Sensors.limelight_controller = LimelightController([Sensors.limelight_front])
+        self.pv_selection = wpilib.SendableChooser()
+        self.pv_selection.setDefaultOption("Off", "off")
+        self.pv_selection.addOption("On", "on")
+        wpilib.SmartDashboard.putData("Photonvision", self.pv_selection)
 
-        Robot.drivetrain.init()
-        # Robot.drivetrain.n_front_left.m_move.set_sensor_position(0)
-        # Robot.drivetrain.n_front_right.m_move.set_sensor_position(0)
-        # Robot.drivetrain.n_back_left.m_move.set_sensor_position(0)
-        # Robot.drivetrain.n_back_right.m_move.set_sensor_position(0)
+        self.auto_selection = wpilib.SendableChooser()
 
-        SmartDashboard.init()
-        Sensors.pv_controller = PV_Cameras()
+        self.auto_selection.setDefaultOption(
+            "Blue Balance Auto", autonomous.BlueBalanceAuto
+        )
 
-        Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
+        self.auto_selection.addOption(
+            "Blue Two Piece No Guard", autonomous.TWO_PIECE_NO_GUARD_BLUE
+        )
+        self.auto_selection.addOption(
+            "Red Two Piece No Guard", autonomous.TWO_PIECE_NO_GUARD_RED
+        )
+        self.auto_selection.addOption(
+            "Blue Three Piece With Guard", autonomous.THREE_PIECE_WITH_GUARD_BLUE
+        )
+        self.auto_selection.addOption(
+            "Red Three Piece With Guard", autonomous.THREE_PIECE_WITH_GUARD_RED
+        )
+        self.auto_selection.addOption(
+            "Blue 2.5 Piece Balance With Guard",
+            autonomous.TWO_PIECE_PICK_BALANCE_WITH_GUARD_BLUE,
+        )
+        self.auto_selection.addOption(
+            "Red 2.5 Piece Balance With Guard",
+            autonomous.TWO_PIECE_PICK_BALANCE_WITH_GUARD_RED,
+        )
+        self.auto_selection.addOption(
+            "Blue 2 Piece Balance With Guard",
+            autonomous.TWO_PIECE_BALANCE_WITH_GUARD_BLUE,
+        )
+        self.auto_selection.addOption(
+            "Red 2 Piece Balance With Guard",
+            autonomous.TWO_PIECE_BALANCE_WITH_GUARD_RED,
+        )
 
-        # self.start_limelight_pose = Sensors.limelight_controller.get_estimated_robot_pose()[0].toPose2d()
-        # self.start_robot_pose = Sensors.odometry.get_robot_pose()
+        self.auto_selection.addOption(
+            "Do Nothing", AutoRoutine(Pose2d(0, 0, 0), InstantCommand(lambda: None))
+        )
+
+        wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
 
     def robotPeriodic(self):
-        Robot.drivetrain.logger_periodic()
-        Sensors.odometry.update()
-        SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
-        SmartDashboard.putString("FDOM", str(Sensors.odometry.get_robot_pose()))
-        SmartDashboard.putString(
-            "EDOM", str(Robot.drivetrain.odometry_estimator.getEstimatedPosition())
+        SmartDashboard.putBoolean(
+            "Zero Elevator", Robot.arm.elevator_bottom_sensor.get()
         )
-        try:
-            SmartDashboard.putString(
-                "PHOTON", str(Sensors.pv_controller.get_estimated_robot_pose())
-            )
-            SmartDashboard.putString(
-                "PHOTON ANGLE", str(Sensors.pv_controller.get_estimated_robot_pose()[0][0].rotation().toRotation2d().degrees())
-            )
-        except Exception:
-            pass
-
+        SmartDashboard.putBoolean("Team", config.red_team)
+        # SmartDashboard.putNumber("PITCH", Robot.drivetrain.gyro.get_robot_pitch())
+        # SmartDashboard.putNumber("ARM_REAL", math.degrees(Robot.arm.get_rotation()))
+        #
+        # Sensors.odometry.update()
+        # SmartDashboard.putString("ODOM", str(Robot.drivetrain.odometry.getPose()))
+        # SmartDashboard.putString("FDOM", str(Sensors.odometry.getPose()))
+        # SmartDashboard.putNumber("Current_length_meters", Robot.arm.get_length())
+        # SmartDashboard.putString(
+        #     "EDOM", str(Robot.drivetrain.odometry_estimator.getEstimatedPosition())
+        # )
+        # try:
+        #     SmartDashboard.putString(
+        #         "PHOTON", str(Sensors.pv_controller.get_estimated_robot_pose())
+        #     )
+        #     SmartDashboard.putString(
+        #         "PHOTON ANGLE",
+        #         str(
+        #             Sensors.pv_controller.get_estimated_robot_pose()[0][0]
+        #             .rotation()
+        #             .toRotation2d()
+        #             .degrees()
+        #         ),
+        #     )
+        # except Exception:
+        #     pass
+        #
+        Sensors.odometry.update()
         pose = Robot.drivetrain.odometry_estimator.getEstimatedPosition()
-        pose2 = Sensors.odometry.get_robot_pose()
-        pv_pose = Sensors.pv_controller.get_estimated_robot_pose()
-
+        # pose2 = Sensors.odometry.getPose()
+        #
         SmartDashboard.putNumberArray(
             "RobotPoseAdvantage", [pose.X(), pose.Y(), pose.rotation().radians()]
         )
-
-        SmartDashboard.putNumberArray(
-            "RobotPoseOrig", [pose2.X(), pose2.Y(), pose2.rotation().radians()]
+        SmartDashboard.putNumber(
+            "ELEVATOR CURRENT", Robot.arm.motor_extend.motor.getOutputCurrent()
         )
-
+        #
+        # SmartDashboard.putNumberArray(
+        #     "RobotPoseOrig", [pose2.X(), pose2.Y(), pose2.rotation().radians()]
+        # )
+        #
         try:
+            pv_pose = Sensors.pv_controller.get_estimated_robot_pose()
             SmartDashboard.putNumberArray(
                 "PVPoseAdvantage",
                 [
@@ -83,104 +149,73 @@ class _Robot(wpilib.TimedRobot):
             )
         except Exception:
             pass
-
-        commands2.CommandScheduler.getInstance().run()
-
-        SmartDashboard.putString(
-            "N00", str(Robot.drivetrain.n_front_left.encoder.getAbsolutePosition())
-        )
-        SmartDashboard.putString(
-            "N01", str(Robot.drivetrain.n_front_right.encoder.getAbsolutePosition())
-        )
-        SmartDashboard.putString(
-            "N10", str(Robot.drivetrain.n_back_left.encoder.getAbsolutePosition())
-        )
-        SmartDashboard.putString(
-            "N11", str(Robot.drivetrain.n_back_right.encoder.getAbsolutePosition())
-        )
-
-        SmartDashboard.putString(
-            "N00_m",
-            str(math.degrees(Robot.drivetrain.n_front_left.get_turn_motor_angle())),
-        )
-        SmartDashboard.putString(
-            "N01_m",
-            str(math.degrees(Robot.drivetrain.n_front_right.get_turn_motor_angle())),
-        )
-        SmartDashboard.putString(
-            "N10_m",
-            str(math.degrees(Robot.drivetrain.n_back_left.get_turn_motor_angle())),
-        )
-        SmartDashboard.putString(
-            "N11_m",
-            str(math.degrees(Robot.drivetrain.n_back_right.get_turn_motor_angle())),
-        )
-
-        SmartDashboard.putString(
-            "N00_drive",
-            str(
-                math.degrees(Robot.drivetrain.n_front_left.m_move.get_sensor_position())
-            ),
-        )
-        SmartDashboard.putString(
-            "N01_drive",
-            str(
-                math.degrees(
-                    Robot.drivetrain.n_front_right.m_move.get_sensor_position()
-                )
-            ),
-        )
-        SmartDashboard.putString(
-            "N10_drive",
-            str(
-                math.degrees(Robot.drivetrain.n_back_left.m_move.get_sensor_position())
-            ),
-        )
-        SmartDashboard.putString(
-            "N11_drive",
-            str(
-                math.degrees(Robot.drivetrain.n_back_right.m_move.get_sensor_position())
-            ),
-        )
-
+        #
+        # SmartDashboard.putNumber(
+        #     "gyro_angle: ", math.degrees(Robot.drivetrain.gyro.get_robot_heading())
+        # )
+        #
         SmartDashboard.putNumber(
-            "n_front_left: ",
-            Robot.drivetrain.n_front_left.m_move.get_sensor_position()
-            * (-1 if Robot.drivetrain.n_front_left.drive_reversed else 1),
+            "SHOULDER ANGLE: ", math.degrees(Robot.arm.get_rotation())
         )
         SmartDashboard.putNumber(
-            "n_front_right: ",
-            Robot.drivetrain.n_front_right.m_move.get_sensor_position()
-            * (-1 if Robot.drivetrain.n_front_right.drive_reversed else 1),
+            "WRIST ANGLE: ", math.degrees(Robot.grabber.get_angle())
         )
-        SmartDashboard.putNumber(
-            "n_back_left: ",
-            Robot.drivetrain.n_back_left.m_move.get_sensor_position()
-            * (-1 if Robot.drivetrain.n_back_left.drive_reversed else 1),
-        )
-        SmartDashboard.putNumber(
-            "n_back_right: ",
-            Robot.drivetrain.n_back_right.m_move.get_sensor_position()
-            * (-1 if Robot.drivetrain.n_back_right.drive_reversed else 1),
-        )
+        SmartDashboard.putNumber("SHOULDER DIST: ", Robot.arm.get_length())
 
-        SmartDashboard.putNumber(
-            "gyro_angle: ", math.degrees(Robot.drivetrain.gyro.get_robot_heading())
-        )
+        try:
+            commands2.CommandScheduler.getInstance().run()
+        except Exception:
+            ...
 
     def teleopInit(self):
+        logger.debug("TELEOP", "Teleop Initialized")
+
         commands2.CommandScheduler.getInstance().schedule(
-            command.DrivetrainZero(Robot.drivetrain).andThen(
-                command.DriveSwerveCustom(Robot.drivetrain)
+            command.DriveSwerveCustom(Robot.drivetrain)
+        )
+
+        Robot.arm.arm_rotation_motor.pid_controller.setOutputRange(-0.2, 0.2, slotID=1)
+        commands2.CommandScheduler.getInstance().schedule(
+            SequentialCommandGroup(
+                command.ZeroShoulder(Robot.arm),
+                command.ZeroWrist(Robot.grabber),
+                command.Target(
+                    Robot.arm,
+                    Robot.grabber,
+                    Robot.intake,
+                    Sensors.odometry,
+                    config.scoring_locations["standard"],
+                ),
             )
         )
 
     def teleopPeriodic(self):
-        pass
+        config.red_team = False
+        # SmartDashboard.putBoolean(
+        #     "Limit Switch", Robot.arm.elevator_bottom_sensor.get()
+        # )
+        # print("Limit Switch: ", Robot.arm.elevator_bottom_sensor.get())
+
+        # SmartDashboard.putBoolean("ELEVATOR_BOTTOM_SENSOR", Robot.arm.elevator_bottom_sensor.get())
+        # print(Pneumatics.compressor.getPressure())
+        # print("I THINK I'm AT: ", math.degrees(Robot.Arm.get_rotation()))
+        # Robot.Arm.disable_brake()
+        ...
 
     def autonomousInit(self):
-        routine.run()
-        pass
+        config.red_team = False
+        if self.pv_selection.getSelected() == "on":
+            Sensors.pv_controller = PV_Cameras(
+                constants.ApriltagPositionDictBlue
+                if self.auto_selection.getSelected().blue_team
+                else constants.ApriltagPositionDictRed
+            )
+            Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
+        else:
+            Sensors.pv_controller = None
+            Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
+        Robot.arm.arm_rotation_motor.pid_controller.setOutputRange(-0.2, 0.2, slotID=1)
+        self.auto_selection.getSelected().run()
 
     def autonomousPeriodic(self):
         pass
@@ -194,4 +229,3 @@ class _Robot(wpilib.TimedRobot):
 
 if __name__ == "__main__":
     wpilib.run(_Robot)
-    # Robot.robotInit(Robot())
