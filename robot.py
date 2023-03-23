@@ -92,10 +92,6 @@ class _Robot(wpilib.TimedRobot):
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
 
     def robotPeriodic(self):
-        SmartDashboard.putBoolean(
-            "Zero Elevator", Robot.arm.elevator_bottom_sensor.get()
-        )
-        SmartDashboard.putBoolean("Team", config.red_team)
         # SmartDashboard.putNumber("PITCH", Robot.drivetrain.gyro.get_robot_pitch())
         # SmartDashboard.putNumber("ARM_REAL", math.degrees(Robot.arm.get_rotation()))
         #
@@ -162,6 +158,10 @@ class _Robot(wpilib.TimedRobot):
         )
         SmartDashboard.putNumber("SHOULDER DIST: ", Robot.arm.get_length())
 
+        SmartDashboard.putBoolean(
+            "ELEVATOR BOTTOM", Robot.arm.elevator_bottom_sensor.get_value()
+        )
+
         try:
             commands2.CommandScheduler.getInstance().run()
         except Exception:
@@ -177,6 +177,7 @@ class _Robot(wpilib.TimedRobot):
         Robot.arm.arm_rotation_motor.pid_controller.setOutputRange(-0.2, 0.2, slotID=1)
         commands2.CommandScheduler.getInstance().schedule(
             SequentialCommandGroup(
+                command.ZeroElevator(Robot.arm),
                 command.ZeroShoulder(Robot.arm),
                 command.ZeroWrist(Robot.grabber),
                 command.Target(
