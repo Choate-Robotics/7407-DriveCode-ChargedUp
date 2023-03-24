@@ -217,6 +217,9 @@ drivetrain_target_max_vel: meters_per_second = (2 * mile / hour).asNumber(m / s)
 drivetrain_max_angular_vel: radians_per_second = (1 * rev / s).asNumber(rad / s)  # 5
 drivetrain_max_climb_vel: meters_per_second = (5 * mile / hour).asNumber(m / s)
 
+climber_out = False
+# this sets up the operator controller to determine which state the climber is in at the start of the match :)
+
 ApriltagPositionDictRed = {
     1: Pose3d(
         (field_length - inches_to_meters * 610.77),
@@ -351,6 +354,6 @@ kCameras = {
 
 # Climber:
 
-climber_motor_gear_ratio = 0.0
-climber_pivot_speed = 0.0
-climber_pivot_threshold = 0.0
+climber_motor_gear_ratio = 16
+climber_pivot_speed = .5
+climber_pivot_threshold = 15.5

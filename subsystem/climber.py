@@ -11,29 +11,36 @@ import constants
 from oi.keymap import Keymap
 from robotpy_toolkit_7407.utils.units import radians
 import math
+import rev
 
-CLIMBER_CONFIG = SparkMaxConfig(0.01, 0, 0.01, output_range=(-.3, .3), idle_mode=SparkMaxConfig.idle_mode.kBrake)
+CLIMBER_CONFIG = SparkMaxConfig(
+    0.06, 0, .0001, 0.002, (-0.5, 0.5), idle_mode=rev.CANSparkMax.IdleMode.kBrake
+)
 
 @dataclass
 class Climber(Subsystem):
+    
     pneumatics: DoubleSolenoidPiston
     latch: DoubleSolenoidPiston
-    climber_motor: SparkMax = SparkMax(config.climber_motor_id, config=CLIMBER_CONFIG)
+    climber_motor: SparkMax = SparkMax(config.climber_motor_id, config=CLIMBER_CONFIG, inverted=False)
     climber_active: bool = False
     latch_enabled: bool = False
+    pivoted: bool = False
+    
+    def __init__(self):
+        super().__init__()
+        self.pneumatics = DoubleSolenoidPiston(config.compressor, config.climber_forwardChannel, config.climber_reverseChannel)
+        self.latch = DoubleSolenoidPiston(config.compressor, config.latch_forwardChannel, config.latch_reverseChannel)
 
 
     def init(self):
         self.climber_motor.init()
-        self.climber_motor.motor.setOpenLoopRampRate(.2)
-        self.pneumatics = DoubleSolenoidPiston(config.compressor, config.climber_forwardChannel, config.climber_reverseChannel)
-        self.latch = DoubleSolenoidPiston(config.compressor, config.latch_forwardChannel, config.latch_reverseChannel)
-
-        self.climber_active = False
+        self.climber_motor.set_sensor_position(0)
         self.pivot_threshold = constants.climber_pivot_threshold
         self.pivot_speed = constants.climber_pivot_speed
 
     def climber_deploy(self):
+        print("Extending Pneumatics")
         self.pneumatics.extend()
         self.climber_active = True
     
@@ -56,6 +63,7 @@ class Climber(Subsystem):
         self.climber_motor.set_target_position(
             (pos / (2 * math.pi)) * constants.climber_motor_gear_ratio
         )
+        
     
     def get_angle(self):
         return self.climber_motor.get_sensor_position()

@@ -12,6 +12,7 @@ import command
 import config
 from oi.keymap import Controllers, Keymap
 from robot_systems import Robot, Sensors
+import constants
 
 logger.info("Hi, I'm OI!")
 
@@ -41,6 +42,9 @@ class OI:
         Keymap.Drivetrain.X_MODE.whenPressed(
             InstantCommand(lambda: Robot.drivetrain.x_mode())
         )
+        def deploy():
+            InstantCommand(command.ClimberDeploy(Robot.climber))
+        
 
         Keymap.Drivetrain.SLOW_FORWARD.whenPressed(
             command.DrivetrainScoreBack(Robot.drivetrain, Sensors.odometry)
@@ -49,14 +53,41 @@ class OI:
         Keymap.Drivetrain.SLOW_REVERSE.whenPressed(
             command.DrivetrainScoreFront(Robot.drivetrain, Sensors.odometry)
         ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
-
-        Keymap.Drivetrain.LANDING_GEAR_RIGHT.whenPressed(
-            SequentialCommandGroup(
-                InstantCommand(lambda: Robot.landing_gear.deploy()),
-                WaitCommand(0.5),
-                InstantCommand(lambda: Robot.landing_gear.release()),
-            )
+        
+        Keymap.Climber.DEPLOY.whenPressed(
+            command.ClimberDeploy(Robot.climber)
         )
+        
+        def unpivot():
+            if Robot.climber.climber_active == False or Robot.climber.pivoted == False:
+                return
+            else:
+                print("UnPivoting")
+                InstantCommand(command.ClimberUnpivot(Robot.climber))
+        
+        Keymap.Climber.UNCLIMB.whenPressed(
+            command.ClimberUnpivot(Robot.climber)
+        )
+        
+        def pivot():
+            if Robot.climber.climber_active == False:
+                return
+            else:
+                print("Pivoting")
+                command.ClimberPivot(Robot.climber)
+        
+        Keymap.Climber.CLIMB.whenPressed(
+            command.ClimberPivot(Robot.climber)
+        )
+        
+
+        # Keymap.Drivetrain.LANDING_GEAR_RIGHT.whenPressed(
+        #     SequentialCommandGroup(
+        #         InstantCommand(lambda: Robot.landing_gear.deploy()),
+        #         WaitCommand(0.5),
+        #         InstantCommand(lambda: Robot.landing_gear.release()),
+        #     )
+        # )
 
         # TARGETING
         Keymap.Targeting.TARGETING_PICKUP.whenPressed(
@@ -276,6 +307,6 @@ class OI:
             InstantCommand(lambda: Robot.grabber.set_output(0.3))
         ).whenReleased(InstantCommand(lambda: Robot.grabber.set_output(0)))
 
-        Keymap.Targeting.ZERO_ARM.whenPressed(
-            InstantCommand(lambda: Robot.arm.zero_elevator_rotation())
-        )
+        # Keymap.Targeting.ZERO_ARM.whenPressed(
+        #     InstantCommand(lambda: Robot.arm.zero_elevator_rotation())
+        # )

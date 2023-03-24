@@ -97,6 +97,19 @@ class Keymap:
             Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.Y
         )
 
-        ZERO_ARM = commands2.button.JoystickButton(
+        # ZERO_ARM = commands2.button.JoystickButton(
+        #     Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.SELECT
+        # )
+        
+    class Climber:
+        DEPLOY = commands2.button.JoystickButton(
             Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.SELECT
+        )
+        
+        UNCLIMB = commands2.button.Button(
+            lambda: Controllers.OPERATOR_CONTROLLER.getPOV() == 90
+        )
+        
+        CLIMB = commands2.button.Button(
+            lambda: Controllers.OPERATOR_CONTROLLER.getPOV() == 270
         )

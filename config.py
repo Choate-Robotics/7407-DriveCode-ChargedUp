@@ -2,11 +2,11 @@
 # Climber Configurations:
 # Needs to be verified
 
-climber_motor_id = 9
+climber_motor_id = 7
 
 compressor = 31
-climber_forwardChannel = 10
-climber_reverseChannel = 11
+climber_forwardChannel = 11
+climber_reverseChannel = 10
 
 latch_forwardChannel = 8
 latch_reverseChannel = 9

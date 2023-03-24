@@ -32,6 +32,7 @@ class _Robot(wpilib.TimedRobot):
         Robot.intake.init()
         Robot.grabber.init()
         Robot.landing_gear.init()
+        Robot.climber.init()
 
         Sensors.pv_controller = None
         Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
@@ -92,6 +93,9 @@ class _Robot(wpilib.TimedRobot):
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
 
     def robotPeriodic(self):
+        SmartDashboard.putNumber("Robot Roll", math.degrees(Sensors.gyro.get_robot_roll()))
+        SmartDashboard.putNumber("Robot Pitch", math.degrees(Sensors.gyro.get_robot_pitch()))
+        SmartDashboard.putNumber("Robot Yaw", math.degrees(Sensors.gyro.get_robot_heading()))
         SmartDashboard.putBoolean(
             "Zero Elevator", Robot.arm.elevator_bottom_sensor.get()
         )
