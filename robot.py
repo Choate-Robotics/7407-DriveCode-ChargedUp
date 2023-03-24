@@ -93,6 +93,8 @@ class _Robot(wpilib.TimedRobot):
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
 
     def robotPeriodic(self):
+        SmartDashboard.putNumber("Climber Rotations", Robot.climber.get_motor())
+        SmartDashboard.putBoolean("Climbed", Robot.climber.is_climbed())
         SmartDashboard.putNumber("Robot Roll", math.degrees(Sensors.gyro.get_robot_roll()))
         SmartDashboard.putNumber("Robot Pitch", math.degrees(Sensors.gyro.get_robot_pitch()))
         SmartDashboard.putNumber("Robot Yaw", math.degrees(Sensors.gyro.get_robot_heading()))
@@ -172,6 +174,7 @@ class _Robot(wpilib.TimedRobot):
             ...
 
     def teleopInit(self):
+        Robot.climber.climber_disable()
         logger.debug("TELEOP", "Teleop Initialized")
 
         commands2.CommandScheduler.getInstance().schedule(

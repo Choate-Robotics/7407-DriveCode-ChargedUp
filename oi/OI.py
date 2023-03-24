@@ -1,5 +1,5 @@
 import math
-
+import time
 import wpilib
 from commands2 import (
     InstantCommand,
@@ -15,8 +15,6 @@ from robot_systems import Robot, Sensors
 import constants
 
 logger.info("Hi, I'm OI!")
-
-
 class OI:
     @staticmethod
     def init() -> None:
@@ -42,9 +40,17 @@ class OI:
         Keymap.Drivetrain.X_MODE.whenPressed(
             InstantCommand(lambda: Robot.drivetrain.x_mode())
         )
-        def deploy():
-            InstantCommand(command.ClimberDeploy(Robot.climber))
+
+        # def start_time_deploy():
+        #     print("starting deploy")
+            
+            
         
+        # def check_time_deploy():
+        #     if delay < time.time() - 3:
+        #         print("deploying")
+        #         InstantCommand(command.ClimberDeploy(Robot.climber))
+    
 
         Keymap.Drivetrain.SLOW_FORWARD.whenPressed(
             command.DrivetrainScoreBack(Robot.drivetrain, Sensors.odometry)
@@ -55,26 +61,14 @@ class OI:
         ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
         
         Keymap.Climber.DEPLOY.whenPressed(
+            # InstantCommand(lambda: start_time_deploy())
             command.ClimberDeploy(Robot.climber)
         )
         
-        def unpivot():
-            if Robot.climber.climber_active == False or Robot.climber.pivoted == False:
-                return
-            else:
-                print("UnPivoting")
-                InstantCommand(command.ClimberUnpivot(Robot.climber))
         
         Keymap.Climber.UNCLIMB.whenPressed(
             command.ClimberUnpivot(Robot.climber)
         )
-        
-        def pivot():
-            if Robot.climber.climber_active == False:
-                return
-            else:
-                print("Pivoting")
-                command.ClimberPivot(Robot.climber)
         
         Keymap.Climber.CLIMB.whenPressed(
             command.ClimberPivot(Robot.climber)

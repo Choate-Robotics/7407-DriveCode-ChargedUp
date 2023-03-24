@@ -356,4 +356,4 @@ kCameras = {
 
 climber_motor_gear_ratio = 16
 climber_pivot_speed = .5
-climber_pivot_threshold = 15.5
+climber_pivot_rotations = 1
