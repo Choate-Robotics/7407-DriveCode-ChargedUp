@@ -163,8 +163,8 @@ class _Robot(wpilib.TimedRobot):
 
         try:
             commands2.CommandScheduler.getInstance().run()
-        except Exception:
-            ...
+        except Exception as e:
+            print(e)
 
     def teleopInit(self):
         logger.debug("TELEOP", "Teleop Initialized")
@@ -190,6 +190,17 @@ class _Robot(wpilib.TimedRobot):
                 ),
             )
         )
+
+        if self.pv_selection.getSelected() == "on":
+            Sensors.pv_controller = PV_Cameras(
+                constants.ApriltagPositionDictBlue
+                if config.blue_team
+                else constants.ApriltagPositionDictRed
+            )
+            Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
+        else:
+            Sensors.pv_controller = None
+            Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
 
     def teleopPeriodic(self):
         ...

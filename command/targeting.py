@@ -1,6 +1,7 @@
 import math
 
 import commands2
+import wpilib
 from commands2 import (
     InstantCommand,
     ParallelCommandGroup,
@@ -11,9 +12,8 @@ from wpimath.geometry import Pose2d
 
 import command
 import config
-import constants
 from command import CustomTrajectory
-from command.autonomous import FollowPathCustom, RotateInPlace
+from command.autonomous import CustomRouting, RotateInPlace
 from config import TargetData
 from robot_systems import Robot, Sensors
 from sensors import FieldOdometry
@@ -47,6 +47,8 @@ class TargetDrivetrain:
         )
         target = Pose2d(target.x, target.y, target_angle)
 
+        wpilib.SmartDashboard.putString("TARGET POSE", str(target))
+
         # Generate a trajectory to the target
         trajectory = CustomTrajectory(
             start_pose=current_pose,
@@ -67,10 +69,11 @@ class TargetDrivetrain:
                 threshold=math.radians(4),
                 max_angular_vel=config.drivetrain_routing_angular_velocity,
             ),
-            FollowPathCustom(
+            CustomRouting(
                 subsystem=Robot.drivetrain,
-                trajectory=trajectory,
-                period=constants.period,
+                max_horizontal_vel=1,
+                max_vertical_vel=1,
+                target=target,
             ),
             RotateInPlace(
                 Robot.drivetrain,

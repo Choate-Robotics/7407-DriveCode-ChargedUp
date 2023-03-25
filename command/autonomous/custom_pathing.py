@@ -291,3 +291,67 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
 
     def runsWhenDisabled(self) -> bool:
         return False
+
+
+class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
+    """
+    Follows a path using a holonomic drive controller.
+
+    :param subsystem: The subsystem to run this command on
+    :type subsystem: SwerveDrivetrain
+    :param target: The Pose to drive the drivetrain to
+    :type target: Pose2d
+    :param period: The period of the controller, defaults to 0.02
+    :type period: float, optional
+    """
+
+    def __init__(
+        self,
+        subsystem: SwerveDrivetrain,
+        target: Pose2d,
+        max_horizontal_vel: float | None = 1,
+        max_vertical_vel: float | None = 1,
+    ):
+        super().__init__(subsystem)
+        self.target: Pose2d = target
+        self.max_horizontal_vel = max_horizontal_vel
+        self.max_vertical_vel = max_vertical_vel
+        self.end_pose: Pose2d = target
+        self.finished: bool = True
+
+    def initialize(self) -> None:
+        self.finished = False
+
+    def execute(self) -> None:
+        relative = self.end_pose.relativeTo(Sensors.odometry.getPose())
+
+        if abs(relative.x) < 0.05 and abs(relative.y) < 0.05:
+            self.finished = True
+
+        if not self.finished:
+            self.subsystem.set_driver_centric(
+                (
+                    -relative.x,
+                    -relative.y,
+                ),
+                0,
+            )
+
+        # vx, vy = rotate_vector(
+        #     speeds.vx, speeds.vy, Sensors.odometry.getPose().rotation().radians()
+        # )
+
+        # self.subsystem.set_driver_centric((-vx, -vy), speeds.omega)
+
+    def isFinished(self) -> bool:
+        return self.finished
+
+    def end(self, interrupted: bool) -> None:
+        self.subsystem.set_driver_centric((0, 0), 0)
+        SmartDashboard.putString("POSE", str(self.subsystem.odometry.getPose()))
+        SmartDashboard.putString(
+            "POSD", str(Sensors.odometry.getPose().rotation().degrees())
+        )
+
+    def runsWhenDisabled(self) -> bool:
+        return False
