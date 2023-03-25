@@ -89,12 +89,16 @@ class Keymap:
             Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.RB
         )
 
-        TARGETING_CUBE_INTAKE = commands2.button.JoystickButton(
+        TARGETING_CUBE_INTAKE_CLAW = commands2.button.JoystickButton(
             Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.X
         )
 
-        TARGETING_EJECT = commands2.button.JoystickButton(
+        TARGETING_CUBE_INTAKE = commands2.button.JoystickButton(
             Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.Y
+        )
+        
+        TARGETING_EJECT_INTAKE = commands2.button.JoystickButton(
+            Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.SELECT
         )
 
         # ZERO_ARM = commands2.button.JoystickButton(
@@ -103,7 +107,7 @@ class Keymap:
         
     class Climber:
         DEPLOY = commands2.button.JoystickButton(
-            Controllers.OPERATOR_CONTROLLER, controllerOPERATOR.SELECT
+            Controllers.DRIVER_CONTROLLER, controllerDRIVER.SELECT
         )
         
         UNCLIMB = commands2.button.Button(

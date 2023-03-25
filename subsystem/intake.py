@@ -28,6 +28,22 @@ class Intake(Subsystem):
         self.intake_motor.set_raw_output(
             self.intake_speed * (-1 if intake_reversed else 1)
         )
+        
+        
+    def enable_intake_motor(self, intake_reversed: bool = False):
+        self.intake_motor.set_raw_output(
+            self.intake_speed * (-1 if intake_reversed else 1)
+        )
+        
+    def enable_intake_motor_max(self, intake_reversed: bool = False):
+        self.intake_motor.set_raw_output(
+            1 * (-1 if intake_reversed else 1)
+        )
+    
+    def disable_intake_motor(self):
+        self.intake_motor.set_raw_output(
+            0
+        )
 
     def intake_disable(self):
         self.intake_piston.retract()

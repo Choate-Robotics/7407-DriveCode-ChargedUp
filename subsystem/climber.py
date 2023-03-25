@@ -62,8 +62,21 @@ class Climber(Subsystem):
         self.climber_motor.set_target_position(
             rotations * constants.climber_motor_gear_ratio
         )
+            
+    def pivot(self):
+        if self.climber_active == True and self.pivoted == False:
+            self.pivoted = True
+            self.set_motor(constants.climber_pivot_rotations)
+            self.latch_enable()
+            
+    def unpivot(self):
+        if self.climber_active == True and self.pivoted == True:
+            self.pivoted = False
+            self.set_motor(0)
+            self.latch_disable()
+
     def get_motor(self):
         return self.climber_motor.get_sensor_position() / constants.climber_motor_gear_ratio
     
     def is_climbed(self):
-        return self.get_motor() * constants.climber_motor_gear_ratio < constants.climber_pivot_rotations + .5 and self.get_motor() * constants.climber_motor_gear_ratio > constants.climber_pivot_rotations - .5
+        return self.get_motor() * constants.climber_motor_gear_ratio < constants.climber_pivot_rotations + 1 and self.get_motor() * constants.climber_motor_gear_ratio > constants.climber_pivot_rotations - 1

@@ -46,3 +46,4 @@ class IntakeDisable(SubsystemCommand[Intake]):
 
     def end(self, interrupted=False):
         pass
+    

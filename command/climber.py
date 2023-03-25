@@ -92,9 +92,7 @@ class ClimberPivot(SubsystemCommand[Climber]):
     def initialize(self):
         
         # self.turn_reversed = Robot.climber.pivot_threshold < Robot.climber.get_angle()
-        Robot.climber.latch_enable()
-        Robot.climber.pivoted = True
-        Robot.climber.set_motor(constants.climber_pivot_rotations)
+        Robot.climber.pivot()
 
     def execute(self):
         pass
@@ -112,9 +110,7 @@ class ClimberUnpivot(SubsystemCommand[Climber]):
     
     def initialize(self):
         # self.turn_reversed = Robot.climber.pivot_threshold < Robot.climber.get_angle()
-        Robot.climber.latch_disable()
-        Robot.climber.pivoted = False
-        Robot.climber.climber_motor.set_target_position(0)
+        Robot.climber.unpivot()
     def execute(self):
         pass
 

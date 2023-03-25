@@ -86,14 +86,14 @@ elevator_brake_id = 3
 
 pneumatics_control_module = 31
 
-claw_motor_speed: float = 0.7
+claw_motor_speed: float = 0.3
 
 # Intake
 intake_motor_id = 11
 intake_piston_forwardChannel = 4
 intake_piston_reverseChannel = 5
 
-default_intake_speed = 0.5
+default_intake_speed = 0.3
 
 kRobotVisionPoseWeight = 0.1
 # Dummy data

@@ -223,7 +223,7 @@ class OI:
             )
         )
 
-        Keymap.Targeting.TARGETING_CUBE_INTAKE.whenPressed(
+        Keymap.Targeting.TARGETING_CUBE_INTAKE_CLAW.whenPressed(
             SequentialCommandGroup(
                 InstantCommand(lambda: Robot.grabber.engage_claw()),
                 command.Target(
@@ -236,7 +236,7 @@ class OI:
             )
         )
 
-        Keymap.Targeting.TARGETING_CUBE_INTAKE.whenReleased(
+        Keymap.Targeting.TARGETING_CUBE_INTAKE_CLAW.whenReleased(
             SequentialCommandGroup(
                 InstantCommand(lambda: Robot.grabber.disengage_claw()),
                 InstantCommand(
@@ -254,27 +254,20 @@ class OI:
             )
         )
 
-        Keymap.Targeting.TARGETING_EJECT.whenPressed(
-            command.Target(
-                Robot.arm,
-                Robot.grabber,
-                Robot.intake,
-                Sensors.odometry,
-                target=config.scoring_locations["eject"],
-            )
+        Keymap.Targeting.TARGETING_CUBE_INTAKE.whenPressed(
+            command.IntakeEnable(Robot.intake)
         )
 
-        Keymap.Targeting.TARGETING_EJECT.whenReleased(
-            SequentialCommandGroup(
-                InstantCommand(lambda: Robot.grabber.disengage_claw()),
-                command.Target(
-                    Robot.arm,
-                    Robot.grabber,
-                    Robot.intake,
-                    Sensors.odometry,
-                    target=config.scoring_locations["standard"],
-                ),
-            )
+        Keymap.Targeting.TARGETING_CUBE_INTAKE.whenReleased(
+            command.IntakeDisable(Robot.intake)
+        )
+        
+        Keymap.Targeting.TARGETING_EJECT_INTAKE.whenPressed(
+            InstantCommand(lambda: Robot.intake.enable_intake_motor_max(True))
+        )
+        
+        Keymap.Targeting.TARGETING_EJECT_INTAKE.whenReleased(
+            InstantCommand(lambda: Robot.intake.disable_intake_motor())
         )
 
         Keymap.Claw.OPEN_CLAW_DRIVER.whenPressed(
@@ -294,11 +287,11 @@ class OI:
         )
 
         Keymap.Claw.RUN_CLAW_UP.whenPressed(
-            InstantCommand(lambda: Robot.grabber.set_output(-0.3))
+            InstantCommand(lambda: Robot.grabber.set_output(-0.4))
         ).whenReleased(InstantCommand(lambda: Robot.grabber.set_output(0)))
 
         Keymap.Claw.RUN_CLAW_DOWN.whenPressed(
-            InstantCommand(lambda: Robot.grabber.set_output(0.3))
+            InstantCommand(lambda: Robot.grabber.set_output(0.4))
         ).whenReleased(InstantCommand(lambda: Robot.grabber.set_output(0)))
 
         # Keymap.Targeting.ZERO_ARM.whenPressed(
