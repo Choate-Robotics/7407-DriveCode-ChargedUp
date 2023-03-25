@@ -19,26 +19,23 @@ class ZeroElevator(SubsystemCommand[Arm]):
     def __init__(self, subsystem: Arm):
         super().__init__(subsystem)
         self.subsystem = subsystem
-        self.start_time = time.time()
-        self.max_time = 5
 
     def initialize(self):
         ...
 
     def execute(self):
-        self.subsystem.motor_extend.set_raw_output(-0.05)
-        # print("ZEROING")
+        # self.subsystem.motor_extend.set_raw_output(-0.05)
+        print("ZEROING")
         ...
 
     def isFinished(self):
-        return (
-            self.subsystem.elevator_bottom_sensor.get_value()
-            or (time.time() - self.start_time) > self.max_time
-        )
-        # return True
+        # return self.subsystem.elevator_bottom_sensor.get()
+        return True
 
     def end(self, interrupted=False):
         self.subsystem.motor_extend.set_sensor_position(0)
+        print("Elevator successfully zeroed.")
+        print("ELEVATOR ZEROED")
         utils.logger.debug("Elevator", "Elevator Successfully Zeroed.")
 
 

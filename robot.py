@@ -169,10 +169,6 @@ class _Robot(wpilib.TimedRobot):
         )
         SmartDashboard.putNumber("SHOULDER DIST: ", Robot.arm.get_length())
 
-        SmartDashboard.putBoolean(
-            "ELEVATOR BOTTOM", Robot.arm.elevator_bottom_sensor.get_value()
-        )
-
         try:
             commands2.CommandScheduler.getInstance().run()
         except Exception:
@@ -189,7 +185,6 @@ class _Robot(wpilib.TimedRobot):
         Robot.arm.arm_rotation_motor.pid_controller.setOutputRange(-0.2, 0.2, slotID=1)
         commands2.CommandScheduler.getInstance().schedule(
             SequentialCommandGroup(
-                command.ZeroElevator(Robot.arm),
                 command.ZeroShoulder(Robot.arm),
                 command.ZeroWrist(Robot.grabber),
                 command.Target(
