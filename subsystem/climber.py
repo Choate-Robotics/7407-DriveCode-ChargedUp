@@ -47,7 +47,7 @@ class Climber(Subsystem):
         self.climber_active = False
         
     def climber_reset(self):
-        if SmartDashboard.getBoolean("Can Reset Climber", False):
+        if SmartDashboard.getData("Can Reset Climber", False):
             self.climber_disable()
         
     def latch_enable(self):

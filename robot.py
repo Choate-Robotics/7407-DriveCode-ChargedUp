@@ -22,6 +22,7 @@ class _Robot(wpilib.TimedRobot):
         super().__init__()
         self.pv_selection: wpilib.SendableChooser | None = None
         self.auto_selection: wpilib.SendableChooser | None = None
+        self.can_reset_climb: wpilib.SendableChooser | None = None
 
     def robotInit(self):
         period = 0.05
@@ -89,9 +90,19 @@ class _Robot(wpilib.TimedRobot):
         self.auto_selection.addOption(
             "Do Nothing", AutoRoutine(Pose2d(0, 0, 0), InstantCommand(lambda: None))
         )
+        
+        self.can_reset_climb = wpilib.SendableChooser()
+        
+        self.can_reset_climb.addOption(
+            "Yes", True
+        )
+        
+        self.can_reset_climb.setDefaultOption(
+            "No", False
+        )
 
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
-        SmartDashboard.putBoolean("Can Reset Climber", False)
+        wpilib.SmartDashboard.putData("Can Reset Climber", self.can_reset_climb)
 
     def robotPeriodic(self):
         SmartDashboard.putNumber("Climber Rotations", Robot.climber.get_motor())

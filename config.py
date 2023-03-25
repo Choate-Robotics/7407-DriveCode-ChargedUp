@@ -93,7 +93,7 @@ intake_motor_id = 11
 intake_piston_forwardChannel = 4
 intake_piston_reverseChannel = 5
 
-default_intake_speed = 0.3
+default_intake_speed = 0.4
 
 kRobotVisionPoseWeight = 0.1
 # Dummy data
