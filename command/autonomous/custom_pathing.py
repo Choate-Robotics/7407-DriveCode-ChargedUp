@@ -323,44 +323,64 @@ class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
         self.vertical_finished: bool = False
         self.angular_finished: bool = False
 
+        self.horizontal_pid: PIDController | None = None
+        self.vertical_pid: PIDController | None = None
+        self.angular_pid: PIDController | None = None
+
     def initialize(self) -> None:
         self.horizontal_finished: bool = False
         self.vertical_finished: bool = False
         self.angular_finished: bool = False
 
-    def execute(self) -> None:
-        relative = self.end_pose.relativeTo(Sensors.odometry.getPose())
+        self.horizontal_pid = PIDController(4, 0, 0.01)
+        self.vertical_pid = PIDController(4, 0, 0.01)
+        self.angular_pid = PIDController(2, 0, 0.05)
 
-        if abs(relative.x) < 0.06:
+        self.horizontal_pid.setSetpoint(0)
+        self.vertical_pid.setSetpoint(0)
+        self.angular_pid.setSetpoint(0)
+
+    def execute(self) -> None:
+        current_pose = Sensors.odometry.getPose()
+        relative = self.end_pose.relativeTo(current_pose)
+
+        if abs(relative.x) < 0.03:
             self.horizontal_finished = True
+        else:
+            self.horizontal_finished = False
         if abs(relative.y) < 0.03:
             self.vertical_finished = True
+        else:
+            self.vertical_finished = False
         if abs(relative.rotation().degrees()) < 5:
             self.angular_finished = True
+        else:
+            self.angular_finished = False
 
-        horizontal_dir = (-1 if relative.x > 0 else 1) * (
-            1 if self.target.rotation().radians() == 0 else -1
+        horizontal_vel = (
+            self.horizontal_pid.calculate(abs(relative.x))
+            * (1 if relative.x > 0 else -1)
+            * (1 if self.target.rotation().radians() == 0 else -1)
         )
-        vertical_dir = (-1 if relative.y > 0 else 1) * (
-            1 if self.target.rotation().radians() == 0 else -1
+        vertical_vel = (
+            self.vertical_pid.calculate(abs(relative.y))
+            * (1 if relative.y > 0 else -1)
+            * (1 if self.target.rotation().radians() == 0 else -1)
         )
-        angular_dir = 1 if relative.rotation().radians() > 0 else -1
+        angular_vel = self.angular_pid.calculate(abs(relative.rotation().radians())) * (
+            -1 if relative.rotation().radians() > 0 else 1
+        )
 
         self.subsystem.set_driver_centric(
             (
-                horizontal_dir * max(abs(relative.x), self.min_horizontal_vel)
-                if not self.horizontal_finished
-                else horizontal_dir * abs(horizontal_dir) * 2,
-                vertical_dir * max(abs(relative.y), self.min_horizontal_vel)
-                if not self.vertical_finished
-                else vertical_dir * abs(relative.y) * 4,
+                horizontal_vel if not self.horizontal_finished else 0,
+                vertical_vel if not self.vertical_finished else 0,
             ),
-            angular_dir * max(abs(relative.rotation().radians()), self.min_angular_vel)
-            if not self.angular_finished
-            else relative.rotation().radians() * 0.3,
+            angular_vel,
         )
 
     def isFinished(self) -> bool:
+        print(self.horizontal_finished, self.vertical_finished, self.angular_finished)
         return (
             self.horizontal_finished
             and self.vertical_finished
@@ -368,6 +388,7 @@ class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
         )
 
     def end(self, interrupted: bool) -> None:
+        print("FINISHED RUNNING CUSTOM ROUTE")
         self.subsystem.set_driver_centric((0, 0), 0)
         SmartDashboard.putString("POSE", str(self.subsystem.odometry.getPose()))
         SmartDashboard.putString(

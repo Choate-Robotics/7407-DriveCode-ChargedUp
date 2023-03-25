@@ -56,6 +56,12 @@ class TargetDrivetrain(BasicCommand):
         # Generate a command to follow the trajectory
         commands2.CommandScheduler.getInstance().schedule(
             SequentialCommandGroup(
+                RotateInPlace(
+                    Robot.drivetrain,
+                    target_angle,
+                    threshold=math.radians(4),
+                    max_angular_vel=config.drivetrain_routing_angular_velocity,
+                ),
                 CustomRouting(
                     subsystem=Robot.drivetrain,
                     min_horizontal_vel=0.8,
