@@ -279,7 +279,7 @@ class OI:
                 target_list=config.blue_scoring_positions
                 if config.blue_team
                 else config.red_scoring_positions,
-            ).generate()
+            )
         ).whenReleased(
             InstantCommand(
                 lambda: commands2.CommandScheduler.getInstance().schedule(

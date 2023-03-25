@@ -309,42 +309,63 @@ class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
         self,
         subsystem: SwerveDrivetrain,
         target: Pose2d,
-        max_horizontal_vel: float | None = 1,
-        max_vertical_vel: float | None = 1,
+        min_horizontal_vel: float | None = 1,
+        min_vertical_vel: float | None = 1,
+        min_angular_vel: float | None = 0.2,
     ):
         super().__init__(subsystem)
         self.target: Pose2d = target
-        self.max_horizontal_vel = max_horizontal_vel
-        self.max_vertical_vel = max_vertical_vel
+        self.min_horizontal_vel = min_horizontal_vel
+        self.min_vertical_vel = min_vertical_vel
+        self.min_angular_vel = min_angular_vel
         self.end_pose: Pose2d = target
-        self.finished: bool = True
+        self.horizontal_finished: bool = False
+        self.vertical_finished: bool = False
+        self.angular_finished: bool = False
 
     def initialize(self) -> None:
-        self.finished = False
+        self.horizontal_finished: bool = False
+        self.vertical_finished: bool = False
+        self.angular_finished: bool = False
 
     def execute(self) -> None:
         relative = self.end_pose.relativeTo(Sensors.odometry.getPose())
 
-        if abs(relative.x) < 0.05 and abs(relative.y) < 0.05:
-            self.finished = True
+        if abs(relative.x) < 0.06:
+            self.horizontal_finished = True
+        if abs(relative.y) < 0.03:
+            self.vertical_finished = True
+        if abs(relative.rotation().degrees()) < 5:
+            self.angular_finished = True
 
-        if not self.finished:
-            self.subsystem.set_driver_centric(
-                (
-                    -relative.x,
-                    -relative.y,
-                ),
-                0,
-            )
+        horizontal_dir = (-1 if relative.x > 0 else 1) * (
+            1 if self.target.rotation().radians() == 0 else -1
+        )
+        vertical_dir = (-1 if relative.y > 0 else 1) * (
+            1 if self.target.rotation().radians() == 0 else -1
+        )
+        angular_dir = 1 if relative.rotation().radians() > 0 else -1
 
-        # vx, vy = rotate_vector(
-        #     speeds.vx, speeds.vy, Sensors.odometry.getPose().rotation().radians()
-        # )
-
-        # self.subsystem.set_driver_centric((-vx, -vy), speeds.omega)
+        self.subsystem.set_driver_centric(
+            (
+                horizontal_dir * max(abs(relative.x), self.min_horizontal_vel)
+                if not self.horizontal_finished
+                else horizontal_dir * abs(horizontal_dir) * 2,
+                vertical_dir * max(abs(relative.y), self.min_horizontal_vel)
+                if not self.vertical_finished
+                else vertical_dir * abs(relative.y) * 4,
+            ),
+            angular_dir * max(abs(relative.rotation().radians()), self.min_angular_vel)
+            if not self.angular_finished
+            else relative.rotation().radians() * 0.3,
+        )
 
     def isFinished(self) -> bool:
-        return self.finished
+        return (
+            self.horizontal_finished
+            and self.vertical_finished
+            and self.angular_finished
+        )
 
     def end(self, interrupted: bool) -> None:
         self.subsystem.set_driver_centric((0, 0), 0)

@@ -81,11 +81,13 @@ claw_motor_extend_id = 0
 
 blue_scoring_positions = [
     Pose2d(1.63, 1.03, 0),
+    Pose2d(1.52, 1.61, 0),
     Pose2d(7, 7, 0),
 ]
 
 red_scoring_positions = [
     Pose2d(1.63, 1.03, 0),
+    Pose2d(1.52, 1.61, 0),
     Pose2d(7, 7, 0),
     # Pose2d(2, 2, 0),
     # Pose2d(3, 3, 0),
