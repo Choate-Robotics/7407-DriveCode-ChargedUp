@@ -32,7 +32,6 @@ class _Robot(wpilib.TimedRobot):
         Robot.drivetrain.init()
         Robot.intake.init()
         Robot.grabber.init()
-        Robot.landing_gear.init()
         Robot.climber.init()
 
         Sensors.pv_controller = None
@@ -90,16 +89,12 @@ class _Robot(wpilib.TimedRobot):
         self.auto_selection.addOption(
             "Do Nothing", AutoRoutine(Pose2d(0, 0, 0), InstantCommand(lambda: None))
         )
-        
+
         self.can_reset_climb = wpilib.SendableChooser()
-        
-        self.can_reset_climb.addOption(
-            "Yes", True
-        )
-        
-        self.can_reset_climb.setDefaultOption(
-            "No", False
-        )
+
+        self.can_reset_climb.addOption("Yes", True)
+
+        self.can_reset_climb.setDefaultOption("No", False)
 
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
         wpilib.SmartDashboard.putData("Can Reset Climber", self.can_reset_climb)
@@ -107,13 +102,18 @@ class _Robot(wpilib.TimedRobot):
     def robotPeriodic(self):
         SmartDashboard.putNumber("Climber Rotations", Robot.climber.get_motor())
         SmartDashboard.putBoolean("Climbed", Robot.climber.is_climbed())
-        SmartDashboard.putNumber("Robot Roll", math.degrees(Sensors.gyro.get_robot_roll()))
-        SmartDashboard.putNumber("Robot Pitch", math.degrees(Sensors.gyro.get_robot_pitch()))
-        SmartDashboard.putNumber("Robot Yaw", math.degrees(Sensors.gyro.get_robot_heading()))
+        SmartDashboard.putNumber(
+            "Robot Roll", math.degrees(Sensors.gyro.get_robot_roll())
+        )
+        SmartDashboard.putNumber(
+            "Robot Pitch", math.degrees(Sensors.gyro.get_robot_pitch())
+        )
+        SmartDashboard.putNumber(
+            "Robot Yaw", math.degrees(Sensors.gyro.get_robot_heading())
+        )
         SmartDashboard.putBoolean(
             "Zero Elevator", Robot.arm.elevator_bottom_sensor.get()
         )
-        SmartDashboard.putBoolean("Team", config.red_team)
         # SmartDashboard.putNumber("PITCH", Robot.drivetrain.gyro.get_robot_pitch())
         # SmartDashboard.putNumber("ARM_REAL", math.degrees(Robot.arm.get_rotation()))
         #
@@ -182,12 +182,14 @@ class _Robot(wpilib.TimedRobot):
 
         try:
             commands2.CommandScheduler.getInstance().run()
-        except Exception:
-            ...
+        except Exception as e:
+            print(e)
 
     def teleopInit(self):
         Robot.climber.climber_disable()
         logger.debug("TELEOP", "Teleop Initialized")
+
+        config.blue_team = self.auto_selection.getSelected().blue_team
 
         commands2.CommandScheduler.getInstance().schedule(
             command.DriveSwerveCustom(Robot.drivetrain)
@@ -196,6 +198,7 @@ class _Robot(wpilib.TimedRobot):
         Robot.arm.arm_rotation_motor.pid_controller.setOutputRange(-0.2, 0.2, slotID=1)
         commands2.CommandScheduler.getInstance().schedule(
             SequentialCommandGroup(
+                command.ZeroElevator(Robot.arm),
                 command.ZeroShoulder(Robot.arm),
                 command.ZeroWrist(Robot.grabber),
                 command.Target(
@@ -208,25 +211,26 @@ class _Robot(wpilib.TimedRobot):
             )
         )
 
-    def teleopPeriodic(self):
-        config.red_team = False
-        # SmartDashboard.putBoolean(
-        #     "Limit Switch", Robot.arm.elevator_bottom_sensor.get()
-        # )
-        # print("Limit Switch: ", Robot.arm.elevator_bottom_sensor.get())
-
-        # SmartDashboard.putBoolean("ELEVATOR_BOTTOM_SENSOR", Robot.arm.elevator_bottom_sensor.get())
-        # print(Pneumatics.compressor.getPressure())
-        # print("I THINK I'm AT: ", math.degrees(Robot.Arm.get_rotation()))
-        # Robot.Arm.disable_brake()
-        ...
-
-    def autonomousInit(self):
-        config.red_team = False
         if self.pv_selection.getSelected() == "on":
             Sensors.pv_controller = PV_Cameras(
                 constants.ApriltagPositionDictBlue
-                if self.auto_selection.getSelected().blue_team
+                if config.blue_team
+                else constants.ApriltagPositionDictRed
+            )
+            Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)
+        else:
+            Sensors.pv_controller = None
+            Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
+
+    def teleopPeriodic(self):
+        ...
+
+    def autonomousInit(self):
+        config.blue_team = self.auto_selection.getSelected().blue_team
+        if self.pv_selection.getSelected() == "on":
+            Sensors.pv_controller = PV_Cameras(
+                constants.ApriltagPositionDictBlue
+                if config.blue_team
                 else constants.ApriltagPositionDictRed
             )
             Sensors.odometry = FieldOdometry(Robot.drivetrain, Sensors.pv_controller)

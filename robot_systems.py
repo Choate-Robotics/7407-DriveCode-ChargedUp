@@ -8,10 +8,9 @@ from sensors import FieldOdometry, PV_Cameras
 class Robot:
     arm = subsystem.Arm()
     drivetrain = subsystem.Drivetrain()
-    climber =  subsystem.Climber()
+    climber = subsystem.Climber()
     intake = subsystem.Intake()
     grabber = subsystem.Grabber()
-    landing_gear = subsystem.LandingGear()
 
 
 class Pneumatics:

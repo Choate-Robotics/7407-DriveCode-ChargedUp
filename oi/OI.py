@@ -1,5 +1,6 @@
 import math
 import time
+import commands2
 import wpilib
 from commands2 import (
     InstantCommand,
@@ -15,6 +16,8 @@ from robot_systems import Robot, Sensors
 import constants
 
 logger.info("Hi, I'm OI!")
+
+
 class OI:
     @staticmethod
     def init() -> None:
@@ -40,7 +43,6 @@ class OI:
         Keymap.Drivetrain.X_MODE.whenPressed(
             InstantCommand(lambda: Robot.drivetrain.x_mode())
         )
-    
 
         Keymap.Drivetrain.SLOW_FORWARD.whenPressed(
             command.DrivetrainScoreBack(Robot.drivetrain, Sensors.odometry)
@@ -49,31 +51,14 @@ class OI:
         Keymap.Drivetrain.SLOW_REVERSE.whenPressed(
             command.DrivetrainScoreFront(Robot.drivetrain, Sensors.odometry)
         ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
-        
-        Keymap.Climber.DEPLOY.whenPressed(
-            command.ClimberDeploy(Robot.climber)
-        )
-        
-        Keymap.Climber.RESET.whenPressed(
-            command.ClimberRetract(Robot.climber)
-        )
-                
-        Keymap.Climber.UNCLIMB.whenPressed(
-            command.ClimberUnpivot(Robot.climber)
-        )
-        
-        Keymap.Climber.CLIMB.whenPressed(
-            command.ClimberPivot(Robot.climber)
-        )
-        
 
-        # Keymap.Drivetrain.LANDING_GEAR_RIGHT.whenPressed(
-        #     SequentialCommandGroup(
-        #         InstantCommand(lambda: Robot.landing_gear.deploy()),
-        #         WaitCommand(0.5),
-        #         InstantCommand(lambda: Robot.landing_gear.release()),
-        #     )
-        # )
+        Keymap.Climber.DEPLOY.whenPressed(command.ClimberDeploy(Robot.climber))
+
+        Keymap.Climber.RESET.whenPressed(command.ClimberRetract(Robot.climber))
+
+        Keymap.Climber.UNCLIMB.whenPressed(command.ClimberUnpivot(Robot.climber))
+
+        Keymap.Climber.CLIMB.whenPressed(command.ClimberPivot(Robot.climber))
 
         # TARGETING
         Keymap.Targeting.TARGETING_PICKUP.whenPressed(
@@ -253,11 +238,11 @@ class OI:
         Keymap.Targeting.TARGETING_CUBE_INTAKE.whenReleased(
             command.IntakeDisable(Robot.intake)
         )
-        
+
         Keymap.Targeting.TARGETING_EJECT_INTAKE.whenPressed(
             InstantCommand(lambda: Robot.intake.enable_intake_motor_max(True))
         )
-        
+
         Keymap.Targeting.TARGETING_EJECT_INTAKE.whenReleased(
             InstantCommand(lambda: Robot.intake.disable_intake_motor())
         )
@@ -286,6 +271,17 @@ class OI:
             InstantCommand(lambda: Robot.grabber.set_output(0.4))
         ).whenReleased(InstantCommand(lambda: Robot.grabber.set_output(0)))
 
-        # Keymap.Targeting.ZERO_ARM.whenPressed(
-        #     InstantCommand(lambda: Robot.arm.zero_elevator_rotation())
-        # )
+        Keymap.Drivetrain.AUTO_ROUTE.whenPressed(
+            command.TargetDrivetrain(
+                Sensors.odometry,
+                target_list=config.blue_scoring_positions
+                if config.blue_team
+                else config.red_scoring_positions,
+            )
+        ).whenReleased(
+            InstantCommand(
+                lambda: commands2.CommandScheduler.getInstance().schedule(
+                    command.DriveSwerveCustom(Robot.drivetrain)
+                )
+            )
+        )

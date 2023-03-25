@@ -291,3 +291,215 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
 
     def runsWhenDisabled(self) -> bool:
         return False
+
+
+class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
+    """
+    Follows a path using a holonomic drive controller.
+
+    :param subsystem: The subsystem to run this command on
+    :type subsystem: SwerveDrivetrain
+    :param target: The Pose to drive the drivetrain to
+    :type target: Pose2d
+    :param period: The period of the controller, defaults to 0.02
+    :type period: float, optional
+    """
+
+    def __init__(
+        self,
+        subsystem: SwerveDrivetrain,
+        target: Pose2d,
+        min_horizontal_vel: float | None = 1,
+        min_vertical_vel: float | None = 1,
+        min_angular_vel: float | None = 0.2,
+    ):
+        super().__init__(subsystem)
+        self.target: Pose2d = target
+        self.min_horizontal_vel = min_horizontal_vel
+        self.min_vertical_vel = min_vertical_vel
+        self.min_angular_vel = min_angular_vel
+        self.end_pose: Pose2d = target
+        self.horizontal_finished: bool = False
+        self.vertical_finished: bool = False
+        self.angular_finished: bool = False
+
+        self.horizontal_pid: PIDController | None = None
+        self.vertical_pid: PIDController | None = None
+        self.angular_pid: PIDController | None = None
+
+    def initialize(self) -> None:
+        self.horizontal_finished: bool = False
+        self.vertical_finished: bool = False
+        self.angular_finished: bool = False
+
+        self.horizontal_pid = PIDController(4, 0, 0.01)
+        self.vertical_pid = PIDController(4, 0, 0.01)
+        self.angular_pid = PIDController(2, 0, 0.05)
+
+        self.horizontal_pid.setSetpoint(0)
+        self.vertical_pid.setSetpoint(0)
+        self.angular_pid.setSetpoint(0)
+
+    def execute(self) -> None:
+        current_pose = Sensors.odometry.getPose()
+        relative = self.end_pose.relativeTo(current_pose)
+
+        if abs(relative.x) < 0.03:
+            self.horizontal_finished = True
+        else:
+            self.horizontal_finished = False
+        if abs(relative.y) < 0.03:
+            self.vertical_finished = True
+        else:
+            self.vertical_finished = False
+        if abs(relative.rotation().degrees()) < 5:
+            self.angular_finished = True
+        else:
+            self.angular_finished = False
+
+        horizontal_vel = (
+            self.horizontal_pid.calculate(abs(relative.x))
+            * (1 if relative.x > 0 else -1)
+            * (1 if self.target.rotation().radians() == 0 else -1)
+        )
+        vertical_vel = (
+            self.vertical_pid.calculate(abs(relative.y))
+            * (1 if relative.y > 0 else -1)
+            * (1 if self.target.rotation().radians() == 0 else -1)
+        )
+        angular_vel = self.angular_pid.calculate(abs(relative.rotation().radians())) * (
+            -1 if relative.rotation().radians() > 0 else 1
+        )
+
+        self.subsystem.set_driver_centric(
+            (
+                horizontal_vel if not self.horizontal_finished else 0,
+                vertical_vel if not self.vertical_finished else 0,
+            ),
+            angular_vel,
+        )
+
+    def isFinished(self) -> bool:
+        print(self.horizontal_finished, self.vertical_finished, self.angular_finished)
+        return (
+            self.horizontal_finished
+            and self.vertical_finished
+            and self.angular_finished
+        )
+
+    def end(self, interrupted: bool) -> None:
+        print("FINISHED RUNNING CUSTOM ROUTE")
+        self.subsystem.set_driver_centric((0, 0), 0)
+        SmartDashboard.putString("POSE", str(self.subsystem.odometry.getPose()))
+        SmartDashboard.putString(
+            "POSD", str(Sensors.odometry.getPose().rotation().degrees())
+        )
+
+    def runsWhenDisabled(self) -> bool:
+        return False
+
+
+class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
+    """
+    Follows a path using a holonomic drive controller.
+
+    :param subsystem: The subsystem to run this command on
+    :type subsystem: SwerveDrivetrain
+    :param target: The Pose to drive the drivetrain to
+    :type target: Pose2d
+    :param period: The period of the controller, defaults to 0.02
+    :type period: float, optional
+    """
+
+    def __init__(
+        self,
+        subsystem: SwerveDrivetrain,
+        target: Pose2d,
+        min_horizontal_vel: float | None = 1,
+        min_vertical_vel: float | None = 1,
+        min_angular_vel: float | None = 0.2,
+    ):
+        super().__init__(subsystem)
+        self.target: Pose2d = target
+        self.min_horizontal_vel = min_horizontal_vel
+        self.min_vertical_vel = min_vertical_vel
+        self.min_angular_vel = min_angular_vel
+        self.end_pose: Pose2d = target
+        self.horizontal_finished: bool = False
+        self.vertical_finished: bool = False
+        self.angular_finished: bool = False
+
+        self.horizontal_pid: PIDController | None = None
+        self.vertical_pid: PIDController | None = None
+        self.angular_pid: PIDController | None = None
+
+    def initialize(self) -> None:
+        self.horizontal_finished: bool = False
+        self.vertical_finished: bool = False
+        self.angular_finished: bool = False
+
+        self.horizontal_pid = PIDController(4, 0, 0.01)
+        self.vertical_pid = PIDController(4, 0, 0.01)
+        self.angular_pid = PIDController(2, 0, 0.05)
+
+        self.horizontal_pid.setSetpoint(0)
+        self.vertical_pid.setSetpoint(0)
+        self.angular_pid.setSetpoint(0)
+
+    def execute(self) -> None:
+        current_pose = Sensors.odometry.getPose()
+        relative = self.end_pose.relativeTo(current_pose)
+
+        if abs(relative.x) < 0.03:
+            self.horizontal_finished = True
+        else:
+            self.horizontal_finished = False
+        if abs(relative.y) < 0.03:
+            self.vertical_finished = True
+        else:
+            self.vertical_finished = False
+        if abs(relative.rotation().degrees()) < 5:
+            self.angular_finished = True
+        else:
+            self.angular_finished = False
+
+        horizontal_vel = (
+            self.horizontal_pid.calculate(abs(relative.x))
+            * (1 if relative.x > 0 else -1)
+            * (1 if self.target.rotation().radians() == 0 else -1)
+        )
+        vertical_vel = (
+            self.vertical_pid.calculate(abs(relative.y))
+            * (1 if relative.y > 0 else -1)
+            * (1 if self.target.rotation().radians() == 0 else -1)
+        )
+        angular_vel = self.angular_pid.calculate(abs(relative.rotation().radians())) * (
+            -1 if relative.rotation().radians() > 0 else 1
+        )
+
+        self.subsystem.set_driver_centric(
+            (
+                horizontal_vel if not self.horizontal_finished else 0,
+                vertical_vel if not self.vertical_finished else 0,
+            ),
+            angular_vel,
+        )
+
+    def isFinished(self) -> bool:
+        print(self.horizontal_finished, self.vertical_finished, self.angular_finished)
+        return (
+            self.horizontal_finished
+            and self.vertical_finished
+            and self.angular_finished
+        )
+
+    def end(self, interrupted: bool) -> None:
+        print("FINISHED RUNNING CUSTOM ROUTE")
+        self.subsystem.set_driver_centric((0, 0), 0)
+        SmartDashboard.putString("POSE", str(self.subsystem.odometry.getPose()))
+        SmartDashboard.putString(
+            "POSD", str(Sensors.odometry.getPose().rotation().degrees())
+        )
+
+    def runsWhenDisabled(self) -> bool:
+        return False

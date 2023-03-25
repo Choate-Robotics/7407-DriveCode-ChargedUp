@@ -1,4 +1,3 @@
-
 # Climber Configurations:
 # Needs to be verified
 
@@ -10,10 +9,6 @@ climber_reverseChannel = 10
 
 latch_forwardChannel = 8
 latch_reverseChannel = 9
-
-
-
-
 
 
 import math
@@ -32,11 +27,9 @@ from units.SI import (
 
 grabber_target_angle = 0
 
-red_team: bool = False
+blue_team: bool = False
 drivetrain_reversed: bool = False
 driver_centric: bool = True
-
-landing_gear_active_init = False
 
 # field_length = 16.459
 # field_width = 8.0137
@@ -98,6 +91,20 @@ default_intake_speed = 0.4
 kRobotVisionPoseWeight = 0.1
 # Dummy data
 claw_motor_extend_id = 0
+
+blue_scoring_positions = [
+    Pose2d(1.63, 1.03, 0),
+    Pose2d(1.52, 1.61, 0),
+    Pose2d(7, 7, 0),
+]
+
+red_scoring_positions = [
+    Pose2d(1.63, 1.03, 0),
+    Pose2d(1.52, 1.61, 0),
+    Pose2d(7, 7, 0),
+    # Pose2d(2, 2, 0),
+    # Pose2d(3, 3, 0),
+]
 
 # SCORING LOCATIONS
 scoring_locations: dict[str, TargetData] = {

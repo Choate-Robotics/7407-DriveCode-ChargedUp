@@ -1,19 +1,92 @@
 import math
 
 import commands2
+import wpilib
 from commands2 import (
     InstantCommand,
     ParallelCommandGroup,
     SequentialCommandGroup,
 )
-from robotpy_toolkit_7407 import SubsystemCommand
+from robotpy_toolkit_7407.command import BasicCommand, SubsystemCommand
+from wpimath.geometry import Pose2d
 
 import command
 import config
+from command.autonomous import CustomRouting, RotateInPlace
 from config import TargetData
-from robot_systems import Sensors
+from robot_systems import Robot, Sensors
 from sensors import FieldOdometry
 from subsystem import Arm, Grabber, Intake
+
+
+class TargetDrivetrain(BasicCommand):
+    def __init__(
+        self,
+        field_odometry: FieldOdometry,
+        target_list: list[Pose2d] = config.blue_scoring_positions,
+    ):
+        super().__init__()
+        self.field_odometry = field_odometry
+        self.target_list = target_list
+
+    def initialize(self) -> SubsystemCommand:
+        gyro_angle = Sensors.gyro.get_robot_heading() % (math.pi * 2)
+        gyro_angle = math.degrees(
+            math.atan2(math.sin(gyro_angle), math.cos(gyro_angle))
+        )
+
+        if -90 < gyro_angle < 90:
+            target_angle = 0
+        else:
+            target_angle = math.pi
+
+        print(target_angle)
+        print(gyro_angle)
+
+        current_pose = self.field_odometry.getPose()
+        target = min(
+            self.target_list,
+            key=lambda x: x.translation().distance(current_pose.translation()),
+        )
+        target = Pose2d(target.x, target.y, target_angle)
+
+        wpilib.SmartDashboard.putString("TARGET POSE", str(target))
+        print(target)
+
+        # Generate a command to follow the trajectory
+        commands2.CommandScheduler.getInstance().schedule(
+            SequentialCommandGroup(
+                RotateInPlace(
+                    Robot.drivetrain,
+                    target_angle,
+                    threshold=math.radians(4),
+                    max_angular_vel=config.drivetrain_routing_angular_velocity,
+                ),
+                CustomRouting(
+                    subsystem=Robot.drivetrain,
+                    min_horizontal_vel=0.8,
+                    min_vertical_vel=0.8,
+                    min_angular_vel=0.2,
+                    target=target,
+                ),
+                RotateInPlace(
+                    Robot.drivetrain,
+                    target_angle,
+                    threshold=math.radians(2),
+                    max_angular_vel=config.drivetrain_routing_angular_velocity,
+                ),
+                InstantCommand(
+                    lambda: commands2.CommandScheduler.getInstance().schedule(
+                        command.DriveSwerveCustom(
+                            Robot.drivetrain,
+                        )
+                    )
+                ),
+            )
+        )
+
+    def isFinished(self) -> bool:
+        return True
 
 
 class TargetAuto:
@@ -171,19 +244,11 @@ class Target(SubsystemCommand[Arm]):
             )
 
             if -90 < gyro_angle < 90:
-                self.target.arm_angle = abs(self.target.arm_angle) * (
-                    1 if config.red_team else -1
-                )
-                self.target.wrist_angle = abs(self.target.wrist_angle) * (
-                    1 if config.red_team else -1
-                )
+                self.target.arm_angle = abs(self.target.arm_angle) * -1
+                self.target.wrist_angle = abs(self.target.wrist_angle) * -1
             else:
-                self.target.arm_angle = (
-                    -1 * abs(self.target.arm_angle) * (1 if config.red_team else -1)
-                )
-                self.target.wrist_angle = (
-                    -1 * abs(self.target.wrist_angle) * (1 if config.red_team else -1)
-                )
+                self.target.arm_angle = abs(self.target.arm_angle)
+                self.target.wrist_angle = abs(self.target.wrist_angle)
 
             if self.target.arm_reversed:
                 self.target.arm_angle = -1 * self.target.arm_angle
