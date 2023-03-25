@@ -40,16 +40,6 @@ class OI:
         Keymap.Drivetrain.X_MODE.whenPressed(
             InstantCommand(lambda: Robot.drivetrain.x_mode())
         )
-
-        # def start_time_deploy():
-        #     print("starting deploy")
-            
-            
-        
-        # def check_time_deploy():
-        #     if delay < time.time() - 3:
-        #         print("deploying")
-        #         InstantCommand(command.ClimberDeploy(Robot.climber))
     
 
         Keymap.Drivetrain.SLOW_FORWARD.whenPressed(
@@ -61,11 +51,13 @@ class OI:
         ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
         
         Keymap.Climber.DEPLOY.whenPressed(
-            # InstantCommand(lambda: start_time_deploy())
             command.ClimberDeploy(Robot.climber)
         )
         
-        
+        Keymap.Climber.RESET.whenPressed(
+            command.ClimberRetract(Robot.climber)
+        )
+                
         Keymap.Climber.UNCLIMB.whenPressed(
             command.ClimberUnpivot(Robot.climber)
         )

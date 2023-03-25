@@ -5,7 +5,7 @@ from robotpy_toolkit_7407.motors import SparkMax, SparkMaxConfig
 from robotpy_toolkit_7407.pneumatics.pistons import DoubleSolenoidPiston
 from dataclasses import dataclass
 from ctre import CANCoder
-
+from wpilib import SmartDashboard
 
 import constants
 from oi.keymap import Keymap
@@ -39,13 +39,16 @@ class Climber(Subsystem):
         self.pivot_speed = constants.climber_pivot_speed
 
     def climber_deploy(self):
-        print("Extending Pneumatics")
         self.pneumatics.extend()
         self.climber_active = True
     
     def climber_disable(self):
         self.pneumatics.retract()
         self.climber_active = False
+        
+    def climber_reset(self):
+        if SmartDashboard.getBoolean("Can Reset Climber", False):
+            self.climber_disable()
         
     def latch_enable(self):
         self.latch.extend()

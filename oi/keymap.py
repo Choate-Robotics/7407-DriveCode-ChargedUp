@@ -110,6 +110,10 @@ class Keymap:
             Controllers.DRIVER_CONTROLLER, controllerDRIVER.SELECT
         )
         
+        RESET = commands2.button.JoystickButton(
+            Controllers.DRIVER_CONTROLLER, controllerDRIVER.START
+        )
+        
         UNCLIMB = commands2.button.Button(
             lambda: Controllers.OPERATOR_CONTROLLER.getPOV() == 90
         )

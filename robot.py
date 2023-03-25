@@ -91,6 +91,7 @@ class _Robot(wpilib.TimedRobot):
         )
 
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
+        SmartDashboard.putBoolean("Can Reset Climber", False)
 
     def robotPeriodic(self):
         SmartDashboard.putNumber("Climber Rotations", Robot.climber.get_motor())

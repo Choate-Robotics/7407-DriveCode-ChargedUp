@@ -72,7 +72,7 @@ class ClimberRetract(SubsystemCommand[Climber]):
         self.subsystem = subsystem
     
     def initialize(self):
-        Robot.climber.climber_disable()
+        Robot.climber.climber_reset()
 
     def execute(self):
         pass
