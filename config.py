@@ -14,11 +14,9 @@ from units.SI import (
 
 grabber_target_angle = 0
 
-red_team: bool = False
+blue_team: bool = False
 drivetrain_reversed: bool = False
 driver_centric: bool = True
-
-landing_gear_active_init = False
 
 # field_length = 16.459
 # field_width = 8.0137
@@ -80,6 +78,20 @@ default_intake_speed = 0.5
 kRobotVisionPoseWeight = 0.1
 # Dummy data
 claw_motor_extend_id = 0
+
+blue_scoring_positions = [
+    Pose2d(1, 1, 0),
+    Pose2d(1, 1, 0),
+    Pose2d(2, 2, 0),
+    Pose2d(3, 3, 0),
+]
+
+red_scoring_positions = [
+    Pose2d(1, 1, 0),
+    Pose2d(1, 1, 0),
+    Pose2d(2, 2, 0),
+    Pose2d(3, 3, 0),
+]
 
 # SCORING LOCATIONS
 scoring_locations: dict[str, TargetData] = {

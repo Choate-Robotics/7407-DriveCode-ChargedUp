@@ -1,5 +1,6 @@
 import math
 
+import commands2
 import wpilib
 from commands2 import (
     InstantCommand,
@@ -49,14 +50,6 @@ class OI:
         Keymap.Drivetrain.SLOW_REVERSE.whenPressed(
             command.DrivetrainScoreFront(Robot.drivetrain, Sensors.odometry)
         ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
-
-        Keymap.Drivetrain.LANDING_GEAR_RIGHT.whenPressed(
-            SequentialCommandGroup(
-                InstantCommand(lambda: Robot.landing_gear.deploy()),
-                WaitCommand(0.5),
-                InstantCommand(lambda: Robot.landing_gear.release()),
-            )
-        )
 
         # TARGETING
         Keymap.Targeting.TARGETING_PICKUP.whenPressed(
@@ -278,4 +271,19 @@ class OI:
 
         Keymap.Targeting.ZERO_ARM.whenPressed(
             InstantCommand(lambda: Robot.arm.zero_elevator_rotation())
+        )
+
+        Keymap.Drivetrain.AUTO_ROUTE.whenPressed(
+            command.TargetDrivetrain(
+                Sensors.odometry,
+                target_list=config.blue_scoring_positions
+                if config.blue_team
+                else config.red_scoring_positions,
+            ).generate()
+        ).whenReleased(
+            InstantCommand(
+                lambda: commands2.CommandScheduler.getInstance().schedule(
+                    command.DriveSwerveCustom(Robot.drivetrain)
+                )
+            )
         )
