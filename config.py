@@ -95,21 +95,27 @@ kRobotVisionPoseWeight = 0.1
 claw_motor_extend_id = 0
 
 blue_scoring_positions = [
-    Pose2d(1.46, 0.51, 0),
-    Pose2d(1.46, 1.03, 0),
-    Pose2d(1.46, 1.61, 0),
-    Pose2d(1.46, 2.19, 0),
-    Pose2d(1.46, 2.78, 0),
-    Pose2d(7, 7, 0),
+    Pose2d(1.46, 0.51, 0),  # Cone
+    Pose2d(1.46, 1.03, 0),  # Cube
+    Pose2d(1.46, 1.61, 0),  # Cone
+    Pose2d(1.46, 2.19, 0),  # Cone
+    Pose2d(1.46, 2.78, 0),  # Cube
+    Pose2d(1.46, 3.30, 0),  # Cone
+    Pose2d(1.46, 3.88, 0),  # Cone
+    Pose2d(1.46, 4.40, 0),  # Cube
+    Pose2d(1.46, 4.92, 0),  # Cone
 ]
 
 red_scoring_positions = [
-    Pose2d(1.51, 0.51, 0),
-    Pose2d(1.51, 1.03, 0),
-    Pose2d(1.51, 1.61, 0),
-    Pose2d(1.51, 2.19, 0),
-    Pose2d(1.51, 2.78, 0),
-    Pose2d(7, 7, 0),
+    Pose2d(1.46, field_width - 0.51, 0),  # Cone
+    Pose2d(1.46, field_width - 1.03, 0),  # Cube
+    Pose2d(1.46, field_width - 1.61, 0),  # Cone
+    Pose2d(1.46, field_width - 2.19, 0),  # Cone
+    Pose2d(1.46, field_width - 2.78, 0),  # Cube
+    Pose2d(1.46, field_width - 3.30, 0),  # Cone
+    Pose2d(1.46, field_width - 3.88, 0),  # Cone
+    Pose2d(1.46, field_width - 4.40, 0),  # Cube
+    Pose2d(1.46, field_width - 4.92, 0),  # Cone
 ]
 
 # SCORING LOCATIONS

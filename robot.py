@@ -103,6 +103,19 @@ class _Robot(wpilib.TimedRobot):
         Robot.climber.climber_motor.set_sensor_position(0)
 
     def robotPeriodic(self):
+        SmartDashboard.putNumber(
+            "FRONT LEFT", Robot.drivetrain.n_front_left.encoder.getAbsolutePosition()
+        )
+        SmartDashboard.putNumber(
+            "FRONT RIGHT", Robot.drivetrain.n_front_right.encoder.getAbsolutePosition()
+        )
+        SmartDashboard.putNumber(
+            "BACK LEFT", Robot.drivetrain.n_back_left.encoder.getAbsolutePosition()
+        )
+        SmartDashboard.putNumber(
+            "BACK RIGHT", Robot.drivetrain.n_back_right.encoder.getAbsolutePosition()
+        )
+
         SmartDashboard.putNumber("Climber Rotations", Robot.climber.get_motor())
         SmartDashboard.putBoolean("Climbed", Robot.climber.is_climbed())
         SmartDashboard.putNumber(

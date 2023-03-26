@@ -13,7 +13,7 @@ import command
 import config
 import constants
 from autonomous.auto_routine import AutoRoutine
-from autonomous.routines.TWO_PIECE_BALANCE_WITH_GUARD.blue_base_coords import (
+from autonomous.routines.TWO_PIECE_BALANCE_WITH_GUARD.base_coords import (
     base_initial_coords,
     base_path_1,
     base_path_2,
