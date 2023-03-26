@@ -347,8 +347,9 @@ kCameras = {
     ],
 }
 
+
 # Climber:
 
 climber_motor_gear_ratio = 16
-climber_pivot_speed = 0.5
-climber_pivot_rotations = 1.25
+climber_pivot_rotations = 1.25 * climber_motor_gear_ratio
+climber_unlatch_extension = 0.3 * climber_motor_gear_ratio
