@@ -47,8 +47,8 @@ class _Robot(wpilib.TimedRobot):
         OI.map_controls()
 
         self.pv_selection = wpilib.SendableChooser()
-        self.pv_selection.setDefaultOption("Off", "off")
-        self.pv_selection.addOption("On", "on")
+        self.pv_selection.setDefaultOption("On", "on")
+        self.pv_selection.addOption("Off", "off")
         wpilib.SmartDashboard.putData("Photonvision", self.pv_selection)
 
         self.auto_selection = wpilib.SendableChooser()

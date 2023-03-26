@@ -14,7 +14,7 @@ import math
 import rev
 
 CLIMBER_CONFIG = SparkMaxConfig(
-    0.008, 0, .0001, 0.0012, (-0.25, 0.25), idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    0.1, 0, .0001, 0.0012, (-0.9, 0.9), idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 
 @dataclass
@@ -82,4 +82,7 @@ class Climber(Subsystem):
         return self.climber_motor.get_sensor_position() / constants.climber_motor_gear_ratio
     
     def is_climbed(self):
-        return self.get_motor() * constants.climber_motor_gear_ratio < constants.climber_pivot_rotations + 1 and self.get_motor() * constants.climber_motor_gear_ratio > constants.climber_pivot_rotations - 1
+        return self.get_motor() * constants.climber_motor_gear_ratio < (constants.climber_pivot_rotations * constants.climber_motor_gear_ratio) + 1 and self.get_motor() * constants.climber_motor_gear_ratio > (constants.climber_pivot_rotations * constants.climber_motor_gear_ratio) - 1
+    
+    def is_at_rotation(self, target):
+        return self.get_motor() * constants.climber_motor_gear_ratio < (target * constants.climber_motor_gear_ratio)  + .6 and self.get_motor() * constants.climber_motor_gear_ratio > (target * constants.climber_motor_gear_ratio) - .6
