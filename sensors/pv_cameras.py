@@ -20,23 +20,29 @@ class PV_Cameras(VisionEstimator):
     def get_estimated_robot_pose(self):
         """this function returns a list of the type (target_id, transformCameraToTarget) for every target"""
         derivedRobotPoses = []
-        for camera in self.cameras:  # Iterate through all cameras
-            cameraToTargets = []
-            photonResult = camera[0].getLatestResult()
-            if photonResult.hasTargets():  # If we have any targets
-                cameraToTargets += [
-                    (target.getFiducialId(), target.getBestCameraToTarget())
-                    for target in photonResult.getTargets()
-                    if target.getPoseAmbiguity() < 0.4
-                ]
 
-            if cameraToTargets != 0:  # If we have any targets
-                derivedRobotPoses += [
-                    (
-                        self.april_tags[tag_id] + point.inverse() + camera[1].inverse(),
-                        Timer.getFPGATimestamp(),
-                    )
-                    for tag_id, point in cameraToTargets
-                ]
+        try:
+            for camera in self.cameras:  # Iterate through all cameras
+                cameraToTargets = []
+                photonResult = camera[0].getLatestResult()
+                if photonResult.hasTargets():  # If we have any targets
+                    cameraToTargets += [
+                        (target.getFiducialId(), target.getBestCameraToTarget())
+                        for target in photonResult.getTargets()
+                        if target.getPoseAmbiguity() < 0.4
+                    ]
+
+                if cameraToTargets != 0:  # If we have any targets
+                    derivedRobotPoses += [
+                        (
+                            self.april_tags[tag_id]
+                            + point.inverse()
+                            + camera[1].inverse(),
+                            Timer.getFPGATimestamp(),
+                        )
+                        for tag_id, point in cameraToTargets
+                    ]
+        except:
+            ...
 
         return derivedRobotPoses

@@ -34,7 +34,8 @@ driver_centric: bool = True
 # field_width = 8.0137
 
 field_length = 651.25 * inches_to_meters
-field_width = 315.5 * inches_to_meters
+# field_width = 315.5 * inches_to_meters
+field_width = 8.075
 
 drivetrain_scoring_velocity = 1
 drivetrain_scoring_angular_velocity = 1
@@ -141,7 +142,7 @@ scoring_locations: dict[str, TargetData] = {
     "high": TargetData(
         target_pose=None,
         arm_angle=math.radians(-49.7),
-        arm_length=1.03,
+        arm_length=1.01,
         wrist_angle=math.radians(25),
         intake_enabled=False,
         claw_scoring=True,
@@ -155,7 +156,7 @@ scoring_locations: dict[str, TargetData] = {
     "high_auto_back": TargetData(
         target_pose=None,
         arm_angle=math.radians(-49.7),
-        arm_length=1.03,
+        arm_length=1.01,
         wrist_angle=math.radians(-25),
         intake_enabled=False,
         claw_scoring=False,
@@ -169,7 +170,7 @@ scoring_locations: dict[str, TargetData] = {
     "high_auto_back_intake": TargetData(
         target_pose=None,
         arm_angle=math.radians(-49.7),
-        arm_length=1.03,
+        arm_length=1.01,
         wrist_angle=math.radians(-25),
         intake_enabled=True,
         claw_scoring=False,
@@ -183,7 +184,7 @@ scoring_locations: dict[str, TargetData] = {
     "high_auto_back_cube": TargetData(
         target_pose=None,
         arm_angle=math.radians(-49.7),
-        arm_length=1.03,
+        arm_length=1.01,
         wrist_angle=math.radians(-25),
         intake_enabled=False,
         claw_scoring=False,

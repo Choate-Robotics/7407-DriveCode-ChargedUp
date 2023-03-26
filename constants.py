@@ -227,7 +227,7 @@ ApriltagPositionDictRed = {
         (inches_to_meters * 18.22),
         Rotation3d(0.0, 0.0, 0),
     ),
-    7: Pose3d(  # IMPORTANT IM SWITCHING WITH 7
+    2: Pose3d(
         (field_length - inches_to_meters * 610.77),
         (field_width - inches_to_meters * 108.19),
         (inches_to_meters * 18.22),
@@ -235,9 +235,7 @@ ApriltagPositionDictRed = {
     ),
     3: Pose3d(
         (field_length - inches_to_meters * 610.77),
-        (
-            field_width - inches_to_meters * 174.19
-        ),  # FIRST's diagram has a typo (it says 147.19)
+        (field_width - inches_to_meters * 174.19),
         (inches_to_meters * 18.22),
         Rotation3d(0.0, 0.0, 0),
     ),
@@ -255,13 +253,11 @@ ApriltagPositionDictRed = {
     ),
     6: Pose3d(
         (field_length - inches_to_meters * 40.45),
-        (
-            field_width - inches_to_meters * 174.19
-        ),  # FIRST's diagram has a typo (it says 147.19)
+        (field_width - inches_to_meters * 174.19),
         (inches_to_meters * 18.22),
         Rotation3d(0.0, 0.0, math.pi),
     ),
-    2: Pose3d(
+    7: Pose3d(
         (field_length - inches_to_meters * 40.45),
         (field_width - inches_to_meters * 108.19),
         (inches_to_meters * 18.22),
@@ -282,7 +278,7 @@ ApriltagPositionDictBlue = {
         (inches_to_meters * 18.22),
         Rotation3d(0.0, 0.0, math.pi),
     ),
-    7: Pose3d(  # IMPORTANT IM SWITCHING WITH 7
+    2: Pose3d(
         (inches_to_meters * 610.77),
         (inches_to_meters * 108.19),
         (inches_to_meters * 18.22),
@@ -312,7 +308,7 @@ ApriltagPositionDictBlue = {
         (inches_to_meters * 18.22),
         Rotation3d(),
     ),
-    2: Pose3d(
+    7: Pose3d(
         (inches_to_meters * 40.45),
         (inches_to_meters * 108.19),
         (inches_to_meters * 18.22),
@@ -351,9 +347,8 @@ kCameras = {
     ],
 }
 
-
 # Climber:
 
 climber_motor_gear_ratio = 16
-climber_pivot_speed = .5
+climber_pivot_speed = 0.5
 climber_pivot_rotations = 1.25
