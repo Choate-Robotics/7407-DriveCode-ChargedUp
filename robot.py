@@ -99,9 +99,6 @@ class _Robot(wpilib.TimedRobot):
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
         wpilib.SmartDashboard.putData("Can Reset Climber", self.can_reset_climb)
 
-        Robot.climber.climber_disable()
-        Robot.climber.climber_motor.set_sensor_position(0)
-
     def robotPeriodic(self):
         SmartDashboard.putNumber(
             "FRONT LEFT", Robot.drivetrain.n_front_left.encoder.getAbsolutePosition()
@@ -203,7 +200,9 @@ class _Robot(wpilib.TimedRobot):
 
     def teleopInit(self):
         Robot.climber.climber_disable()
+        Robot.climber.latch_enable()
         Robot.climber.climber_motor.set_sensor_position(0)
+        Robot.climber.set_motor(0)
 
         logger.debug("TELEOP", "Teleop Initialized")
 
@@ -245,6 +244,7 @@ class _Robot(wpilib.TimedRobot):
 
     def autonomousInit(self):
         Robot.climber.climber_disable()
+        Robot.climber.latch_enable()
         Robot.climber.climber_motor.set_sensor_position(0)
         Robot.climber.set_motor(0)
 

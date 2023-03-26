@@ -238,7 +238,7 @@ class OI:
                     Robot.grabber,
                     Robot.intake,
                     Sensors.odometry,
-                    target=config.scoring_locations["cube_intake"],
+                    target=config.scoring_locations["cube_intake_no_grab"],
                 ),
             )
         )
