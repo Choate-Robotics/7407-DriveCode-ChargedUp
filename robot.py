@@ -106,7 +106,9 @@ class _Robot(wpilib.TimedRobot):
             "BACK RIGHT", Robot.drivetrain.n_back_right.encoder.getAbsolutePosition()
         )
 
-        SmartDashboard.putNumber("Climber Rotations", Robot.climber.get_motor())
+        SmartDashboard.putNumber(
+            "Climber Rotations", Robot.climber.get_motor_rotations()
+        )
         SmartDashboard.putBoolean("Climbed", Robot.climber.is_climbed())
         SmartDashboard.putNumber(
             "Robot Roll", math.degrees(Sensors.gyro.get_robot_roll())
@@ -195,7 +197,7 @@ class _Robot(wpilib.TimedRobot):
         Robot.climber.climber_disable()
         Robot.climber.latch_enable()
         Robot.climber.climber_motor.set_sensor_position(0)
-        Robot.climber.set_motor(0)
+        Robot.climber.set_motor_rotations(0)
 
         logger.debug("TELEOP", "Teleop Initialized")
 
@@ -239,7 +241,7 @@ class _Robot(wpilib.TimedRobot):
         Robot.climber.climber_disable()
         Robot.climber.latch_enable()
         Robot.climber.climber_motor.set_sensor_position(0)
-        Robot.climber.set_motor(0)
+        Robot.climber.set_motor_rotations(0)
 
         config.blue_team = self.auto_selection.getSelected().blue_team
         if self.pv_selection.getSelected() == "on":

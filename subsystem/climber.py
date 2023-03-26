@@ -4,7 +4,6 @@ import rev
 from robotpy_toolkit_7407 import Subsystem
 from robotpy_toolkit_7407.motors import SparkMax, SparkMaxConfig
 from robotpy_toolkit_7407.pneumatics.pistons import DoubleSolenoidPiston
-from wpilib import SmartDashboard
 
 import config
 import constants
@@ -39,7 +38,6 @@ class Climber(Subsystem):
     def init(self):
         self.climber_motor.init()
         self.climber_motor.set_sensor_position(0)
-        self.pivot_speed = constants.climber_pivot_speed
 
     def climber_deploy(self):
         self.pneumatics.extend()
@@ -64,10 +62,8 @@ class Climber(Subsystem):
         self.climber_motor.set_sensor_position(0)
 
     def set_motor_rotations(self, rotations):
-        self.climber_motor.set_target_position(
-            rotations
-        )
-        
+        self.climber_motor.set_target_position(rotations)
+
     def set_shaft_rotations(self, rotations):
         self.climber_motor.set_target_position(
             rotations * constants.climber_motor_gear_ratio
@@ -83,13 +79,11 @@ class Climber(Subsystem):
         if self.climber_active == True and self.pivoted == True:
             self.pivoted = False
             self.latch_disable()
-            self.set_motor(0)
+            self.set_motor_rotations(0)
 
     def get_motor_rotations(self):
-        return (
-            self.climber_motor.get_sensor_position()
-        )
-        
+        return self.climber_motor.get_sensor_position()
+
     def get_shaft_rotations(self):
         return (
             self.climber_motor.get_sensor_position()
@@ -101,4 +95,4 @@ class Climber(Subsystem):
 
     def is_at_rotation(self, target):
         print(abs(self.climber_motor.get_sensor_position() - target))
-        return abs(self.climber_motor.get_sensor_position() - target) < .3
+        return abs(self.climber_motor.get_sensor_position() - target) < 0.3
