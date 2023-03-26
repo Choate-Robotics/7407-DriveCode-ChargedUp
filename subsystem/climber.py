@@ -47,9 +47,8 @@ class Climber(Subsystem):
         self.climber_active = False
         
     def climber_reset(self):
-        if SmartDashboard.getData("Can Reset Climber", False):
-            self.climber_disable()
-        
+        self.climber_disable()
+
     def latch_enable(self):
         self.latch.extend()
         self.latch_enabled = True
@@ -82,7 +81,7 @@ class Climber(Subsystem):
         return self.climber_motor.get_sensor_position() / constants.climber_motor_gear_ratio
     
     def is_climbed(self):
-        return self.get_motor() * constants.climber_motor_gear_ratio < (constants.climber_pivot_rotations * constants.climber_motor_gear_ratio) + 1 and self.get_motor() * constants.climber_motor_gear_ratio > (constants.climber_pivot_rotations * constants.climber_motor_gear_ratio) - 1
-    
+        return abs(self.climber_motor.get_sensor_position - (constants.climber_pivot_rotations * constants.climber_motor_gear_ratio)) < 1
+
     def is_at_rotation(self, target):
-        return self.get_motor() * constants.climber_motor_gear_ratio < (target * constants.climber_motor_gear_ratio)  + .6 and self.get_motor() * constants.climber_motor_gear_ratio > (target * constants.climber_motor_gear_ratio) - .6
+        return abs(self.climber_motor.get_sensor_position - (target * constants.climber_motor_gear_ratio)) < .6

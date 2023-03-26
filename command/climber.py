@@ -115,38 +115,21 @@ class ClimberUnpivot(SubsystemCommand[Climber]):
         # self.turn_reversed = Robot.climber.pivot_threshold < Robot.climber.get_angle()
         if self.subsystem.climber_active and self.subsystem.pivoted:
             print("Un-pivoting Climber")
-            self.subsystem.set_motor(self.current_angle + .12)
             self.subsystem.latch_disable()
+            self.subsystem.set_motor(self.current_angle + .14)
             
     def execute(self):
         pass
 
     def isFinished(self) -> bool:
-        return self.subsystem.is_at_rotation(self.current_angle + .12)
+        return self.subsystem.is_at_rotation(self.current_angle + .14)
     
     def end(self, interrupted=False):
         print("Climber going back down")
         self.subsystem.unpivot()
     
     
-class ClimberToZero(SubsystemCommand[Climber]):
-    def __init__(self, subsystem: Climber):
-        super().__init__(subsystem)
-        self.subsystem = subsystem
-    
-    def initialize(self):
-        # self.turn_reversed = Robot.climber.pivot_threshold < Robot.climber.get_angle()
-        Robot.climber.latch_disable()
-        Robot.climber.climber_motor.set_target_position(0)
 
-    def execute(self):
-        pass
-
-    def isFinished(self) -> bool:
-        return True
-    
-    def end(self, interrupted=False):
-        Robot.climber.latch_enable()
 
 
 
