@@ -1,5 +1,5 @@
 import math
-import time
+
 import commands2
 import wpilib
 from commands2 import (
@@ -13,7 +13,6 @@ import command
 import config
 from oi.keymap import Controllers, Keymap
 from robot_systems import Robot, Sensors
-import constants
 
 logger.info("Hi, I'm OI!")
 
@@ -48,9 +47,9 @@ class OI:
             command.DrivetrainScoreBack(Robot.drivetrain, Sensors.odometry)
         ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
 
-        Keymap.Drivetrain.SLOW_REVERSE.whenPressed(
-            command.DrivetrainScoreFront(Robot.drivetrain, Sensors.odometry)
-        ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
+        # Keymap.Drivetrain.SLOW_REVERSE.whenPressed(
+        #     command.DrivetrainScoreFront(Robot.drivetrain, Sensors.odometry)
+        # ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
 
         Keymap.Climber.DEPLOY.whenPressed(command.ClimberDeploy(Robot.climber))
 
@@ -158,7 +157,7 @@ class OI:
 
         Keymap.Claw.DROP_CLAW.whenPressed(
             InstantCommand(
-                lambda: set_claw_angle(math.radians(25) * gyro_angle_calc() * -1)
+                lambda: set_claw_angle(math.radians(30) * gyro_angle_calc() * -1)
             )
         ).whenReleased(
             InstantCommand(lambda: set_claw_angle(math.radians(25) * gyro_angle_calc()))
@@ -232,11 +231,35 @@ class OI:
         )
 
         Keymap.Targeting.TARGETING_CUBE_INTAKE.whenPressed(
-            command.IntakeEnable(Robot.intake)
+            SequentialCommandGroup(
+                InstantCommand(lambda: Robot.grabber.engage_claw()),
+                command.Target(
+                    Robot.arm,
+                    Robot.grabber,
+                    Robot.intake,
+                    Sensors.odometry,
+                    target=config.scoring_locations["cube_intake"],
+                ),
+            )
         )
 
         Keymap.Targeting.TARGETING_CUBE_INTAKE.whenReleased(
-            command.IntakeDisable(Robot.intake)
+            SequentialCommandGroup(
+                InstantCommand(
+                    lambda: Controllers.OPERATOR_CONTROLLER.setRumble(
+                        wpilib.Joystick.RumbleType.kBothRumble, 0
+                    )
+                ),
+                InstantCommand(lambda: Robot.grabber.open_claw()),
+                InstantCommand(lambda: Robot.grabber.set_output(0)),
+                command.Target(
+                    Robot.arm,
+                    Robot.grabber,
+                    Robot.intake,
+                    Sensors.odometry,
+                    target=config.scoring_locations["standard_pickup"],
+                ),
+            )
         )
 
         Keymap.Targeting.TARGETING_EJECT_INTAKE.whenPressed(
@@ -274,9 +297,6 @@ class OI:
         Keymap.Drivetrain.AUTO_ROUTE.whenPressed(
             command.TargetDrivetrain(
                 Sensors.odometry,
-                target_list=config.blue_scoring_positions
-                if config.blue_team
-                else config.red_scoring_positions,
             )
         ).whenReleased(
             InstantCommand(

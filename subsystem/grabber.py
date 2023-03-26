@@ -10,7 +10,7 @@ import config
 import constants
 
 WRIST_CONFIG = SparkMaxConfig(
-    0.05, 0, 0.004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    0.1, 0, 0.004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 
 
@@ -53,6 +53,10 @@ class Grabber(Subsystem):
         # )
 
         self.zero_wrist()
+
+    def get_no_grab_cube_detected(self):
+        avg_voltage = self.distance_sensor_back.getVoltage()
+        return 0.3 < avg_voltage
 
     def get_cube_detected(self):
         avg_voltage = self.distance_sensor_back.getVoltage()

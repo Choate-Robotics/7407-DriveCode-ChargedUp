@@ -181,6 +181,8 @@ class _Robot(wpilib.TimedRobot):
 
     def teleopInit(self):
         Robot.climber.climber_disable()
+        Robot.climber.climber_motor.set_sensor_position(0)
+
         logger.debug("TELEOP", "Teleop Initialized")
 
         config.blue_team = self.auto_selection.getSelected().blue_team
