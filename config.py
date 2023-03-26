@@ -104,6 +104,7 @@ blue_scoring_positions = [
     Pose2d(1.46, 3.87, 0),  # Cone
     Pose2d(1.46, 4.43, 0),  # Cube
     Pose2d(1.46, 4.99, 0),  # Cone
+    Pose2d(15.5, 6.38, 0),  # Cone
 ]
 
 red_scoring_positions = [
@@ -116,6 +117,7 @@ red_scoring_positions = [
     Pose2d(1.46, field_width - 3.90, 0),  # Cone
     Pose2d(1.46, field_width - 4.46, 0),  # Cube
     Pose2d(1.46, field_width - 5.02, 0),  # Cone
+    Pose2d(16.1, field_width - 6.38, 0),  # Cone
 ]
 
 # SCORING LOCATIONS
