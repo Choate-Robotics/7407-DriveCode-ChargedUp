@@ -183,9 +183,9 @@ scoring_locations: dict[str, TargetData] = {
     ),
     "high_auto_back_cube": TargetData(
         target_pose=None,
-        arm_angle=math.radians(-49.7),
+        arm_angle=math.radians(-53.7),
         arm_length=1.01,
-        wrist_angle=math.radians(-25),
+        wrist_angle=math.radians(-30),
         intake_enabled=False,
         claw_scoring=False,
         claw_picking=False,
@@ -280,13 +280,13 @@ scoring_locations: dict[str, TargetData] = {
     ),
     "cube_intake_auto": TargetData(
         target_pose=None,
-        arm_angle=math.radians(69.5),
+        arm_angle=math.radians(71.5),
         arm_length=1 * units.SI.inches_to_meters,
-        wrist_angle=math.radians(120),
+        wrist_angle=math.radians(113),
         intake_enabled=True,
         claw_scoring=False,
         claw_picking=True,
-        cube_picking=False,
+        cube_picking=True,
     ),
     "standard": TargetData(
         target_pose=None,

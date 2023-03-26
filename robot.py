@@ -99,6 +99,9 @@ class _Robot(wpilib.TimedRobot):
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
         wpilib.SmartDashboard.putData("Can Reset Climber", self.can_reset_climb)
 
+        Robot.climber.climber_disable()
+        Robot.climber.climber_motor.set_sensor_position(0)
+
     def robotPeriodic(self):
         SmartDashboard.putNumber("Climber Rotations", Robot.climber.get_motor())
         SmartDashboard.putBoolean("Climbed", Robot.climber.is_climbed())
@@ -228,6 +231,10 @@ class _Robot(wpilib.TimedRobot):
         ...
 
     def autonomousInit(self):
+        Robot.climber.climber_disable()
+        Robot.climber.climber_motor.set_sensor_position(0)
+        Robot.climber.set_motor(0)
+
         config.blue_team = self.auto_selection.getSelected().blue_team
         if self.pv_selection.getSelected() == "on":
             Sensors.pv_controller = PV_Cameras(

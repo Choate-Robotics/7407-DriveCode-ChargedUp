@@ -42,14 +42,14 @@ red_base_path_1: path = (
 red_base_path_2: path = (
     red_base_path_1[2],
     [(3.92, config.field_width - 0.82)],
-    (1.67, config.field_width - 1.12, 0),
+    (1.53, config.field_width - 1.12, 0),
 )
 
 red_base_path_3: path = (
     red_base_path_2[2],
     [
-        (3.35, config.field_width - 0.6),
-        (4.8, config.field_width - 0.57),
+        (3.35, config.field_width - 0.64),
+        (4.8, config.field_width - 0.61),
         (5.6, config.field_width - 0.68),
     ],
     (7, config.field_width - 2.1, -0.91),
@@ -59,8 +59,8 @@ red_base_path_4: path = (
     red_base_path_3[2],
     [
         (5.6, config.field_width - 0.68),
-        (4.8, config.field_width - 0.57),
-        (3.92, config.field_width - 0.6),
+        (4.8, config.field_width - 0.61),
+        (3.92, config.field_width - 0.64),
     ],
-    (1.67, config.field_width - 1.08, 0),
+    (1.53, config.field_width - 1.08, 0),
 )
