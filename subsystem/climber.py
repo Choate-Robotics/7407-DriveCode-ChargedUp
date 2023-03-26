@@ -63,7 +63,12 @@ class Climber(Subsystem):
     def zero(self):
         self.climber_motor.set_sensor_position(0)
 
-    def set_motor(self, rotations):
+    def set_motor_rotations(self, rotations):
+        self.climber_motor.set_target_position(
+            rotations
+        )
+        
+    def set_shaft_rotations(self, rotations):
         self.climber_motor.set_target_position(
             rotations * constants.climber_motor_gear_ratio
         )
@@ -71,23 +76,29 @@ class Climber(Subsystem):
     def pivot(self):
         if self.climber_active == True and self.pivoted == False:
             self.pivoted = True
-            self.set_motor(constants.climber_pivot_rotations)
             self.latch_enable()
+            self.set_motor_rotations(constants.climber_pivot_rotations)
 
     def unpivot(self):
         if self.climber_active == True and self.pivoted == True:
             self.pivoted = False
-            self.set_motor(0)
             self.latch_disable()
+            self.set_motor(0)
 
-    def get_motor(self):
+    def get_motor_rotations(self):
+        return (
+            self.climber_motor.get_sensor_position()
+        )
+        
+    def get_shaft_rotations(self):
         return (
             self.climber_motor.get_sensor_position()
             / constants.climber_motor_gear_ratio
         )
 
     def is_climbed(self):
-        return abs(self.climber_motor.get_sensor_position - (constants.climber_pivot_rotations * constants.climber_motor_gear_ratio)) < 1
+        return abs(self.get_motor_rotations() - constants.climber_pivot_rotations) < 1
 
     def is_at_rotation(self, target):
-        return abs(self.climber_motor.get_sensor_position - (target * constants.climber_motor_gear_ratio)) < .6
+        print(abs(self.climber_motor.get_sensor_position() - target))
+        return abs(self.climber_motor.get_sensor_position() - target) < .3
