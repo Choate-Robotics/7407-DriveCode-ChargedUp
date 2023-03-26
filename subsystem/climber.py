@@ -9,7 +9,7 @@ import config
 import constants
 
 CLIMBER_CONFIG = SparkMaxConfig(
-    0.425, 0, 0.0001, 0.0012, (-1, 1), idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    0.575, 0, 0.0001, 0.0012, (-1, 1), idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 
 
