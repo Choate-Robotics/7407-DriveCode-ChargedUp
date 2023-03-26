@@ -380,7 +380,6 @@ class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
         )
 
     def isFinished(self) -> bool:
-        print(self.horizontal_finished, self.vertical_finished, self.angular_finished)
         return (
             self.horizontal_finished
             and self.vertical_finished

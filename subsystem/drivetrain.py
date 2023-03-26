@@ -57,9 +57,6 @@ class SparkMaxSwerveNode(SwerveNode):
         self.m_turn.set_sensor_position(
             current_pos_rad * constants.drivetrain_turn_gear_ratio / (2 * math.pi)
         )
-        self.set_motor_angle(current_pos_rad)
-        self.m_move.set_sensor_position(0)
-        self.m_move.set_target_position(0)
 
     def raw_output(self, power):
         self.m_move.set_raw_output(power)
@@ -117,7 +114,7 @@ class Drivetrain(SwerveDrivetrain):
         SparkMax(14, config=MOVE_CONFIG),
         SparkMax(13, config=TURN_CONFIG),
         CANCoder(23),
-        absolute_encoder_zeroed_pos=math.radians(180 + 102.128),
+        absolute_encoder_zeroed_pos=math.radians(180 + 100.9),
     )
     n_back_left = SparkMaxSwerveNode(
         SparkMax(3, config=MOVE_CONFIG),
@@ -129,7 +126,7 @@ class Drivetrain(SwerveDrivetrain):
         SparkMax(5, config=MOVE_CONFIG),
         SparkMax(6, config=TURN_CONFIG),
         CANCoder(22),
-        absolute_encoder_zeroed_pos=math.radians(180 + 127.529),
+        absolute_encoder_zeroed_pos=math.radians(180 + 112.5),
     )
 
     gyro: PigeonIMUGyro_Wrapper = PigeonIMUGyro_Wrapper(20)
