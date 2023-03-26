@@ -10,7 +10,6 @@ climber_reverseChannel = 10
 latch_forwardChannel = 8
 latch_reverseChannel = 9
 
-
 import math
 from dataclasses import dataclass
 
@@ -70,6 +69,8 @@ class TargetData:
     max_acceleration: meters_per_second_squared = None
     max_angular_velocity: meters_per_second = None
 
+    grabber_no_grab: bool = False
+
 
 elevator_motor_extend_id = 17
 elevator_secondary_rotation_motor_id = 1
@@ -79,7 +80,7 @@ elevator_brake_id = 3
 
 pneumatics_control_module = 31
 
-claw_motor_speed: float = 0.3
+claw_motor_speed: float = 0.4
 
 # Intake
 intake_motor_id = 11
@@ -93,17 +94,21 @@ kRobotVisionPoseWeight = 0.1
 claw_motor_extend_id = 0
 
 blue_scoring_positions = [
-    Pose2d(1.63, 1.03, 0),
-    Pose2d(1.52, 1.61, 0),
+    Pose2d(1.46, 0.51, 0),
+    Pose2d(1.46, 1.03, 0),
+    Pose2d(1.46, 1.61, 0),
+    Pose2d(1.46, 2.19, 0),
+    Pose2d(1.46, 2.78, 0),
     Pose2d(7, 7, 0),
 ]
 
 red_scoring_positions = [
-    Pose2d(1.63, 1.03, 0),
-    Pose2d(1.52, 1.61, 0),
+    Pose2d(1.51, 0.51, 0),
+    Pose2d(1.51, 1.03, 0),
+    Pose2d(1.51, 1.61, 0),
+    Pose2d(1.51, 2.19, 0),
+    Pose2d(1.51, 2.78, 0),
     Pose2d(7, 7, 0),
-    # Pose2d(2, 2, 0),
-    # Pose2d(3, 3, 0),
 ]
 
 # SCORING LOCATIONS
@@ -253,13 +258,24 @@ scoring_locations: dict[str, TargetData] = {
     ),
     "cube_intake": TargetData(
         target_pose=None,
-        arm_angle=math.radians(70.5),
+        arm_angle=math.radians(74.5),
         arm_length=1 * units.SI.inches_to_meters,
         wrist_angle=math.radians(104),
         intake_enabled=True,
         claw_scoring=False,
         claw_picking=True,
         cube_picking=True,
+    ),
+    "cube_intake_no_grab": TargetData(
+        target_pose=None,
+        arm_angle=math.radians(74.5),
+        arm_length=1 * units.SI.inches_to_meters,
+        wrist_angle=math.radians(104),
+        intake_enabled=True,
+        claw_scoring=False,
+        claw_picking=True,
+        cube_picking=True,
+        grabber_no_grab=True,
     ),
     "cube_intake_auto": TargetData(
         target_pose=None,

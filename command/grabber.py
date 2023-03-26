@@ -17,6 +17,7 @@ class SetGrabber(SubsystemCommand[Grabber]):
         auto_cube: bool = False,
         auto_cone: bool = False,
         auto_double: bool = False,
+        no_grab: bool = False,
         threshold: float | None = None,
         finish: bool = True,
     ):
@@ -29,6 +30,8 @@ class SetGrabber(SubsystemCommand[Grabber]):
         self.auto_cone = auto_cone
         self.auto_double = auto_double
         self.threshold = threshold
+
+        self.no_grab = no_grab
 
         self.finished = not auto_claw
         self.finish = finish
@@ -45,19 +48,40 @@ class SetGrabber(SubsystemCommand[Grabber]):
         self.subsystem.set_angle(config.grabber_target_angle)
 
         if self.auto_claw:
-            if self.auto_cube and self.subsystem.get_cube_detected():
+            if (
+                self.auto_cube
+                and self.no_grab
+                and self.subsystem.get_no_grab_cube_detected()
+            ):
+                self.finished = True
+                Controllers.OPERATOR_CONTROLLER.setRumble(
+                    wpilib.Joystick.RumbleType.kBothRumble, 0.3
+                )
+            elif (
+                self.auto_cube
+                and not self.no_grab
+                and self.subsystem.get_cube_detected()
+            ):
                 self.subsystem.disengage_claw()
                 self.finished = True
                 Controllers.OPERATOR_CONTROLLER.setRumble(
                     wpilib.Joystick.RumbleType.kBothRumble, 0.3
                 )
-            elif self.auto_cone and self.subsystem.get_cone_detected():
+            elif (
+                self.auto_cone
+                and not self.no_grab
+                and self.subsystem.get_cone_detected()
+            ):
                 self.subsystem.disengage_claw()
                 self.finished = True
                 Controllers.OPERATOR_CONTROLLER.setRumble(
                     wpilib.Joystick.RumbleType.kBothRumble, 0.3
                 )
-            elif self.auto_double and self.subsystem.get_double_station_detected():
+            elif (
+                self.auto_double
+                and not self.no_grab
+                and self.subsystem.get_double_station_detected()
+            ):
                 self.subsystem.disengage_claw()
                 self.finished = True
         ...

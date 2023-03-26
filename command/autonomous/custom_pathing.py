@@ -344,11 +344,11 @@ class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
         current_pose = Sensors.odometry.getPose()
         relative = self.end_pose.relativeTo(current_pose)
 
-        if abs(relative.x) < 0.03:
+        if abs(relative.x) < 0.01:
             self.horizontal_finished = True
         else:
             self.horizontal_finished = False
-        if abs(relative.y) < 0.03:
+        if abs(relative.y) < 0.01:
             self.vertical_finished = True
         else:
             self.vertical_finished = False

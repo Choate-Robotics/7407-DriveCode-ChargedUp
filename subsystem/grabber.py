@@ -54,6 +54,10 @@ class Grabber(Subsystem):
 
         self.zero_wrist()
 
+    def get_no_grab_cube_detected(self):
+        avg_voltage = self.distance_sensor_back.getVoltage()
+        return 0.3 < avg_voltage
+
     def get_cube_detected(self):
         avg_voltage = self.distance_sensor_back.getVoltage()
         return 0.5 < avg_voltage

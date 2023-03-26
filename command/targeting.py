@@ -23,13 +23,18 @@ class TargetDrivetrain(BasicCommand):
     def __init__(
         self,
         field_odometry: FieldOdometry,
-        target_list: list[Pose2d] = config.blue_scoring_positions,
     ):
         super().__init__()
         self.field_odometry = field_odometry
-        self.target_list = target_list
+        self.target_list = None
 
-    def initialize(self) -> SubsystemCommand:
+    def initialize(self):
+        self.target_list = (
+            config.blue_scoring_positions
+            if config.blue_team
+            else config.red_scoring_positions
+        )
+
         gyro_angle = Sensors.gyro.get_robot_heading() % (math.pi * 2)
         gyro_angle = math.degrees(
             math.atan2(math.sin(gyro_angle), math.cos(gyro_angle))
@@ -270,7 +275,11 @@ class Target(SubsystemCommand[Arm]):
                         self.arm, self.target.arm_length, self.target.arm_angle
                     ),
                     command.SetGrabber(
-                        self.grabber, self.target.wrist_angle, True, finish=False
+                        self.grabber,
+                        self.target.wrist_angle,
+                        True,
+                        finish=False,
+                        no_grab=self.target.grabber_no_grab,
                     ),
                 )
             elif self.target.claw_scoring and self.arm_on:
@@ -300,7 +309,11 @@ class Target(SubsystemCommand[Arm]):
                         self.arm, self.target.arm_length, self.target.arm_angle
                     ),
                     command.SetGrabber(
-                        self.grabber, self.target.wrist_angle, False, finish=False
+                        self.grabber,
+                        self.target.wrist_angle,
+                        False,
+                        finish=False,
+                        no_grab=self.target.grabber_no_grab,
                     ),
                 )
             else:
@@ -319,6 +332,7 @@ class Target(SubsystemCommand[Arm]):
                         auto_cube=self.target.cube_picking,
                         auto_cone=self.target.cone_picking,
                         auto_double=self.target.double_station_picking,
+                        no_grab=self.target.grabber_no_grab,
                         finish=False,
                     ),
                 )
@@ -329,7 +343,11 @@ class Target(SubsystemCommand[Arm]):
                             self.arm, self.target.arm_length, self.target.arm_angle
                         ),
                         command.SetGrabber(
-                            self.grabber, self.target.wrist_angle, False, finish=False
+                            self.grabber,
+                            self.target.wrist_angle,
+                            False,
+                            finish=False,
+                            no_grab=self.target.grabber_no_grab,
                         ),
                     ),
                     InstantCommand(self.grabber.open_claw()),
@@ -340,7 +358,11 @@ class Target(SubsystemCommand[Arm]):
                         self.arm, self.target.arm_length, self.target.arm_angle
                     ),
                     command.SetGrabber(
-                        self.grabber, self.target.wrist_angle, False, finish=False
+                        self.grabber,
+                        self.target.wrist_angle,
+                        False,
+                        finish=False,
+                        no_grab=self.target.grabber_no_grab,
                     ),
                 )
             else:

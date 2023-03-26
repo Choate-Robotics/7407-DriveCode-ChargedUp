@@ -31,9 +31,9 @@ class Keymap:
         RESET_ODOMETRY = commands2.button.JoystickButton(
             Joysticks.joysticks[Controllers.DRIVER], controllerDRIVER.Y
         )
-        SLOW_REVERSE = commands2.button.Button(
-            lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.LT) > 0.5
-        )
+        # SLOW_REVERSE = commands2.button.Button(
+        #     lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.LT) > 0.5
+        # )
         SLOW_FORWARD = commands2.button.Button(
             lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.RT) > 0.5
         )
@@ -41,8 +41,8 @@ class Keymap:
             Joysticks.joysticks[Controllers.DRIVER], controllerDRIVER.X
         )
 
-        AUTO_ROUTE = commands2.button.JoystickButton(
-            Joysticks.joysticks[Controllers.DRIVER], controllerDRIVER.RB
+        AUTO_ROUTE = commands2.button.Button(
+            lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerDRIVER.LT) > 0.5
         )
 
     class Claw:
