@@ -22,5 +22,5 @@ claw_motor_extend_id = 0
 red_team: bool = False
 
 # Scoring position
-real_scoring_position = ""
-current_scoring_position = ""
+real_scoring_position = "NA"
+current_scoring_position = "NA"

@@ -10,6 +10,7 @@ controllerDRIVER = XBoxController
 controllerOPERATOR = XBoxController
 controllerNUMPAD = XBoxController
 
+
 class Controllers:
     DRIVER = 0
     OPERATOR = 1
@@ -18,6 +19,7 @@ class Controllers:
     DRIVER_CONTROLLER = wpilib.Joystick(0)
     OPERATOR_CONTROLLER = wpilib.Joystick(1)
     NUMPAD_CONTROLLER = wpilib.Joystick(2)
+
 
 class Keymap:
     class Drivetrain:
@@ -60,82 +62,52 @@ class Keymap:
     class Intake:
         INTAKE_ENABLE = commands2.button.Button(
             lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerOPERATOR.LT)
-            > 0.8
+                    > 0.8
         )
 
     class Claw:
         ENGAGE_CLAW = commands2.button.Button(
             lambda: Controllers.DRIVER_CONTROLLER.getRawAxis(-controllerOPERATOR.RT)
-            > 0.8
+                    > 0.8
         )
-    
+
     class Scoring:
-        CONFIRM = commands2.button.JoystickButton( # 0, Right Thumb/Stick
+        CONFIRM = commands2.button.JoystickButton(  # 0, Right Thumb/Stick
             Controllers.NUMPAD_CONTROLLER,
             10
         )
 
-        DELETE = commands2.button.Button( # Dot, Left Trigger
+        DELETE = commands2.button.Button(  # Dot, Left Trigger
             lambda: Controllers.NUMPAD_CONTROLLER.getRawAxis(-controllerNUMPAD.LT)
-            > 0.8
+                    > 0.8
         )
 
-        LEFT_GRID = commands2.button.Button( # NUM, Axis X Min (Left)
+        LEFT_GRID = commands2.button.Button(  # NUM, Axis X Min (Left)
             lambda: Controllers.NUMPAD_CONTROLLER.getRawAxis(controllerNUMPAD.L_JOY[0])
-            < -0.8
+                    < -0.8
         )
 
-        MIDDLE_GRID = commands2.button.Button( # /, Axis Y Max (Left)
+        MIDDLE_GRID = commands2.button.Button(  # /, Axis Y Max (Left)
             lambda: Controllers.NUMPAD_CONTROLLER.getRawAxis(controllerNUMPAD.L_JOY[1])
-            < -0.8
+                    < -0.8
         )
 
-        RIGHT_GRID = commands2.button.Button( # *, Axis Y Min (Left)
+        RIGHT_GRID = commands2.button.Button(  # *, Axis Y Min (Left)
             lambda: Controllers.NUMPAD_CONTROLLER.getRawAxis(controllerNUMPAD.L_JOY[1])
-            > 0.8
+                    > 0.8
         )
 
-        TOP_LEFT = commands2.button.JoystickButton( # 7, Back
+        LEFT = commands2.button.JoystickButton(  # 7, Back
             Controllers.NUMPAD_CONTROLLER,
             controllerNUMPAD.SELECT
         )
 
-        TOP_MIDDLE = commands2.button.JoystickButton( # 8, Start
+        MIDDLE = commands2.button.JoystickButton(  # 8, Start
             Controllers.NUMPAD_CONTROLLER,
             controllerNUMPAD.START
         )
 
-        TOP_RIGHT = commands2.button.JoystickButton( # 9, Left Thumb/Stick
+        RIGHT = commands2.button.JoystickButton(  # 9, Left Thumb/Stick
             Controllers.NUMPAD_CONTROLLER,
             9
-        )
-
-        MIDDLE_LEFT = commands2.button.JoystickButton( # 4, Y
-            Controllers.NUMPAD_CONTROLLER, 
-            controllerNUMPAD.Y
-        )
-        
-        MIDDLE_MIDDLE = commands2.button.JoystickButton( # 5, Left Bumper
-            Controllers.NUMPAD_CONTROLLER,
-            controllerNUMPAD.LB
-        )
-
-        MIDDLE_RIGHT = commands2.button.JoystickButton( # 6, Right Bumper
-            Controllers.NUMPAD_CONTROLLER,
-            controllerNUMPAD.RB
-        )
-
-        BOTTOM_LEFT = commands2.button.JoystickButton( # 1, A
-            Controllers.NUMPAD_CONTROLLER,
-            controllerNUMPAD.A
-        )
-
-        BOTTOM_MIDDLE = commands2.button.JoystickButton( # 2, B
-            Controllers.NUMPAD_CONTROLLER,
-            controllerNUMPAD.B
-        )
-
-        BOTTOM_RIGHT = commands2.button.JoystickButton( # 3, X
-            Controllers.NUMPAD_CONTROLLER, 
-            controllerNUMPAD.X
         )
