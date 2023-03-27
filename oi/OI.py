@@ -44,7 +44,7 @@ class OI:
         )
 
         Keymap.Drivetrain.SLOW_FORWARD.whenPressed(
-            command.DrivetrainScoreBack(Robot.drivetrain, Sensors.odometry)
+            command.DrivetrainScoreSlow(Robot.drivetrain)
         ).whenReleased(command.DrivetrainRegular(Robot.drivetrain, Sensors.odometry))
 
         # Keymap.Drivetrain.SLOW_REVERSE.whenPressed(

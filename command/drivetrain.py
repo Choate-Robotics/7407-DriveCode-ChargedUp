@@ -4,13 +4,14 @@ import math
 import commands2
 from commands2 import SequentialCommandGroup
 from robotpy_toolkit_7407.command import SubsystemCommand
-from wpimath.geometry import Pose2d
+from wpimath.controller import PIDController
+from wpimath.geometry import Pose2d, Rotation2d
 
 import command
 import command.autonomous.custom_pathing
 import config
-import constants
 from command.autonomous import CustomTrajectory
+from robot_systems import Sensors
 from sensors import FieldOdometry
 from subsystem import Drivetrain
 
@@ -96,13 +97,75 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         return True
 
     def end(self, interrupted: bool) -> None:
-        self.subsystem.n_front_left.m_move.set_sensor_position(0)
-        self.subsystem.n_front_right.m_move.set_sensor_position(0)
-        self.subsystem.n_back_left.m_move.set_sensor_position(0)
-        self.subsystem.n_back_right.m_move.set_sensor_position(0)
-
         logging.info("Successfully re-zeroed swerve pods.")
         ...
+
+
+class DriveSwerveSlowed(SubsystemCommand[Drivetrain]):
+    driver_centric = True
+    driver_centric_reversed = False
+    angular_pid = None
+    target_angle = Rotation2d(0)
+
+    def initialize(self) -> None:
+        print("STARTED DRIVE SWERVE SLOW")
+        self.angular_pid: PIDController = PIDController(2, 0, 0.05)
+        self.angular_pid.setSetpoint(0)
+
+        gyro_angle = self.subsystem.gyro.get_robot_heading() % (math.pi * 2)
+        gyro_angle = math.degrees(
+            math.atan2(math.sin(gyro_angle), math.cos(gyro_angle))
+        )
+
+        if -90 < gyro_angle < 90:
+            self.target_angle = Rotation2d(0)
+        else:
+            self.target_angle = Rotation2d(math.pi)
+
+    def execute(self) -> None:
+        current_angle = Sensors.odometry.getPose().rotation()
+        relative = Pose2d(0, 0, self.target_angle).relativeTo(
+            Pose2d(0, 0, current_angle)
+        )
+
+        angular_vel = self.angular_pid.calculate(abs(relative.rotation().radians())) * (
+            -1 if relative.rotation().radians() > 0 else 1
+        )
+
+        dx, dy, d_theta = (
+            self.subsystem.axis_dx.value * (-1 if config.drivetrain_reversed else 1),
+            self.subsystem.axis_dy.value * (-1 if config.drivetrain_reversed else 1),
+            angular_vel,
+        )
+
+        if abs(d_theta) < 0.15:
+            d_theta = 0
+
+        dx = curve(dx)
+        dy = curve(dy)
+
+        dx *= config.drivetrain_scoring_velocity
+        dy *= -config.drivetrain_scoring_velocity
+        d_theta = min(config.drivetrain_scoring_angular_velocity, d_theta)
+
+        if config.driver_centric:
+            self.subsystem.set_driver_centric((-dy, dx), d_theta)
+        elif self.driver_centric_reversed:
+            self.subsystem.set_driver_centric((dy, -dx), d_theta)
+        else:
+            self.subsystem.set_robot_centric((dy, -dx), d_theta)
+
+    def end(self, interrupted: bool) -> None:
+        self.subsystem.n_front_left.set(0, 0)
+        self.subsystem.n_front_right.set(0, 0)
+        self.subsystem.n_back_left.set(0, 0)
+        self.subsystem.n_back_right.set(0, 0)
+
+    def isFinished(self) -> bool:
+        return False
+
+    def runsWhenDisabled(self) -> bool:
+        return False
 
 
 class DrivetrainRoute(SubsystemCommand[Drivetrain]):
@@ -146,13 +209,13 @@ class DrivetrainRoute(SubsystemCommand[Drivetrain]):
                     ).andThen(
                         command.autonomous.custom_pathing.FollowPathCustom(
                             self.subsystem, trajectory
-                        ).andThen(DrivetrainScoreBack(self.subsystem, self.odometry))
+                        ).andThen(DrivetrainScoreSlow(self.subsystem, self.odometry))
                     )
                 )
             except:
                 print("COULD NOT GENERATE TRAJECTORY")
                 commands2.CommandScheduler.getInstance().schedule(
-                    DrivetrainScoreBack(self.subsystem, self.odometry)
+                    DrivetrainScoreSlow(self.subsystem, self.odometry)
                 )
 
     def isFinished(self) -> bool:
@@ -162,35 +225,14 @@ class DrivetrainRoute(SubsystemCommand[Drivetrain]):
         ...
 
 
-class DrivetrainScoreBack(SubsystemCommand[Drivetrain]):
-    def __init__(self, subsystem: Drivetrain, odometry: FieldOdometry):
+class DrivetrainScoreSlow(SubsystemCommand[Drivetrain]):
+    def __init__(self, subsystem: Drivetrain):
         super().__init__(subsystem)
         self.subsystem = subsystem
-        self.odometry = odometry
 
     def initialize(self) -> None:
-        # config.driver_centric = False
-        self.odometry.vision_on = False
-        current_theta = self.odometry.getPose().rotation().degrees()
-
-        if -90 < current_theta < 90:
-            desired_theta = 0
-        else:
-            desired_theta = math.radians(180)
-
-        self.subsystem.max_vel = config.drivetrain_scoring_velocity
-        self.subsystem.max_angular_vel = config.drivetrain_scoring_angular_velocity
-
         commands2.CommandScheduler.getInstance().schedule(
-            SequentialCommandGroup(
-                # command.autonomous.custom_pathing.RotateInPlace(
-                #     self.subsystem,
-                #     threshold=math.radians(6),
-                #     theta_f=desired_theta,
-                #     max_angular_vel=config.drivetrain_scoring_angular_velocity,
-                # ),
-                command.DriveSwerveCustom(self.subsystem),
-            )
+            command.DriveSwerveSlowed(self.subsystem)
         )
 
     def isFinished(self) -> bool:
@@ -247,17 +289,14 @@ class DrivetrainRegular(SubsystemCommand[Drivetrain]):
         self.odometry = odometry
 
     def initialize(self) -> None:
-        # config.driver_centric = True
         config.drivetrain_reversed = False
 
-        self.odometry.vision_on = True
-        self.subsystem.max_vel = constants.drivetrain_max_vel
-        self.subsystem.max_angular_vel = constants.drivetrain_max_angular_vel
+        commands2.CommandScheduler.getInstance().schedule(
+            command.DriveSwerveCustom(self.subsystem)
+        )
 
     def isFinished(self) -> bool:
         return True
 
     def end(self, interrupted: bool) -> None:
-        commands2.CommandScheduler.getInstance().schedule(
-            command.DriveSwerveCustom(self.subsystem)
-        )
+        ...

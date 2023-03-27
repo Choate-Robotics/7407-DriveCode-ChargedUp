@@ -69,9 +69,6 @@ class TargetDrivetrain(BasicCommand):
                 ),
                 CustomRouting(
                     subsystem=Robot.drivetrain,
-                    min_horizontal_vel=0.8,
-                    min_vertical_vel=0.8,
-                    min_angular_vel=0.2,
                     target=target,
                 ),
                 RotateInPlace(

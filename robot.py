@@ -2,7 +2,7 @@ import math
 
 import commands2
 import wpilib
-from commands2 import InstantCommand, SequentialCommandGroup
+from commands2 import InstantCommand, SequentialCommandGroup, WaitCommand
 from wpilib import SmartDashboard
 from wpimath.geometry import Pose2d
 
@@ -91,6 +91,15 @@ class _Robot(wpilib.TimedRobot):
         )
 
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
+
+        commands2.CommandScheduler.getInstance().schedule(
+            SequentialCommandGroup(
+                WaitCommand(
+                    2
+                ),  # Wait for CANCoders to finish initialization before zeroing.
+                command.DrivetrainZero(Robot.drivetrain),
+            )
+        )
 
     def robotPeriodic(self):
         SmartDashboard.putNumber(
@@ -188,12 +197,30 @@ class _Robot(wpilib.TimedRobot):
         )
         SmartDashboard.putNumber("SHOULDER DIST: ", Robot.arm.get_length())
 
+        SmartDashboard.putNumber(
+            "FRONT LEFT VEL", Robot.drivetrain.n_front_left.get_motor_velocity()
+        )
+        SmartDashboard.putNumber(
+            "FRONT RIGHT VEL", Robot.drivetrain.n_front_right.get_motor_velocity()
+        )
+        SmartDashboard.putNumber(
+            "BACK LEFT VEL", Robot.drivetrain.n_back_left.get_motor_velocity()
+        )
+        SmartDashboard.putNumber(
+            "BACK RIGHT VEL", Robot.drivetrain.n_back_right.get_motor_velocity()
+        )
+
         try:
             commands2.CommandScheduler.getInstance().run()
         except Exception as e:
             print(e)
 
     def teleopInit(self):
+        # Robot.drivetrain.n_front_left.set(-2, math.radians(90))
+        # Robot.drivetrain.n_front_right.set(-2, math.radians(90))
+        # Robot.drivetrain.n_back_left.set(-2, math.radians(90))
+        # Robot.drivetrain.n_back_right.set(-2, math.radians(90))
+
         Robot.climber.climber_disable()
         Robot.climber.latch_enable()
         Robot.climber.climber_motor.set_sensor_position(0)

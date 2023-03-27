@@ -301,23 +301,15 @@ class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
     :type subsystem: SwerveDrivetrain
     :param target: The Pose to drive the drivetrain to
     :type target: Pose2d
-    :param period: The period of the controller, defaults to 0.02
-    :type period: float, optional
     """
 
     def __init__(
         self,
         subsystem: SwerveDrivetrain,
         target: Pose2d,
-        min_horizontal_vel: float | None = 1,
-        min_vertical_vel: float | None = 1,
-        min_angular_vel: float | None = 0.2,
     ):
         super().__init__(subsystem)
         self.target: Pose2d = target
-        self.min_horizontal_vel = min_horizontal_vel
-        self.min_vertical_vel = min_vertical_vel
-        self.min_angular_vel = min_angular_vel
         self.end_pose: Pose2d = target
         self.horizontal_finished: bool = False
         self.vertical_finished: bool = False
@@ -344,11 +336,11 @@ class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
         current_pose = Sensors.odometry.getPose()
         relative = self.end_pose.relativeTo(current_pose)
 
-        if abs(relative.x) < 0.03:
+        if abs(relative.x) < 0.02:
             self.horizontal_finished = True
         else:
             self.horizontal_finished = False
-        if abs(relative.y) < 0.03:
+        if abs(relative.y) < 0.02:
             self.vertical_finished = True
         else:
             self.vertical_finished = False
