@@ -32,7 +32,7 @@ class ZeroElevator(SubsystemCommand[Arm]):
 
     def isFinished(self):
         return (
-            self.subsystem.elevator_bottom_sensor.get()
+            self.subsystem.elevator_bottom_sensor.get_value()
             or (time.time() - self.start_time) > 5
         )
 

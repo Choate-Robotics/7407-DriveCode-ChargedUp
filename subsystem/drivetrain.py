@@ -2,7 +2,7 @@ import math
 from dataclasses import dataclass
 
 import rev
-from ctre import CANCoder
+from ctre.sensors import CANCoder
 from robotpy_toolkit_7407.motors.rev_motors import SparkMax, SparkMaxConfig
 from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
 from robotpy_toolkit_7407.subsystem_templates.drivetrain import (
@@ -26,12 +26,6 @@ TURN_CONFIG = SparkMaxConfig(
 )
 MOVE_CONFIG = SparkMaxConfig(
     0.00005, 0, 0.0004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
-)
-LANDING_CONFIG_BRAKE_ON = SparkMaxConfig(
-    0.2, 0, 0.003, 0.00015, (-0.5, 0.5), rev.CANSparkMax.IdleMode.kBrake
-)
-LANDING_CONFIG_BRAKE_OFF = SparkMaxConfig(
-    0.2, 0, 0.003, 0.00015, (-0.5, 0.5), rev.CANSparkMax.IdleMode.kCoast
 )
 
 

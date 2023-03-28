@@ -15,10 +15,19 @@ from wpimath.geometry import Pose2d, Rotation2d
 from wpimath.trajectory import Trajectory, TrapezoidProfileRadians
 
 import config
-from command import curve
 from command.autonomous.trajectory import CustomTrajectory
 from robot_systems import Sensors
 from subsystem import Drivetrain
+
+
+def curve_abs(x):
+    return x**2
+
+
+def curve(x):
+    if x < 0:
+        return -curve_abs(-x)
+    return curve_abs(x)
 
 
 class AutoBalance(SubsystemCommand[Drivetrain]):

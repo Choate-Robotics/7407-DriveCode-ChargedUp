@@ -92,25 +92,7 @@ class _Robot(wpilib.TimedRobot):
 
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
 
-        Robot.drivetrain.n_front_left.zero()
-        Robot.drivetrain.n_front_right.zero()
-        Robot.drivetrain.n_back_left.zero()
-        Robot.drivetrain.n_back_right.zero()
-
     def robotPeriodic(self):
-        SmartDashboard.putNumber(
-            "FRONT LEFT", Robot.drivetrain.n_front_left.encoder.getAbsolutePosition()
-        )
-        SmartDashboard.putNumber(
-            "FRONT RIGHT", Robot.drivetrain.n_front_right.encoder.getAbsolutePosition()
-        )
-        SmartDashboard.putNumber(
-            "BACK LEFT", Robot.drivetrain.n_back_left.encoder.getAbsolutePosition()
-        )
-        SmartDashboard.putNumber(
-            "BACK RIGHT", Robot.drivetrain.n_back_right.encoder.getAbsolutePosition()
-        )
-
         SmartDashboard.putNumber(
             "Climber Rotations", Robot.climber.get_motor_rotations()
         )
@@ -206,6 +188,23 @@ class _Robot(wpilib.TimedRobot):
             "BACK RIGHT VEL", Robot.drivetrain.n_back_right.get_motor_velocity()
         )
 
+        SmartDashboard.putNumber(
+            "FRONT LEFT INTERNAL",
+            Robot.drivetrain.n_front_left.m_turn.get_sensor_position(),
+        )
+        SmartDashboard.putNumber(
+            "FRONT RIGHT INTERNAL",
+            Robot.drivetrain.n_front_right.m_turn.get_sensor_position(),
+        )
+        SmartDashboard.putNumber(
+            "BACK LEFT INTERNAL",
+            Robot.drivetrain.n_back_left.m_turn.get_sensor_position(),
+        )
+        SmartDashboard.putNumber(
+            "BACK RIGHT INTERNAL",
+            Robot.drivetrain.n_back_right.m_turn.get_sensor_position(),
+        )
+
         try:
             commands2.CommandScheduler.getInstance().run()
         except Exception as e:
@@ -216,6 +215,16 @@ class _Robot(wpilib.TimedRobot):
         Robot.drivetrain.n_front_right.zero()
         Robot.drivetrain.n_back_left.zero()
         Robot.drivetrain.n_back_right.zero()
+
+        # Robot.drivetrain.n_front_left.m_turn.set_sensor_position(0)
+        # Robot.drivetrain.n_front_right.m_turn.set_sensor_position(0)
+        # Robot.drivetrain.n_back_left.m_turn.set_sensor_position(0)
+        # Robot.drivetrain.n_back_right.m_turn.set_sensor_position(0)
+
+        # Robot.drivetrain.n_front_left.m_turn.set_target_position(constants.drivetrain_turn_gear_ratio * 100)
+        # Robot.drivetrain.n_front_right.m_turn.set_target_position(constants.drivetrain_turn_gear_ratio * 100)
+        # Robot.drivetrain.n_back_left.m_turn.set_target_position(constants.drivetrain_turn_gear_ratio * 100)
+        # Robot.drivetrain.n_back_right.m_turn.set_target_position(constants.drivetrain_turn_gear_ratio * 100)
 
         Robot.climber.climber_disable()
         Robot.climber.latch_enable()
@@ -258,6 +267,18 @@ class _Robot(wpilib.TimedRobot):
             Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
 
     def teleopPeriodic(self):
+        SmartDashboard.putNumber(
+            "FRONT LEFT", Robot.drivetrain.n_front_left.encoder.getAbsolutePosition()
+        )
+        SmartDashboard.putNumber(
+            "FRONT RIGHT", Robot.drivetrain.n_front_right.encoder.getAbsolutePosition()
+        )
+        SmartDashboard.putNumber(
+            "BACK LEFT", Robot.drivetrain.n_back_left.encoder.getAbsolutePosition()
+        )
+        SmartDashboard.putNumber(
+            "BACK RIGHT", Robot.drivetrain.n_back_right.encoder.getAbsolutePosition()
+        )
         ...
 
     def autonomousInit(self):
