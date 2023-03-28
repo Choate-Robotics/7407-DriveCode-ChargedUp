@@ -19,20 +19,24 @@ class ZeroElevator(SubsystemCommand[Arm]):
     def __init__(self, subsystem: Arm):
         super().__init__(subsystem)
         self.subsystem = subsystem
+        self.start_time = None
 
     def initialize(self):
+        self.subsystem.motor_extend.set_raw_output(-0.05)
+        self.start_time = time.time()
         ...
 
     def execute(self):
-        # self.subsystem.motor_extend.set_raw_output(-0.05)
-        print("ZEROING")
         ...
 
     def isFinished(self):
-        # return self.subsystem.elevator_bottom_sensor.get()
-        return True
+        return (
+            self.subsystem.elevator_bottom_sensor.get()
+            or (time.time() - self.start_time) > 5
+        )
 
     def end(self, interrupted=False):
+        self.subsystem.motor_extend.set_raw_output(0)
         self.subsystem.motor_extend.set_sensor_position(0)
         print("Elevator successfully zeroed.")
         print("ELEVATOR ZEROED")
@@ -114,7 +118,6 @@ class SetArm(SubsystemCommand[Arm]):
 
         wpilib.SmartDashboard.putBoolean("Arm/IsMoving", True)
 
-        elevator_p = SmartDashboard.getNumber("ELEVATOR_P_VALUE", 0)
         self.arm_controller = PIDController(6, 0, 0.1)
         self.elevator_controller = PIDController(1.1, 0, 0.0)
         self.arm_controller_profiled = ProfiledPIDControllerRadians(
@@ -257,9 +260,14 @@ class SetArm(SubsystemCommand[Arm]):
         if self.distance == 0 and self.subsystem.get_length() < 0.1:
             elevator_desired_voltage = 0
 
+        true_desired_voltage = min(
+            elevator_maximum_power, abs(elevator_desired_voltage)
+        )
+        if calculated_motor_rotations - current_length_rotations < 0:
+            true_desired_voltage *= -1
+
         self.subsystem.motor_extend.pid_controller.setReference(
-            min(elevator_maximum_power, abs(elevator_desired_voltage))
-            * (1 if elevator_desired_voltage > 0 else -1),
+            true_desired_voltage,
             rev.CANSparkMax.ControlType.kVoltage,
             pidSlot=1,
         )

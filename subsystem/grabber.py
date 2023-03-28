@@ -10,7 +10,7 @@ import config
 import constants
 
 WRIST_CONFIG = SparkMaxConfig(
-    0.1, 0, 0.004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    0.08, 0, 0.004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 
 

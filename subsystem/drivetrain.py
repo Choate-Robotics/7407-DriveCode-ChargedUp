@@ -107,25 +107,25 @@ class Drivetrain(SwerveDrivetrain):
         SparkMax(16, config=MOVE_CONFIG),
         SparkMax(15, config=TURN_CONFIG),
         CANCoder(24),
-        absolute_encoder_zeroed_pos=math.radians(173.586),  # (THIS IS FLIPPED 180)
+        absolute_encoder_zeroed_pos=math.radians(174.638),
     )
     n_front_right = SparkMaxSwerveNode(
         SparkMax(14, config=MOVE_CONFIG),
         SparkMax(13, config=TURN_CONFIG),
         CANCoder(23),
-        absolute_encoder_zeroed_pos=math.radians(180 + 100.9),
+        absolute_encoder_zeroed_pos=math.radians(282.304),
     )
     n_back_left = SparkMaxSwerveNode(
         SparkMax(3, config=MOVE_CONFIG),
         SparkMax(4, config=TURN_CONFIG),
         CANCoder(21),
-        absolute_encoder_zeroed_pos=math.radians(180 + 133.242),
+        absolute_encoder_zeroed_pos=math.radians(313.769),
     )
     n_back_right = SparkMaxSwerveNode(
         SparkMax(5, config=MOVE_CONFIG),
         SparkMax(6, config=TURN_CONFIG),
         CANCoder(22),
-        absolute_encoder_zeroed_pos=math.radians(180 + 112.4),
+        absolute_encoder_zeroed_pos=math.radians(293.994),
     )
 
     gyro: PigeonIMUGyro_Wrapper = PigeonIMUGyro_Wrapper(20)

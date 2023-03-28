@@ -84,6 +84,7 @@ class DrivetrainZero(SubsystemCommand[Drivetrain]):
         self.subsystem = subsystem
 
     def initialize(self) -> None:
+        print("ZEROING DRIVETRAIN")
         self.subsystem.n_front_left.zero()
         self.subsystem.n_front_right.zero()
         self.subsystem.n_back_left.zero()
@@ -138,9 +139,6 @@ class DriveSwerveSlowed(SubsystemCommand[Drivetrain]):
             angular_vel,
         )
 
-        if abs(d_theta) < 0.15:
-            d_theta = 0
-
         dx = curve(dx)
         dy = curve(dy)
 
@@ -148,12 +146,14 @@ class DriveSwerveSlowed(SubsystemCommand[Drivetrain]):
         dy *= -config.drivetrain_scoring_velocity
         d_theta = min(config.drivetrain_scoring_angular_velocity, d_theta)
 
-        if config.driver_centric:
-            self.subsystem.set_driver_centric((-dy, dx), d_theta)
-        elif self.driver_centric_reversed:
-            self.subsystem.set_driver_centric((dy, -dx), d_theta)
-        else:
-            self.subsystem.set_robot_centric((dy, -dx), d_theta)
+        controller_d_theta = -self.subsystem.axis_rotation.value
+
+        if abs(controller_d_theta) > 0.15:
+            d_theta = (
+                curve(controller_d_theta) * config.drivetrain_scoring_angular_velocity
+            )
+
+        self.subsystem.set_driver_centric((-dy, dx), d_theta)
 
     def end(self, interrupted: bool) -> None:
         self.subsystem.n_front_left.set(0, 0)

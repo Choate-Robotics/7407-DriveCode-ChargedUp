@@ -79,11 +79,18 @@ class TargetDrivetrain(BasicCommand):
                 ),
                 InstantCommand(
                     lambda: commands2.CommandScheduler.getInstance().schedule(
-                        command.DriveSwerveCustom(
+                        command.DriveSwerveSlowed(
                             Robot.drivetrain,
                         )
                     )
                 ),
+                # InstantCommand(
+                #     lambda: commands2.CommandScheduler.getInstance().schedule(
+                #         command.DriveSwerveCustom(
+                #             Robot.drivetrain,
+                #         )
+                #     )
+                # ),
             )
         )
 

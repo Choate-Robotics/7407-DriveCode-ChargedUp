@@ -2,7 +2,7 @@ import math
 
 import commands2
 import wpilib
-from commands2 import InstantCommand, SequentialCommandGroup, WaitCommand
+from commands2 import InstantCommand, SequentialCommandGroup
 from wpilib import SmartDashboard
 from wpimath.geometry import Pose2d
 
@@ -92,14 +92,10 @@ class _Robot(wpilib.TimedRobot):
 
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
 
-        commands2.CommandScheduler.getInstance().schedule(
-            SequentialCommandGroup(
-                WaitCommand(
-                    2
-                ),  # Wait for CANCoders to finish initialization before zeroing.
-                command.DrivetrainZero(Robot.drivetrain),
-            )
-        )
+        Robot.drivetrain.n_front_left.zero()
+        Robot.drivetrain.n_front_right.zero()
+        Robot.drivetrain.n_back_left.zero()
+        Robot.drivetrain.n_back_right.zero()
 
     def robotPeriodic(self):
         SmartDashboard.putNumber(
@@ -129,7 +125,7 @@ class _Robot(wpilib.TimedRobot):
             "Robot Yaw", math.degrees(Sensors.gyro.get_robot_heading())
         )
         SmartDashboard.putBoolean(
-            "Zero Elevator", Robot.arm.elevator_bottom_sensor.get()
+            "Zero Elevator", Robot.arm.elevator_bottom_sensor.get_value()
         )
         # SmartDashboard.putNumber("PITCH", Robot.drivetrain.gyro.get_robot_pitch())
         # SmartDashboard.putNumber("ARM_REAL", math.degrees(Robot.arm.get_rotation()))
@@ -216,10 +212,10 @@ class _Robot(wpilib.TimedRobot):
             print(e)
 
     def teleopInit(self):
-        # Robot.drivetrain.n_front_left.set(-2, math.radians(90))
-        # Robot.drivetrain.n_front_right.set(-2, math.radians(90))
-        # Robot.drivetrain.n_back_left.set(-2, math.radians(90))
-        # Robot.drivetrain.n_back_right.set(-2, math.radians(90))
+        Robot.drivetrain.n_front_left.zero()
+        Robot.drivetrain.n_front_right.zero()
+        Robot.drivetrain.n_back_left.zero()
+        Robot.drivetrain.n_back_right.zero()
 
         Robot.climber.climber_disable()
         Robot.climber.latch_enable()
@@ -265,6 +261,11 @@ class _Robot(wpilib.TimedRobot):
         ...
 
     def autonomousInit(self):
+        Robot.drivetrain.n_front_left.zero()
+        Robot.drivetrain.n_front_right.zero()
+        Robot.drivetrain.n_back_left.zero()
+        Robot.drivetrain.n_back_right.zero()
+
         Robot.climber.climber_disable()
         Robot.climber.latch_enable()
         Robot.climber.climber_motor.set_sensor_position(0)

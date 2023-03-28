@@ -14,6 +14,8 @@ from wpimath.controller import (
 from wpimath.geometry import Pose2d, Rotation2d
 from wpimath.trajectory import Trajectory, TrapezoidProfileRadians
 
+import config
+from command import curve
 from command.autonomous.trajectory import CustomTrajectory
 from robot_systems import Sensors
 from subsystem import Drivetrain
@@ -350,23 +352,47 @@ class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
             self.angular_finished = False
 
         horizontal_vel = (
-            self.horizontal_pid.calculate(abs(relative.x))
-            * (1 if relative.x > 0 else -1)
-            * (1 if self.target.rotation().radians() == 0 else -1)
+            (
+                self.horizontal_pid.calculate(abs(relative.x))
+                * (1 if relative.x > 0 else -1)
+                * (1 if self.target.rotation().radians() == 0 else -1)
+            )
+            if not self.horizontal_finished
+            else 0
         )
+
         vertical_vel = (
-            self.vertical_pid.calculate(abs(relative.y))
-            * (1 if relative.y > 0 else -1)
-            * (1 if self.target.rotation().radians() == 0 else -1)
+            (
+                self.vertical_pid.calculate(abs(relative.y))
+                * (1 if relative.y > 0 else -1)
+                * (1 if self.target.rotation().radians() == 0 else -1)
+            )
+            if not self.vertical_finished
+            else 0
         )
+
         angular_vel = self.angular_pid.calculate(abs(relative.rotation().radians())) * (
             -1 if relative.rotation().radians() > 0 else 1
         )
 
+        controller_dx, controller_dy, controller_d_theta = (
+            -self.subsystem.axis_dx.value,
+            -self.subsystem.axis_dy.value,
+            -self.subsystem.axis_rotation.value,
+        )
+
+        dx = curve(controller_dx) * config.drivetrain_scoring_velocity
+        dy = curve(controller_dy) * config.drivetrain_scoring_velocity
+        d_theta = curve(controller_d_theta) * config.drivetrain_scoring_angular_velocity
+
+        horizontal_vel = dy if abs(controller_dx) > 0.1 else horizontal_vel
+        vertical_vel = dx if abs(controller_dy) > 0.1 else vertical_vel
+        angular_vel = d_theta if abs(controller_d_theta) > 0.15 else angular_vel
+
         self.subsystem.set_driver_centric(
             (
-                horizontal_vel if not self.horizontal_finished else 0,
-                vertical_vel if not self.vertical_finished else 0,
+                horizontal_vel,
+                vertical_vel,
             ),
             angular_vel,
         )

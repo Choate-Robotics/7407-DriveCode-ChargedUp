@@ -4,6 +4,7 @@ import rev
 import wpilib
 from robotpy_toolkit_7407 import Subsystem
 from robotpy_toolkit_7407.motors.rev_motors import SparkMax, SparkMaxConfig
+from robotpy_toolkit_7407.sensors.limit_switches import MagneticLimitSwitch
 from wpimath.geometry import Pose3d
 
 import config
@@ -52,7 +53,6 @@ class Arm(Subsystem):
         self.length = None
         self.distance_sensor = None
         self.abs_encoder = None
-        self.elevator_top_sensor = None
         self.elevator_bottom_sensor = None
 
     def init(self):  # initializing motors
@@ -64,13 +64,7 @@ class Arm(Subsystem):
             self.arm_rotation_motor.motor, True
         )
 
-        self.elevator_bottom_sensor = self.motor_extend.motor.getReverseLimitSwitch(
-            rev.SparkMaxLimitSwitch.Type.kNormallyOpen
-        )
-
-        self.elevator_top_sensor = self.motor_extend.motor.getForwardLimitSwitch(
-            rev.SparkMaxLimitSwitch.Type.kNormallyOpen
-        )
+        self.elevator_bottom_sensor = MagneticLimitSwitch(5)
 
         self.abs_encoder = self.arm_rotation_follower_motor.motor.getAbsoluteEncoder(
             rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle
