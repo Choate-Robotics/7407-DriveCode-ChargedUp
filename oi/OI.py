@@ -305,3 +305,10 @@ class OI:
                 )
             )
         )
+
+        def invert_elevator():
+            config.elevator_voltage_inverted = not config.elevator_voltage_inverted
+
+        Keymap.Debug.INVERT_ELEVATOR.whenPressed(
+            InstantCommand(lambda: invert_elevator())
+        )

@@ -121,3 +121,8 @@ class Keymap:
         CLIMB = commands2.button.Button(
             lambda: Controllers.OPERATOR_CONTROLLER.getPOV() == 270
         )
+
+    class Debug:
+        INVERT_ELEVATOR = commands2.button.Button(
+            lambda: Controllers.DRIVER_CONTROLLER.getPOV() == 180
+        )

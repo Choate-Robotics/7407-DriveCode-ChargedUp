@@ -9,6 +9,7 @@ from wpimath.controller import ArmFeedforward, PIDController
 from wpimath.controller import ProfiledPIDControllerRadians
 from wpimath.trajectory import TrapezoidProfileRadians
 
+import config
 import constants
 import utils
 from subsystem import Arm
@@ -262,8 +263,9 @@ class SetArm(SubsystemCommand[Arm]):
 
         true_desired_voltage = min(
             elevator_maximum_power, abs(elevator_desired_voltage)
-        )
-        if calculated_motor_rotations - current_length_rotations < 0:
+        ) * (1 if elevator_desired_voltage > 0 else -1)
+
+        if config.elevator_voltage_inverted:
             true_desired_voltage *= -1
 
         self.subsystem.motor_extend.pid_controller.setReference(

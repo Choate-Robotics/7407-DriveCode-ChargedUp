@@ -24,6 +24,8 @@ from units.SI import (
     radians,
 )
 
+elevator_voltage_inverted = False
+
 grabber_target_angle = 0
 
 blue_team: bool = False
