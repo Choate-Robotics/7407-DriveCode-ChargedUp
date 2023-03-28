@@ -1,3 +1,17 @@
+from wpimath.geometry import Pose2d
+import units.SI
+from units.SI import (
+    inches_to_meters,
+    meters,
+    meters_per_second,
+    meters_per_second_squared,
+    radians,
+)
+
+field_length = 651.25 * inches_to_meters
+# field_width = 315.5 * inches_to_meters
+field_width = 8.075
+
 elevator_motor_extend_id = 17
 elevator_secondary_rotation_motor_id = 1
 elevator_main_rotation_motor_id = 2
@@ -24,3 +38,27 @@ red_team: bool = False
 # Scoring position
 real_scoring_position = "NA"
 current_scoring_position = "NA"
+
+blue_scoring_positions: dict[str, Pose2d] = {
+    "AL": Pose2d(1.46, 0.51, 0),  # Cone
+    "AM": Pose2d(1.46, 1.07, 0),  # Cube
+    "AR": Pose2d(1.46, 1.63, 0),  # Cone
+    "BL": Pose2d(1.46, 2.19, 0),  # Cone
+    "BM": Pose2d(1.46, 2.75, 0),  # Cube
+    "BR": Pose2d(1.46, 3.31, 0),  # Cone
+    "CL": Pose2d(1.46, 3.87, 0),  # Cone
+    "CM": Pose2d(1.46, 4.43, 0),  # Cube
+    "CR": Pose2d(1.46, 4.99, 0),  # Cone
+}
+
+red_scoring_positions: dict[str, Pose2d] = {
+    "AL": Pose2d(1.46, field_width - 0.51, 0),  # Cone
+    "AM": Pose2d(1.46, field_width - 1.07, 0),  # Cube
+    "AR": Pose2d(1.46, field_width - 1.63, 0),  # Cone
+    "BL": Pose2d(1.46, field_width - 2.19, 0),  # Cone
+    "BM": Pose2d(1.46, field_width - 2.75, 0),  # Cube
+    "BR": Pose2d(1.46, field_width - 3.31, 0),  # Cone
+    "CL": Pose2d(1.46, field_width - 3.87, 0),  # Cone
+    "CM": Pose2d(1.46, field_width - 4.43, 0),  # Cube
+    "CR": Pose2d(1.46, field_width - 4.99, 0),  # Cone
+}
