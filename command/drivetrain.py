@@ -66,10 +66,10 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
             )
 
     def end(self, interrupted: bool) -> None:
-        self.subsystem.n_front_left.set(0, 0)
-        self.subsystem.n_front_right.set(0, 0)
-        self.subsystem.n_back_left.set(0, 0)
-        self.subsystem.n_back_right.set(0, 0)
+        self.subsystem.n_front_left.set_motor_velocity(0)
+        self.subsystem.n_front_right.set_motor_velocity(0)
+        self.subsystem.n_back_left.set_motor_velocity(0)
+        self.subsystem.n_back_right.set_motor_velocity(0)
 
     def isFinished(self) -> bool:
         return False
@@ -156,10 +156,10 @@ class DriveSwerveSlowed(SubsystemCommand[Drivetrain]):
         self.subsystem.set_driver_centric((-dy, dx), d_theta)
 
     def end(self, interrupted: bool) -> None:
-        self.subsystem.n_front_left.set(0, 0)
-        self.subsystem.n_front_right.set(0, 0)
-        self.subsystem.n_back_left.set(0, 0)
-        self.subsystem.n_back_right.set(0, 0)
+        self.subsystem.n_front_left.set_motor_velocity(0)
+        self.subsystem.n_front_right.set_motor_velocity(0)
+        self.subsystem.n_back_left.set_motor_velocity(0)
+        self.subsystem.n_back_right.set_motor_velocity(0)
 
     def isFinished(self) -> bool:
         return False
