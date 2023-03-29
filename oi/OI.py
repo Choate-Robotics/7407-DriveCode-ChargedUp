@@ -313,7 +313,7 @@ class OI:
             InstantCommand(lambda: invert_elevator())
         )
 
-        def edit_current_scoring_position(key: int | None):
+        def edit_current_scoring_position(key: int | str):
             config.current_scoring_position = key
 
         Keymap.Scoring.ONE.whenPressed(
@@ -353,5 +353,9 @@ class OI:
         )
 
         Keymap.Scoring.DEL.whenPressed(
-            InstantCommand(lambda: edit_current_scoring_position(None))
+            InstantCommand(lambda: edit_current_scoring_position("None"))
+        )
+
+        Keymap.Scoring.DEL_DRIVER.whenPressed(
+            InstantCommand(lambda: edit_current_scoring_position("None"))
         )

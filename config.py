@@ -24,7 +24,7 @@ from units.SI import (
     radians,
 )
 
-current_scoring_position = None
+current_scoring_position = "None"
 
 elevator_voltage_inverted = False
 
@@ -98,29 +98,27 @@ kRobotVisionPoseWeight = 0.1
 claw_motor_extend_id = 0
 
 blue_scoring_positions = [
-    Pose2d(1.46, 0.51, 0),  # Cone
-    Pose2d(1.46, 1.07, 0),  # Cube
-    Pose2d(1.46, 1.63, 0),  # Cone
-    Pose2d(1.46, 2.19, 0),  # Cone
-    Pose2d(1.46, 2.75, 0),  # Cube
-    Pose2d(1.46, 3.31, 0),  # Cone
-    Pose2d(1.46, 3.87, 0),  # Cone
-    Pose2d(1.46, 4.43, 0),  # Cube
     Pose2d(1.46, 4.99, 0),  # Cone
-    Pose2d(15.5, 6.38, 0),  # Cone
+    Pose2d(1.46, 4.43, 0),  # Cube
+    Pose2d(1.46, 3.87, 0),  # Cone
+    Pose2d(1.46, 3.31, 0),  # Cone
+    Pose2d(1.46, 2.75, 0),  # Cube
+    Pose2d(1.46, 2.19, 0),  # Cone
+    Pose2d(1.46, 1.63, 0),  # Cone
+    Pose2d(1.46, 1.07, 0),  # Cube
+    Pose2d(1.46, 0.51, 0),  # Cone
 ]
 
 red_scoring_positions = [
     Pose2d(1.46, field_width - 0.54, 0),  # Cone
-    Pose2d(1.46, field_width - 1.66, 0),  # Cone
-    Pose2d(1.46, field_width - 1.10, 0),  # Cube
+    Pose2d(1.46, field_width - 1.66, 0),  # Cube
+    Pose2d(1.46, field_width - 1.10, 0),  # Cone
     Pose2d(1.46, field_width - 2.22, 0),  # Cone
     Pose2d(1.46, field_width - 2.78, 0),  # Cube
     Pose2d(1.46, field_width - 3.34, 0),  # Cone
     Pose2d(1.46, field_width - 3.90, 0),  # Cone
     Pose2d(1.46, field_width - 4.46, 0),  # Cube
     Pose2d(1.46, field_width - 5.02, 0),  # Cone
-    Pose2d(16.1, field_width - 6.38, 0),  # Cone
 ]
 
 # SCORING LOCATIONS

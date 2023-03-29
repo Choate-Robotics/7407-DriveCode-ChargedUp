@@ -165,7 +165,8 @@ class Keymap:
 
         NINE = commands2.button.JoystickButton(Controllers.NUMPAD_CONTROLLER, 9)
 
-        DEL = commands2.button.Button(
-            lambda: Controllers.OPERATOR_CONTROLLER.getRawAxis(-controllerNUMPAD.LT)
-            > 0.8
+        DEL = commands2.button.JoystickButton(Controllers.NUMPAD_CONTROLLER, 10)
+
+        DEL_DRIVER = commands2.button.JoystickButton(
+            Joysticks.joysticks[Controllers.DRIVER], controllerDRIVER.LB
         )

@@ -45,7 +45,7 @@ class TargetDrivetrain(BasicCommand):
         else:
             target_angle = math.pi
 
-        if config.current_scoring_position is not None:
+        if config.current_scoring_position != "None":
             target = self.target_list[config.current_scoring_position]
             target = Pose2d(target.x, target.y, target_angle)
         else:
