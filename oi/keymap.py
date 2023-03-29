@@ -165,7 +165,23 @@ class Keymap:
 
         NINE = commands2.button.JoystickButton(Controllers.NUMPAD_CONTROLLER, 9)
 
-        DEL = commands2.button.Button(
-            lambda: Controllers.OPERATOR_CONTROLLER.getRawAxis(-controllerNUMPAD.LT)
-            > 0.8
+
+        LEFT_GRID = commands2.button.Button( #NUM
+            lambda: Controllers.OPERATOR_CONTROLLER.getPOV() == 0
         )
+        MIDDLE_GRID = commands2.button.Button( #Division
+            lambda: Controllers.OPERATOR_CONTROLLER.getPOV() == 90
+        )
+        RIGHT_GRID = commands2.button.Button( #Multiplication
+            lambda: Controllers.OPERATOR_CONTROLLER.getPOV() == 180
+        )
+
+
+
+        DEL = commands2.button.JoystickButton(Controllers.NUMPAD_CONTROLLER, 10) #0 button
+
+        CONFIRM = commands2.button.Button( #Enter
+            lambda: Controllers.OPERATOR_CONTROLLER.getPOV() == 270
+        )
+
+
