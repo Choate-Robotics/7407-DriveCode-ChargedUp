@@ -113,7 +113,7 @@ elevator_extend_gear_ratio: rotations = 6.33  # 6.33  # to one
 elevator_length_per_rotation: meters = (
     1.736 * inches_to_meters
 )  # the length of the elevator per rotation
-wrist_gear_ratio: rotations = 80  # to one
+wrist_gear_ratio: rotations = 75.5212  # to one
 # 24 rotations to max extension
 stabilizer_magnitude: float = (
     2  # the magnitude of the rotation of the arm based on the tip of the robot
