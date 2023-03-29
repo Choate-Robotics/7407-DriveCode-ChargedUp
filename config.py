@@ -24,6 +24,8 @@ from units.SI import (
     radians,
 )
 
+current_scoring_position = None
+
 elevator_voltage_inverted = False
 
 grabber_target_angle = 0
@@ -44,7 +46,6 @@ drivetrain_scoring_angular_velocity = 1
 drivetrain_routing_velocity = 2
 drivetrain_routing_acceleration = 1
 drivetrain_routing_angular_velocity = 3
-current_scoring_location = "double_station"
 
 
 @dataclass

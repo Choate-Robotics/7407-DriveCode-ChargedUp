@@ -45,15 +45,16 @@ class TargetDrivetrain(BasicCommand):
         else:
             target_angle = math.pi
 
-        print(target_angle)
-        print(gyro_angle)
-
-        current_pose = self.field_odometry.getPose()
-        target = min(
-            self.target_list,
-            key=lambda x: x.translation().distance(current_pose.translation()),
-        )
-        target = Pose2d(target.x, target.y, target_angle)
+        if config.current_scoring_position is not None:
+            target = self.target_list[config.current_scoring_position]
+            target = Pose2d(target.x, target.y, target_angle)
+        else:
+            current_pose = self.field_odometry.getPose()
+            target = min(
+                self.target_list,
+                key=lambda x: x.translation().distance(current_pose.translation()),
+            )
+            target = Pose2d(target.x, target.y, target_angle)
 
         wpilib.SmartDashboard.putString("TARGET POSE", str(target))
         print(target)

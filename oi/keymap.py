@@ -8,14 +8,17 @@ from robotpy_toolkit_7407.oi.joysticks import Joysticks
 
 controllerDRIVER = XBoxController
 controllerOPERATOR = XBoxController
+controllerNUMPAD = XBoxController
 
 
 class Controllers:
     DRIVER = 0
     OPERATOR = 1
+    NUMPAD = 2
 
     DRIVER_CONTROLLER = wpilib.Joystick(0)
     OPERATOR_CONTROLLER = wpilib.Joystick(1)
+    NUMPAD_CONTROLLER = wpilib.Joystick(2)
 
 
 class Keymap:
@@ -125,4 +128,44 @@ class Keymap:
     class Debug:
         INVERT_ELEVATOR = commands2.button.Button(
             lambda: Controllers.DRIVER_CONTROLLER.getPOV() == 180
+        )
+
+    class Scoring:
+        ONE = commands2.button.JoystickButton(
+            Controllers.NUMPAD_CONTROLLER, controllerNUMPAD.A
+        )
+
+        TWO = commands2.button.JoystickButton(
+            Controllers.NUMPAD_CONTROLLER, controllerNUMPAD.B
+        )
+
+        THREE = commands2.button.JoystickButton(
+            Controllers.NUMPAD_CONTROLLER, controllerNUMPAD.X
+        )
+
+        FOUR = commands2.button.JoystickButton(
+            Controllers.NUMPAD_CONTROLLER, controllerNUMPAD.Y
+        )
+
+        FIVE = commands2.button.JoystickButton(
+            Controllers.NUMPAD_CONTROLLER, controllerNUMPAD.LB
+        )
+
+        SIX = commands2.button.JoystickButton(
+            Controllers.NUMPAD_CONTROLLER, controllerNUMPAD.RB
+        )
+
+        SEVEN = commands2.button.JoystickButton(
+            Controllers.NUMPAD_CONTROLLER, controllerNUMPAD.SELECT
+        )
+
+        EIGHT = commands2.button.JoystickButton(
+            Controllers.NUMPAD_CONTROLLER, controllerNUMPAD.START
+        )
+
+        NINE = commands2.button.JoystickButton(Controllers.NUMPAD_CONTROLLER, 9)
+
+        DEL = commands2.button.Button(
+            lambda: Controllers.OPERATOR_CONTROLLER.getRawAxis(-controllerNUMPAD.LT)
+            > 0.8
         )

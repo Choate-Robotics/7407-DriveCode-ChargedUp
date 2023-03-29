@@ -267,6 +267,10 @@ class _Robot(wpilib.TimedRobot):
             Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
 
     def teleopPeriodic(self):
+        SmartDashboard.putString(
+            "Scoring Position", str(config.current_scoring_position)
+        )
+
         SmartDashboard.putNumber(
             "FRONT LEFT", Robot.drivetrain.n_front_left.encoder.getAbsolutePosition()
         )

@@ -312,3 +312,46 @@ class OI:
         Keymap.Debug.INVERT_ELEVATOR.whenPressed(
             InstantCommand(lambda: invert_elevator())
         )
+
+        def edit_current_scoring_position(key: int | None):
+            config.current_scoring_position = key
+
+        Keymap.Scoring.ONE.whenPressed(
+            InstantCommand(lambda: edit_current_scoring_position(0))
+        )
+
+        Keymap.Scoring.TWO.whenPressed(
+            InstantCommand(lambda: edit_current_scoring_position(1))
+        )
+
+        Keymap.Scoring.THREE.whenPressed(
+            InstantCommand(lambda: edit_current_scoring_position(2))
+        )
+
+        Keymap.Scoring.FOUR.whenPressed(
+            InstantCommand(lambda: edit_current_scoring_position(3))
+        )
+
+        Keymap.Scoring.FIVE.whenPressed(
+            InstantCommand(lambda: edit_current_scoring_position(4))
+        )
+
+        Keymap.Scoring.SIX.whenPressed(
+            InstantCommand(lambda: edit_current_scoring_position(5))
+        )
+
+        Keymap.Scoring.SEVEN.whenPressed(
+            InstantCommand(lambda: edit_current_scoring_position(6))
+        )
+
+        Keymap.Scoring.EIGHT.whenPressed(
+            InstantCommand(lambda: edit_current_scoring_position(7))
+        )
+
+        Keymap.Scoring.NINE.whenPressed(
+            InstantCommand(lambda: edit_current_scoring_position(8))
+        )
+
+        Keymap.Scoring.DEL.whenPressed(
+            InstantCommand(lambda: edit_current_scoring_position(None))
+        )
