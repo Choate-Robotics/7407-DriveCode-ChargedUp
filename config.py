@@ -25,7 +25,7 @@ from units.SI import (
 )
 
 current_scoring_position = None
-current_scoring_grid = None
+current_scoring_height = None
 current_scoring_position_confirmed = None
 
 elevator_voltage_inverted = False

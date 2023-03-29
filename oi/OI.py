@@ -314,52 +314,52 @@ class OI:
         )
         
 
-        def edit_current_scoring_position(key: tuple | None):
-            config.current_scoring_position = key #row, column
+        def edit_current_scoring_position(key: int | None):
+            config.current_scoring_position = key 
 
-        def edit_current_scoring_grid(key: int | None):
-            config.current_scoring_grid = key
+        def edit_current_scoring_height(key: int | None):
+            config.current_scoring_height = key
 
         def confirm_current_scoring_position(set: bool):
-            if set and config.current_scoring_position != None and config.current_scoring_grid != None:
-                config.current_scoring_position_confirmed = [edit_current_scoring_position[0], edit_current_scoring_position[1] + config.current_scoring_grid*3] #row, column
+            if set and config.current_scoring_position != None and config.current_scoring_height != None:
+                config.current_scoring_position_confirmed = [config.current_scoring_height, config.current_scoring_position] #row, column
             else:
-                config.current_scoring_position_confirmed
+                config.current_scoring_position_confirmed = None
 
         Keymap.Scoring.ONE.whenPressed(
-            InstantCommand(lambda: edit_current_scoring_position((2,0)))
+            InstantCommand(lambda: edit_current_scoring_position(0))
         )
 
         Keymap.Scoring.TWO.whenPressed(
-            InstantCommand(lambda: edit_current_scoring_position((2,1)))
+            InstantCommand(lambda: edit_current_scoring_position(1))
         )
 
         Keymap.Scoring.THREE.whenPressed(
-            InstantCommand(lambda: edit_current_scoring_position((2,2)))
+            InstantCommand(lambda: edit_current_scoring_position(2))
         )
 
         Keymap.Scoring.FOUR.whenPressed(
-            InstantCommand(lambda: edit_current_scoring_position((1,0)))
+            InstantCommand(lambda: edit_current_scoring_position(3))
         )
 
         Keymap.Scoring.FIVE.whenPressed(
-            InstantCommand(lambda: edit_current_scoring_position((1,1)))
+            InstantCommand(lambda: edit_current_scoring_position(4))
         )
 
         Keymap.Scoring.SIX.whenPressed(
-            InstantCommand(lambda: edit_current_scoring_position((1,2)))
+            InstantCommand(lambda: edit_current_scoring_position(5))
         )
 
         Keymap.Scoring.SEVEN.whenPressed(
-            InstantCommand(lambda: edit_current_scoring_position((0,0)))
+            InstantCommand(lambda: edit_current_scoring_position(6))
         )
 
         Keymap.Scoring.EIGHT.whenPressed(
-            InstantCommand(lambda: edit_current_scoring_position((0,1)))
+            InstantCommand(lambda: edit_current_scoring_position(7))
         )
 
         Keymap.Scoring.NINE.whenPressed(
-            InstantCommand(lambda: edit_current_scoring_position((0,2)))
+            InstantCommand(lambda: edit_current_scoring_position(8))
         )
 
 
@@ -371,12 +371,15 @@ class OI:
         )
 
 
-        Keymap.Scoring.LEFT_GRID.whenPressed(
-            InstantCommand(lambda: edit_current_scoring_grid(0))
+
+        Keymap.Scoring.HIGH_SCORE.whenPressed(
+            InstantCommand(lambda: edit_current_scoring_height(0))
         )
-        Keymap.Scoring.MIDDLE_GRID.whenPressed(
-            InstantCommand(lambda: edit_current_scoring_grid(1))
+
+        Keymap.Scoring.MID_SCORE.whenPressed(
+            InstantCommand(lambda: edit_current_scoring_height(1))
         )
-        Keymap.Scoring.RIGHT_GRID.whenPressed(
-            InstantCommand(lambda: edit_current_scoring_grid(2))
+
+        Keymap.Scoring.LOW_SCORE.whenPressed(
+            InstantCommand(lambda: edit_current_scoring_height(2))
         )

@@ -166,22 +166,22 @@ class Keymap:
         NINE = commands2.button.JoystickButton(Controllers.NUMPAD_CONTROLLER, 9)
 
 
-        LEFT_GRID = commands2.button.Button( #NUM
-            lambda: Controllers.OPERATOR_CONTROLLER.getPOV() == 0
+        HIGH_SCORE = commands2.button.Button( #Minus
+            lambda: Controllers.NUMPAD_CONTROLLER.getPOV() == 180
         )
-        MIDDLE_GRID = commands2.button.Button( #Division
-            lambda: Controllers.OPERATOR_CONTROLLER.getPOV() == 90
+        MID_SCORE = commands2.button.Button( #Plus
+            lambda: Controllers.NUMPAD_CONTROLLER.getPOV() == 90
         )
-        RIGHT_GRID = commands2.button.Button( #Multiplication
-            lambda: Controllers.OPERATOR_CONTROLLER.getPOV() == 180
+        LOW_SCORE = commands2.button.Button( #Multiplication
+            lambda: Controllers.NUMPAD_CONTROLLER.getPOV() == 270
         )
 
 
 
-        DEL = commands2.button.JoystickButton(Controllers.NUMPAD_CONTROLLER, 10) #0 button
-
-        CONFIRM = commands2.button.Button( #Enter
-            lambda: Controllers.OPERATOR_CONTROLLER.getPOV() == 270
+        DEL = commands2.button.Button( #DOT
+            lambda: Controllers.NUMPAD_CONTROLLER.getPOV() == 0
         )
+
+        CONFIRM = commands2.button.JoystickButton(Controllers.NUMPAD_CONTROLLER, 10) #0 button
 
 
