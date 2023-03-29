@@ -10,6 +10,7 @@ from wpimath.geometry import Pose2d, Rotation2d
 import command
 import command.autonomous.custom_pathing
 import config
+import constants
 from command.autonomous import CustomTrajectory
 from robot_systems import Sensors
 from sensors import FieldOdometry
@@ -29,13 +30,18 @@ def curve(x):
 class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
     driver_centric = True
     driver_centric_reversed = False
+    period = constants.period
+    angular_pid: PIDController = PIDController(4, 0, 0.05)
+    target_angle = None
 
     def initialize(self) -> None:
-        print("STARTED DRIVE SWERVE")
-        pass
+        self.angular_pid.setSetpoint(0)
+        self.target_angle = Sensors.gyro.get_robot_heading() % (math.pi * 2)
+        self.target_angle = math.atan2(
+            math.sin(self.target_angle), math.cos(self.target_angle)
+        )
 
     def execute(self) -> None:
-
         dx, dy, d_theta = (
             self.subsystem.axis_dx.value * (-1 if config.drivetrain_reversed else 1),
             self.subsystem.axis_dy.value * (-1 if config.drivetrain_reversed else 1),
@@ -51,19 +57,31 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
 
         dx *= self.subsystem.max_vel
         dy *= -self.subsystem.max_vel
+        d_theta *= self.subsystem.max_angular_vel
+
+        # if abs(d_theta) > 0:
+        #     self.target_angle = Sensors.gyro.get_robot_heading() % (math.pi * 2)
+        #     self.target_angle = math.atan2(math.sin(self.target_angle), math.cos(self.target_angle))
+        # elif dx > 0 or dy > 0:
+        #     current_angle = Sensors.odometry.getPose().rotation()
+        #     relative = Pose2d(0, 0, self.target_angle).relativeTo(
+        #         Pose2d(0, 0, current_angle)
+        #     )
+        #
+        #     angular_vel = self.angular_pid.calculate(abs(relative.rotation().radians()))
+        #
+        #     d_theta = min(constants.drivetrain_max_correction_vel, abs(angular_vel)) * (
+        #         1 if relative.rotation().radians() > 0 else -1
+        #     )
+        #
+        #     print("DESIRED D_THETA", d_theta)
 
         if config.driver_centric:
-            self.subsystem.set_driver_centric(
-                (-dy, dx), d_theta * self.subsystem.max_angular_vel
-            )
+            self.subsystem.set_driver_centric((-dy, dx), d_theta)
         elif self.driver_centric_reversed:
-            self.subsystem.set_driver_centric(
-                (dy, -dx), d_theta * self.subsystem.max_angular_vel
-            )
+            self.subsystem.set_driver_centric((dy, -dx), d_theta)
         else:
-            self.subsystem.set_robot_centric(
-                (dy, -dx), d_theta * self.subsystem.max_angular_vel
-            )
+            self.subsystem.set_robot_centric((dy, -dx), d_theta)
 
     def end(self, interrupted: bool) -> None:
         self.subsystem.n_front_left.set_motor_velocity(0)

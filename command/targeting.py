@@ -261,8 +261,13 @@ class Target(SubsystemCommand[Arm]):
                 self.target.wrist_angle = abs(self.target.wrist_angle)
 
             if self.target.arm_reversed:
-                self.target.arm_angle = -1 * self.target.arm_angle
-                self.target.wrist_angle = -1 * self.target.wrist_angle
+                if self.target.low_scoring:
+                    self.target.arm_length = self.target.arm_length_opposite
+                    self.target.arm_angle = self.target.arm_angle_opposite
+                    self.target.wrist_angle = self.target.wrist_angle_opposite
+                else:
+                    self.target.arm_angle = -1 * self.target.arm_angle
+                    self.target.wrist_angle = -1 * self.target.wrist_angle
 
         if self.target.intake_enabled and self.intake_on:
             self.intake_command = command.IntakeEnable(

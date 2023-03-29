@@ -145,50 +145,6 @@ elevator_initial_length = (
 # --------------------------------------------------------------
 
 claw_motor_speed: float = 0.2
-
-# general claw rotations
-# --------------------------------------------------------------
-claw_initial_rotation: Rotation3d = Rotation3d(0, 0, 0)
-claw_horizontal_rotation: Rotation3d = Rotation3d(0, 90, 0)
-claw_cone_intake_rotation: Rotation3d = Rotation3d(0, 30, 0)
-claw_transport_rotation: Rotation3d = Rotation3d(0, 0, 0)
-claw_cube_intake_rotation: Rotation3d = Rotation3d(0, 90, 0)
-claw_cone_peg_rotation: Rotation3d = Rotation3d(0, 90, 0)
-claw_cube_platform_rotation: Rotation3d = Rotation3d(0, 90, 0)
-# --------------------------------------------------------------
-
-# Robot arm positions
-# --------------------------------------------------------------
-zero_pose: Pose3d = Pose3d(0, 0, elevator_zero_length, claw_initial_rotation)
-cube_intake_arm_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_intake_rotation)
-arm_transport_pose: Pose3d = Pose3d(0, 0, 0, claw_transport_rotation)
-cone_top_intake_arm_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_intake_rotation)
-# --------------------------------------------------------------
-
-# Field intake positions (Relative to the field)
-# --------------------------------------------------------------
-bottom_cone_intake_arm_pose: Pose3d = Pose3d(0, 0, 0, claw_horizontal_rotation)
-top_cone_intake_arm_pose: Pose3d = Pose3d(0, 0, 0, claw_horizontal_rotation)
-# --------------------------------------------------------------
-
-# Apriltag positions (Relative to the apriltag)
-# --------------------------------------------------------------
-# CONE PEGS #
-left_high_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
-left_mid_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
-left_low_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
-right_high_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
-right_mid_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
-right_low_peg_pose: Pose3d = Pose3d(0, 0, 0, claw_cone_peg_rotation)
-
-# CUBE PLATFORMS #
-center_low_platform_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)
-center_mid_platform_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)
-center_high_platform_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)
-
-# LOADING STATION #
-double_loading_station_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)
-single_loading_station_pose: Pose3d = Pose3d(0, 0, 0, claw_cube_platform_rotation)
 # --------------------------------------------------------------
 
 period = 0.03
@@ -215,6 +171,7 @@ drivetrain_max_target_accel: meters_per_second_squared = (
 )
 drivetrain_target_max_vel: meters_per_second = (2 * mile / hour).asNumber(m / s)  # 3
 drivetrain_max_angular_vel: radians_per_second = (1 * rev / s).asNumber(rad / s)  # 5
+drivetrain_max_correction_vel: radians_per_second = (2 * rev / s).asNumber(rad / s)
 drivetrain_max_climb_vel: meters_per_second = (5 * mile / hour).asNumber(m / s)
 
 climber_out = False
@@ -278,7 +235,7 @@ ApriltagPositionDictBlue = {
         (inches_to_meters * 18.22),
         Rotation3d(0.0, 0.0, math.pi),
     ),
-    2: Pose3d(
+    7: Pose3d(
         (inches_to_meters * 610.77),
         (inches_to_meters * 108.19),
         (inches_to_meters * 18.22),
@@ -308,7 +265,7 @@ ApriltagPositionDictBlue = {
         (inches_to_meters * 18.22),
         Rotation3d(),
     ),
-    7: Pose3d(
+    2: Pose3d(
         (inches_to_meters * 40.45),
         (inches_to_meters * 108.19),
         (inches_to_meters * 18.22),

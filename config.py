@@ -75,6 +75,11 @@ class TargetData:
 
     grabber_no_grab: bool = False
 
+    low_scoring: bool = False
+    arm_angle_opposite: float | None = None
+    arm_length_opposite: float | None = None
+    wrist_angle_opposite: float | None = None
+
 
 elevator_motor_extend_id = 17
 elevator_secondary_rotation_motor_id = 1
@@ -84,7 +89,7 @@ elevator_brake_id = 3
 
 pneumatics_control_module = 31
 
-claw_motor_speed: float = 0.4
+claw_motor_speed: float = 0.6
 
 # Intake
 intake_motor_id = 11
@@ -128,10 +133,15 @@ scoring_locations: dict[str, TargetData] = {
         arm_angle=math.radians(-98),
         arm_length=0,
         wrist_angle=math.radians(0),
+        arm_angle_opposite=math.radians(45),
+        arm_length_opposite=0.1,
+        wrist_angle_opposite=math.radians(90),
         intake_enabled=False,
         claw_scoring=False,
         claw_picking=False,
         cone_picking=False,
+        low_scoring=True,
+        arm_scoring=True,
     ),
     "middle": TargetData(
         target_pose=Pose2d(1.55, 1.55, 0),  # 2.43 .94

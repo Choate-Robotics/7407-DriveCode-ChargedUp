@@ -119,7 +119,8 @@ class Drivetrain(SwerveDrivetrain):
         SparkMax(5, config=MOVE_CONFIG),
         SparkMax(6, config=TURN_CONFIG),
         CANCoder(22),
-        absolute_encoder_zeroed_pos=math.radians(293.994),
+        # absolute_encoder_zeroed_pos=math.radians(293.994),
+        absolute_encoder_zeroed_pos=math.radians(136.58),
     )
 
     gyro: PigeonIMUGyro_Wrapper = PigeonIMUGyro_Wrapper(20)

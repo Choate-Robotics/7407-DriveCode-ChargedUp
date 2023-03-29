@@ -26,12 +26,15 @@ class OI:
     def map_controls():
         logger.info("Mapping controls...")
 
+        def reset():
+            Robot.drivetrain.gyro.reset_angle(Robot.drivetrain.start_angle)
+            Robot.drivetrain.n_front_left.zero()
+            Robot.drivetrain.n_front_right.zero()
+            Robot.drivetrain.n_back_left.zero()
+            Robot.drivetrain.n_back_right.zero()
+
         # DRIVETRAIN
-        Keymap.Drivetrain.RESET_GYRO.whenPressed(
-            InstantCommand(
-                lambda: Robot.drivetrain.gyro.reset_angle(Robot.drivetrain.start_angle)
-            )
-        )
+        Keymap.Drivetrain.RESET_GYRO.whenPressed(InstantCommand(lambda: reset()))
 
         Keymap.Drivetrain.RESET_ODOMETRY.whenPressed(
             InstantCommand(
@@ -263,7 +266,9 @@ class OI:
         )
 
         Keymap.Targeting.TARGETING_EJECT_INTAKE.whenPressed(
-            InstantCommand(lambda: Robot.intake.enable_intake_motor_max(True))
+            InstantCommand(
+                lambda: Robot.intake.enable_intake_motor(intake_reversed=True)
+            )
         )
 
         Keymap.Targeting.TARGETING_EJECT_INTAKE.whenReleased(
