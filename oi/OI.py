@@ -235,7 +235,7 @@ class OI:
 
         Keymap.Targeting.TARGETING_CUBE_INTAKE.whenPressed(
             SequentialCommandGroup(
-                InstantCommand(lambda: Robot.grabber.engage_claw()),
+                InstantCommand(lambda: Robot.grabber.open_claw()),
                 command.Target(
                     Robot.arm,
                     Robot.grabber,

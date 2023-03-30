@@ -92,6 +92,11 @@ class _Robot(wpilib.TimedRobot):
 
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
 
+        Robot.drivetrain.n_front_left.initial_zero()
+        Robot.drivetrain.n_front_right.initial_zero()
+        Robot.drivetrain.n_back_left.initial_zero()
+        Robot.drivetrain.n_back_right.initial_zero()
+
     def robotPeriodic(self):
         SmartDashboard.putNumber(
             "Climber Rotations", Robot.climber.get_motor_rotations()
@@ -205,18 +210,18 @@ class _Robot(wpilib.TimedRobot):
             Robot.drivetrain.n_back_right.m_turn.get_sensor_position(),
         )
 
-        SmartDashboard.putNumber(
-            "FRONT LEFT", Robot.drivetrain.n_front_left.encoder.getAbsolutePosition()
-        )
-        SmartDashboard.putNumber(
-            "FRONT RIGHT", Robot.drivetrain.n_front_right.encoder.getAbsolutePosition()
-        )
-        SmartDashboard.putNumber(
-            "BACK LEFT", Robot.drivetrain.n_back_left.encoder.getAbsolutePosition()
-        )
-        SmartDashboard.putNumber(
-            "BACK RIGHT", Robot.drivetrain.n_back_right.encoder.getAbsolutePosition()
-        )
+        # SmartDashboard.putNumber(
+        #     "FRONT LEFT", Robot.drivetrain.n_front_left.encoder.getAbsolutePosition()
+        # )
+        # SmartDashboard.putNumber(
+        #     "FRONT RIGHT", Robot.drivetrain.n_front_right.encoder.getAbsolutePosition()
+        # )
+        # SmartDashboard.putNumber(
+        #     "BACK LEFT", Robot.drivetrain.n_back_left.encoder.getAbsolutePosition()
+        # )
+        # SmartDashboard.putNumber(
+        #     "BACK RIGHT", Robot.drivetrain.n_back_right.encoder.getAbsolutePosition()
+        # )
 
         try:
             commands2.CommandScheduler.getInstance().run()
@@ -279,7 +284,50 @@ class _Robot(wpilib.TimedRobot):
             Sensors.pv_controller = None
             Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
 
+        # self.iters = 0
+
     def teleopPeriodic(self):
+        reported = math.degrees(Robot.drivetrain.n_front_left.get_current_motor_angle())
+        actual = (
+            Robot.drivetrain.n_front_left.encoder.getAbsolutePosition()
+            - Robot.drivetrain.n_front_left.absolute_encoder_zeroed_pos
+        )
+
+        SmartDashboard.putNumber("n_front_left_error", reported - actual)
+
+        reported = math.degrees(
+            Robot.drivetrain.n_front_right.get_current_motor_angle()
+        )
+        actual = (
+            Robot.drivetrain.n_front_right.encoder.getAbsolutePosition()
+            - Robot.drivetrain.n_front_right.absolute_encoder_zeroed_pos
+        )
+
+        SmartDashboard.putNumber("n_front_right_error", reported - actual)
+
+        reported = math.degrees(Robot.drivetrain.n_back_left.get_current_motor_angle())
+        actual = (
+            Robot.drivetrain.n_back_left.encoder.getAbsolutePosition()
+            - Robot.drivetrain.n_back_left.absolute_encoder_zeroed_pos
+        )
+
+        SmartDashboard.putNumber("n_back_left_error", reported - actual)
+
+        reported = math.degrees(Robot.drivetrain.n_back_right.get_current_motor_angle())
+        actual = (
+            Robot.drivetrain.n_back_right.encoder.getAbsolutePosition()
+            - Robot.drivetrain.n_back_right.absolute_encoder_zeroed_pos
+        )
+
+        SmartDashboard.putNumber("n_back_right_error", reported - actual)
+
+        # self.iters += 1
+        # if self.iters % 5 == 0:
+        #     Robot.drivetrain.n_front_left.zero()
+        #     Robot.drivetrain.n_front_right.zero()
+        #     Robot.drivetrain.n_back_left.zero()
+        #     Robot.drivetrain.n_back_right.zero()
+
         SmartDashboard.putString(
             "Scoring Position", str(config.current_scoring_position)
         )
@@ -299,10 +347,10 @@ class _Robot(wpilib.TimedRobot):
         ...
 
     def autonomousInit(self):
-        Robot.drivetrain.n_front_left.zero()
-        Robot.drivetrain.n_front_right.zero()
-        Robot.drivetrain.n_back_left.zero()
-        Robot.drivetrain.n_back_right.zero()
+        Robot.drivetrain.n_front_left.initial_zero()
+        Robot.drivetrain.n_front_right.initial_zero()
+        Robot.drivetrain.n_back_left.initial_zero()
+        Robot.drivetrain.n_back_right.initial_zero()
 
         Robot.climber.climber_disable()
         Robot.climber.latch_enable()

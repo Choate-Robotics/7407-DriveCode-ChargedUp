@@ -2,6 +2,7 @@ import math
 from dataclasses import dataclass
 
 import rev
+import wpilib
 from ctre.sensors import CANCoder
 from robotpy_toolkit_7407.motors.rev_motors import SparkMax, SparkMaxConfig
 from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
@@ -35,13 +36,14 @@ class SparkMaxSwerveNode(SwerveNode):
     m_turn: SparkMax
     encoder: CANCoder
     absolute_encoder_zeroed_pos: radians = 0
+    name: str = "DefaultNode"
 
     def init(self):
         super().init()
         self.m_move.init()
         self.m_turn.init()
 
-    def zero(self):
+    def initial_zero(self):
         current_pos_rad = (
             math.radians(self.encoder.getAbsolutePosition())
             - self.absolute_encoder_zeroed_pos
@@ -51,10 +53,48 @@ class SparkMaxSwerveNode(SwerveNode):
             current_pos_rad * constants.drivetrain_turn_gear_ratio / (2 * math.pi)
         )
 
+        self.m_move.set_sensor_position(0)
+        self.m_move.set_target_position(0)
+
+    def zero(self):
+        current_angle = self.get_current_motor_angle()
+
+        current_pos_rad = (
+            math.radians(self.encoder.getAbsolutePosition())
+            - self.absolute_encoder_zeroed_pos
+        )
+
+        self.m_turn.set_sensor_position(
+            current_pos_rad * constants.drivetrain_turn_gear_ratio / (2 * math.pi)
+        )
+
+        self.set_motor_angle(current_angle)
+
     def raw_output(self, power):
         self.m_move.set_raw_output(power)
 
     def set_motor_angle(self, pos: radians):
+        wpilib.SmartDashboard.putNumber(f"{self.name} Desired Angle", pos)
+        wpilib.SmartDashboard.putNumber(
+            f"{self.name} Real Angle", self.get_current_motor_angle()
+        )
+        wpilib.SmartDashboard.putNumber(
+            f"{self.name} Des Angle Error", pos - self.get_current_motor_angle()
+        )
+        wpilib.SmartDashboard.putNumber(
+            f"{self.name} CANCoder Angle Error",
+            pos
+            - math.radians(
+                (
+                    (
+                        self.encoder.getAbsolutePosition()
+                        - self.absolute_encoder_zeroed_pos
+                    )
+                    % 360
+                )
+            ),
+        )
+
         self.m_turn.set_target_position(
             (pos / (2 * math.pi)) * constants.drivetrain_turn_gear_ratio
         )
@@ -72,6 +112,19 @@ class SparkMaxSwerveNode(SwerveNode):
         )
 
     def set_motor_velocity(self, vel: meters_per_second):
+        wpilib.SmartDashboard.putNumber(f"{self.name} Desired Vel", vel)
+        wpilib.SmartDashboard.putNumber(
+            f"{self.name} Real Vel",
+            self.m_move.get_sensor_velocity() / constants.drivetrain_move_gear_ratio,
+        )
+        wpilib.SmartDashboard.putNumber(
+            f"{self.name} Des Vel Error",
+            vel
+            - (
+                self.m_move.get_sensor_velocity() / constants.drivetrain_move_gear_ratio
+            ),
+        )
+
         self.m_move.set_target_velocity(vel * constants.drivetrain_move_gear_ratio)
 
     def get_motor_velocity(self) -> radians_per_second:
@@ -102,25 +155,28 @@ class Drivetrain(SwerveDrivetrain):
         SparkMax(15, config=TURN_CONFIG),
         CANCoder(24),
         absolute_encoder_zeroed_pos=math.radians(174.638),
+        name="n_front_left",
     )
     n_front_right = SparkMaxSwerveNode(
         SparkMax(14, config=MOVE_CONFIG),
         SparkMax(13, config=TURN_CONFIG),
         CANCoder(23),
         absolute_encoder_zeroed_pos=math.radians(282.304),
+        name="n_front_right",
     )
     n_back_left = SparkMaxSwerveNode(
         SparkMax(3, config=MOVE_CONFIG),
         SparkMax(4, config=TURN_CONFIG),
         CANCoder(21),
         absolute_encoder_zeroed_pos=math.radians(313.769),
+        name="n_back_left",
     )
     n_back_right = SparkMaxSwerveNode(
         SparkMax(5, config=MOVE_CONFIG),
         SparkMax(6, config=TURN_CONFIG),
         CANCoder(22),
-        # absolute_encoder_zeroed_pos=math.radians(293.994),
         absolute_encoder_zeroed_pos=math.radians(136.58),
+        name="n_back_right",
     )
 
     gyro: PigeonIMUGyro_Wrapper = PigeonIMUGyro_Wrapper(20)
