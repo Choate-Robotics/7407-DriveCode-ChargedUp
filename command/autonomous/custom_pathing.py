@@ -335,8 +335,8 @@ class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
         self.angular_finished: bool = False
 
         self.horizontal_pid = PIDController(4, 0, 0.01)
-        self.vertical_pid = PIDController(4, 0, 0.01)
-        self.angular_pid = PIDController(2, 0, 0.05)
+        self.vertical_pid = PIDController(4.1, 0, 0.01)
+        self.angular_pid = PIDController(1.8, 0, 0.05)
 
         self.horizontal_pid.setSetpoint(0)
         self.vertical_pid.setSetpoint(0)
