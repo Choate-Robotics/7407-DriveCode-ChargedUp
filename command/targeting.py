@@ -247,6 +247,10 @@ class Target(SubsystemCommand[Arm]):
         self.finished = True
 
     def initialize(self) -> None:
+        arm_length = self.target.arm_length
+        arm_angle = self.target.arm_angle
+        wrist_angle = self.target.wrist_angle
+
         if self.target.arm_scoring:
             gyro_angle = Sensors.gyro.get_robot_heading() % (math.pi * 2)
             gyro_angle = math.degrees(
@@ -254,20 +258,25 @@ class Target(SubsystemCommand[Arm]):
             )
 
             if -90 < gyro_angle < 90:
-                self.target.arm_angle = abs(self.target.arm_angle) * -1
-                self.target.wrist_angle = abs(self.target.wrist_angle) * -1
+                arm_angle = abs(self.target.arm_angle) * -1
+                wrist_angle = abs(self.target.wrist_angle) * -1
             else:
-                self.target.arm_angle = abs(self.target.arm_angle)
-                self.target.wrist_angle = abs(self.target.wrist_angle)
+                arm_angle = abs(self.target.arm_angle)
+                wrist_angle = abs(self.target.wrist_angle)
 
             if self.target.arm_reversed:
-                if self.target.low_scoring:
-                    self.target.arm_length = self.target.arm_length_opposite
-                    self.target.arm_angle = self.target.arm_angle_opposite
-                    self.target.wrist_angle = self.target.wrist_angle_opposite
+                arm_angle = -1 * self.target.arm_angle
+                wrist_angle = -1 * self.target.wrist_angle
+
+            if self.target.low_scoring:
+                if -90 < gyro_angle < 90:
+                    arm_length = self.target.arm_length
+                    arm_angle = self.target.arm_angle
+                    wrist_angle = self.target.wrist_angle
                 else:
-                    self.target.arm_angle = -1 * self.target.arm_angle
-                    self.target.wrist_angle = -1 * self.target.wrist_angle
+                    arm_length = self.target.arm_length_opposite
+                    arm_angle = self.target.arm_angle_opposite
+                    wrist_angle = self.target.wrist_angle_opposite
 
         if self.target.intake_enabled and self.intake_on:
             self.intake_command = command.IntakeEnable(
@@ -281,12 +290,10 @@ class Target(SubsystemCommand[Arm]):
         if self.target.claw_wait:
             if self.target.claw_picking and self.arm_on:
                 self.arm_sequence = SequentialCommandGroup(
-                    command.SetArm(
-                        self.arm, self.target.arm_length, self.target.arm_angle
-                    ),
+                    command.SetArm(self.arm, arm_length, arm_angle),
                     command.SetGrabber(
                         self.grabber,
-                        self.target.wrist_angle,
+                        wrist_angle,
                         True,
                         finish=False,
                         no_grab=self.target.grabber_no_grab,
@@ -294,20 +301,16 @@ class Target(SubsystemCommand[Arm]):
                 )
             elif self.target.claw_scoring and self.arm_on:
                 self.arm_sequence = ParallelCommandGroup(
-                    command.SetArm(
-                        self.arm, self.target.arm_length, self.target.arm_angle
-                    ),
+                    command.SetArm(self.arm, arm_length, arm_angle),
                     SequentialCommandGroup(
                         command.SetGrabber(
                             self.grabber,
-                            math.radians(90)
-                            * (-1 if self.target.wrist_angle > 0 else 1),
+                            math.radians(90) * (-1 if wrist_angle > 0 else 1),
                             False,
                         ),
                         command.SetGrabber(
                             self.grabber,
-                            math.radians(25)
-                            * (-1 if self.target.wrist_angle > 0 else 1),
+                            math.radians(25) * (-1 if wrist_angle > 0 else 1),
                             False,
                             finish=False,
                         ),
@@ -315,12 +318,10 @@ class Target(SubsystemCommand[Arm]):
                 )
             elif self.arm_on:
                 self.arm_sequence = SequentialCommandGroup(
-                    command.SetArm(
-                        self.arm, self.target.arm_length, self.target.arm_angle
-                    ),
+                    command.SetArm(self.arm, arm_length, arm_angle),
                     command.SetGrabber(
                         self.grabber,
-                        self.target.wrist_angle,
+                        wrist_angle,
                         False,
                         finish=False,
                         no_grab=self.target.grabber_no_grab,
@@ -331,12 +332,10 @@ class Target(SubsystemCommand[Arm]):
         else:
             if self.target.claw_picking and self.arm_on:
                 self.arm_sequence = ParallelCommandGroup(
-                    command.SetArm(
-                        self.arm, self.target.arm_length, self.target.arm_angle
-                    ),
+                    command.SetArm(self.arm, arm_length, arm_angle),
                     command.SetGrabber(
                         self.grabber,
-                        self.target.wrist_angle,
+                        wrist_angle,
                         True,
                         auto_claw=True,
                         auto_cube=self.target.cube_picking,
@@ -349,12 +348,10 @@ class Target(SubsystemCommand[Arm]):
             elif self.target.claw_scoring and self.arm_on:
                 self.arm_sequence = SequentialCommandGroup(
                     ParallelCommandGroup(
-                        command.SetArm(
-                            self.arm, self.target.arm_length, self.target.arm_angle
-                        ),
+                        command.SetArm(self.arm, arm_length, arm_angle),
                         command.SetGrabber(
                             self.grabber,
-                            self.target.wrist_angle,
+                            wrist_angle,
                             False,
                             finish=False,
                             no_grab=self.target.grabber_no_grab,
@@ -364,12 +361,10 @@ class Target(SubsystemCommand[Arm]):
                 )
             elif self.arm_on:
                 self.arm_sequence = ParallelCommandGroup(
-                    command.SetArm(
-                        self.arm, self.target.arm_length, self.target.arm_angle
-                    ),
+                    command.SetArm(self.arm, arm_length, arm_angle),
                     command.SetGrabber(
                         self.grabber,
-                        self.target.wrist_angle,
+                        wrist_angle,
                         False,
                         finish=False,
                         no_grab=self.target.grabber_no_grab,

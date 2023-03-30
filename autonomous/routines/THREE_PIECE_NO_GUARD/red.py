@@ -12,12 +12,12 @@ import command
 import config
 import constants
 from autonomous.auto_routine import AutoRoutine
-from autonomous.routines.THREE_PIECE_WITH_GUARD.base_coords import (
-    blue_base_initial_coords,
-    blue_base_path_1,
-    blue_base_path_2,
-    blue_base_path_3,
-    blue_base_path_4,
+from autonomous.routines.THREE_PIECE_NO_GUARD.base_coords import (
+    red_base_initial_coords,
+    red_base_path_1,
+    red_base_path_2,
+    red_base_path_3,
+    red_base_path_4,
 )
 from command.autonomous.custom_pathing import FollowPathCustom
 from command.autonomous.trajectory import CustomTrajectory
@@ -30,9 +30,9 @@ max_accel: meters_per_second_squared = 3
 path_1 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(*blue_base_path_1[0]),
-        waypoints=[Translation2d(*x) for x in blue_base_path_2[1]],
-        end_pose=Pose2d(*blue_base_path_1[2]),
+        start_pose=Pose2d(*red_base_path_1[0]),
+        waypoints=[Translation2d(*x) for x in red_base_path_2[1]],
+        end_pose=Pose2d(*red_base_path_1[2]),
         max_velocity=max_vel,
         max_accel=max_accel,
         start_velocity=0,
@@ -44,9 +44,9 @@ path_1 = FollowPathCustom(
 path_2 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(*blue_base_path_2[0]),
-        waypoints=[Translation2d(*x) for x in blue_base_path_2[1]],
-        end_pose=Pose2d(*blue_base_path_2[2]),
+        start_pose=Pose2d(*red_base_path_2[0]),
+        waypoints=[Translation2d(*x) for x in red_base_path_2[1]],
+        end_pose=Pose2d(*red_base_path_2[2]),
         max_velocity=3,
         max_accel=2,
         start_velocity=0,
@@ -58,9 +58,9 @@ path_2 = FollowPathCustom(
 path_3 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(*blue_base_path_3[0]),
-        waypoints=[Translation2d(*x) for x in blue_base_path_3[1]],
-        end_pose=Pose2d(*blue_base_path_3[2]),
+        start_pose=Pose2d(*red_base_path_3[0]),
+        waypoints=[Translation2d(*x) for x in red_base_path_3[1]],
+        end_pose=Pose2d(*red_base_path_3[2]),
         max_velocity=3,
         max_accel=1.7,
         start_velocity=0,
@@ -72,9 +72,9 @@ path_3 = FollowPathCustom(
 path_4 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(*blue_base_path_4[0]),
-        waypoints=[Translation2d(*x) for x in blue_base_path_4[1]],
-        end_pose=Pose2d(*blue_base_path_4[2]),
+        start_pose=Pose2d(*red_base_path_4[0]),
+        waypoints=[Translation2d(*x) for x in red_base_path_4[1]],
+        end_pose=Pose2d(*red_base_path_4[2]),
         max_velocity=3.5,
         max_accel=2.5,
         start_velocity=0,
@@ -106,13 +106,15 @@ auto = SequentialCommandGroup(
     ParallelDeadlineGroup(
         deadline=SequentialCommandGroup(path_1, WaitCommand(0)),
         commands=[
-            command.TargetAuto(
-                Robot.arm,
-                Robot.grabber,
-                Robot.intake,
-                Sensors.odometry,
-                target=config.scoring_locations["cube_intake_auto"],
-            ).generate(),
+            SequentialCommandGroup(
+                command.TargetAuto(
+                    Robot.arm,
+                    Robot.grabber,
+                    Robot.intake,
+                    Sensors.odometry,
+                    target=config.scoring_locations["cube_intake_auto"],
+                ).generate(),
+            )
         ],
     ),
     ParallelDeadlineGroup(
@@ -165,11 +167,14 @@ auto = SequentialCommandGroup(
             )
         ],
     ),
-    InstantCommand(lambda: Robot.grabber.close_claw()),
     WaitCommand(0.1),
     ParallelDeadlineGroup(
         deadline=path_4,
         commands=[
+            SequentialCommandGroup(
+                WaitCommand(0.5),
+                InstantCommand(lambda: Robot.grabber.close_claw()),
+            ),
             SequentialCommandGroup(
                 WaitCommand(2.4),
                 command.TargetAuto(
@@ -179,7 +184,7 @@ auto = SequentialCommandGroup(
                     Sensors.odometry,
                     target=config.scoring_locations["mid_auto_back_cube"],
                 ).generate(),
-            )
+            ),
         ],
     ),
     InstantCommand(lambda: Robot.grabber.set_output(-0.3)),
@@ -194,4 +199,4 @@ auto = SequentialCommandGroup(
     ).generate(),
 )
 
-routine = AutoRoutine(Pose2d(*blue_base_initial_coords), auto)
+routine = AutoRoutine(Pose2d(*red_base_initial_coords), auto, blue_team=False)

@@ -12,7 +12,7 @@ import command
 import config
 import constants
 from autonomous.auto_routine import AutoRoutine
-from autonomous.routines.THREE_PIECE_WITH_GUARD.base_coords import (
+from autonomous.routines.THREE_PIECE_NO_GUARD.base_coords import (
     blue_base_initial_coords,
     blue_base_path_1,
     blue_base_path_2,
