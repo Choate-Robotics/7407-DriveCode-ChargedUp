@@ -2,6 +2,7 @@ import math
 
 from commands2 import (
     InstantCommand,
+    ParallelCommandGroup,
     ParallelDeadlineGroup,
     SequentialCommandGroup,
     WaitCommand,
