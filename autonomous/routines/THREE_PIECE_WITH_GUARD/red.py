@@ -126,13 +126,21 @@ auto = SequentialCommandGroup(
             ),
             SequentialCommandGroup(
                 WaitCommand(1.7),
-                command.TargetAuto(
-                    Robot.arm,
-                    Robot.grabber,
-                    Robot.intake,
-                    Sensors.odometry,
-                    target=config.scoring_locations["high_auto_back_cube"],
-                ).generate(),
+                ParallelCommandGroup(
+                    command.SetArm(
+                        Robot.arm,
+                        config.scoring_locations["high_auto_back_cube"].arm_length,
+                        config.scoring_locations["high_auto_back_cube"].arm_angle,
+                    ),
+                    SequentialCommandGroup(
+                        WaitCommand(0.6),
+                        command.SetGrabber(
+                            Robot.grabber,
+                            config.scoring_locations["high_auto_back_cube"].wrist_angle,
+                            False,
+                        ),
+                    ),
+                ),
             ),
         ],
     ),
@@ -174,15 +182,28 @@ auto = SequentialCommandGroup(
         deadline=path_4,
         commands=[
             SequentialCommandGroup(
+                WaitCommand(0.5),
+                InstantCommand(lambda: Robot.grabber.disengage_claw()),
+                InstantCommand(lambda: Robot.grabber.set_output(0)),
+            ),
+            SequentialCommandGroup(
                 WaitCommand(1.8),
-                command.TargetAuto(
-                    Robot.arm,
-                    Robot.grabber,
-                    Robot.intake,
-                    Sensors.odometry,
-                    target=config.scoring_locations["mid_auto_back_cube"],
-                ).generate(),
-            )
+                ParallelCommandGroup(
+                    command.SetArm(
+                        Robot.arm,
+                        config.scoring_locations["mid_auto_back_cube"].arm_length,
+                        config.scoring_locations["mid_auto_back_cube"].arm_angle,
+                    ),
+                    SequentialCommandGroup(
+                        WaitCommand(0.6),
+                        command.SetGrabber(
+                            Robot.grabber,
+                            config.scoring_locations["mid_auto_back_cube"].wrist_angle,
+                            False,
+                        ),
+                    ),
+                ),
+            ),
         ],
     ),
     InstantCommand(lambda: Robot.grabber.set_output(-0.3)),
