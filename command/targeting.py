@@ -265,8 +265,8 @@ class Target(SubsystemCommand[Arm]):
                 wrist_angle = abs(self.target.wrist_angle)
 
             if self.target.arm_reversed:
-                arm_angle = -1 * self.target.arm_angle
-                wrist_angle = -1 * self.target.wrist_angle
+                arm_angle = -1 * arm_angle
+                wrist_angle = -1 * wrist_angle
 
             if self.target.low_scoring:
                 if -90 < gyro_angle < 90:

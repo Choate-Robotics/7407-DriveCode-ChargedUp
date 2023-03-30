@@ -219,7 +219,7 @@ class SetArm(SubsystemCommand[Arm]):
 
         # ------------ ELEVATOR ------------
 
-        elevator_maximum_power = 10
+        elevator_maximum_power = 9
 
         elevator_feed_forward = math.sin(math.pi / 2 - current_theta) * 1.1
 
@@ -238,7 +238,7 @@ class SetArm(SubsystemCommand[Arm]):
         SmartDashboard.putNumber("PID_Voltage", elevator_pid_output)
 
         if (
-            abs(self.subsystem.get_rotation() - self.real_desired) > math.radians(25)
+            abs(self.subsystem.get_rotation() - self.real_desired) > math.radians(35)
             and elevator_pid_output > 0.0
         ):
             elevator_pid_output = 0

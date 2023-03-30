@@ -347,10 +347,10 @@ class _Robot(wpilib.TimedRobot):
         ...
 
     def autonomousInit(self):
-        Robot.drivetrain.n_front_left.initial_zero()
-        Robot.drivetrain.n_front_right.initial_zero()
-        Robot.drivetrain.n_back_left.initial_zero()
-        Robot.drivetrain.n_back_right.initial_zero()
+        Robot.drivetrain.n_front_left.zero()
+        Robot.drivetrain.n_front_right.zero()
+        Robot.drivetrain.n_back_left.zero()
+        Robot.drivetrain.n_back_right.zero()
 
         Robot.climber.climber_disable()
         Robot.climber.latch_enable()
