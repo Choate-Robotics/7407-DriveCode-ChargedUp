@@ -92,6 +92,11 @@ class _Robot(wpilib.TimedRobot):
 
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)
 
+        self.teleop_zero = wpilib.SendableChooser()
+        self.teleop_zero.setDefaultOption("Off", "off")
+        self.teleop_zero.addOption("On", "on")
+        wpilib.SmartDashboard.putData("Teleop Zero", self.teleop_zero)
+
         Robot.drivetrain.n_front_left.initial_zero()
         Robot.drivetrain.n_front_right.initial_zero()
         Robot.drivetrain.n_back_left.initial_zero()
@@ -258,20 +263,32 @@ class _Robot(wpilib.TimedRobot):
         )
 
         Robot.arm.arm_rotation_motor.pid_controller.setOutputRange(-0.2, 0.2, slotID=1)
-        commands2.CommandScheduler.getInstance().schedule(
-            SequentialCommandGroup(
-                command.ZeroElevator(Robot.arm),
-                command.ZeroShoulder(Robot.arm),
-                command.ZeroWrist(Robot.grabber),
+
+        if self.teleop_zero.getSelected() == "on":
+            commands2.CommandScheduler.getInstance().schedule(
+                SequentialCommandGroup(
+                    command.ZeroElevator(Robot.arm),
+                    command.ZeroShoulder(Robot.arm),
+                    command.ZeroWrist(Robot.grabber),
+                    command.Target(
+                        Robot.arm,
+                        Robot.grabber,
+                        Robot.intake,
+                        Sensors.odometry,
+                        config.scoring_locations["standard"],
+                    ),
+                )
+            )
+        else:
+            commands2.CommandScheduler.getInstance().schedule(
                 command.Target(
                     Robot.arm,
                     Robot.grabber,
                     Robot.intake,
                     Sensors.odometry,
                     config.scoring_locations["standard"],
-                ),
+                )
             )
-        )
 
         if self.pv_selection.getSelected() == "on":
             Sensors.pv_controller = PV_Cameras(

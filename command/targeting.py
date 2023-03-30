@@ -57,7 +57,6 @@ class TargetDrivetrain(BasicCommand):
             target = Pose2d(target.x, target.y, target_angle)
 
         wpilib.SmartDashboard.putString("TARGET POSE", str(target))
-        print(target)
 
         # Generate a command to follow the trajectory
         commands2.CommandScheduler.getInstance().schedule(

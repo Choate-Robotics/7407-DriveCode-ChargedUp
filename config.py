@@ -97,7 +97,7 @@ intake_motor_id = 11
 intake_piston_forwardChannel = 4
 intake_piston_reverseChannel = 5
 
-default_intake_speed = 0.4
+default_intake_speed = 0.5
 
 kRobotVisionPoseWeight = 0.1
 # Dummy data
@@ -268,7 +268,7 @@ scoring_locations: dict[str, TargetData] = {
     "double_station": TargetData(
         target_pose=Pose2d(16, 7.51, math.radians(0)),
         arm_angle=math.radians(32.84),
-        arm_length=0.356,  # .322 for comp
+        arm_length=0.334,  # .322 for comp
         wrist_angle=math.radians(64.63),
         intake_enabled=False,
         claw_scoring=False,
