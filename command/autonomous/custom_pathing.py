@@ -29,6 +29,77 @@ def curve(x):
     return curve_abs(x)
 
 
+class GyroBalance(SubsystemCommand[Drivetrain]):
+    def __init__(
+        self,
+        subsystem: Drivetrain,
+        vx,
+        gyro_threshold=3,
+        gyro_threshold_pid=0.195,
+    ):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+        self.vx = vx
+        self.vx2_cap = 0.8
+        self.gyro_threshold = gyro_threshold
+        self.gyro_threshold_pid = gyro_threshold_pid
+        self.times_zeroed = 0
+        self.currently_zeroed = 0
+        self.pid_active = False
+
+        self.gyro_pid: PIDController = PIDController(1, 0, 0.01)
+        self.finished = False
+
+    def initialize(self) -> None:
+        self.times_zeroed = 0
+        self.currently_zeroed = 0
+        self.pid_active = False
+        self.gyro_pid.setSetpoint(0)
+        self.finished = False
+        ...
+
+    def execute(self) -> None:
+        if (
+            self.times_zeroed > 0
+            and self.currently_zeroed == 0
+            and abs(self.subsystem.gyro.get_robot_pitch()) > self.gyro_threshold_pid
+            and not self.pid_active
+        ):
+            self.pid_active = True
+
+        if self.pid_active:
+            current_pitch = self.subsystem.gyro.get_robot_pitch()
+
+            if current_pitch < self.gyro_threshold:
+                self.finished = True
+                vx2 = 0
+            else:
+                vx2 = self.gyro_pid.calculate(current_pitch)
+                vx2 = min(abs(vx2), self.vx2_cap) * math.copysign(1, vx2)
+
+            self.subsystem.set_driver_centric((-vx2, 0), 0)
+        else:
+            self.subsystem.set_driver_centric((-self.vx, 0), 0)
+
+    def isFinished(self) -> bool:
+        pitch = self.subsystem.gyro.get_robot_pitch()
+        if abs(pitch) < self.gyro_threshold:
+            if self.currently_zeroed == 1:
+                self.times_zeroed += 1
+                self.currently_zeroed += 1
+            else:
+                self.currently_zeroed += 1
+        else:
+            self.currently_zeroed = 0
+
+        return self.finished
+
+    def end(self, interrupted: bool = False) -> None:
+        if not interrupted:
+            self.subsystem.set_driver_centric((0, 0), 0)
+        ...
+
+
 class AutoBalance(SubsystemCommand[Drivetrain]):
     def __init__(
         self,

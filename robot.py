@@ -123,6 +123,8 @@ class _Robot(wpilib.TimedRobot):
 
         self.auto_selection.addOption("PICK BALANCE RED", autonomous.red_pick_balance)
 
+        self.auto_selection.addOption("GYRO BALANCE", autonomous.gyro_balance)
+
         self.auto_selection.addOption(
             "Do Nothing", AutoRoutine(Pose2d(0, 0, 0), InstantCommand(lambda: None))
         )
