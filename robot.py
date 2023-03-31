@@ -119,6 +119,10 @@ class _Robot(wpilib.TimedRobot):
             "3 BALANCE WITH GUARD RED", autonomous.red_three_piece_balance_with_guard
         )
 
+        self.auto_selection.addOption("PICK BALANCE BLUE", autonomous.blue_pick_balance)
+
+        self.auto_selection.addOption("PICK BALANCE RED", autonomous.red_pick_balance)
+
         self.auto_selection.addOption(
             "Do Nothing", AutoRoutine(Pose2d(0, 0, 0), InstantCommand(lambda: None))
         )
