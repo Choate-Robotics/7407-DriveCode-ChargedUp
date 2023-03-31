@@ -6,18 +6,18 @@ from commands2 import (
     SequentialCommandGroup,
     WaitCommand,
 )
-from wpilib import SmartDashboard
 from wpimath.geometry import Pose2d, Translation2d
 
 import command
 import config
 import constants
 from autonomous.auto_routine import AutoRoutine
-from autonomous.routines.TWO_PIECE_BALANCE_WITH_GUARD.base_coords import (
+from autonomous.routines.TWO_PIECE_BALANCE_WITH_GUARD.red_base_coords import (
     base_initial_coords,
     base_path_1,
     base_path_2,
     base_path_3,
+    blue_team,
 )
 from command.autonomous.custom_pathing import FollowPathCustom
 from command.autonomous.trajectory import CustomTrajectory
@@ -133,8 +133,8 @@ auto = SequentialCommandGroup(
     ParallelDeadlineGroup(
         deadline=command.autonomous.custom_pathing.AutoBalance(
             Robot.drivetrain,
-            vx=1.6,  # Initial velocity of drivetrain while balancing (m/s)
-            vx2=0.6,  # Final velocity of drivetrain while balancing (m/s)
+            vx=2,  # Initial velocity of drivetrain while balancing (m/s)
+            vx2=0.8,  # Final velocity of drivetrain while balancing (m/s)
             omega=0,
             times_before_stop=1,
             gyro_threshold_2=0.195,  # Threshold for reducing speed of drivetrain (pitch in radians)
@@ -149,14 +149,13 @@ auto = SequentialCommandGroup(
             ).generate()
         ],
     ),
-    InstantCommand(lambda: SmartDashboard.putBoolean("CURRENTLY BALANCING", False)),
     # The reason this is same sign vel is that in the auto balance code the drivetrain is set to negative
-    InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0.7, 0), 0)),
+    InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0.8, 0), 0)),
     WaitCommand(
-        0.55
+        0.7
     ),  # TUNE THIS AT SE MASS (HOW LONG TO MOVE BACKWARDS FOR AFTER TIPPING)
     InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0, 0), 0)),
     InstantCommand(lambda: Robot.drivetrain.x_mode()),
 )
 
-routine = AutoRoutine(Pose2d(*base_initial_coords), auto)
+routine = AutoRoutine(Pose2d(*base_initial_coords), auto, blue_team=blue_team)

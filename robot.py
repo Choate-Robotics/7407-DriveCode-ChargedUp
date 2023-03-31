@@ -53,37 +53,70 @@ class _Robot(wpilib.TimedRobot):
 
         self.auto_selection = wpilib.SendableChooser()
 
-        self.auto_selection.setDefaultOption(
-            "Blue Balance Auto", autonomous.BlueBalanceAuto
+        self.auto_selection.setDefaultOption("BALANCE", autonomous.balance_auto)
+
+        self.auto_selection.addOption(
+            "3 NO GUARD BLUE", autonomous.blue_three_piece_no_guard
         )
 
         self.auto_selection.addOption(
-            "Blue Two Piece No Guard", autonomous.TWO_PIECE_NO_GUARD_BLUE
+            "3 NO GUARD RED", autonomous.red_three_piece_no_guard
         )
+
         self.auto_selection.addOption(
-            "Red Two Piece No Guard", autonomous.TWO_PIECE_NO_GUARD_RED
+            "3 WITH GUARD BLUE", autonomous.blue_three_piece_with_guard
         )
+
         self.auto_selection.addOption(
-            "Blue Three Piece With Guard", autonomous.THREE_PIECE_WITH_GUARD_BLUE
+            "3 WITH GUARD RED", autonomous.red_three_piece_with_guard
         )
+
         self.auto_selection.addOption(
-            "Red Three Piece With Guard", autonomous.THREE_PIECE_WITH_GUARD_RED
+            "2 NO GUARD BLUE", autonomous.blue_two_piece_no_guard
         )
+
         self.auto_selection.addOption(
-            "Blue 2.5 Piece Balance With Guard",
-            autonomous.TWO_PIECE_PICK_BALANCE_WITH_GUARD_BLUE,
+            "2 NO GUARD RED", autonomous.red_two_piece_no_guard
         )
+
         self.auto_selection.addOption(
-            "Red 2.5 Piece Balance With Guard",
-            autonomous.TWO_PIECE_PICK_BALANCE_WITH_GUARD_RED,
+            "2 WITH GUARD BLUE", autonomous.blue_two_piece_with_guard
         )
+
         self.auto_selection.addOption(
-            "Blue 2 Piece Balance With Guard",
-            autonomous.TWO_PIECE_BALANCE_WITH_GUARD_BLUE,
+            "2 WITH GUARD RED", autonomous.red_two_piece_with_guard
         )
+
         self.auto_selection.addOption(
-            "Red 2 Piece Balance With Guard",
-            autonomous.TWO_PIECE_BALANCE_WITH_GUARD_RED,
+            "2 BALANCE NO GUARD BLUE", autonomous.blue_two_piece_balance_no_guard
+        )
+
+        self.auto_selection.addOption(
+            "2 BALANCE NO GUARD RED", autonomous.red_two_piece_balance_no_guard
+        )
+
+        self.auto_selection.addOption(
+            "2 BALANCE WITH GUARD BLUE", autonomous.blue_two_piece_balance_with_guard
+        )
+
+        self.auto_selection.addOption(
+            "2 BALANCE WITH GUARD RED", autonomous.red_two_piece_balance_with_guard
+        )
+
+        self.auto_selection.addOption(
+            "3 BALANCE NO GUARD BLUE", autonomous.blue_three_piece_balance_no_guard
+        )
+
+        self.auto_selection.addOption(
+            "3 BALANCE NO GUARD RED", autonomous.red_three_piece_balance_no_guard
+        )
+
+        self.auto_selection.addOption(
+            "3 BALANCE WITH GUARD BLUE", autonomous.blue_three_piece_balance_with_guard
+        )
+
+        self.auto_selection.addOption(
+            "3 BALANCE WITH GUARD RED", autonomous.red_three_piece_balance_with_guard
         )
 
         self.auto_selection.addOption(
