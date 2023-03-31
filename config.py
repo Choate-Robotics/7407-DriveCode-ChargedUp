@@ -40,7 +40,7 @@ driver_centric: bool = True
 field_length = 651.25 * inches_to_meters
 # field_width = 315.5 * inches_to_meters
 field_width = 8.075
-scoring_width = 3.5
+scoring_width = 5.72
 
 drivetrain_scoring_velocity = 0.5
 drivetrain_scoring_angular_velocity = 1

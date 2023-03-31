@@ -14,6 +14,7 @@ from wpimath.controller import (
 from wpimath.geometry import Pose2d, Rotation2d
 from wpimath.trajectory import Trajectory, TrapezoidProfileRadians
 
+import constants
 from command.autonomous.trajectory import CustomTrajectory
 from robot_systems import Sensors
 from subsystem import Drivetrain
@@ -47,7 +48,9 @@ class GyroBalance(SubsystemCommand[Drivetrain]):
         self.currently_zeroed = 0
         self.pid_active = False
 
-        self.gyro_pid: PIDController = PIDController(1, 0, 0.01)
+        self.gyro_pid: PIDController = PIDController(
+            1, 0, 0.01, period=constants.period
+        )
         self.finished = False
 
     def initialize(self) -> None:
