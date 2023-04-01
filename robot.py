@@ -110,12 +110,6 @@ class _Robot(wpilib.TimedRobot):
             "Zero Elevator", Robot.arm.elevator_bottom_sensor.get_value()
         )
 
-        SmartDashboard.putString(
-            "Scoring Position", str(config.current_scoring_position)
-        )
-        SmartDashboard.putString(
-            "Confirmed Scoring Position", str(config.current_scoring_position_confirmed)
-        )
         # SmartDashboard.putNumber("PITCH", Robot.drivetrain.gyro.get_robot_pitch())
         # SmartDashboard.putNumber("ARM_REAL", math.degrees(Robot.arm.get_rotation()))
         #
@@ -278,7 +272,7 @@ class _Robot(wpilib.TimedRobot):
             "Scoring Position", str(config.current_scoring_position)
         )
         SmartDashboard.putString(
-            "Confirmed Scoring Position", str(config.current_scoring_position_confirmed)
+            "DashboardScoringPosition", f"[{config.current_scoring_position_confirmed},[{config.current_scoring_height},{config.current_scoring_position}]]"
         )
 
         SmartDashboard.putNumber(

@@ -170,10 +170,10 @@ class Keymap:
             lambda: Controllers.NUMPAD_CONTROLLER.getPOV() == 180
         )
         MID_SCORE = commands2.button.Button( #Plus
-            lambda: Controllers.NUMPAD_CONTROLLER.getPOV() == 90
+            lambda: Controllers.NUMPAD_CONTROLLER.getPOV() == 270
         )
         LOW_SCORE = commands2.button.Button( #Multiplication
-            lambda: Controllers.NUMPAD_CONTROLLER.getPOV() == 270
+            lambda: Controllers.NUMPAD_CONTROLLER.getPOV() == 90
         )
 
 

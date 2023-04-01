@@ -321,6 +321,7 @@ class OI:
             config.current_scoring_height = key
 
         def confirm_current_scoring_position(set: bool):
+            print(f"Trying to confirm: {[config.current_scoring_height, config.current_scoring_position]}")
             if set and config.current_scoring_position != None and config.current_scoring_height != None:
                 config.current_scoring_position_confirmed = [config.current_scoring_height, config.current_scoring_position] #row, column
             else:
