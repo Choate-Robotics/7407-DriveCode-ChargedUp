@@ -21,8 +21,8 @@ from subsystem import Arm, Grabber, Intake
 
 class TargetDrivetrain(BasicCommand):
     def __init__(
-        self,
-        field_odometry: FieldOdometry,
+            self,
+            field_odometry: FieldOdometry,
     ):
         super().__init__()
         self.field_odometry = field_odometry
@@ -100,13 +100,13 @@ class TargetDrivetrain(BasicCommand):
 
 class TargetAuto:
     def __init__(
-        self,
-        arm: Arm,
-        grabber: Grabber,
-        intake: Intake,
-        field_odometry: FieldOdometry,
-        target: TargetData,
-        grabber_back_first=False,
+            self,
+            arm: Arm,
+            grabber: Grabber,
+            intake: Intake,
+            field_odometry: FieldOdometry,
+            target: TargetData,
+            grabber_back_first=False,
     ):
         self.arm = arm
         self.grabber = grabber
@@ -214,13 +214,13 @@ class TargetAuto:
 
 class Target(SubsystemCommand[Arm]):
     def __init__(
-        self,
-        arm: Arm,
-        grabber: Grabber,
-        intake: Intake,
-        field_odometry: FieldOdometry,
-        target: TargetData,
-        grabber_back_first=False,
+            self,
+            arm: Arm,
+            grabber: Grabber,
+            intake: Intake,
+            field_odometry: FieldOdometry,
+            target: TargetData,
+            grabber_back_first=False,
     ):
         super().__init__(arm)
         super().addRequirements(grabber)
@@ -246,6 +246,8 @@ class Target(SubsystemCommand[Arm]):
         self.finished = True
 
     def initialize(self) -> None:
+        self.intake_on = not self.target.no_intake
+
         arm_length = self.target.arm_length
         arm_angle = self.target.arm_angle
         wrist_angle = self.target.wrist_angle

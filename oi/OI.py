@@ -240,19 +240,21 @@ class OI:
                         wpilib.Joystick.RumbleType.kBothRumble, 0
                     )
                 ),
-                command.Target(
-                    Robot.arm,
-                    Robot.grabber,
-                    Robot.intake,
-                    Sensors.odometry,
-                    target=config.scoring_locations["standard_pickup"],
-                ),
+                ParallelCommandGroup(
+                    command.SetArm(Robot.arm, 0, 0),
+                    SequentialCommandGroup(
+                        WaitCommand(.6),
+                        InstantCommand(lambda: Robot.intake.intake_disable()),
+                        command.SetGrabber(Robot.grabber, 0, False),
+                    )
+                )
             )
         )
 
         Keymap.Targeting.TARGETING_CUBE_INTAKE.whenPressed(
             SequentialCommandGroup(
-                InstantCommand(lambda: Robot.grabber.open_claw()),
+                InstantCommand(lambda: Robot.intake.intake_motor.set_raw_output(.3)),
+                InstantCommand(lambda: Robot.intake.intake_piston.extend()),
                 command.Target(
                     Robot.arm,
                     Robot.grabber,
@@ -329,7 +331,7 @@ class OI:
         )
 
         def invert_elevator():
-            config.elevator_voltage_inverted = not config.elevator_voltage_inverted
+            config.intake_inverted = not config.intake_inverted
 
         Keymap.Debug.INVERT_ELEVATOR.whenPressed(
             InstantCommand(lambda: invert_elevator())

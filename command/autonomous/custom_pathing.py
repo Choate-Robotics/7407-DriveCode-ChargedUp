@@ -21,7 +21,7 @@ from subsystem import Drivetrain
 
 
 def curve_abs(x):
-    return x**2
+    return x ** 2
 
 
 def curve(x):
@@ -32,11 +32,11 @@ def curve(x):
 
 class GyroBalance(SubsystemCommand[Drivetrain]):
     def __init__(
-        self,
-        subsystem: Drivetrain,
-        vx,
-        gyro_threshold=math.radians(3),
-        gyro_threshold_pid=0.1,
+            self,
+            subsystem: Drivetrain,
+            vx,
+            gyro_threshold=math.radians(3),
+            gyro_threshold_pid=0.1,
     ):
         super().__init__(subsystem)
         self.subsystem = subsystem
@@ -54,48 +54,25 @@ class GyroBalance(SubsystemCommand[Drivetrain]):
         self.finished = False
 
     def initialize(self) -> None:
-        self.times_zeroed = 0
-        self.currently_zeroed = 0
-        self.pid_active = False
-        self.gyro_pid.setSetpoint(0)
+        self.not_zeroed = None
         self.finished = False
         ...
 
     def execute(self) -> None:
-        if (
-            self.times_zeroed > 0
-            and self.currently_zeroed == 0
-            and abs(self.subsystem.gyro.get_robot_pitch()) > self.gyro_threshold_pid
-            and not self.pid_active
-        ):
-            self.pid_active = True
-
-        if self.pid_active:
-            current_pitch = self.subsystem.gyro.get_robot_pitch()
-
-            if current_pitch < self.gyro_threshold:
-                self.finished = True
-                vx2 = 0
-            else:
-                vx2 = self.gyro_pid.calculate(current_pitch)
-                vx2 = min(abs(vx2), self.vx2_cap) * math.copysign(1, vx2)
-
-            self.subsystem.set_driver_centric((-vx2, 0), 0)
+        if self.not_zeroed:
+            self.subsystem.set_driver_centric((.4, 0), 0)
         else:
-            self.subsystem.set_driver_centric((-self.vx, 0), 0)
+            self.not_zeroed = True
+            self.subsystem.set_driver_centric((-2, 0), 0)
 
     def isFinished(self) -> bool:
         pitch = self.subsystem.gyro.get_robot_pitch()
-        if abs(pitch) < self.gyro_threshold:
-            if self.currently_zeroed == 1:
-                self.times_zeroed += 1
-                self.currently_zeroed += 1
-            else:
-                self.currently_zeroed += 1
-        else:
-            self.currently_zeroed = 0
 
-        return self.finished
+        if self.not_zeroed:
+            return True
+        elif abs(pitch) > math.radians(4):
+            self.not_zeroed = True
+            return False
 
     def end(self, interrupted: bool = False) -> None:
         if not interrupted:
@@ -105,14 +82,14 @@ class GyroBalance(SubsystemCommand[Drivetrain]):
 
 class AutoBalance(SubsystemCommand[Drivetrain]):
     def __init__(
-        self,
-        subsystem: Drivetrain,
-        vx,
-        vx2,
-        omega,
-        gyro_threshold=math.radians(3),
-        gyro_threshold_2=0.195,
-        times_before_stop=1,
+            self,
+            subsystem: Drivetrain,
+            vx,
+            vx2,
+            omega,
+            gyro_threshold=math.radians(3),
+            gyro_threshold_2=0.195,
+            times_before_stop=1,
     ):
         super().__init__(subsystem)
         self.subsystem = subsystem
@@ -137,10 +114,10 @@ class AutoBalance(SubsystemCommand[Drivetrain]):
         SmartDashboard.putBoolean("REDUCED SPEED", self.reduced_speed)
 
         if (
-            self.times_zeroed > 0
-            and self.currently_zeroed == 0
-            and abs(self.subsystem.gyro.get_robot_pitch()) > self.gyro_threshold_2
-            and not self.reduced_speed
+                self.times_zeroed > 0
+                and self.currently_zeroed == 0
+                and abs(self.subsystem.gyro.get_robot_pitch()) > self.gyro_threshold_2
+                and not self.reduced_speed
         ):
             self.reduced_speed = True
 
@@ -170,13 +147,13 @@ class AutoBalance(SubsystemCommand[Drivetrain]):
 
 class DriveOverChargeStation(SubsystemCommand[Drivetrain]):
     def __init__(
-        self,
-        subsystem: Drivetrain,
-        vx,
-        vy,
-        omega,
-        gyro_threshold=math.radians(5),
-        times_before_stop=2,
+            self,
+            subsystem: Drivetrain,
+            vx,
+            vy,
+            omega,
+            gyro_threshold=math.radians(5),
+            times_before_stop=2,
     ):
         super().__init__(subsystem)
         self.subsystem = subsystem
@@ -230,10 +207,10 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
     """
 
     def __init__(
-        self,
-        subsystem: SwerveDrivetrain,
-        trajectory: CustomTrajectory,
-        period: float = 0.02,
+            self,
+            subsystem: SwerveDrivetrain,
+            trajectory: CustomTrajectory,
+            period: float = 0.02,
     ):
         super().__init__(subsystem)
         self.trajectory: Trajectory = trajectory.trajectory
@@ -274,10 +251,10 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
         relative = self.end_pose.relativeTo(Sensors.odometry.getPose())
 
         if (
-            abs(relative.x) < 0.05
-            and abs(relative.y < 0.05)
-            and abs(relative.rotation().degrees()) < 3
-            or self.t > self.duration
+                abs(relative.x) < 0.05
+                and abs(relative.y < 0.05)
+                and abs(relative.rotation().degrees()) < 3
+                or self.t > self.duration
         ):
             self.t = self.duration
             self.finished = True
@@ -323,12 +300,12 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
     """
 
     def __init__(
-        self,
-        subsystem: SwerveDrivetrain,
-        theta_f: radians,
-        threshold: float = math.radians(1),
-        max_angular_vel: float | None = None,
-        period: float = 0.02,
+            self,
+            subsystem: SwerveDrivetrain,
+            theta_f: radians,
+            threshold: float = math.radians(1),
+            max_angular_vel: float | None = None,
+            period: float = 0.02,
     ):
         super().__init__(subsystem)
 
@@ -369,8 +346,8 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
 
     def isFinished(self) -> bool:
         return (
-            abs(Sensors.odometry.getPose().rotation().radians() - self.theta_f)
-            < self.threshold
+                abs(Sensors.odometry.getPose().rotation().radians() - self.theta_f)
+                < self.threshold
         )
 
     def runsWhenDisabled(self) -> bool:
@@ -388,9 +365,9 @@ class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
     """
 
     def __init__(
-        self,
-        subsystem: SwerveDrivetrain,
-        target: Pose2d,
+            self,
+            subsystem: SwerveDrivetrain,
+            target: Pose2d,
     ):
         super().__init__(subsystem)
         self.target: Pose2d = target
@@ -435,9 +412,9 @@ class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
 
         horizontal_vel = (
             (
-                self.horizontal_pid.calculate(abs(relative.x))
-                * (1 if relative.x > 0 else -1)
-                * (1 if self.target.rotation().radians() == 0 else -1)
+                    self.horizontal_pid.calculate(abs(relative.x))
+                    * (1 if relative.x > 0 else -1)
+                    * (1 if self.target.rotation().radians() == 0 else -1)
             )
             if not self.horizontal_finished
             else 0
@@ -445,9 +422,9 @@ class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
 
         vertical_vel = (
             (
-                self.vertical_pid.calculate(abs(relative.y))
-                * (1 if relative.y > 0 else -1)
-                * (1 if self.target.rotation().radians() == 0 else -1)
+                    self.vertical_pid.calculate(abs(relative.y))
+                    * (1 if relative.y > 0 else -1)
+                    * (1 if self.target.rotation().radians() == 0 else -1)
             )
             if not self.vertical_finished
             else 0
@@ -481,9 +458,9 @@ class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
 
     def isFinished(self) -> bool:
         return (
-            self.horizontal_finished
-            and self.vertical_finished
-            and self.angular_finished
+                self.horizontal_finished
+                and self.vertical_finished
+                and self.angular_finished
         )
 
     def end(self, interrupted: bool) -> None:

@@ -26,7 +26,7 @@ latch_reverseChannel = 9
 
 current_scoring_position = "None"
 
-elevator_voltage_inverted = False
+intake_inverted = False
 
 grabber_target_angle = 0
 grabber_disable_intake = False
@@ -82,6 +82,8 @@ class TargetData:
     arm_length_opposite: float | None = None
     wrist_angle_opposite: float | None = None
 
+    no_intake: bool = False
+
 
 elevator_motor_extend_id = 17
 elevator_secondary_rotation_motor_id = 1
@@ -98,7 +100,7 @@ intake_motor_id = 11
 intake_piston_forwardChannel = 4
 intake_piston_reverseChannel = 5
 
-default_intake_speed = 0.3
+default_intake_speed = 0.40
 
 kRobotVisionPoseWeight = 0.1
 # Dummy data
@@ -269,7 +271,7 @@ scoring_locations: dict[str, TargetData] = {
     "double_station": TargetData(
         target_pose=Pose2d(16, 7.51, math.radians(0)),
         arm_angle=math.radians(32.84),
-        arm_length=0.322,  # .322 for comp
+        arm_length=0.392,  # .322 for comp
         wrist_angle=math.radians(64.63),
         intake_enabled=False,
         claw_scoring=False,
@@ -281,7 +283,7 @@ scoring_locations: dict[str, TargetData] = {
     "cube_intake": TargetData(
         target_pose=None,
         arm_angle=math.radians(74.5),
-        arm_length=1 * units.SI.inches_to_meters,
+        arm_length=2.5 * units.SI.inches_to_meters,
         wrist_angle=math.radians(100),
         intake_enabled=True,
         claw_scoring=False,
@@ -298,6 +300,7 @@ scoring_locations: dict[str, TargetData] = {
         claw_picking=False,
         cube_picking=False,
         grabber_no_grab=False,
+        no_intake=False
     ),
     "cube_intake_auto": TargetData(
         target_pose=None,

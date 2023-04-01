@@ -28,7 +28,7 @@ base_path_3: path = (
         (4.8, config.field_width - 0.8),
         (5.6, config.field_width - 0.82),
     ],
-    (6.75, config.field_width - 2.2, 1),
+    (6.75, config.field_width - 2.2, -1),
 )
 
 base_path_4: path = (

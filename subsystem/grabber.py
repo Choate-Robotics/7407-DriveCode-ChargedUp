@@ -10,14 +10,14 @@ import config
 import constants
 
 WRIST_CONFIG = SparkMaxConfig(
-    0.04, 0, 0.004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
+    0.035, 0, 0.004, 0.00017, idle_mode=rev.CANSparkMax.IdleMode.kBrake
 )
 
 
 class Grabber(Subsystem):
     wrist: SparkMax = SparkMax(18, inverted=False, config=WRIST_CONFIG)
 
-    claw_motor: SparkMax = SparkMax(12, inverted=False)
+    claw_motor: SparkMax = SparkMax(12, inverted=False, config=WRIST_CONFIG)
     claw_grabber: wpilib.DoubleSolenoid = wpilib.DoubleSolenoid(
         config.pneumatics_control_module, wpilib.PneumaticsModuleType.REVPH, 0, 1
     )
@@ -60,7 +60,7 @@ class Grabber(Subsystem):
 
     def get_cube_detected(self):
         avg_voltage = self.distance_sensor_back.getVoltage()
-        return 0.6 < avg_voltage
+        return 0.7 < avg_voltage
 
     def get_cone_detected(self):
         avg_voltage = self.distance_sensor_back.getVoltage()
@@ -88,9 +88,9 @@ class Grabber(Subsystem):
         :rtype: float
         """
         return (
-            (self.wrist.get_sensor_position() / constants.wrist_gear_ratio)
-            * math.pi
-            * 2
+                (self.wrist.get_sensor_position() / constants.wrist_gear_ratio)
+                * math.pi
+                * 2
         )
 
     def set_output(self, output: float):
@@ -120,11 +120,11 @@ class Grabber(Subsystem):
         # Set distance forward (closes claw)
         self.open_claw()
         print("Setting claw speed.")
-        self.set_output(0.8)
+        self.set_output(0.85)
 
     def disengage_claw(self):
         self.close_claw()
-        self.claw_motor.set_target_velocity(0)
+        self.claw_motor.set_raw_output(.05)
 
     def is_at_angle(self, angle: radians, threshold=math.radians(2)):
         return abs(self.get_angle() - angle) < threshold

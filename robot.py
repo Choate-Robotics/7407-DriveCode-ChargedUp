@@ -3,7 +3,6 @@ import math
 import commands2
 import wpilib
 from commands2 import InstantCommand, SequentialCommandGroup
-from robotpy_toolkit_7407.motors import SparkMax
 from wpilib import SmartDashboard
 from wpimath.geometry import Pose2d
 
@@ -29,13 +28,15 @@ class _Robot(wpilib.TimedRobot):
         period = 0.05
         commands2.CommandScheduler.getInstance().setPeriod(period)
         Pneumatics.compressor.enableAnalog(90, 120)
-        fake_motor = SparkMax(8)  # Initialize a dummy motor to prevent can errors.
-        fake_motor.init()
+
         Robot.intake.init()
         Robot.climber.init()
         Robot.drivetrain.init()
         Robot.arm.init()
         Robot.grabber.init()
+
+        for i in range(10):
+            Robot.intake.intake_motor.motor.setInverted(True)
 
         Sensors.pv_controller = None
         Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
@@ -145,6 +146,7 @@ class _Robot(wpilib.TimedRobot):
         Robot.drivetrain.n_back_right.initial_zero()
 
     def robotPeriodic(self):
+
         SmartDashboard.putBoolean("Climbed", Robot.climber.is_climbed())
         SmartDashboard.putNumber(
             "Robot Roll", math.degrees(Sensors.gyro.get_robot_roll())
