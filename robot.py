@@ -3,6 +3,7 @@ import math
 import commands2
 import wpilib
 from commands2 import InstantCommand, SequentialCommandGroup
+from robotpy_toolkit_7407.motors import SparkMax
 from wpilib import SmartDashboard
 from wpimath.geometry import Pose2d
 
@@ -28,11 +29,13 @@ class _Robot(wpilib.TimedRobot):
         period = 0.05
         commands2.CommandScheduler.getInstance().setPeriod(period)
         Pneumatics.compressor.enableAnalog(90, 120)
-        Robot.arm.init()
-        Robot.drivetrain.init()
+        fake_motor = SparkMax(8)  # Initialize a dummy motor to prevent can errors.
+        fake_motor.init()
         Robot.intake.init()
-        Robot.grabber.init()
         Robot.climber.init()
+        Robot.drivetrain.init()
+        Robot.arm.init()
+        Robot.grabber.init()
 
         Sensors.pv_controller = None
         Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
@@ -142,9 +145,6 @@ class _Robot(wpilib.TimedRobot):
         Robot.drivetrain.n_back_right.initial_zero()
 
     def robotPeriodic(self):
-        SmartDashboard.putNumber(
-            "Climber Rotations", Robot.climber.get_motor_rotations()
-        )
         SmartDashboard.putBoolean("Climbed", Robot.climber.is_climbed())
         SmartDashboard.putNumber(
             "Robot Roll", math.degrees(Sensors.gyro.get_robot_roll())
@@ -154,9 +154,6 @@ class _Robot(wpilib.TimedRobot):
         )
         SmartDashboard.putNumber(
             "Robot Yaw", math.degrees(Sensors.gyro.get_robot_heading())
-        )
-        SmartDashboard.putBoolean(
-            "Zero Elevator", Robot.arm.elevator_bottom_sensor.get_value()
         )
         # SmartDashboard.putNumber("PITCH", Robot.drivetrain.gyro.get_robot_pitch())
         # SmartDashboard.putNumber("ARM_REAL", math.degrees(Robot.arm.get_rotation()))
@@ -194,6 +191,9 @@ class _Robot(wpilib.TimedRobot):
         SmartDashboard.putNumber(
             "ELEVATOR CURRENT", Robot.arm.motor_extend.motor.getOutputCurrent()
         )
+        SmartDashboard.putNumber(
+            "ELEVATOR BUS VOLTAGE", Robot.arm.motor_extend.motor.getBusVoltage()
+        )
         #
         # SmartDashboard.putNumberArray(
         #     "RobotPoseOrig", [pose2.X(), pose2.Y(), pose2.rotation().radians()]
@@ -224,35 +224,35 @@ class _Robot(wpilib.TimedRobot):
         )
         SmartDashboard.putNumber("SHOULDER DIST: ", Robot.arm.get_length())
 
-        SmartDashboard.putNumber(
-            "FRONT LEFT VEL", Robot.drivetrain.n_front_left.get_motor_velocity()
-        )
-        SmartDashboard.putNumber(
-            "FRONT RIGHT VEL", Robot.drivetrain.n_front_right.get_motor_velocity()
-        )
-        SmartDashboard.putNumber(
-            "BACK LEFT VEL", Robot.drivetrain.n_back_left.get_motor_velocity()
-        )
-        SmartDashboard.putNumber(
-            "BACK RIGHT VEL", Robot.drivetrain.n_back_right.get_motor_velocity()
-        )
+        # SmartDashboard.putNumber(
+        #     "FRONT LEFT VEL", Robot.drivetrain.n_front_left.get_motor_velocity()
+        # )
+        # SmartDashboard.putNumber(
+        #     "FRONT RIGHT VEL", Robot.drivetrain.n_front_right.get_motor_velocity()
+        # )
+        # SmartDashboard.putNumber(
+        #     "BACK LEFT VEL", Robot.drivetrain.n_back_left.get_motor_velocity()
+        # )
+        # SmartDashboard.putNumber(
+        #     "BACK RIGHT VEL", Robot.drivetrain.n_back_right.get_motor_velocity()
+        # )
 
-        SmartDashboard.putNumber(
-            "FRONT LEFT INTERNAL",
-            Robot.drivetrain.n_front_left.m_turn.get_sensor_position(),
-        )
-        SmartDashboard.putNumber(
-            "FRONT RIGHT INTERNAL",
-            Robot.drivetrain.n_front_right.m_turn.get_sensor_position(),
-        )
-        SmartDashboard.putNumber(
-            "BACK LEFT INTERNAL",
-            Robot.drivetrain.n_back_left.m_turn.get_sensor_position(),
-        )
-        SmartDashboard.putNumber(
-            "BACK RIGHT INTERNAL",
-            Robot.drivetrain.n_back_right.m_turn.get_sensor_position(),
-        )
+        # SmartDashboard.putNumber(
+        #     "FRONT LEFT INTERNAL",
+        #     Robot.drivetrain.n_front_left.m_turn.get_sensor_position(),
+        # )
+        # SmartDashboard.putNumber(
+        #     "FRONT RIGHT INTERNAL",
+        #     Robot.drivetrain.n_front_right.m_turn.get_sensor_position(),
+        # )
+        # SmartDashboard.putNumber(
+        #     "BACK LEFT INTERNAL",
+        #     Robot.drivetrain.n_back_left.m_turn.get_sensor_position(),
+        # )
+        # SmartDashboard.putNumber(
+        #     "BACK RIGHT INTERNAL",
+        #     Robot.drivetrain.n_back_right.m_turn.get_sensor_position(),
+        # )
 
         # SmartDashboard.putNumber(
         #     "FRONT LEFT", Robot.drivetrain.n_front_left.encoder.getAbsolutePosition()
@@ -343,63 +343,63 @@ class _Robot(wpilib.TimedRobot):
         # self.iters = 0
 
     def teleopPeriodic(self):
-        reported = math.degrees(Robot.drivetrain.n_front_left.get_current_motor_angle())
-        actual = (
-            Robot.drivetrain.n_front_left.encoder.getAbsolutePosition()
-            - Robot.drivetrain.n_front_left.absolute_encoder_zeroed_pos
-        )
-
-        SmartDashboard.putNumber("n_front_left_error", reported - actual)
-
-        reported = math.degrees(
-            Robot.drivetrain.n_front_right.get_current_motor_angle()
-        )
-        actual = (
-            Robot.drivetrain.n_front_right.encoder.getAbsolutePosition()
-            - Robot.drivetrain.n_front_right.absolute_encoder_zeroed_pos
-        )
-
-        SmartDashboard.putNumber("n_front_right_error", reported - actual)
-
-        reported = math.degrees(Robot.drivetrain.n_back_left.get_current_motor_angle())
-        actual = (
-            Robot.drivetrain.n_back_left.encoder.getAbsolutePosition()
-            - Robot.drivetrain.n_back_left.absolute_encoder_zeroed_pos
-        )
-
-        SmartDashboard.putNumber("n_back_left_error", reported - actual)
-
-        reported = math.degrees(Robot.drivetrain.n_back_right.get_current_motor_angle())
-        actual = (
-            Robot.drivetrain.n_back_right.encoder.getAbsolutePosition()
-            - Robot.drivetrain.n_back_right.absolute_encoder_zeroed_pos
-        )
-
-        SmartDashboard.putNumber("n_back_right_error", reported - actual)
-
-        # self.iters += 1
-        # if self.iters % 5 == 0:
-        #     Robot.drivetrain.n_front_left.zero()
-        #     Robot.drivetrain.n_front_right.zero()
-        #     Robot.drivetrain.n_back_left.zero()
-        #     Robot.drivetrain.n_back_right.zero()
-
-        SmartDashboard.putString(
-            "Scoring Position", str(config.current_scoring_position)
-        )
-
-        SmartDashboard.putNumber(
-            "FRONT LEFT", Robot.drivetrain.n_front_left.encoder.getAbsolutePosition()
-        )
-        SmartDashboard.putNumber(
-            "FRONT RIGHT", Robot.drivetrain.n_front_right.encoder.getAbsolutePosition()
-        )
-        SmartDashboard.putNumber(
-            "BACK LEFT", Robot.drivetrain.n_back_left.encoder.getAbsolutePosition()
-        )
-        SmartDashboard.putNumber(
-            "BACK RIGHT", Robot.drivetrain.n_back_right.encoder.getAbsolutePosition()
-        )
+        # reported = math.degrees(Robot.drivetrain.n_front_left.get_current_motor_angle())
+        # actual = (
+        #     Robot.drivetrain.n_front_left.encoder.getAbsolutePosition()
+        #     - Robot.drivetrain.n_front_left.absolute_encoder_zeroed_pos
+        # )
+        #
+        # SmartDashboard.putNumber("n_front_left_error", reported - actual)
+        #
+        # reported = math.degrees(
+        #     Robot.drivetrain.n_front_right.get_current_motor_angle()
+        # )
+        # actual = (
+        #     Robot.drivetrain.n_front_right.encoder.getAbsolutePosition()
+        #     - Robot.drivetrain.n_front_right.absolute_encoder_zeroed_pos
+        # )
+        #
+        # SmartDashboard.putNumber("n_front_right_error", reported - actual)
+        #
+        # reported = math.degrees(Robot.drivetrain.n_back_left.get_current_motor_angle())
+        # actual = (
+        #     Robot.drivetrain.n_back_left.encoder.getAbsolutePosition()
+        #     - Robot.drivetrain.n_back_left.absolute_encoder_zeroed_pos
+        # )
+        #
+        # SmartDashboard.putNumber("n_back_left_error", reported - actual)
+        #
+        # reported = math.degrees(Robot.drivetrain.n_back_right.get_current_motor_angle())
+        # actual = (
+        #     Robot.drivetrain.n_back_right.encoder.getAbsolutePosition()
+        #     - Robot.drivetrain.n_back_right.absolute_encoder_zeroed_pos
+        # )
+        #
+        # SmartDashboard.putNumber("n_back_right_error", reported - actual)
+        #
+        # # self.iters += 1
+        # # if self.iters % 5 == 0:
+        # #     Robot.drivetrain.n_front_left.zero()
+        # #     Robot.drivetrain.n_front_right.zero()
+        # #     Robot.drivetrain.n_back_left.zero()
+        # #     Robot.drivetrain.n_back_right.zero()
+        #
+        # SmartDashboard.putString(
+        #     "Scoring Position", str(config.current_scoring_position)
+        # )
+        #
+        # SmartDashboard.putNumber(
+        #     "FRONT LEFT", Robot.drivetrain.n_front_left.encoder.getAbsolutePosition()
+        # )
+        # SmartDashboard.putNumber(
+        #     "FRONT RIGHT", Robot.drivetrain.n_front_right.encoder.getAbsolutePosition()
+        # )
+        # SmartDashboard.putNumber(
+        #     "BACK LEFT", Robot.drivetrain.n_back_left.encoder.getAbsolutePosition()
+        # )
+        # SmartDashboard.putNumber(
+        #     "BACK RIGHT", Robot.drivetrain.n_back_right.encoder.getAbsolutePosition()
+        # )
         ...
 
     def autonomousInit(self):

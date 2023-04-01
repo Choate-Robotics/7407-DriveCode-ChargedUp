@@ -69,8 +69,6 @@ class Arm(Subsystem):
         self.abs_encoder = self.arm_rotation_follower_motor.motor.getAbsoluteEncoder(
             rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle
         )
-        # assuem start zero,
-        self.motor_extend.set_sensor_position(0)
 
     def enable_brake(self) -> bool:
         """enables the brake"""

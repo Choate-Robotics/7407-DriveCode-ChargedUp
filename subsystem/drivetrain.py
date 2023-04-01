@@ -2,7 +2,6 @@ import math
 from dataclasses import dataclass
 
 import rev
-import wpilib
 from ctre.sensors import CANCoder
 from robotpy_toolkit_7407.motors.rev_motors import SparkMax, SparkMaxConfig
 from robotpy_toolkit_7407.sensors.gyro import PigeonIMUGyro_Wrapper
@@ -74,27 +73,6 @@ class SparkMaxSwerveNode(SwerveNode):
         self.m_move.set_raw_output(power)
 
     def set_motor_angle(self, pos: radians):
-        wpilib.SmartDashboard.putNumber(f"{self.name} Desired Angle", pos)
-        wpilib.SmartDashboard.putNumber(
-            f"{self.name} Real Angle", self.get_current_motor_angle()
-        )
-        wpilib.SmartDashboard.putNumber(
-            f"{self.name} Des Angle Error", pos - self.get_current_motor_angle()
-        )
-        wpilib.SmartDashboard.putNumber(
-            f"{self.name} CANCoder Angle Error",
-            pos
-            - math.radians(
-                (
-                    (
-                        self.encoder.getAbsolutePosition()
-                        - self.absolute_encoder_zeroed_pos
-                    )
-                    % 360
-                )
-            ),
-        )
-
         self.m_turn.set_target_position(
             (pos / (2 * math.pi)) * constants.drivetrain_turn_gear_ratio
         )
@@ -112,19 +90,6 @@ class SparkMaxSwerveNode(SwerveNode):
         )
 
     def set_motor_velocity(self, vel: meters_per_second):
-        wpilib.SmartDashboard.putNumber(f"{self.name} Desired Vel", vel)
-        wpilib.SmartDashboard.putNumber(
-            f"{self.name} Real Vel",
-            self.m_move.get_sensor_velocity() / constants.drivetrain_move_gear_ratio,
-        )
-        wpilib.SmartDashboard.putNumber(
-            f"{self.name} Des Vel Error",
-            vel
-            - (
-                self.m_move.get_sensor_velocity() / constants.drivetrain_move_gear_ratio
-            ),
-        )
-
         self.m_move.set_target_velocity(vel * constants.drivetrain_move_gear_ratio)
 
     def get_motor_velocity(self) -> radians_per_second:
