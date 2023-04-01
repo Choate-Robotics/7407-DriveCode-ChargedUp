@@ -235,7 +235,7 @@ ApriltagPositionDictBlue = {
         (inches_to_meters * 18.22),
         Rotation3d(0.0, 0.0, math.pi),
     ),
-    7: Pose3d(
+    2: Pose3d(
         (inches_to_meters * 610.77),
         (inches_to_meters * 108.19),
         (inches_to_meters * 18.22),
@@ -265,7 +265,7 @@ ApriltagPositionDictBlue = {
         (inches_to_meters * 18.22),
         Rotation3d(),
     ),
-    2: Pose3d(
+    7: Pose3d(
         (inches_to_meters * 40.45),
         (inches_to_meters * 108.19),
         (inches_to_meters * 18.22),

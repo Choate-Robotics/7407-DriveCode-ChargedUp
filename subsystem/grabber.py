@@ -116,6 +116,12 @@ class Grabber(Subsystem):
         print("Setting claw speed.")
         self.set_output(config.claw_motor_speed)
 
+    def engage_claw_cube(self):
+        # Set distance forward (closes claw)
+        self.open_claw()
+        print("Setting claw speed.")
+        self.set_output(0.8)
+
     def disengage_claw(self):
         self.close_claw()
         self.claw_motor.set_target_velocity(0)

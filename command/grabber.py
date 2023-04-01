@@ -40,7 +40,7 @@ class SetGrabber(SubsystemCommand[Grabber]):
         self.subsystem.set_angle(self.wrist_angle)
         config.grabber_target_angle = self.wrist_angle
         if self.claw_active:
-            self.subsystem.engage_claw()
+            self.subsystem.engage_claw_cube()
         else:
             self.subsystem.claw_motor.set_raw_output(0)
 
@@ -67,6 +67,7 @@ class SetGrabber(SubsystemCommand[Grabber]):
                 Controllers.OPERATOR_CONTROLLER.setRumble(
                     wpilib.Joystick.RumbleType.kBothRumble, 0.3
                 )
+                config.grabber_disable_intake = True
             elif (
                 self.auto_cone
                 and not self.no_grab

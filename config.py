@@ -29,6 +29,7 @@ current_scoring_position = "None"
 elevator_voltage_inverted = False
 
 grabber_target_angle = 0
+grabber_disable_intake = False
 
 blue_team: bool = False
 drivetrain_reversed: bool = False
@@ -97,7 +98,7 @@ intake_motor_id = 11
 intake_piston_forwardChannel = 4
 intake_piston_reverseChannel = 5
 
-default_intake_speed = 0.5
+default_intake_speed = 0.3
 
 kRobotVisionPoseWeight = 0.1
 # Dummy data
@@ -289,14 +290,14 @@ scoring_locations: dict[str, TargetData] = {
     ),
     "cube_intake_no_grab": TargetData(
         target_pose=None,
-        arm_angle=math.radians(74.5),
-        arm_length=1 * units.SI.inches_to_meters,
-        wrist_angle=math.radians(100),
+        arm_angle=math.radians(0),
+        arm_length=0 * units.SI.inches_to_meters,
+        wrist_angle=math.radians(0),
         intake_enabled=True,
         claw_scoring=False,
         claw_picking=False,
-        cube_picking=True,
-        grabber_no_grab=True,
+        cube_picking=False,
+        grabber_no_grab=False,
     ),
     "cube_intake_auto": TargetData(
         target_pose=None,

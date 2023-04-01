@@ -343,6 +343,9 @@ class _Robot(wpilib.TimedRobot):
         # self.iters = 0
 
     def teleopPeriodic(self):
+        if config.grabber_disable_intake:
+            Robot.intake.intake_motor.set_raw_output(0)
+            config.grabber_disable_intake = False
         # reported = math.degrees(Robot.drivetrain.n_front_left.get_current_motor_angle())
         # actual = (
         #     Robot.drivetrain.n_front_left.encoder.getAbsolutePosition()
