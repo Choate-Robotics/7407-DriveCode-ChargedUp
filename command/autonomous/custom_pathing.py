@@ -35,8 +35,8 @@ class GyroBalance(SubsystemCommand[Drivetrain]):
         self,
         subsystem: Drivetrain,
         vx,
-        gyro_threshold=3,
-        gyro_threshold_pid=0.195,
+        gyro_threshold=math.radians(3),
+        gyro_threshold_pid=0.1,
     ):
         super().__init__(subsystem)
         self.subsystem = subsystem

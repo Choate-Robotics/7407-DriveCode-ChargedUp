@@ -1,15 +1,3 @@
-# Climber Configurations:
-# Needs to be verified
-
-climber_motor_id = 7
-
-compressor = 31
-climber_forwardChannel = 11
-climber_reverseChannel = 10
-
-latch_forwardChannel = 8
-latch_reverseChannel = 9
-
 import math
 from dataclasses import dataclass
 
@@ -23,6 +11,18 @@ from units.SI import (
     meters_per_second_squared,
     radians,
 )
+
+# Climber Configurations:
+# Needs to be verified
+
+climber_motor_id = 7
+
+compressor = 31
+climber_forwardChannel = 11
+climber_reverseChannel = 10
+
+latch_forwardChannel = 8
+latch_reverseChannel = 9
 
 current_scoring_position = "None"
 

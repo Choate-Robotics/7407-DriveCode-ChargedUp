@@ -15,7 +15,26 @@
   },
   "NTProvider": {
     "types": {
-      "/FMSInfo": "FMSInfo"
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Auto Mode": "String Chooser",
+      "/SmartDashboard/Photonvision": "String Chooser",
+      "/SmartDashboard/Teleop Zero": "String Chooser"
+    }
+  },
+  "NetworkTables": {
+    "Retained Values": {
+      "open": false
+    },
+    "Transitory Values": {
+      "open": false
+    },
+    "transitory": {
+      "SmartDashboard": {
+        "Auto Mode": {
+          "open": true
+        },
+        "open": true
+      }
     }
   }
 }

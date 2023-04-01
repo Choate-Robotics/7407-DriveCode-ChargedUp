@@ -2,8 +2,8 @@ import math
 
 from commands2 import (
     InstantCommand,
-    ParallelCommandGroup,
     ParallelDeadlineGroup,
+    ParallelRaceGroup,
     SequentialCommandGroup,
     WaitCommand,
 )
@@ -42,7 +42,15 @@ auto = SequentialCommandGroup(
     command.SetGrabber(Robot.grabber, wrist_angle=math.radians(-25), claw_active=False),
     InstantCommand(lambda: Robot.grabber.open_claw()),
     WaitCommand(0.3),
-    ParallelCommandGroup(
+    ParallelRaceGroup(
+        command.autonomous.custom_pathing.AutoBalance(
+            Robot.drivetrain,
+            vx=2,  # Initial velocity of drivetrain while balancing (m/s)
+            vx2=0.8,  # Final velocity of drivetrain while balancing (m/s)
+            omega=0,
+            times_before_stop=1,
+            gyro_threshold_2=0.18,  # Threshold for reducing speed of drivetrain (pitch in radians)
+        ),
         command.TargetAuto(
             Robot.arm,
             Robot.grabber,
@@ -50,12 +58,15 @@ auto = SequentialCommandGroup(
             Sensors.odometry,
             target=config.scoring_locations["standard"],
         ).generate(),
-        SequentialCommandGroup(
-            command.autonomous.custom_pathing.GyroBalance(Robot.drivetrain, vx=2),
-            InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0, 0), 0)),
-            InstantCommand(lambda: Robot.drivetrain.x_mode()),
-        ),
+        WaitCommand(4),
     ),
+    # The reason this is same sign vel is that in the auto balance code the drivetrain is set to negative
+    InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0.8, 0), 0)),
+    WaitCommand(
+        0.7
+    ),  # TUNE THIS AT SE MASS (HOW LONG TO MOVE BACKWARDS FOR AFTER TIPPING)
+    InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0, 0), 0)),
+    InstantCommand(lambda: Robot.drivetrain.x_mode()),
 )
 
 routine = AutoRoutine(Pose2d(initial_x, initial_y, initial_theta), auto)

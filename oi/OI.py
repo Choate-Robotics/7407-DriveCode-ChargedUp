@@ -4,6 +4,7 @@ import commands2
 import wpilib
 from commands2 import (
     InstantCommand,
+    ParallelCommandGroup,
     SequentialCommandGroup,
     WaitCommand,
 )
@@ -34,7 +35,23 @@ class OI:
             Robot.drivetrain.n_back_right.zero()
 
         # DRIVETRAIN
-        Keymap.Drivetrain.RESET_GYRO.whenPressed(InstantCommand(lambda: reset()))
+        Keymap.Drivetrain.RESET_GYRO.whenPressed(
+            ParallelCommandGroup(
+                InstantCommand(lambda: reset()),
+                SequentialCommandGroup(
+                    command.ZeroElevator(Robot.arm),
+                    command.ZeroShoulder(Robot.arm),
+                    command.ZeroWrist(Robot.grabber),
+                    command.Target(
+                        Robot.arm,
+                        Robot.grabber,
+                        Robot.intake,
+                        Sensors.odometry,
+                        config.scoring_locations["standard"],
+                    ),
+                ),
+            )
+        )
 
         Keymap.Drivetrain.RESET_ODOMETRY.whenPressed(
             InstantCommand(
