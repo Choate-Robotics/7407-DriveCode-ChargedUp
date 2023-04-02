@@ -41,7 +41,7 @@ driver_centric: bool = True
 field_length = 651.25 * inches_to_meters
 # field_width = 315.5 * inches_to_meters
 field_width = 8.075
-scoring_width = 5.72
+scoring_width = 5.40
 
 drivetrain_scoring_velocity = 0.5
 drivetrain_scoring_angular_velocity = 1
@@ -271,8 +271,8 @@ scoring_locations: dict[str, TargetData] = {
     "double_station": TargetData(
         target_pose=Pose2d(16, 7.51, math.radians(0)),
         arm_angle=math.radians(32.84),
-        arm_length=0.392,  # .322 for comp
-        wrist_angle=math.radians(64.63),
+        arm_length=0.382,  # .322 for comp
+        wrist_angle=math.radians(54.63),
         intake_enabled=False,
         claw_scoring=False,
         claw_picking=True,
