@@ -3,6 +3,7 @@ import math
 from commands2 import (
     InstantCommand,
     ParallelDeadlineGroup,
+    ParallelRaceGroup,
     SequentialCommandGroup,
     WaitCommand,
 )
@@ -31,7 +32,7 @@ path_1 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
         start_pose=Pose2d(*base_path_1[0]),
-        waypoints=[Translation2d(*x) for x in base_path_2[1]],
+        waypoints=[Translation2d(*x) for x in base_path_1[1]],
         end_pose=Pose2d(*base_path_1[2]),
         max_velocity=max_vel,
         max_accel=max_accel,
@@ -130,29 +131,28 @@ auto = SequentialCommandGroup(
             ).generate(),
         ],
     ),
-    ParallelDeadlineGroup(
-        deadline=command.autonomous.custom_pathing.AutoBalance(
+    ParallelRaceGroup(
+        command.autonomous.custom_pathing.AutoBalance(
             Robot.drivetrain,
             vx=2,  # Initial velocity of drivetrain while balancing (m/s)
             vx2=0.8,  # Final velocity of drivetrain while balancing (m/s)
             omega=0,
             times_before_stop=1,
-            gyro_threshold_2=0.195,  # Threshold for reducing speed of drivetrain (pitch in radians)
+            gyro_threshold_2=0.18,  # Threshold for reducing speed of drivetrain (pitch in radians)
         ),
-        commands=[
-            command.TargetAuto(
-                Robot.arm,
-                Robot.grabber,
-                Robot.intake,
-                Sensors.odometry,
-                target=config.scoring_locations["standard"],
-            ).generate()
-        ],
+        command.TargetAuto(
+            Robot.arm,
+            Robot.grabber,
+            Robot.intake,
+            Sensors.odometry,
+            target=config.scoring_locations["standard"],
+        ).generate(),
+        WaitCommand(4),
     ),
     # The reason this is same sign vel is that in the auto balance code the drivetrain is set to negative
     InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0.8, 0), 0)),
     WaitCommand(
-        0.7
+        1.2
     ),  # TUNE THIS AT SE MASS (HOW LONG TO MOVE BACKWARDS FOR AFTER TIPPING)
     InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0, 0), 0)),
     InstantCommand(lambda: Robot.drivetrain.x_mode()),

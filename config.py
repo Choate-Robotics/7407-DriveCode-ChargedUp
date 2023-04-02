@@ -300,7 +300,7 @@ scoring_locations: dict[str, TargetData] = {
         claw_picking=False,
         cube_picking=False,
         grabber_no_grab=False,
-        no_intake=False
+        no_intake=False,
     ),
     "cube_intake_auto": TargetData(
         target_pose=None,

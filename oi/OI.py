@@ -243,17 +243,17 @@ class OI:
                 ParallelCommandGroup(
                     command.SetArm(Robot.arm, 0, 0),
                     SequentialCommandGroup(
-                        WaitCommand(.6),
+                        WaitCommand(0.6),
                         InstantCommand(lambda: Robot.intake.intake_disable()),
                         command.SetGrabber(Robot.grabber, 0, False),
-                    )
-                )
+                    ),
+                ),
             )
         )
 
         Keymap.Targeting.TARGETING_CUBE_INTAKE.whenPressed(
             SequentialCommandGroup(
-                InstantCommand(lambda: Robot.intake.intake_motor.set_raw_output(.3)),
+                InstantCommand(lambda: Robot.intake.intake_motor.set_raw_output(0.3)),
                 InstantCommand(lambda: Robot.intake.intake_piston.extend()),
                 command.Target(
                     Robot.arm,

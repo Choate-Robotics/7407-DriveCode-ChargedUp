@@ -9,17 +9,17 @@ from units.SI import radians
 
 class SetGrabber(SubsystemCommand[Grabber]):
     def __init__(
-            self,
-            subsystem: Grabber,
-            wrist_angle: radians,
-            claw_active: bool,
-            auto_claw: bool = False,
-            auto_cube: bool = False,
-            auto_cone: bool = False,
-            auto_double: bool = False,
-            no_grab: bool = False,
-            threshold: float | None = None,
-            finish: bool = True,
+        self,
+        subsystem: Grabber,
+        wrist_angle: radians,
+        claw_active: bool,
+        auto_claw: bool = False,
+        auto_cube: bool = False,
+        auto_cone: bool = False,
+        auto_double: bool = False,
+        no_grab: bool = False,
+        threshold: float | None = None,
+        finish: bool = True,
     ):
         super().__init__(subsystem)
         self.subsystem = subsystem
@@ -42,25 +42,25 @@ class SetGrabber(SubsystemCommand[Grabber]):
         if self.claw_active:
             self.subsystem.engage_claw_cube()
         else:
-            self.subsystem.claw_motor.set_raw_output(.05)
+            self.subsystem.claw_motor.set_raw_output(0.05)
 
     def execute(self) -> None:
         self.subsystem.set_angle(config.grabber_target_angle)
 
         if self.auto_claw:
             if (
-                    self.auto_cube
-                    and self.no_grab
-                    and self.subsystem.get_no_grab_cube_detected()
+                self.auto_cube
+                and self.no_grab
+                and self.subsystem.get_no_grab_cube_detected()
             ):
                 self.finished = True
                 Controllers.OPERATOR_CONTROLLER.setRumble(
                     wpilib.Joystick.RumbleType.kBothRumble, 0.3
                 )
             elif (
-                    self.auto_cube
-                    and not self.no_grab
-                    and self.subsystem.get_cube_detected()
+                self.auto_cube
+                and not self.no_grab
+                and self.subsystem.get_cube_detected()
             ):
                 self.subsystem.disengage_claw()
                 self.finished = True
@@ -69,9 +69,9 @@ class SetGrabber(SubsystemCommand[Grabber]):
                 )
                 config.grabber_disable_intake = True
             elif (
-                    self.auto_cone
-                    and not self.no_grab
-                    and self.subsystem.get_cone_detected()
+                self.auto_cone
+                and not self.no_grab
+                and self.subsystem.get_cone_detected()
             ):
                 self.subsystem.disengage_claw()
                 self.finished = True
@@ -79,9 +79,9 @@ class SetGrabber(SubsystemCommand[Grabber]):
                     wpilib.Joystick.RumbleType.kBothRumble, 0.3
                 )
             elif (
-                    self.auto_double
-                    and not self.no_grab
-                    and self.subsystem.get_double_station_detected()
+                self.auto_double
+                and not self.no_grab
+                and self.subsystem.get_double_station_detected()
             ):
                 self.subsystem.disengage_claw()
                 self.finished = True
@@ -94,9 +94,9 @@ class SetGrabber(SubsystemCommand[Grabber]):
             ) and self.finished and self.finish
         else:
             return (
-                    self.subsystem.is_at_angle(self.wrist_angle)
-                    and self.finished
-                    and self.finish
+                self.subsystem.is_at_angle(self.wrist_angle)
+                and self.finished
+                and self.finish
             )
 
     def end(self, interrupted: bool) -> None:

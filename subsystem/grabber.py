@@ -88,9 +88,9 @@ class Grabber(Subsystem):
         :rtype: float
         """
         return (
-                (self.wrist.get_sensor_position() / constants.wrist_gear_ratio)
-                * math.pi
-                * 2
+            (self.wrist.get_sensor_position() / constants.wrist_gear_ratio)
+            * math.pi
+            * 2
         )
 
     def set_output(self, output: float):
@@ -124,7 +124,7 @@ class Grabber(Subsystem):
 
     def disengage_claw(self):
         self.close_claw()
-        self.claw_motor.set_raw_output(.05)
+        self.claw_motor.set_raw_output(0.05)
 
     def is_at_angle(self, angle: radians, threshold=math.radians(2)):
         return abs(self.get_angle() - angle) < threshold

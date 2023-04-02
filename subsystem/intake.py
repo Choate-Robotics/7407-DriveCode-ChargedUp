@@ -26,12 +26,16 @@ class Intake(Subsystem):
         self.intake_piston.extend()
         self.intake_active = True
         self.intake_motor.set_raw_output(
-            self.intake_speed * (-1 if intake_reversed else 1) * (-1 if config.intake_inverted else 1)
+            self.intake_speed
+            * (-1 if intake_reversed else 1)
+            * (-1 if config.intake_inverted else 1)
         )
 
     def enable_intake_motor(self, intake_reversed: bool = False):
         self.intake_motor.set_raw_output(
-            self.intake_speed * (-1 if intake_reversed else 1) * (-1 if config.intake_inverted else 1)
+            self.intake_speed
+            * (-1 if intake_reversed else 1)
+            * (-1 if config.intake_inverted else 1)
         )
 
     def disable_intake_motor(self):
