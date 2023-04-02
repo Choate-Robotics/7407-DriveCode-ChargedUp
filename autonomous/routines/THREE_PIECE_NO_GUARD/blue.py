@@ -124,7 +124,7 @@ auto = SequentialCommandGroup(
                 InstantCommand(lambda: Robot.grabber.close_claw()),
             ),
             SequentialCommandGroup(
-                WaitCommand(1.7),
+                WaitCommand(1.3),
                 command.TargetAuto(
                     Robot.arm,
                     Robot.grabber,
@@ -172,7 +172,7 @@ auto = SequentialCommandGroup(
         deadline=path_4,
         commands=[
             SequentialCommandGroup(
-                WaitCommand(2.4),
+                WaitCommand(1.6),
                 command.TargetAuto(
                     Robot.arm,
                     Robot.grabber,

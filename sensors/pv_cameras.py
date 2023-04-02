@@ -43,6 +43,6 @@ class PV_Cameras(VisionEstimator):
                         for tag_id, point in cameraToTargets
                     ]
         except:
-            ...
+            return None
 
         return derivedRobotPoses

@@ -68,7 +68,7 @@ class Grabber(Subsystem):
 
     def get_double_station_detected(self):
         avg_voltage = self.distance_sensor_back.getVoltage()
-        return 0.8 < avg_voltage
+        return 0.7 < avg_voltage
 
     def set_angle(self, pos: float):
         """

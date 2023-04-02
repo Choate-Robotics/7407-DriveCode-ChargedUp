@@ -87,11 +87,14 @@ class FieldOdometry:
             if self.last_update_time is None or (
                 current_time - self.last_update_time >= self.min_update_wait_time
             ):
-                vision_robot_pose_list = (
-                    self.vision_estimator.get_estimated_robot_pose()
-                    if self.vision_estimator
-                    else None
-                )
+                try:
+                    vision_robot_pose_list = (
+                        self.vision_estimator.get_estimated_robot_pose()
+                        if self.vision_estimator
+                        else None
+                    )
+                except:
+                    vision_robot_pose_list = None
 
             if vision_robot_pose_list:
                 for vision_robot_pose in vision_robot_pose_list:
