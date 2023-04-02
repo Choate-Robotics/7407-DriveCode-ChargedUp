@@ -38,6 +38,9 @@ class _Robot(wpilib.TimedRobot):
         for i in range(10):
             Robot.intake.intake_motor.motor.setInverted(True)
 
+        for i in range(10):
+            Robot.climber.climber_motor.motor.setInverted(False)
+
         Sensors.pv_controller = None
         Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
         Sensors.gyro = Robot.drivetrain.gyro

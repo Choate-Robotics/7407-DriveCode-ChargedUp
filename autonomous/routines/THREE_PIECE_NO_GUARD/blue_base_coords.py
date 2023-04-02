@@ -12,7 +12,7 @@ base_initial_coords: coord = (1.5, config.scoring_width - 0.57, 0)
 base_path_1: path = (
     base_initial_coords,
     [],
-    (6.75, config.scoring_width - 1, 0),
+    (6.68, config.scoring_width - 1, 0),
 )
 
 base_path_2: path = (

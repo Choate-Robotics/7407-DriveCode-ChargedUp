@@ -43,7 +43,7 @@ auto = SequentialCommandGroup(
     InstantCommand(lambda: Robot.grabber.open_claw()),
     WaitCommand(0.3),
     ParallelRaceGroup(
-        command.autonomous.custom_pathing.AutoBalanceNew(
+        command.autonomous.custom_pathing.AutoBalance(
             Robot.drivetrain,
             vx=2,  # Initial velocity of drivetrain while balancing (m/s)
             vx2=0.6,  # Final velocity of drivetrain while balancing (m/s)
@@ -61,10 +61,10 @@ auto = SequentialCommandGroup(
         WaitCommand(7),
     ),
     # The reason this is same sign vel is that in the auto balance code the drivetrain is set to negative
-    # InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0.8, 0), 0)),
-    # WaitCommand(
-    #     1.2
-    # ),  # TUNE THIS AT SE MASS (HOW LONG TO MOVE BACKWARDS FOR AFTER TIPPING)
+    InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0.8, 0), 0)),
+    WaitCommand(
+        1.2
+    ),  # TUNE THIS AT SE MASS (HOW LONG TO MOVE BACKWARDS FOR AFTER TIPPING)
     InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0, 0), 0)),
     InstantCommand(lambda: Robot.drivetrain.x_mode()),
 )

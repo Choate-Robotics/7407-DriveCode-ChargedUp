@@ -42,7 +42,7 @@ class SetGrabber(SubsystemCommand[Grabber]):
         if self.claw_active:
             self.subsystem.engage_claw_cube()
         else:
-            self.subsystem.claw_motor.set_raw_output(0.05)
+            self.subsystem.claw_motor.set_raw_output(0.025)
 
     def execute(self) -> None:
         self.subsystem.set_angle(config.grabber_target_angle)

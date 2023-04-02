@@ -135,57 +135,65 @@ auto = SequentialCommandGroup(
             ),
         ],
     ),
+    command.TargetAuto(
+        Robot.arm,
+        Robot.grabber,
+        Robot.intake,
+        Sensors.odometry,
+        target=config.scoring_locations["high_auto_back_cube"],
+    ).generate(),
+    WaitCommand(2),
     InstantCommand(lambda: Robot.grabber.set_output(-0.3)),
     InstantCommand(lambda: Robot.grabber.open_claw()),
     WaitCommand(0.25),
-    ParallelDeadlineGroup(
-        deadline=SequentialCommandGroup(path_3, WaitCommand(0)),
-        commands=[
-            SequentialCommandGroup(
-                ParallelDeadlineGroup(
-                    deadline=WaitCommand(0.8),
-                    commands=[
-                        command.TargetAuto(
-                            Robot.arm,
-                            Robot.grabber,
-                            Robot.intake,
-                            Sensors.odometry,
-                            target=config.scoring_locations["standard"],
-                        ).generate()
-                    ],
-                ),
-                command.IntakeEnable(Robot.intake),
-                WaitCommand(0.7),
-                command.TargetAuto(
-                    Robot.arm,
-                    Robot.grabber,
-                    Robot.intake,
-                    Sensors.odometry,
-                    target=config.scoring_locations["cube_intake_auto"],
-                ).generate(),
-            )
-        ],
-    ),
-    InstantCommand(lambda: Robot.grabber.close_claw()),
-    WaitCommand(0.1),
-    ParallelDeadlineGroup(
-        deadline=path_4,
-        commands=[
-            SequentialCommandGroup(
-                WaitCommand(1.6),
-                command.TargetAuto(
-                    Robot.arm,
-                    Robot.grabber,
-                    Robot.intake,
-                    Sensors.odometry,
-                    target=config.scoring_locations["mid_auto_back_cube"],
-                ).generate(),
-            )
-        ],
-    ),
-    InstantCommand(lambda: Robot.grabber.set_output(-0.3)),
-    InstantCommand(lambda: Robot.grabber.open_claw()),
-    WaitCommand(0.35),
+    # ParallelDeadlineGroup(
+    #     deadline=SequentialCommandGroup(path_3, WaitCommand(0)),
+    #     commands=[
+    #         SequentialCommandGroup(
+    #             ParallelDeadlineGroup(
+    #                 deadline=WaitCommand(0.8),
+    #                 commands=[
+    #                     command.TargetAuto(
+    #                         Robot.arm,
+    #                         Robot.grabber,
+    #                         Robot.intake,
+    #                         Sensors.odometry,
+    #                         target=config.scoring_locations["standard"],
+    #                     ).generate()
+    #                 ],
+    #             ),
+    #             command.IntakeEnable(Robot.intake),
+    #             WaitCommand(0.7),
+    #             command.TargetAuto(
+    #                 Robot.arm,
+    #                 Robot.grabber,
+    #                 Robot.intake,
+    #                 Sensors.odometry,
+    #                 target=config.scoring_locations["cube_intake_auto"],
+    #             ).generate(),
+    #         )
+    #     ],
+    # ),
+    # InstantCommand(lambda: Robot.grabber.close_claw()),
+    # WaitCommand(0.1),
+    # ParallelDeadlineGroup(
+    #     deadline=path_4,
+    #     commands=[
+    #         SequentialCommandGroup(
+    #             WaitCommand(1.6),
+    #             command.TargetAuto(
+    #                 Robot.arm,
+    #                 Robot.grabber,
+    #                 Robot.intake,
+    #                 Sensors.odometry,
+    #                 target=config.scoring_locations["mid_auto_back_cube"],
+    #             ).generate(),
+    #         )
+    #     ],
+    # ),
+    # InstantCommand(lambda: Robot.grabber.set_output(-0.3)),
+    # InstantCommand(lambda: Robot.grabber.open_claw()),
+    # WaitCommand(0.35),
     command.TargetAuto(
         Robot.arm,
         Robot.grabber,
