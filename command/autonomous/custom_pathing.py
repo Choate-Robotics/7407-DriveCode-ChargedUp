@@ -80,6 +80,71 @@ class GyroBalance(SubsystemCommand[Drivetrain]):
         ...
 
 
+class AutoBalanceNew(SubsystemCommand[Drivetrain]):
+    def __init__(
+        self,
+        subsystem: Drivetrain,
+        vx,
+        vx2,
+        omega,
+        gyro_threshold=math.radians(6),
+        gyro_threshold_2=0.195,
+        times_before_stop=1,
+    ):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+        self.vx = vx
+        self.vx2 = vx2
+        self.omega = omega
+        self.gyro_threshold = gyro_threshold
+        self.gyro_threshold_2 = gyro_threshold_2
+        self.times_zeroed = 0
+        self.currently_zeroed = 0
+        self.times_before_stop = times_before_stop
+        self.reduced_speed = False
+
+    def initialize(self) -> None:
+        self.times_zeroed = 0
+        self.currently_zeroed = 0
+        self.reduced_speed = False
+        SmartDashboard.putBoolean("REDUCED SPEED", False)
+        ...
+
+    def execute(self) -> None:
+        SmartDashboard.putBoolean("REDUCED SPEED", self.reduced_speed)
+
+        if (
+            self.times_zeroed > 0
+            and self.currently_zeroed == 0
+            and abs(self.subsystem.gyro.get_robot_pitch()) > self.gyro_threshold_2
+            and not self.reduced_speed
+        ):
+            self.reduced_speed = True
+
+        if self.reduced_speed:
+            self.subsystem.set_driver_centric((-self.vx2, 0), self.omega)
+        else:
+            self.subsystem.set_driver_centric((-self.vx, 0), self.omega)
+
+    def isFinished(self) -> bool:
+        pitch = self.subsystem.gyro.get_robot_pitch()
+        if abs(pitch) < self.gyro_threshold:
+            if self.currently_zeroed == 1:
+                self.times_zeroed += 1
+                self.currently_zeroed += 1
+            else:
+                self.currently_zeroed += 1
+        else:
+            self.currently_zeroed = 0
+
+        return self.times_zeroed > self.times_before_stop
+
+    def end(self, interrupted: bool = False) -> None:
+        if not interrupted:
+            self.subsystem.set_driver_centric((0, 0), 0)
+        ...
+
+
 class AutoBalance(SubsystemCommand[Drivetrain]):
     def __init__(
         self,

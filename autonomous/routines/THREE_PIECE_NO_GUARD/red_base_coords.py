@@ -32,7 +32,7 @@ base_path_3: path = (
         (4.8, config.field_width - (config.scoring_width - 0.8)),
         (5.6, config.field_width - (config.scoring_width - 0.82)),
     ],
-    (6.9, config.field_width - (config.scoring_width - 2.4), 1),
+    (6.75, config.field_width - (config.scoring_width - 2.4), 1),
 )
 
 base_path_4: path = (
