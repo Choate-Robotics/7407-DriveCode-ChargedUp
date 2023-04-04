@@ -20,9 +20,9 @@ from utils import logger
 class _Robot(wpilib.TimedRobot):
     def __init__(self):
         super().__init__()
+        self.teleop_zero: wpilib.SendableChooser | None = None
         self.pv_selection: wpilib.SendableChooser | None = None
         self.auto_selection: wpilib.SendableChooser | None = None
-        self.can_reset_climb: wpilib.SendableChooser | None = None
 
     def robotInit(self):
         period = 0.05
@@ -93,44 +93,6 @@ class _Robot(wpilib.TimedRobot):
         self.auto_selection.addOption(
             "2 WITH GUARD RED", autonomous.red_two_piece_with_guard
         )
-
-        self.auto_selection.addOption(
-            "2 BALANCE NO GUARD BLUE", autonomous.blue_two_piece_balance_no_guard
-        )
-
-        self.auto_selection.addOption(
-            "2 BALANCE NO GUARD RED", autonomous.red_two_piece_balance_no_guard
-        )
-
-        self.auto_selection.addOption(
-            "2 BALANCE WITH GUARD BLUE", autonomous.blue_two_piece_balance_with_guard
-        )
-
-        self.auto_selection.addOption(
-            "2 BALANCE WITH GUARD RED", autonomous.red_two_piece_balance_with_guard
-        )
-
-        self.auto_selection.addOption(
-            "3 BALANCE NO GUARD BLUE", autonomous.blue_three_piece_balance_no_guard
-        )
-
-        self.auto_selection.addOption(
-            "3 BALANCE NO GUARD RED", autonomous.red_three_piece_balance_no_guard
-        )
-
-        self.auto_selection.addOption(
-            "3 BALANCE WITH GUARD BLUE", autonomous.blue_three_piece_balance_with_guard
-        )
-
-        self.auto_selection.addOption(
-            "3 BALANCE WITH GUARD RED", autonomous.red_three_piece_balance_with_guard
-        )
-
-        self.auto_selection.addOption("PICK BALANCE BLUE", autonomous.blue_pick_balance)
-
-        self.auto_selection.addOption("PICK BALANCE RED", autonomous.red_pick_balance)
-
-        self.auto_selection.addOption("GYRO BALANCE", autonomous.gyro_balance)
 
         self.auto_selection.addOption(
             "Do Nothing", AutoRoutine(Pose2d(0, 0, 0), InstantCommand(lambda: None))

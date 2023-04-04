@@ -35,13 +35,9 @@ blue_team: bool = False
 drivetrain_reversed: bool = False
 driver_centric: bool = True
 
-# field_length = 16.459
-# field_width = 8.0137
-
 field_length = 651.25 * inches_to_meters
-# field_width = 315.5 * inches_to_meters
-field_width = 8.075
-scoring_width = 5.40
+field_width = 315.5 * inches_to_meters
+scoring_width = 216.2 * inches_to_meters
 
 drivetrain_scoring_velocity = 0.5
 drivetrain_scoring_angular_velocity = 1
