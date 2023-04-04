@@ -13,10 +13,14 @@ import command
 import config
 import constants
 from autonomous.auto_routine import AutoRoutine
-from autonomous.routines.THREE_PIECE.NO_GUARD.coords.red import (blue_team, come_back_with_first_cube,
-                                                                 come_back_with_second_cube,
-                                                                 go_get_first_cube,
-                                                                 go_get_second_cube, initial)
+from autonomous.routines.THREE_PIECE.NO_GUARD.coords.red import (
+    blue_team,
+    come_back_with_first_cube,
+    come_back_with_second_cube,
+    go_get_first_cube,
+    go_get_second_cube,
+    initial,
+)
 from command.autonomous.custom_pathing import FollowPathCustom
 from command.autonomous.trajectory import CustomTrajectory
 from robot_systems import Robot, Sensors

@@ -1,7 +1,11 @@
 import math
 
-from autonomous.routines.TWO_PIECE.NORMAL.NO_GUARD.coords.red import (blue_team, come_back_with_first_cube,
-                                                                      go_get_first_cube, initial)
+from autonomous.routines.TWO_PIECE.NORMAL.NO_GUARD.coords.red import (
+    blue_team,
+    come_back_with_first_cube,
+    go_get_first_cube,
+    initial,
+)
 from commands2 import (
     InstantCommand,
     ParallelCommandGroup,
@@ -121,7 +125,7 @@ auto = SequentialCommandGroup(
                 Sensors.odometry,
                 target=config.scoring_locations["high_auto_back_cube"],
             ).generate()
-        ]
+        ],
     ),
     InstantCommand(lambda: Robot.grabber.set_output(-0.3)),
     InstantCommand(lambda: Robot.grabber.open_claw()),

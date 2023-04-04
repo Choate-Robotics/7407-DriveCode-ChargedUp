@@ -154,8 +154,8 @@ class DriveSwerveSlowed(SubsystemCommand[Drivetrain]):
         dx = curve(dx)
         dy = curve(dy)
 
-        dx *= config.drivetrain_scoring_velocity
-        dy *= -config.drivetrain_scoring_velocity
+        dx *= config.drivetrain_scoring_velocity * 1.5
+        dy *= -config.drivetrain_scoring_velocity * 1.5
         d_theta = min(config.drivetrain_scoring_angular_velocity, d_theta)
 
         controller_d_theta = -self.subsystem.axis_rotation.value

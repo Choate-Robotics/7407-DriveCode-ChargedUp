@@ -32,8 +32,8 @@ class ZeroElevator(SubsystemCommand[Arm]):
 
     def isFinished(self):
         return (
-                self.subsystem.elevator_bottom_sensor.get_value()
-                or (time.time() - self.start_time) > 5
+            self.subsystem.elevator_bottom_sensor.get_value()
+            or (time.time() - self.start_time) > 5
         )
 
     def end(self, interrupted=False):
@@ -71,10 +71,10 @@ class ZeroShoulder(SubsystemCommand[Arm]):
 
 class SetArm(SubsystemCommand[Arm]):
     def __init__(
-            self,
-            subsystem: Arm,
-            distance: meters,
-            shoulder_angle: radians,
+        self,
+        subsystem: Arm,
+        distance: meters,
+        shoulder_angle: radians,
     ):
         super().__init__(subsystem)
         self.real_desired = shoulder_angle
@@ -131,7 +131,7 @@ class SetArm(SubsystemCommand[Arm]):
         self.theta_f = self.shoulder_angle
 
         if not (
-                abs(self.subsystem.get_rotation() - self.real_desired) < self.threshold
+            abs(self.subsystem.get_rotation() - self.real_desired) < self.threshold
         ):
             self.subsystem.disable_brake()
 
@@ -160,10 +160,10 @@ class SetArm(SubsystemCommand[Arm]):
         arm_maximum_power = 10
 
         arm_feed_forward_test = (
-                                        (self.arm_ff_constant_extended - self.arm_ff_constant_retracted)
-                                        * self.distance
-                                        + self.arm_ff_constant_retracted
-                                ) * -math.sin(current_theta)
+            (self.arm_ff_constant_extended - self.arm_ff_constant_retracted)
+            * self.distance
+            + self.arm_ff_constant_retracted
+        ) * -math.sin(current_theta)
         arm_feed_forward = self.arm_ff_constant_retracted * -math.sin(current_theta)
 
         # arm_pid_output_normal = -(
@@ -211,7 +211,7 @@ class SetArm(SubsystemCommand[Arm]):
         # --PID STUFF--
         meters_ceiling = min(self.distance, constants.max_elevator_height_delta)
         calculated_motor_rotations = meters_ceiling * (
-                1 / constants.elevator_length_per_rotation
+            1 / constants.elevator_length_per_rotation
         )
         elevator_pid_output = self.elevator_controller.calculate(
             current_length_rotations, calculated_motor_rotations
@@ -223,14 +223,14 @@ class SetArm(SubsystemCommand[Arm]):
         SmartDashboard.putNumber("PID_Voltage", elevator_pid_output)
 
         if (
-                abs(self.subsystem.get_rotation() - self.real_desired) > math.radians(35)
-                and elevator_pid_output > 0.0
+            abs(self.subsystem.get_rotation() - self.real_desired) > math.radians(35)
+            and elevator_pid_output > 0.0
         ):
             elevator_pid_output = 0
 
         if (
-                abs(current_length_rotations - calculated_motor_rotations)
-                * constants.elevator_length_per_rotation
+            abs(current_length_rotations - calculated_motor_rotations)
+            * constants.elevator_length_per_rotation
         ) < 0.03:
             elevator_pid_output = 0
 
@@ -302,10 +302,10 @@ class SetArm(SubsystemCommand[Arm]):
 
 class SetArmAuto(SubsystemCommand[Arm]):
     def __init__(
-            self,
-            subsystem: Arm,
-            distance: meters,
-            shoulder_angle: radians,
+        self,
+        subsystem: Arm,
+        distance: meters,
+        shoulder_angle: radians,
     ):
         super().__init__(subsystem)
         self.real_desired = shoulder_angle
@@ -364,7 +364,7 @@ class SetArmAuto(SubsystemCommand[Arm]):
         self.theta_f = self.shoulder_angle
 
         if not (
-                abs(self.subsystem.get_rotation() - self.real_desired) < self.threshold
+            abs(self.subsystem.get_rotation() - self.real_desired) < self.threshold
         ):
             self.subsystem.disable_brake()
 
@@ -401,21 +401,21 @@ class SetArmAuto(SubsystemCommand[Arm]):
 
         meters_ceiling = min(self.distance, constants.max_elevator_height_delta)
         calculated_motor_rotations = meters_ceiling * (
-                1 / constants.elevator_length_per_rotation
+            1 / constants.elevator_length_per_rotation
         )
         elevator_pid_output = self.elevator_controller.calculate(
             current_length_rotations, calculated_motor_rotations
         )
 
         if (
-                abs(self.subsystem.get_rotation() - self.real_desired) > math.radians(35)
-                and elevator_pid_output > 0.0
+            abs(self.subsystem.get_rotation() - self.real_desired) > math.radians(35)
+            and elevator_pid_output > 0.0
         ):
             elevator_pid_output = 0
 
         if (
-                abs(current_length_rotations - calculated_motor_rotations)
-                * constants.elevator_length_per_rotation
+            abs(current_length_rotations - calculated_motor_rotations)
+            * constants.elevator_length_per_rotation
         ) < 0.03:
             elevator_pid_output = 0
 
@@ -445,11 +445,13 @@ class SetArmAuto(SubsystemCommand[Arm]):
 
     def isFinished(self) -> bool:
         return (
-                abs(self.subsystem.get_rotation() - self.real_desired) < self.threshold
-                and abs(self.subsystem.get_length() - self.distance) < 0.05
+            abs(self.subsystem.get_rotation() - self.real_desired) < self.threshold
+            and abs(self.subsystem.get_length() - self.distance) < 0.05
         )
 
     def end(self, interrupted: bool) -> None:
         if not interrupted:
             self.subsystem.enable_brake()
-            commands2.CommandScheduler.getInstance().schedule(SetArm(self.subsystem, self.distance, self.real_desired))
+            commands2.CommandScheduler.getInstance().schedule(
+                SetArm(self.subsystem, self.distance, self.real_desired)
+            )

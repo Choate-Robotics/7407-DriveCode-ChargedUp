@@ -13,8 +13,12 @@ import command
 import config
 import constants
 from autonomous.auto_routine import AutoRoutine
-from autonomous.routines.TWO_PIECE.NORMAL.GUARD.coords.blue import (blue_team, come_back_with_first_cube,
-                                                                    go_get_first_cube, initial)
+from autonomous.routines.TWO_PIECE.NORMAL.GUARD.coords.blue import (
+    blue_team,
+    come_back_with_first_cube,
+    go_get_first_cube,
+    initial,
+)
 from command.autonomous.custom_pathing import FollowPathCustom
 from command.autonomous.trajectory import CustomTrajectory
 from robot_systems import Robot, Sensors
@@ -121,7 +125,7 @@ auto = SequentialCommandGroup(
                 Sensors.odometry,
                 target=config.scoring_locations["high_auto_back_cube"],
             ).generate()
-        ]
+        ],
     ),
     InstantCommand(lambda: Robot.grabber.set_output(-0.3)),
     InstantCommand(lambda: Robot.grabber.open_claw()),

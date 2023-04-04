@@ -11,13 +11,11 @@ initial: coord = (1.5, 0.57, 0)
 go_get_first_cube: path = (
     initial,
     [],
-    (initial[0] + 5.25, initial[1] + .43, 0),
+    (initial[0] + 5.25, initial[1] + 0.43, 0),
 )
 
 come_back_with_first_cube: path = (
     go_get_first_cube[2],
-    [
-        (initial[0] + 2.42, initial[1] + .25)
-    ],
-    (initial[0] + .1, initial[1] + .65, 0),
+    [(initial[0] + 2.42, initial[1] + 0.25)],
+    (initial[0] + 0.1, initial[1] + 0.65, 0),
 )
