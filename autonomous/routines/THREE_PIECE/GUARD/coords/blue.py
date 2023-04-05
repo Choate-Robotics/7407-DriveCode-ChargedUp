@@ -6,7 +6,7 @@ path = (coord, waypoints, coord)
 
 blue_team = True
 
-initial: coord = (1.5, 0.57, 0)
+initial: coord = (1.55, 0.51, 0)
 
 go_get_first_cube: path = (
     initial,
@@ -17,7 +17,7 @@ go_get_first_cube: path = (
 come_back_with_first_cube: path = (
     go_get_first_cube[2],
     [(initial[0] + 2.42, initial[1] + 0.25)],
-    (initial[0] + 0.1, initial[1] + 0.65, 0),
+    (initial[0] + 0.35, initial[1] + 0.65, 0),
 )
 
 go_get_second_cube: path = (
@@ -27,15 +27,15 @@ go_get_second_cube: path = (
         (initial[0] + 3.3, initial[1] + 0.23),
         (initial[0] + 4.1, initial[1] + 0.25),
     ],
-    (initial[0] + 5.4, initial[1] - 1.83, 1),
+    (initial[0] + 5.4, initial[1] + 1.83, 1),
 )
 
 come_back_with_second_cube: path = (
     go_get_second_cube[2],
     [
-        (initial[0] + 4.1, initial[1] - 0.28),
-        (initial[0] + 3.3, initial[1] - 0.23),
-        (initial[0] + 4.1, initial[1] - 0.25),
+        (initial[0] + 4.1, initial[1] + 0.25),
+        (initial[0] + 3.3, initial[1] + 0.23),
+        (initial[0] + 1.85, initial[1] + 0.28),
     ],
-    (initial[0] + 0.1, initial[1] + 0.51, 0),
+    (initial[0] + 0.35, initial[1] + 0.7, 0),
 )

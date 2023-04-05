@@ -314,7 +314,9 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
     def execute(self) -> None:
         self.t = time.perf_counter() - self.start_time
 
-        relative = self.end_pose.relativeTo(Sensors.odometry.getPose())
+        relative = self.end_pose.relativeTo(
+            self.subsystem.odometry_estimator.getEstimatedPosition()
+        )
 
         if (
             abs(relative.x) < 0.05
