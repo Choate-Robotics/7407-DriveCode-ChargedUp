@@ -66,11 +66,11 @@ class GyroBalance(SubsystemCommand[Drivetrain]):
             "Auto Pitch Gyro", str(math.degrees(self.subsystem.gyro.get_robot_pitch()))
         )
 
-        if abs(pitch) > 22:
+        if abs(pitch) > 15:
             self.step_1 = True
             print("FINISHED STEP 1")
 
-        if self.step_1 and abs(pitch) < 18:
+        if self.step_1 and abs(pitch) < 13:
             self.finished = True
 
         return self.finished
