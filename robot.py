@@ -110,10 +110,11 @@ class _Robot(wpilib.TimedRobot):
         self.teleop_zero.addOption("On", "on")
         wpilib.SmartDashboard.putData("Teleop Zero", self.teleop_zero)
 
-        Robot.drivetrain.n_front_left.initial_zero()
-        Robot.drivetrain.n_front_right.initial_zero()
-        Robot.drivetrain.n_back_left.initial_zero()
-        Robot.drivetrain.n_back_right.initial_zero()
+        for i in range(15):
+            Robot.drivetrain.n_front_left.initial_zero()
+            Robot.drivetrain.n_front_right.initial_zero()
+            Robot.drivetrain.n_back_left.initial_zero()
+            Robot.drivetrain.n_back_right.initial_zero()
 
     def robotPeriodic(self):
 

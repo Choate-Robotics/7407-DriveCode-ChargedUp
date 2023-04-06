@@ -42,11 +42,13 @@ class GyroBalance(SubsystemCommand[Drivetrain]):
         self.vx2_cap = 0.4
 
         self.step_1 = False
+        self.step_2 = False
         self.finished = False
         self.start_delay = 0
 
     def initialize(self) -> None:
         self.step_1 = False
+        self.step_2 = False
         self.finished = False
         self.start_delay = 0
         SmartDashboard.putBoolean("Climbed", False)
@@ -54,8 +56,11 @@ class GyroBalance(SubsystemCommand[Drivetrain]):
 
     def execute(self) -> None:
         SmartDashboard.putBoolean("STEP 1", self.step_1)
+        SmartDashboard.putBoolean("STEP 2", self.step_2)
 
         if self.step_1:
+            self.subsystem.set_driver_centric((-1, 0), 0)
+        if self.step_2:
             self.subsystem.set_driver_centric((-0.4, 0), 0)
         else:
             self.subsystem.set_driver_centric((-2, 0), 0)
@@ -73,7 +78,10 @@ class GyroBalance(SubsystemCommand[Drivetrain]):
             self.start_delay = time.time()
             print("FINISHED STEP 1")
 
-        if self.step_1 and abs(pitch) < 9.5 and (time.time() - self.start_delay) > 1:
+        if self.step_1 and (time.time() - self.start_delay) > 0.4:
+            self.step_2 = True
+
+        if self.step_2 and abs(pitch) < 10:
             self.finished = True
 
         return self.finished
@@ -323,8 +331,8 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
         )
 
         if (
-            abs(relative.x) < 0.05
-            and abs(relative.y < 0.05)
+            abs(relative.x) < 0.03
+            and abs(relative.y < 0.03)
             and abs(relative.rotation().degrees()) < 3
             or self.t > self.duration
         ):

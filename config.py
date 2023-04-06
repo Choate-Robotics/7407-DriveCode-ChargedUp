@@ -55,6 +55,7 @@ class TargetData:
     target_waypoints: list[Translation2d] = None
     intake_enabled: bool = False
     intake_reversed: bool = False
+    intake_off: bool = False
 
     claw_picking: bool = False
     cube_picking: bool = False
@@ -285,6 +286,17 @@ scoring_locations: dict[str, TargetData] = {
         claw_scoring=False,
         claw_picking=True,
         cube_picking=True,
+    ),
+    "cube_intake_off": TargetData(
+        target_pose=None,
+        arm_angle=math.radians(74.5),
+        arm_length=2.5 * units.SI.inches_to_meters,
+        wrist_angle=math.radians(100),
+        intake_enabled=True,
+        claw_scoring=False,
+        claw_picking=True,
+        cube_picking=True,
+        intake_off=True,
     ),
     "cube_intake_no_grab": TargetData(
         target_pose=None,
