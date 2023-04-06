@@ -31,15 +31,12 @@ def curve(x):
 
 
 class GyroBalance(SubsystemCommand[Drivetrain]):
-    def __init__(
-        self,
-        subsystem: Drivetrain,
-        vx,
-    ):
+    def __init__(self, subsystem: Drivetrain, vx, rever=False):
         super().__init__(subsystem)
         self.subsystem = subsystem
         self.vx = vx
         self.vx2_cap = 0.4
+        self.reversed = rever
 
         self.step_1 = False
         self.step_2 = False
@@ -59,11 +56,13 @@ class GyroBalance(SubsystemCommand[Drivetrain]):
         SmartDashboard.putBoolean("STEP 2", self.step_2)
 
         if self.step_1:
-            self.subsystem.set_driver_centric((-1, 0), 0)
+            self.subsystem.set_driver_centric((-1 * (-1 if self.reversed else 1), 0), 0)
         if self.step_2:
-            self.subsystem.set_driver_centric((-0.4, 0), 0)
+            self.subsystem.set_driver_centric(
+                (-0.4 * (-1 if self.reversed else 1), 0), 0
+            )
         else:
-            self.subsystem.set_driver_centric((-2, 0), 0)
+            self.subsystem.set_driver_centric((-2 * (-1 if self.reversed else 1), 0), 0)
 
     def isFinished(self) -> bool:
         pitch = math.degrees(self.subsystem.gyro.get_robot_pitch())

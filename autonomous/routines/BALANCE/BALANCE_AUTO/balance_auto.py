@@ -41,20 +41,27 @@ auto = SequentialCommandGroup(
     ),
     command.SetGrabber(Robot.grabber, wrist_angle=math.radians(-25), claw_active=False),
     InstantCommand(lambda: Robot.grabber.open_claw()),
-    WaitCommand(0.3),
+    WaitCommand(0.15),
+    ParallelDeadlineGroup(
+        deadline=WaitCommand(3.3),
+        commands=[
+            InstantCommand(lambda: Robot.drivetrain.set_driver_centric((-2, 0), 0)),
+            command.TargetAuto(
+                Robot.arm,
+                Robot.grabber,
+                Robot.intake,
+                Sensors.odometry,
+                target=config.scoring_locations["standard"],
+            ).generate(),
+        ],
+    ),
     ParallelRaceGroup(
         command.autonomous.custom_pathing.GyroBalance(
             Robot.drivetrain,
             vx=2,  # Initial velocity of drivetrain while balancing (m/s)
+            rever=True,
         ),
-        command.TargetAuto(
-            Robot.arm,
-            Robot.grabber,
-            Robot.intake,
-            Sensors.odometry,
-            target=config.scoring_locations["standard"],
-        ).generate(),
-        WaitCommand(7),
+        WaitCommand(5),
     ),
     InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0, 0), 0)),
     InstantCommand(lambda: Robot.drivetrain.x_mode()),
