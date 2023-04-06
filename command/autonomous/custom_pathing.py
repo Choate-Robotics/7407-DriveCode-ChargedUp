@@ -43,10 +43,12 @@ class GyroBalance(SubsystemCommand[Drivetrain]):
 
         self.step_1 = False
         self.finished = False
+        self.start_delay = 0
 
     def initialize(self) -> None:
         self.step_1 = False
         self.finished = False
+        self.start_delay = 0
         SmartDashboard.putBoolean("Climbed", False)
         ...
 
@@ -56,7 +58,7 @@ class GyroBalance(SubsystemCommand[Drivetrain]):
         if self.step_1:
             self.subsystem.set_driver_centric((-0.4, 0), 0)
         else:
-            self.subsystem.set_driver_centric((-1.4, 0), 0)
+            self.subsystem.set_driver_centric((-2, 0), 0)
 
     def isFinished(self) -> bool:
         pitch = math.degrees(self.subsystem.gyro.get_robot_pitch())
@@ -66,11 +68,12 @@ class GyroBalance(SubsystemCommand[Drivetrain]):
             "Auto Pitch Gyro", str(math.degrees(self.subsystem.gyro.get_robot_pitch()))
         )
 
-        if abs(pitch) > 15:
+        if abs(pitch) > 13 and self.start_delay == 0:
             self.step_1 = True
+            self.start_delay = time.time()
             print("FINISHED STEP 1")
 
-        if self.step_1 and abs(pitch) < 13:
+        if self.step_1 and abs(pitch) < 9.5 and (time.time() - self.start_delay) > 1:
             self.finished = True
 
         return self.finished

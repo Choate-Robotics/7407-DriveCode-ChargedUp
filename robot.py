@@ -253,10 +253,10 @@ class _Robot(wpilib.TimedRobot):
             print(e)
 
     def teleopInit(self):
-        Robot.drivetrain.n_front_left.zero()
-        Robot.drivetrain.n_front_right.zero()
-        Robot.drivetrain.n_back_left.zero()
-        Robot.drivetrain.n_back_right.zero()
+        # Robot.drivetrain.n_front_left.zero()
+        # Robot.drivetrain.n_front_right.zero()
+        # Robot.drivetrain.n_back_left.zero()
+        # Robot.drivetrain.n_back_right.zero()
 
         # Robot.drivetrain.n_front_left.m_turn.set_sensor_position(0)
         # Robot.drivetrain.n_front_right.m_turn.set_sensor_position(0)
@@ -298,6 +298,10 @@ class _Robot(wpilib.TimedRobot):
                     ),
                 )
             )
+            Robot.drivetrain.n_front_left.zero()
+            Robot.drivetrain.n_front_right.zero()
+            Robot.drivetrain.n_back_left.zero()
+            Robot.drivetrain.n_back_right.zero()
         else:
             commands2.CommandScheduler.getInstance().schedule(
                 command.Target(
