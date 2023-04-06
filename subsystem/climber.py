@@ -74,7 +74,6 @@ class Climber(Subsystem):
             self.pivoted = True
             self.latch_enable()
             self.set_motor_rotations(constants.climber_pivot_rotations)
-            print("PIVOTING CLIMBER")
 
     def unpivot(self):
         if self.climber_active and self.pivoted:

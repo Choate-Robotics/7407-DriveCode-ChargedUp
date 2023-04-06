@@ -14,7 +14,6 @@ from wpimath.controller import (
 from wpimath.geometry import Pose2d, Rotation2d
 from wpimath.trajectory import Trajectory, TrapezoidProfileRadians
 
-import constants
 from command.autonomous.trajectory import CustomTrajectory
 from robot_systems import Sensors
 from subsystem import Drivetrain
@@ -36,46 +35,48 @@ class GyroBalance(SubsystemCommand[Drivetrain]):
         self,
         subsystem: Drivetrain,
         vx,
-        gyro_threshold=math.radians(3),
-        gyro_threshold_pid=0.1,
     ):
         super().__init__(subsystem)
         self.subsystem = subsystem
         self.vx = vx
-        self.vx2_cap = 0.8
-        self.gyro_threshold = gyro_threshold
-        self.gyro_threshold_pid = gyro_threshold_pid
-        self.times_zeroed = 0
-        self.currently_zeroed = 0
-        self.pid_active = False
+        self.vx2_cap = 0.4
 
-        self.gyro_pid: PIDController = PIDController(
-            1, 0, 0.01, period=constants.period
-        )
+        self.step_1 = False
         self.finished = False
 
     def initialize(self) -> None:
-        self.not_zeroed = None
+        self.step_1 = False
         self.finished = False
+        SmartDashboard.putBoolean("Climbed", False)
         ...
 
     def execute(self) -> None:
-        if self.not_zeroed:
-            self.subsystem.set_driver_centric((0.4, 0), 0)
+        SmartDashboard.putBoolean("STEP 1", self.step_1)
+
+        if self.step_1:
+            self.subsystem.set_driver_centric((-0.4, 0), 0)
         else:
-            self.not_zeroed = True
-            self.subsystem.set_driver_centric((-2, 0), 0)
+            self.subsystem.set_driver_centric((-1.4, 0), 0)
 
     def isFinished(self) -> bool:
-        pitch = self.subsystem.gyro.get_robot_pitch()
+        pitch = math.degrees(self.subsystem.gyro.get_robot_pitch())
+        print(pitch)
 
-        if self.not_zeroed:
-            return True
-        elif abs(pitch) > math.radians(4):
-            self.not_zeroed = True
-            return False
+        SmartDashboard.putString(
+            "Auto Pitch Gyro", str(math.degrees(self.subsystem.gyro.get_robot_pitch()))
+        )
+
+        if abs(pitch) > 22:
+            self.step_1 = True
+            print("FINISHED STEP 1")
+
+        if self.step_1 and abs(pitch) < 18:
+            self.finished = True
+
+        return self.finished
 
     def end(self, interrupted: bool = False) -> None:
+        SmartDashboard.putBoolean("Climbed", True)
         if not interrupted:
             self.subsystem.set_driver_centric((0, 0), 0)
         ...

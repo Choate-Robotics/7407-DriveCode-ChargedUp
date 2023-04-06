@@ -41,6 +41,9 @@ class _Robot(wpilib.TimedRobot):
         for i in range(10):
             Robot.climber.climber_motor.motor.setInverted(False)
 
+        for i in range(10):
+            Robot.arm.motor_extend.motor.setInverted(True)
+
         Sensors.pv_controller = None
         Sensors.odometry = FieldOdometry(Robot.drivetrain, None)
         Sensors.gyro = Robot.drivetrain.gyro
@@ -93,6 +96,8 @@ class _Robot(wpilib.TimedRobot):
         self.auto_selection.addOption(
             "2 WITH GUARD RED", autonomous.red_two_piece_with_guard
         )
+
+        self.auto_selection.addOption("NEW_BALANCE", autonomous.new_balance)
 
         self.auto_selection.addOption(
             "Do Nothing", AutoRoutine(Pose2d(0, 0, 0), InstantCommand(lambda: None))
@@ -233,6 +238,14 @@ class _Robot(wpilib.TimedRobot):
         SmartDashboard.putNumber(
             "BACK RIGHT", Robot.drivetrain.n_back_right.encoder.getAbsolutePosition()
         )
+
+        # SmartDashboard.putNumber(
+        #     "Gyro Pitch", Robot.drivetrain.gyro.get_robot_pitch()
+        # )
+
+        # SmartDashboard.putString(
+        #     "Raw Gyro", str(Robot.drivetrain.gyro._gyro.getRawGyro())
+        # )
 
         try:
             commands2.CommandScheduler.getInstance().run()

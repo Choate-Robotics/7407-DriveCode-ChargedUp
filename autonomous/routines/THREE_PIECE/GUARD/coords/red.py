@@ -1,4 +1,3 @@
-import config
 from units.SI import meters, radians
 
 coord = (meters, meters, radians)
@@ -7,7 +6,7 @@ path = (coord, waypoints, coord)
 
 blue_team = False
 
-initial: coord = (1.55, config.field_width - 0.51, 0)
+initial: coord = (1.55, 7.495, 0)
 
 go_get_first_cube: path = (
     initial,
