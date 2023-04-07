@@ -126,7 +126,7 @@ auto = SequentialCommandGroup(
                 InstantCommand(lambda: Robot.grabber.set_output(0)),
             ),
             SequentialCommandGroup(
-                WaitCommand(1.7),
+                WaitCommand(2.1),
                 ParallelCommandGroup(
                     command.SetArm(
                         Robot.arm,
@@ -134,7 +134,7 @@ auto = SequentialCommandGroup(
                         config.scoring_locations["high_auto_back_cube"].arm_angle,
                     ),
                     SequentialCommandGroup(
-                        WaitCommand(0.6),
+                        WaitCommand(0.3),
                         command.SetGrabber(
                             Robot.grabber,
                             config.scoring_locations["high_auto_back_cube"].wrist_angle,
