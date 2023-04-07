@@ -149,7 +149,7 @@ auto = SequentialCommandGroup(
     InstantCommand(lambda: Robot.grabber.open_claw()),
     WaitCommand(0.25),
     ParallelDeadlineGroup(
-        deadline=SequentialCommandGroup(path_3, WaitCommand(0)),
+        deadline=path_3,
         commands=[
             SequentialCommandGroup(
                 ParallelDeadlineGroup(
@@ -171,14 +171,15 @@ auto = SequentialCommandGroup(
                     Robot.grabber,
                     Robot.intake,
                     Sensors.odometry,
-                    target=config.scoring_locations["cube_intake_auto"],
+                    target=config.scoring_locations[
+                        "cube_intake_auto_but_slightly_higher"
+                    ],
                 ).generate(),
             )
         ],
     ),
     InstantCommand(lambda: Robot.grabber.disengage_claw()),
     InstantCommand(lambda: Robot.grabber.set_output(0)),
-    WaitCommand(0.1),
     ParallelDeadlineGroup(
         deadline=path_4,
         commands=[
@@ -188,7 +189,19 @@ auto = SequentialCommandGroup(
                 InstantCommand(lambda: Robot.grabber.set_output(0)),
             ),
             SequentialCommandGroup(
-                WaitCommand(1.8),
+                ParallelDeadlineGroup(
+                    deadline=WaitCommand(1),
+                    commands=[
+                        command.TargetAuto(
+                            Robot.arm,
+                            Robot.grabber,
+                            Robot.intake,
+                            Sensors.odometry,
+                            target=config.scoring_locations["cube_intake_auto_2"],
+                        ).generate()
+                    ],
+                ),
+                WaitCommand(0.8),
                 ParallelCommandGroup(
                     command.SetArm(
                         Robot.arm,

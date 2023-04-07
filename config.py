@@ -313,7 +313,7 @@ scoring_locations: dict[str, TargetData] = {
     "cube_intake_auto_but_slightly_higher": TargetData(
         target_pose=None,
         arm_angle=math.radians(54.5),
-        arm_length=1 * units.SI.inches_to_meters,
+        arm_length=0 * units.SI.inches_to_meters,
         wrist_angle=math.radians(100),
         intake_enabled=True,
         claw_scoring=False,
@@ -331,7 +331,7 @@ scoring_locations: dict[str, TargetData] = {
     "cube_intake_auto_2": TargetData(
         target_pose=None,
         arm_angle=math.radians(74.5),
-        arm_length=1 * units.SI.inches_to_meters,
+        arm_length=0 * units.SI.inches_to_meters,
         wrist_angle=math.radians(100),
         intake_enabled=True,
         claw_scoring=False,

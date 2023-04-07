@@ -13,7 +13,7 @@ import command
 import config
 import constants
 from autonomous.auto_routine import AutoRoutine
-from autonomous.routines.THREE_PIECE.GUARD.coords.red import (
+from autonomous.routines.THREE_PIECE.GUARD.coords.blue import (
     blue_team,
     come_back_with_first_cube,
     come_back_with_second_cube,
