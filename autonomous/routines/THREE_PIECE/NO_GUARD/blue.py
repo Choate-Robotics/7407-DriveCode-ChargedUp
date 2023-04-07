@@ -49,8 +49,8 @@ path_2 = FollowPathCustom(
         start_pose=Pose2d(*come_back_with_first_cube[0]),
         waypoints=[Translation2d(*x) for x in come_back_with_first_cube[1]],
         end_pose=Pose2d(*come_back_with_first_cube[2]),
-        max_velocity=4,
-        max_accel=2.5,
+        max_velocity=3.7,
+        max_accel=2.3,
         start_velocity=0,
         end_velocity=0,
     ),
@@ -149,7 +149,7 @@ auto = SequentialCommandGroup(
     InstantCommand(lambda: Robot.grabber.open_claw()),
     WaitCommand(0.25),
     ParallelDeadlineGroup(
-        deadline=SequentialCommandGroup(path_3, WaitCommand(0)),
+        deadline=path_3,
         commands=[
             SequentialCommandGroup(
                 ParallelDeadlineGroup(
@@ -171,14 +171,15 @@ auto = SequentialCommandGroup(
                     Robot.grabber,
                     Robot.intake,
                     Sensors.odometry,
-                    target=config.scoring_locations["cube_intake_auto"],
+                    target=config.scoring_locations[
+                        "cube_intake_auto_but_slightly_higher"
+                    ],
                 ).generate(),
             )
         ],
     ),
     InstantCommand(lambda: Robot.grabber.disengage_claw()),
     InstantCommand(lambda: Robot.grabber.set_output(0)),
-    WaitCommand(0.1),
     ParallelDeadlineGroup(
         deadline=path_4,
         commands=[
@@ -188,7 +189,19 @@ auto = SequentialCommandGroup(
                 InstantCommand(lambda: Robot.grabber.set_output(0)),
             ),
             SequentialCommandGroup(
-                WaitCommand(1.8),
+                ParallelDeadlineGroup(
+                    deadline=WaitCommand(1),
+                    commands=[
+                        command.TargetAuto(
+                            Robot.arm,
+                            Robot.grabber,
+                            Robot.intake,
+                            Sensors.odometry,
+                            target=config.scoring_locations["cube_intake_auto_2"],
+                        ).generate()
+                    ],
+                ),
+                WaitCommand(0.8),
                 ParallelCommandGroup(
                     command.SetArm(
                         Robot.arm,

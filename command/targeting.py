@@ -126,9 +126,14 @@ class TargetAuto:
         self.command = None
 
     def generate(self) -> ParallelCommandGroup:
-        if self.target.intake_enabled and self.intake_on:
+        if self.target.intake_enabled and self.intake_on and not self.target.intake_off:
             self.intake_command = command.IntakeEnable(
                 self.intake, intake_reversed=self.target.intake_reversed
+            )
+        elif self.intake_on and self.target.intake_off:
+            self.intake_command = SequentialCommandGroup(
+                InstantCommand(lambda: self.intake.intake_piston.extend()),
+                InstantCommand(lambda: self.intake.intake_motor.set_raw_output(0)),
             )
         elif self.intake_on:
             self.intake_command = command.IntakeDisable(self.intake)

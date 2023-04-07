@@ -310,6 +310,15 @@ scoring_locations: dict[str, TargetData] = {
         grabber_no_grab=False,
         no_intake=False,
     ),
+    "cube_intake_auto_but_slightly_higher": TargetData(
+        target_pose=None,
+        arm_angle=math.radians(54.5),
+        arm_length=1 * units.SI.inches_to_meters,
+        wrist_angle=math.radians(100),
+        intake_enabled=True,
+        claw_scoring=False,
+        claw_picking=True,
+    ),
     "cube_intake_auto": TargetData(
         target_pose=None,
         arm_angle=math.radians(74.5),
@@ -318,6 +327,16 @@ scoring_locations: dict[str, TargetData] = {
         intake_enabled=True,
         claw_scoring=False,
         claw_picking=True,
+    ),
+    "cube_intake_auto_2": TargetData(
+        target_pose=None,
+        arm_angle=math.radians(74.5),
+        arm_length=1 * units.SI.inches_to_meters,
+        wrist_angle=math.radians(100),
+        intake_enabled=True,
+        claw_scoring=False,
+        claw_picking=True,
+        intake_off=True,
     ),
     "standard": TargetData(
         target_pose=None,
