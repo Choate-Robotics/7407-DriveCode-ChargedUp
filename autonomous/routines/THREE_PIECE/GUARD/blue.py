@@ -153,7 +153,7 @@ auto = SequentialCommandGroup(
         commands=[
             SequentialCommandGroup(
                 ParallelDeadlineGroup(
-                    deadline=WaitCommand(0.8),
+                    deadline=WaitCommand(1.7),
                     commands=[
                         command.TargetAuto(
                             Robot.arm,
@@ -164,8 +164,6 @@ auto = SequentialCommandGroup(
                         ).generate()
                     ],
                 ),
-                command.IntakeEnable(Robot.intake),
-                WaitCommand(0.7),
                 command.TargetAuto(
                     Robot.arm,
                     Robot.grabber,
@@ -178,19 +176,17 @@ auto = SequentialCommandGroup(
             )
         ],
     ),
-    InstantCommand(lambda: Robot.grabber.disengage_claw()),
-    InstantCommand(lambda: Robot.grabber.set_output(0)),
     ParallelDeadlineGroup(
         deadline=path_4,
         commands=[
             SequentialCommandGroup(
-                WaitCommand(0.5),
+                WaitCommand(0.8),
                 InstantCommand(lambda: Robot.grabber.disengage_claw()),
                 InstantCommand(lambda: Robot.grabber.set_output(0)),
             ),
             SequentialCommandGroup(
                 ParallelDeadlineGroup(
-                    deadline=WaitCommand(1),
+                    deadline=WaitCommand(1.2),
                     commands=[
                         command.TargetAuto(
                             Robot.arm,
@@ -201,7 +197,7 @@ auto = SequentialCommandGroup(
                         ).generate()
                     ],
                 ),
-                WaitCommand(0.8),
+                WaitCommand(0.6),
                 ParallelCommandGroup(
                     command.SetArm(
                         Robot.arm,
@@ -220,7 +216,6 @@ auto = SequentialCommandGroup(
             ),
         ],
     ),
-    InstantCommand(lambda: Robot.grabber.set_output(-0.3)),
     InstantCommand(lambda: Robot.grabber.open_claw()),
     WaitCommand(1),
     command.TargetAuto(
