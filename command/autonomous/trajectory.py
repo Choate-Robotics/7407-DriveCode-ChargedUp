@@ -1,5 +1,5 @@
 from wpimath.geometry import Pose2d, Translation2d
-from wpimath.trajectory import TrajectoryGenerator, TrajectoryConfig
+from wpimath.trajectory import TrajectoryConfig, TrajectoryGenerator
 
 
 class CustomTrajectory:
@@ -31,6 +31,7 @@ class CustomTrajectory:
         max_accel: float,
         start_velocity: float = 0,
         end_velocity: float = 0,
+        rev: bool = False,
     ):
         self.start_pose = start_pose
         self.waypoints = waypoints
@@ -39,6 +40,7 @@ class CustomTrajectory:
         self.max_accel = max_accel
         self.start_velocity = start_velocity
         self.end_velocity = end_velocity
+        self.rev = rev
 
         config = TrajectoryConfig(
             self.max_velocity,
@@ -46,6 +48,7 @@ class CustomTrajectory:
         )
         config.setStartVelocity(self.start_velocity)
         config.setEndVelocity(self.end_velocity)
+        config.setReversed(self.rev)
 
         self.trajectory = TrajectoryGenerator.generateTrajectory(
             start=self.start_pose,

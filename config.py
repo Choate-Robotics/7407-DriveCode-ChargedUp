@@ -203,7 +203,7 @@ scoring_locations: dict[str, TargetData] = {
     ),
     "high_auto_back_cube": TargetData(
         target_pose=None,
-        arm_angle=math.radians(-53.7),
+        arm_angle=math.radians(-49.7),
         arm_length=1.01,
         wrist_angle=math.radians(-30),
         intake_enabled=False,

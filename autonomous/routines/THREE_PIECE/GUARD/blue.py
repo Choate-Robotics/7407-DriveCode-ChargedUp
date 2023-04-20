@@ -39,6 +39,7 @@ path_1 = FollowPathCustom(
         max_accel=max_accel,
         start_velocity=0,
         end_velocity=0,
+        rev=False,
     ),
     period=constants.period,
 )
@@ -53,6 +54,7 @@ path_2 = FollowPathCustom(
         max_accel=2.3,
         start_velocity=0,
         end_velocity=0,
+        rev=True,
     ),
     period=constants.period,
 )
@@ -67,6 +69,7 @@ path_3 = FollowPathCustom(
         max_accel=2.5,
         start_velocity=0,
         end_velocity=0,
+        rev=False,
     ),
     period=constants.period,
 )
@@ -81,6 +84,7 @@ path_4 = FollowPathCustom(
         max_accel=2.6,
         start_velocity=0,
         end_velocity=0,
+        rev=True,
     ),
     period=constants.period,
 )
@@ -118,7 +122,7 @@ auto = SequentialCommandGroup(
         ],
     ),
     ParallelDeadlineGroup(
-        deadline=path_2,
+        deadline=SequentialCommandGroup(path_2, WaitCommand(0.5)),
         commands=[
             SequentialCommandGroup(
                 WaitCommand(0.5),
@@ -177,7 +181,7 @@ auto = SequentialCommandGroup(
         ],
     ),
     ParallelDeadlineGroup(
-        deadline=path_4,
+        deadline=SequentialCommandGroup(path_4, WaitCommand(0.1)),
         commands=[
             SequentialCommandGroup(
                 WaitCommand(0.8),
