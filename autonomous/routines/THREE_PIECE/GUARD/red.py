@@ -184,11 +184,18 @@ auto = SequentialCommandGroup(
         deadline=SequentialCommandGroup(path_4, WaitCommand(0.1)),
         commands=[
             SequentialCommandGroup(
-                WaitCommand(0.8),
+                InstantCommand(lambda: Robot.intake.intake_motor.set_raw_output(0)),
+                InstantCommand(lambda: Robot.intake.intake_piston.retract()),
+                WaitCommand(0.4),
+                InstantCommand(lambda: Robot.intake.intake_piston.extend()),
+                InstantCommand(lambda: Robot.intake.intake_motor.set_raw_output(0.1)),
+                WaitCommand(1),
+                InstantCommand(lambda: Robot.intake.intake_motor.set_raw_output(0.1)),
                 InstantCommand(lambda: Robot.grabber.disengage_claw()),
                 InstantCommand(lambda: Robot.grabber.set_output(0)),
             ),
             SequentialCommandGroup(
+                WaitCommand(0.6),
                 ParallelDeadlineGroup(
                     deadline=WaitCommand(1.2),
                     commands=[
@@ -201,7 +208,6 @@ auto = SequentialCommandGroup(
                         ).generate()
                     ],
                 ),
-                WaitCommand(0.6),
                 ParallelCommandGroup(
                     command.SetArm(
                         Robot.arm,
