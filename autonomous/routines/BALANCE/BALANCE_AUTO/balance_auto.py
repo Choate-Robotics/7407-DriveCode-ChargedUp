@@ -56,6 +56,7 @@ auto = SequentialCommandGroup(
         ],
     ),
     InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0, 0), 0)),
+    WaitCommand(1.5),
     ParallelRaceGroup(
         command.autonomous.custom_pathing.GyroBalance(
             Robot.drivetrain,
