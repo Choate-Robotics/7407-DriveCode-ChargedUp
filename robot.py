@@ -84,7 +84,7 @@ class _Robot(wpilib.TimedRobot):
         # self.auto_selection.addOption(
         #     "3 WITH GUARD BALANCE BLUE", autonomous.blue_three_piece_balance_guard
         # )
-        # 
+        #
         # self.auto_selection.addOption(
         #     "3 WITH GUARD BALANCE RED", autonomous.red_three_piece_balance_guard
         # )
