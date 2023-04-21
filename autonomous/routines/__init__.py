@@ -15,10 +15,10 @@ from autonomous.routines.THREE_PIECE.NO_GUARD.red import (
     routine as red_three_piece_no_guard,
 )
 from autonomous.routines.THREE_PIECE_BALANCE.GUARD.blue import (
-    routine as blue_three_piece_balance_guard
+    routine as blue_three_piece_balance_guard,
 )
 from autonomous.routines.THREE_PIECE_BALANCE.GUARD.red import (
-    routine as red_three_piece_balance_guard
+    routine as red_three_piece_balance_guard,
 )
 from autonomous.routines.TWO_PIECE.NORMAL.GUARD.blue import (
     routine as blue_two_piece_with_guard,

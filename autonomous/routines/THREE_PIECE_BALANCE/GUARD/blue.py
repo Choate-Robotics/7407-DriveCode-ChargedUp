@@ -4,7 +4,8 @@ from commands2 import (
     InstantCommand,
     ParallelCommandGroup,
     ParallelDeadlineGroup,
-    ParallelRaceGroup, SequentialCommandGroup,
+    ParallelRaceGroup,
+    SequentialCommandGroup,
     WaitCommand,
 )
 from wpimath.geometry import Pose2d, Translation2d
@@ -241,10 +242,9 @@ auto = SequentialCommandGroup(
             target=config.scoring_locations["high_auto_back"],
         ).generate(),
         SequentialCommandGroup(
-            WaitCommand(1),
-            InstantCommand(lambda: Robot.grabber.open_claw())
-        )
-    )
+            WaitCommand(1), InstantCommand(lambda: Robot.grabber.open_claw())
+        ),
+    ),
 )
 
 routine = AutoRoutine(Pose2d(*initial), auto, blue_team=blue_team)

@@ -21,7 +21,7 @@ from units.SI import meters, meters_per_second, radians_per_second
 
 
 def curve_abs(x):
-    return x ** 2
+    return x**2
 
 
 def curve(x):
@@ -94,14 +94,14 @@ class GyroBalance(SubsystemCommand[Drivetrain]):
 
 class AutoBalanceNew(SubsystemCommand[Drivetrain]):
     def __init__(
-            self,
-            subsystem: Drivetrain,
-            vx,
-            vx2,
-            omega,
-            gyro_threshold=math.radians(6),
-            gyro_threshold_2=0.195,
-            times_before_stop=1,
+        self,
+        subsystem: Drivetrain,
+        vx,
+        vx2,
+        omega,
+        gyro_threshold=math.radians(6),
+        gyro_threshold_2=0.195,
+        times_before_stop=1,
     ):
         super().__init__(subsystem)
         self.subsystem = subsystem
@@ -126,10 +126,10 @@ class AutoBalanceNew(SubsystemCommand[Drivetrain]):
         SmartDashboard.putBoolean("REDUCED SPEED", self.reduced_speed)
 
         if (
-                self.times_zeroed > 0
-                and self.currently_zeroed == 0
-                and abs(self.subsystem.gyro.get_robot_pitch()) > self.gyro_threshold_2
-                and not self.reduced_speed
+            self.times_zeroed > 0
+            and self.currently_zeroed == 0
+            and abs(self.subsystem.gyro.get_robot_pitch()) > self.gyro_threshold_2
+            and not self.reduced_speed
         ):
             self.reduced_speed = True
 
@@ -159,14 +159,14 @@ class AutoBalanceNew(SubsystemCommand[Drivetrain]):
 
 class AutoBalance(SubsystemCommand[Drivetrain]):
     def __init__(
-            self,
-            subsystem: Drivetrain,
-            vx,
-            vx2,
-            omega,
-            gyro_threshold=math.radians(3),
-            gyro_threshold_2=0.195,
-            times_before_stop=1,
+        self,
+        subsystem: Drivetrain,
+        vx,
+        vx2,
+        omega,
+        gyro_threshold=math.radians(3),
+        gyro_threshold_2=0.195,
+        times_before_stop=1,
     ):
         super().__init__(subsystem)
         self.subsystem = subsystem
@@ -191,10 +191,10 @@ class AutoBalance(SubsystemCommand[Drivetrain]):
         SmartDashboard.putBoolean("REDUCED SPEED", self.reduced_speed)
 
         if (
-                self.times_zeroed > 0
-                and self.currently_zeroed == 0
-                and abs(self.subsystem.gyro.get_robot_pitch()) > self.gyro_threshold_2
-                and not self.reduced_speed
+            self.times_zeroed > 0
+            and self.currently_zeroed == 0
+            and abs(self.subsystem.gyro.get_robot_pitch()) > self.gyro_threshold_2
+            and not self.reduced_speed
         ):
             self.reduced_speed = True
 
@@ -224,13 +224,13 @@ class AutoBalance(SubsystemCommand[Drivetrain]):
 
 class DriveOverChargeStation(SubsystemCommand[Drivetrain]):
     def __init__(
-            self,
-            subsystem: Drivetrain,
-            vx,
-            vy,
-            omega,
-            gyro_threshold=math.radians(5),
-            times_before_stop=2,
+        self,
+        subsystem: Drivetrain,
+        vx,
+        vy,
+        omega,
+        gyro_threshold=math.radians(5),
+        times_before_stop=2,
     ):
         super().__init__(subsystem)
         self.subsystem = subsystem
@@ -284,10 +284,10 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
     """
 
     def __init__(
-            self,
-            subsystem: SwerveDrivetrain,
-            trajectory: CustomTrajectory,
-            period: float = 0.02,
+        self,
+        subsystem: SwerveDrivetrain,
+        trajectory: CustomTrajectory,
+        period: float = 0.02,
     ):
         super().__init__(subsystem)
         self.trajectory: Trajectory = trajectory.trajectory
@@ -330,10 +330,10 @@ class FollowPathCustom(SubsystemCommand[SwerveDrivetrain]):
         )
 
         if (
-                abs(relative.x) < 0.03
-                and abs(relative.y < 0.03)
-                and abs(relative.rotation().degrees()) < 3
-                or self.t > self.duration
+            abs(relative.x) < 0.03
+            and abs(relative.y < 0.03)
+            and abs(relative.rotation().degrees()) < 3
+            or self.t > self.duration
         ):
             self.t = self.duration
             self.finished = True
@@ -379,12 +379,12 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
     """
 
     def __init__(
-            self,
-            subsystem: SwerveDrivetrain,
-            theta_f: radians,
-            threshold: float = math.radians(1),
-            max_angular_vel: float | None = None,
-            period: float = 0.02,
+        self,
+        subsystem: SwerveDrivetrain,
+        theta_f: radians,
+        threshold: float = math.radians(1),
+        max_angular_vel: float | None = None,
+        period: float = 0.02,
     ):
         super().__init__(subsystem)
 
@@ -425,8 +425,8 @@ class RotateInPlace(SubsystemCommand[SwerveDrivetrain]):
 
     def isFinished(self) -> bool:
         return (
-                abs(Sensors.odometry.getPose().rotation().radians() - self.theta_f)
-                < self.threshold
+            abs(Sensors.odometry.getPose().rotation().radians() - self.theta_f)
+            < self.threshold
         )
 
     def runsWhenDisabled(self) -> bool:
@@ -444,9 +444,9 @@ class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
     """
 
     def __init__(
-            self,
-            subsystem: SwerveDrivetrain,
-            target: Pose2d,
+        self,
+        subsystem: SwerveDrivetrain,
+        target: Pose2d,
     ):
         super().__init__(subsystem)
         self.target: Pose2d = target
@@ -491,9 +491,9 @@ class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
 
         horizontal_vel = (
             (
-                    self.horizontal_pid.calculate(abs(relative.x))
-                    * (1 if relative.x > 0 else -1)
-                    * (1 if self.target.rotation().radians() == 0 else -1)
+                self.horizontal_pid.calculate(abs(relative.x))
+                * (1 if relative.x > 0 else -1)
+                * (1 if self.target.rotation().radians() == 0 else -1)
             )
             if not self.horizontal_finished
             else 0
@@ -501,9 +501,9 @@ class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
 
         vertical_vel = (
             (
-                    self.vertical_pid.calculate(abs(relative.y))
-                    * (1 if relative.y > 0 else -1)
-                    * (1 if self.target.rotation().radians() == 0 else -1)
+                self.vertical_pid.calculate(abs(relative.y))
+                * (1 if relative.y > 0 else -1)
+                * (1 if self.target.rotation().radians() == 0 else -1)
             )
             if not self.vertical_finished
             else 0
@@ -537,9 +537,9 @@ class CustomRouting(SubsystemCommand[SwerveDrivetrain]):
 
     def isFinished(self) -> bool:
         return (
-                self.horizontal_finished
-                and self.vertical_finished
-                and self.angular_finished
+            self.horizontal_finished
+            and self.vertical_finished
+            and self.angular_finished
         )
 
     def end(self, interrupted: bool) -> None:
@@ -565,15 +565,15 @@ class CustomRoutingAuto(SubsystemCommand[SwerveDrivetrain]):
     """
 
     def __init__(
-            self,
-            subsystem: SwerveDrivetrain,
-            target: Pose2d,
-            max_x_velocity: meters_per_second = 1.5,
-            max_y_velocity: meters_per_second = 1.5,
-            max_angular_velocity: radians_per_second = 5,
-            theta_threshold: radians = math.radians(5),
-            x_threshold: meters = 0.06,
-            y_threshold: meters = 0.06,
+        self,
+        subsystem: SwerveDrivetrain,
+        target: Pose2d,
+        max_x_velocity: meters_per_second = 1.5,
+        max_y_velocity: meters_per_second = 1.5,
+        max_angular_velocity: radians_per_second = 5,
+        theta_threshold: radians = math.radians(5),
+        x_threshold: meters = 0.06,
+        y_threshold: meters = 0.06,
     ):
         super().__init__(subsystem)
         self.end_pose: Pose2d = target
@@ -614,13 +614,13 @@ class CustomRoutingAuto(SubsystemCommand[SwerveDrivetrain]):
         self.horizontal_finished = abs(relative.x) < self.x_threshold
         self.vertical_finished = abs(relative.y) < self.y_threshold
         self.angular_finished = (
-                abs(relative.rotation().radians()) < self.theta_threshold
+            abs(relative.rotation().radians()) < self.theta_threshold
         )
 
         horizontal_vel = (
             (
-                    self.horizontal_pid.calculate(abs(relative.x))
-                    * (1 if relative.x > 0 else -1)
+                self.horizontal_pid.calculate(abs(relative.x))
+                * (1 if relative.x > 0 else -1)
             )
             if not self.horizontal_finished
             else 0
@@ -628,8 +628,8 @@ class CustomRoutingAuto(SubsystemCommand[SwerveDrivetrain]):
 
         vertical_vel = (
             (
-                    self.vertical_pid.calculate(abs(relative.y))
-                    * (1 if relative.y > 0 else -1)
+                self.vertical_pid.calculate(abs(relative.y))
+                * (1 if relative.y > 0 else -1)
             )
             if not self.vertical_finished
             else 0
@@ -659,9 +659,9 @@ class CustomRoutingAuto(SubsystemCommand[SwerveDrivetrain]):
 
     def isFinished(self) -> bool:
         return (
-                self.horizontal_finished
-                and self.vertical_finished
-                and self.angular_finished
+            self.horizontal_finished
+            and self.vertical_finished
+            and self.angular_finished
         )
 
     def end(self, interrupted: bool) -> None:
