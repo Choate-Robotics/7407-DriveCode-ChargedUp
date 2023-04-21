@@ -4,7 +4,7 @@ from commands2 import (
     InstantCommand,
     ParallelCommandGroup,
     ParallelDeadlineGroup,
-    SequentialCommandGroup,
+    ParallelRaceGroup, SequentialCommandGroup,
     WaitCommand,
 )
 from wpimath.geometry import Pose2d, Translation2d
@@ -13,7 +13,7 @@ import command
 import config
 import constants
 from autonomous.auto_routine import AutoRoutine
-from autonomous.routines.THREE_PIECE.NO_GUARD.coords.red import (
+from autonomous.routines.THREE_PIECE_BALANCE.GUARD.coords.red import (
     blue_team,
     come_back_with_first_cube,
     come_back_with_second_cube,
@@ -181,7 +181,16 @@ auto = SequentialCommandGroup(
         ],
     ),
     ParallelDeadlineGroup(
-        deadline=SequentialCommandGroup(path_4, WaitCommand(0.1)),
+        deadline=SequentialCommandGroup(
+            ParallelRaceGroup(
+                command.autonomous.custom_pathing.GyroBalance(
+                    Robot.drivetrain,
+                    vx=2,  # Initial velocity of drivetrain while balancing (m/s)
+                    rever=True,
+                ),
+                WaitCommand(5),
+            )
+        ),
         commands=[
             SequentialCommandGroup(
                 InstantCommand(lambda: Robot.intake.intake_motor.set_raw_output(0)),
@@ -208,33 +217,34 @@ auto = SequentialCommandGroup(
                         ).generate()
                     ],
                 ),
-                ParallelCommandGroup(
-                    command.SetArm(
-                        Robot.arm,
-                        config.scoring_locations["mid_auto_back_cube"].arm_length,
-                        config.scoring_locations["mid_auto_back_cube"].arm_angle,
-                    ),
-                    SequentialCommandGroup(
-                        WaitCommand(0.6),
-                        command.SetGrabber(
+                ParallelDeadlineGroup(
+                    deadline=WaitCommand(2),
+                    commands=[
+                        command.TargetAuto(
+                            Robot.arm,
                             Robot.grabber,
-                            config.scoring_locations["mid_auto_back_cube"].wrist_angle,
-                            False,
-                        ),
-                    ),
+                            Robot.intake,
+                            Sensors.odometry,
+                            target=config.scoring_locations["standard"],
+                        ).generate()
+                    ],
                 ),
             ),
         ],
     ),
-    InstantCommand(lambda: Robot.grabber.open_claw()),
-    WaitCommand(.2),
-    command.TargetAuto(
-        Robot.arm,
-        Robot.grabber,
-        Robot.intake,
-        Sensors.odometry,
-        target=config.scoring_locations["standard"],
-    ).generate(),
+    ParallelCommandGroup(
+        command.TargetAuto(
+            Robot.arm,
+            Robot.grabber,
+            Robot.intake,
+            Sensors.odometry,
+            target=config.scoring_locations["high_auto_back"],
+        ).generate(),
+        SequentialCommandGroup(
+            WaitCommand(1),
+            InstantCommand(lambda: Robot.grabber.open_claw())
+        )
+    )
 )
 
 routine = AutoRoutine(Pose2d(*initial), auto, blue_team=blue_team)

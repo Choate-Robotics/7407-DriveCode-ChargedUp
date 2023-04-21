@@ -216,7 +216,7 @@ scoring_locations: dict[str, TargetData] = {
     ),
     "mid_auto_back_cube": TargetData(
         target_pose=None,
-        arm_angle=math.radians(-46.78),
+        arm_angle=math.radians(-54.78),
         arm_length=0.55,
         wrist_angle=math.radians(-27.09),
         intake_enabled=False,
@@ -229,7 +229,7 @@ scoring_locations: dict[str, TargetData] = {
     ),
     "middle_auto_back": TargetData(
         target_pose=None,
-        arm_angle=math.radians(-46.78),
+        arm_angle=math.radians(-54.78),
         arm_length=0.55,
         wrist_angle=math.radians(-27.09),
         intake_enabled=False,

@@ -227,7 +227,7 @@ auto = SequentialCommandGroup(
         ],
     ),
     InstantCommand(lambda: Robot.grabber.open_claw()),
-    WaitCommand(1),
+    WaitCommand(.2),
     command.TargetAuto(
         Robot.arm,
         Robot.grabber,

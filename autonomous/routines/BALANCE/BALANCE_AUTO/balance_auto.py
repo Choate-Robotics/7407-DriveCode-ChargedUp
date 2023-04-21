@@ -43,7 +43,7 @@ auto = SequentialCommandGroup(
     InstantCommand(lambda: Robot.grabber.open_claw()),
     WaitCommand(0.15),
     ParallelDeadlineGroup(
-        deadline=WaitCommand(3.3),
+        deadline=WaitCommand(2.9),
         commands=[
             InstantCommand(lambda: Robot.drivetrain.set_driver_centric((-2, 0), 0)),
             command.TargetAuto(
@@ -56,7 +56,7 @@ auto = SequentialCommandGroup(
         ],
     ),
     InstantCommand(lambda: Robot.drivetrain.set_robot_centric((0, 0), 0)),
-    WaitCommand(1.5),
+    WaitCommand(2),
     ParallelRaceGroup(
         command.autonomous.custom_pathing.GyroBalance(
             Robot.drivetrain,
