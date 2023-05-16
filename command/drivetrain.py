@@ -6,7 +6,7 @@ from commands2 import SequentialCommandGroup
 from robotpy_toolkit_7407.command import SubsystemCommand
 from wpimath.controller import PIDController
 from wpimath.geometry import Pose2d, Rotation2d
-
+from wpimath.filter import SlewRateLimiter
 import command
 import command.autonomous.custom_pathing
 import config
@@ -40,17 +40,30 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
         self.target_angle = math.atan2(
             math.sin(self.target_angle), math.cos(self.target_angle)
         )
-
+        self.ramp_limit_x = SlewRateLimiter(1.5, -1.5, 0.0)
+        self.ramp_limit_y = SlewRateLimiter(1.5, -1.5, 0.0)
     def execute(self) -> None:
+        
         dx, dy, d_theta = (
-            self.subsystem.axis_dx.value * (-1 if config.drivetrain_reversed else 1),
-            self.subsystem.axis_dy.value * (-1 if config.drivetrain_reversed else 1),
+            self.ramp_limit_x.calculate(self.subsystem.axis_dx.value * (-1 if config.drivetrain_reversed else 1)),
+            self.ramp_limit_y.calculate(self.subsystem.axis_dy.value * (-1 if config.drivetrain_reversed else 1)),
             -self.subsystem.axis_rotation.value,
         )
-
-        if abs(d_theta) < 0.15:
+        
+        if abs(d_theta) < 0.11:
             d_theta = 0
+            
+        if abs(dx) > abs(self.subsystem.axis_dx.value):
+            dx = self.ramp_limit_x.reset(self.subsystem.axis_dx.value)
+        
+        if abs(dy) > abs(self.subsystem.axis_dy.value):
+            dx = self.ramp_limit_y.reset(self.subsystem.axis_dy.value)
 
+        
+        # if abs(self.subsystem.axis_dy.value - dy) < .3:
+        #     dy = self.ramp_limit_y.reset(self.subsystem.axis_dy.value)
+
+        print("dx", dx)
         dx = curve(dx)
         dy = curve(dy)
         d_theta = curve(d_theta)
@@ -82,6 +95,8 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
         self.subsystem.n_front_right.set_motor_velocity(0)
         self.subsystem.n_back_left.set_motor_velocity(0)
         self.subsystem.n_back_right.set_motor_velocity(0)
+        self.ramp_limit_x.reset(0)
+        self.ramp_limit_y.reset(0)
 
     def isFinished(self) -> bool:
         return False
