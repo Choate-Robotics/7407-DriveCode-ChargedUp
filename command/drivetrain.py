@@ -40,28 +40,24 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
         self.target_angle = math.atan2(
             math.sin(self.target_angle), math.cos(self.target_angle)
         )
-        self.ramp_limit_x = SlewRateLimiter(1.5, -1.5, 0.0)
-        self.ramp_limit_y = SlewRateLimiter(1.5, -1.5, 0.0)
+        self.ramp_limit_x = SlewRateLimiter(constants.drivetrain_max_accel_tele, -constants.drivetrain_max_accel_tele, 0.0)
+        self.ramp_limit_y = SlewRateLimiter(constants.drivetrain_max_accel_tele, -constants.drivetrain_max_accel_tele, 0.0)
     def execute(self) -> None:
         
+        #might be better to add acceleration after scaling if its non-linear
+        
+        accel = True
+        
         dx, dy, d_theta = (
-            self.ramp_limit_x.calculate(self.subsystem.axis_dx.value * (-1 if config.drivetrain_reversed else 1)),
-            self.ramp_limit_y.calculate(self.subsystem.axis_dy.value * (-1 if config.drivetrain_reversed else 1)),
+            self.subsystem.axis_dx.value * (-1 if config.drivetrain_reversed else 1),
+            self.subsystem.axis_dy.value * (-1 if config.drivetrain_reversed else 1),
             -self.subsystem.axis_rotation.value,
         )
         
         if abs(d_theta) < 0.11:
             d_theta = 0
             
-        if abs(dx) > abs(self.subsystem.axis_dx.value):
-            dx = self.ramp_limit_x.reset(self.subsystem.axis_dx.value)
         
-        if abs(dy) > abs(self.subsystem.axis_dy.value):
-            dx = self.ramp_limit_y.reset(self.subsystem.axis_dy.value)
-
-        
-        # if abs(self.subsystem.axis_dy.value - dy) < .3:
-        #     dy = self.ramp_limit_y.reset(self.subsystem.axis_dy.value)
 
         print("dx", dx)
         dx = curve(dx)
@@ -82,6 +78,22 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
         #     self.subsystem.n_front_right.set_motor_angle(0)
         #     self.subsystem.n_back_left.set_motor_angle(0)
         #     self.subsystem.n_back_right.set_motor_angle(0)
+
+
+        if constants.drivetrain_accel:
+            dx_scale = dx
+            dy_scale = dy
+
+            dx = self.ramp_limit_x.calculate(dx)
+            dy = self.ramp_limit_y.calculate(dy)
+        
+            
+            if abs(dx) > abs(dx_scale):
+                dx = self.ramp_limit_x.reset(dx_scale)
+            
+            if abs(dy) > abs(dy_scale):
+                dx = self.ramp_limit_y.reset(dy_scale)
+
 
         if config.driver_centric:
             self.subsystem.set_driver_centric((-dy, dx), d_theta)
