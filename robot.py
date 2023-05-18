@@ -25,6 +25,7 @@ class _Robot(wpilib.TimedRobot):
         self.auto_selection: wpilib.SendableChooser | None = None
 
     def robotInit(self):
+        
         period = 0.05
         commands2.CommandScheduler.getInstance().setPeriod(period)
         Pneumatics.compressor.enableAnalog(90, 120)
