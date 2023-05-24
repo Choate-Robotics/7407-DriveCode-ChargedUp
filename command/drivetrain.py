@@ -6,7 +6,7 @@ from commands2 import SequentialCommandGroup
 from robotpy_toolkit_7407.command import SubsystemCommand
 from wpimath.controller import PIDController
 from wpimath.geometry import Pose2d, Rotation2d
-
+from wpimath.filter import SlewRateLimiter
 import command
 import command.autonomous.custom_pathing
 import config
@@ -40,17 +40,23 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
         self.target_angle = math.atan2(
             math.sin(self.target_angle), math.cos(self.target_angle)
         )
-
+        self.ramp_limit_x = SlewRateLimiter(constants.drivetrain_max_accel_tele, -constants.drivetrain_max_accel_tele, 0.0)
+        self.ramp_limit_y = SlewRateLimiter(constants.drivetrain_max_accel_tele, -constants.drivetrain_max_accel_tele, 0.0)
     def execute(self) -> None:
+        
+        #might be better to add acceleration after scaling if its non-linear
+                
         dx, dy, d_theta = (
             self.subsystem.axis_dx.value * (-1 if config.drivetrain_reversed else 1),
             self.subsystem.axis_dy.value * (-1 if config.drivetrain_reversed else 1),
             -self.subsystem.axis_rotation.value,
         )
-
-        if abs(d_theta) < 0.15:
+        
+        if abs(d_theta) < 0.11:
             d_theta = 0
+            
 
+        print("dx", dx)
         dx = curve(dx)
         dy = curve(dy)
         d_theta = curve(d_theta)
@@ -70,6 +76,22 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
         #     self.subsystem.n_back_left.set_motor_angle(0)
         #     self.subsystem.n_back_right.set_motor_angle(0)
 
+
+        if constants.drivetrain_accel:
+            dx_scale = dx
+            dy_scale = dy
+
+            dx = self.ramp_limit_x.calculate(dx)
+            dy = self.ramp_limit_y.calculate(dy)
+        
+            ## deceleration
+            if abs(dx) > abs(dx_scale):
+                dx = self.ramp_limit_x.reset(dx_scale)
+            
+            if abs(dy) > abs(dy_scale):
+                dx = self.ramp_limit_y.reset(dy_scale)
+
+
         if config.driver_centric:
             self.subsystem.set_driver_centric((-dy, dx), d_theta)
         elif self.driver_centric_reversed:
@@ -82,6 +104,8 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
         self.subsystem.n_front_right.set_motor_velocity(0)
         self.subsystem.n_back_left.set_motor_velocity(0)
         self.subsystem.n_back_right.set_motor_velocity(0)
+        self.ramp_limit_x.reset(0)
+        self.ramp_limit_y.reset(0)
 
     def isFinished(self) -> bool:
         return False
