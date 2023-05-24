@@ -32,3 +32,9 @@ from autonomous.routines.TWO_PIECE.NORMAL.NO_GUARD.blue import (
 from autonomous.routines.TWO_PIECE.NORMAL.NO_GUARD.red import (
     routine as red_two_piece_no_guard,
 )
+from autonomous.routines.THREE_PIECE_BALANCE_V2.GUARD.red import (
+    routine as red_three_balance
+)
+from autonomous.routines.THREE_PIECE_BALANCE_V2.GUARD.blue import (
+    routine as blue_three_balance
+)
