@@ -12,7 +12,7 @@ import config
 import constants
 from autonomous.auto_routine import AutoRoutine
 from oi.OI import OI
-from robot_systems import Pneumatics, Robot, Sensors
+from robot_systems import Pneumatics, Robot, Sensors, Leds
 from sensors import FieldOdometry, PV_Cameras
 from utils import logger
 
@@ -35,6 +35,9 @@ class _Robot(wpilib.TimedRobot):
         Robot.drivetrain.init()
         Robot.arm.init()
         Robot.grabber.init()
+        Leds.Default.init()
+        Leds.Default.setStatic(200, 0, 0)
+
 
         for i in range(10):
             Robot.intake.intake_motor.motor.setInverted(True)
@@ -126,7 +129,7 @@ class _Robot(wpilib.TimedRobot):
             Robot.drivetrain.n_back_right.initial_zero()
 
     def robotPeriodic(self):
-
+        Leds.Default.setRainbow()
         SmartDashboard.putBoolean("Climbed", Robot.climber.is_climbed())
         SmartDashboard.putNumber(
             "Robot Roll", math.degrees(Sensors.gyro.get_robot_roll())
