@@ -139,46 +139,46 @@ auto =  SequentialCommandGroup(
         ],
     ),
     ParallelDeadlineGroup(
-        deadline=SequentialCommandGroup(path_2, WaitCommand(0.5)),
+        deadline=SequentialCommandGroup(path_2, WaitCommand(1.5)),
         commands=[
             SequentialCommandGroup(
                 WaitCommand(0.5),
                 InstantCommand(lambda: Robot.grabber.disengage_claw()),
                 InstantCommand(lambda: Robot.grabber.set_output(0)),
+                ParallelDeadlineGroup(
+                    deadline = WaitCommand(.8),
+                    commands=[
+                        command.SetArm(
+                                Robot.arm,
+                                config.scoring_locations["mid_auto_back_cube"].arm_length,
+                                config.scoring_locations["high_auto_back_cube"].arm_angle,
+                            ),
+                        command.SetGrabber(
+                            Robot.grabber,
+                            config.scoring_locations["standard"].wrist_angle,
+                            False,
+                        ),
+                    ],
+                ),
                 command.SetArm(
-                        Robot.arm,
-                        config.scoring_locations["standard"].arm_length,
+                    Robot.arm,
+                        config.scoring_locations["high_auto_back_cube"].arm_length,
                         config.scoring_locations["high_auto_back_cube"].arm_angle,
-                    ),
-                command.SetGrabber(
+                ),
+                SequentialCommandGroup(
+                    WaitCommand(0.1),
+                    command.SetGrabber(
                     Robot.grabber,
                     config.scoring_locations["high_auto_back_cube"].wrist_angle,
                     False,
+                    ),
                 ),
             ),
         ],
     ),
 
-    ParallelDeadlineGroup(
-        deadline= WaitCommand(.9),
-        commands=[
-            command.SetArm(
-                Robot.arm,
-                    config.scoring_locations["high_auto_back_cube"].arm_length,
-                    config.scoring_locations["high_auto_back_cube"].arm_angle,
-                ),
-            SequentialCommandGroup(
-                WaitCommand(0.1),
-                command.SetGrabber(
-                    Robot.grabber,
-                    config.scoring_locations["high_auto_back_cube"].wrist_angle,
-                    False,
-                ),
-            InstantCommand(lambda: Robot.grabber.set_output(-0.3)),
-            InstantCommand(lambda: Robot.grabber.open_claw()),
-            ),
-        ]
-    ),
+    InstantCommand(lambda: Robot.grabber.set_output(-0.3)),
+    InstantCommand(lambda: Robot.grabber.open_claw()),
 
     WaitCommand(0.25),
     ParallelDeadlineGroup(

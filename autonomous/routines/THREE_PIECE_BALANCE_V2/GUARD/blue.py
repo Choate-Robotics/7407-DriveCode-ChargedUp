@@ -106,7 +106,7 @@ path_5 = FollowPathCustom(
 )
 
 
-auto = SequentialCommandGroup(
+auto =  SequentialCommandGroup(
     command.ZeroElevator(Robot.arm),
     command.ZeroShoulder(Robot.arm),
     command.ZeroWrist(Robot.grabber),
@@ -139,35 +139,47 @@ auto = SequentialCommandGroup(
         ],
     ),
     ParallelDeadlineGroup(
-        deadline=SequentialCommandGroup(path_2, WaitCommand(0.5)),
+        deadline=SequentialCommandGroup(path_2, WaitCommand(1.5)),
         commands=[
             SequentialCommandGroup(
                 WaitCommand(0.5),
                 InstantCommand(lambda: Robot.grabber.disengage_claw()),
                 InstantCommand(lambda: Robot.grabber.set_output(0)),
-            ),
-            SequentialCommandGroup(
-                WaitCommand(0.1),
-                ParallelCommandGroup(
-                    command.SetArm(
-                        Robot.arm,
-                        config.scoring_locations["high_auto_back_cube"].arm_length,
-                        config.scoring_locations["high_auto_back_cube"].arm_angle,
-                    ),
-                    SequentialCommandGroup(
-                        WaitCommand(0.3),
+                ParallelDeadlineGroup(
+                    deadline = WaitCommand(.8),
+                    commands=[
+                        command.SetArm(
+                                Robot.arm,
+                                config.scoring_locations["mid_auto_back_cube"].arm_length,
+                                config.scoring_locations["high_auto_back_cube"].arm_angle,
+                            ),
                         command.SetGrabber(
                             Robot.grabber,
-                            config.scoring_locations["high_auto_back_cube"].wrist_angle,
+                            config.scoring_locations["standard"].wrist_angle,
                             False,
                         ),
+                    ],
+                ),
+                command.SetArm(
+                    Robot.arm,
+                        config.scoring_locations["high_auto_back_cube"].arm_length,
+                        config.scoring_locations["high_auto_back_cube"].arm_angle,
+                ),
+                SequentialCommandGroup(
+                    WaitCommand(0.1),
+                    command.SetGrabber(
+                    Robot.grabber,
+                    config.scoring_locations["high_auto_back_cube"].wrist_angle,
+                    False,
                     ),
                 ),
             ),
         ],
     ),
+
     InstantCommand(lambda: Robot.grabber.set_output(-0.3)),
     InstantCommand(lambda: Robot.grabber.open_claw()),
+
     WaitCommand(0.25),
     ParallelDeadlineGroup(
         deadline=path_3,
@@ -198,7 +210,7 @@ auto = SequentialCommandGroup(
         ],
     ),
     ParallelDeadlineGroup(
-        deadline=SequentialCommandGroup(path_4, WaitCommand(0.1)),
+        deadline=SequentialCommandGroup(path_4, WaitCommand(0.4)),
         commands=[
             SequentialCommandGroup(
                 InstantCommand(lambda: Robot.intake.intake_motor.set_raw_output(0)),
@@ -212,7 +224,7 @@ auto = SequentialCommandGroup(
                 InstantCommand(lambda: Robot.grabber.set_output(0)),
             ),
             SequentialCommandGroup(
-                WaitCommand(0.6),
+                WaitCommand(0.4),
                 ParallelDeadlineGroup(
                     deadline=WaitCommand(1.2),
                     commands=[
@@ -243,6 +255,7 @@ auto = SequentialCommandGroup(
             ),
         ],
     ),
+   
     InstantCommand(lambda: Robot.grabber.open_claw()),
     ParallelDeadlineGroup(
         deadline=path_5,
@@ -259,6 +272,7 @@ auto = SequentialCommandGroup(
 
         ]
     ), 
+    InstantCommand(lambda: Robot.grabber.open_claw()),
     WaitCommand(0.2),
     command.TargetAuto(
         Robot.arm,
