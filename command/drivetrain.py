@@ -45,9 +45,7 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
     def execute(self) -> None:
         
         #might be better to add acceleration after scaling if its non-linear
-        
-        accel = True
-        
+                
         dx, dy, d_theta = (
             self.subsystem.axis_dx.value * (-1 if config.drivetrain_reversed else 1),
             self.subsystem.axis_dy.value * (-1 if config.drivetrain_reversed else 1),
@@ -57,7 +55,6 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
         if abs(d_theta) < 0.11:
             d_theta = 0
             
-        
 
         print("dx", dx)
         dx = curve(dx)
@@ -87,7 +84,7 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
             dx = self.ramp_limit_x.calculate(dx)
             dy = self.ramp_limit_y.calculate(dy)
         
-            
+            ## deceleration
             if abs(dx) > abs(dx_scale):
                 dx = self.ramp_limit_x.reset(dx_scale)
             
