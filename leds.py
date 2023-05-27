@@ -1,16 +1,60 @@
 from wpilib import AddressableLED, PowerDistribution
 import math
-class ALEDS:
+class ALEDS():
     '''Addressable LEDS from PWM RIO'''
     m_led: AddressableLED
+    active_mode: dict
+    speed: int
     # m_ledBuffer: AddressableLED.LEDData
+    class Type():
+        
+        def KStatic(r, g, b):
+            return {
+                'type': 1,
+                'color': {
+                    'r': r,
+                    'g': g,
+                    'b': b
+                }
+            }
+        
+        def KRainbow():
+            return {
+                'type': 2
+            }
+        
+        def KTrack(r1, g1, b1, r2, g2, b2):
+            return {
+                'type': 3,
+                'color': {
+                    'r1': r1,
+                    'g1': g1,
+                    'b1': b1,
+                    'r2': r2,
+                    'g2': g2,
+                    'b2': b2
+                }
+            }
+        
+        def KBlink(r,g,b):
+            return {
+                'type': 4,
+                'color': {
+                    'r': r,
+                    'g': g,
+                    'b': b
+                }
+            }
+        
     
     def __init__(self, id: int, size: int):
         self.size = size
         self.id = id
+        self.speed = 5
         
     def init(self):
         self.m_rainbowFirstPixelHue = 0
+        self.track_index
         self.m_led = AddressableLED(self.id)
         self.m_led.setLength(self.size)
         self.m_ledBuffer = self.m_led.LEDData
@@ -20,16 +64,41 @@ class ALEDS:
         self.m_led.setData(self.array)
         self.m_led.start()
         
+        
+    def enable(self):
+        self.m_led.start()
+    
     def disable(self):
         self.m_led.stop()
         
+    def run(self):
+        pass
+    
+    def setLED(self, type, brightness: float = 1.0, speed: int = 5):
+        self.active_mode = type
+        self.speed = speed
+        self.brightness = brightness
+                
+    def cycle(self):
+        match self.active_mode['type']:
+            case 1:
+                color = self.active_mode['type']
+                self._setStatic(color['r'], color['g'], color['b'])
+            case 2:
+                self._setRainbow()
+            case 3:
+                color = self.active_mode['type']
+                self._setTrack(color['r1'], color['g1'], color['b1'], color['r2'], color['g2'], color['b2'])
+            case 4:
+                color = self.active_mode['type']
+                self._setBlink(color['r'], color['g'], color['b']) 
         
-    def setStatic(self, red: int, green: int, blue: int):
+    def _setStatic(self, red: int, green: int, blue: int):
         for i in range(self.size):
             self.array[i].setRGB(red, green, blue)
         self.m_led.setData(self.array)
         
-    def setRainbow(self):
+    def _setRainbow(self):
         for i in range(len(self.array)):
             # Calculate the hue - hue is easier for rainbows because the color
             # shape is a circle so only one value needs to precess
@@ -38,15 +107,33 @@ class ALEDS:
             self.array[i].setHSV(hue, 255, 128)
     
         # Increase by to make the rainbow "move"
-        self.m_rainbowFirstPixelHue += 3
+        self.m_rainbowFirstPixelHue += self.speed
         # Check bounds
         self.m_rainbowFirstPixelHue %= 180
         self.m_led.setData(self.array)
         
-    def setTrack(self):
-        pass
+    def _setTrack(self, r1, g1, b1, r2, g2, b2):
+        for i in range(len(self.array)):
+            self.array[i].setRGB(r1, g1, b1)
+            
+        for i in range(3, len(self.array), 4):
+            self.array[i + self.track_index].setRGB(r2, g2, b2)
         
+        self.track_index += self.speed
         
+        if self.track_index < len(self.array): 
+            self.track_index = 0
+        
+        self.m_led.setData(self.array)
+        
+    def _setBlink(self, r,g,b):
+        if self.blink_index / 10 < .5:
+            for i in range(len(self.array)):
+                self.array[i].setRGB(r, g, b) 
+        
+        self.blink_index += self.speed
+        if self.blink_index < 10:
+            self.blink_index = 0      
 class SLEDS:
     '''Switchable LEDS from Switchable PDH'''
     
