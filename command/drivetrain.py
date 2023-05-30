@@ -4,7 +4,8 @@ import math
 import commands2
 from commands2 import SequentialCommandGroup
 from robotpy_toolkit_7407.command import SubsystemCommand
-from wpimath.controller import PIDController
+from wpimath.controller import PIDController, ProfiledPIDController
+from wpimath.trajectory import TrapezoidProfile
 from wpimath.geometry import Pose2d, Rotation2d
 from wpimath.filter import SlewRateLimiter
 import command
@@ -113,6 +114,47 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
     def runsWhenDisabled(self) -> bool:
         return False
 
+class DrivetrainDock(SubsystemCommand[Drivetrain]):
+    def __init__(self, subsystem: Drivetrain):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+        self.gyro = Sensors.gyro
+        
+    def initialize(self) -> None:
+        pass
+    
+    def execute(self) -> None:
+        self.subsystem.set_robot_centric((.75, 0), 0)
+    
+    def isFinished(self) -> bool:
+        return abs(self.gyro.get_robot_pitch()) > math.radians(15)
+    
+    def end(self, interrupted: bool) -> None:
+        pass
+        
+
+class DrivetrainEngage(SubsystemCommand[Drivetrain]):
+    def __init__(self, subsystem: Drivetrain):
+        super().__init__(subsystem)
+        self.subsystem = subsystem
+        self.gyro = Sensors.gyro
+        self.constraints = TrapezoidProfile.Constraints(1, .3)
+        self.pid = ProfiledPIDController(.3, .001, .3, self.constraints)
+        
+    def initialize(self) -> None:
+        self.pid.reset()
+        self.pid.setGoal(0)
+    
+    def execute(self) -> None:
+        dy = self.pid.calculate(self.gyro.get_robot_pitch())
+        self.subsystem.set_robot_centric((dy, 0), 0)
+    
+    def isFinished(self) -> bool:
+        return abs(self.gyro.get_robot_pitch()) < 3
+    
+    def end(self, interrupted: bool) -> None:
+        pass
+        
 
 class DrivetrainZero(SubsystemCommand[Drivetrain]):
     def __init__(self, subsystem: Drivetrain):
