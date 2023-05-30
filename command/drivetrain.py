@@ -147,7 +147,7 @@ class DrivetrainEngage(SubsystemCommand[Drivetrain]):
         self.pid.setTolerance(3, 0.3)
     
     def execute(self) -> None:
-        dy = self.pid.calculate(self.gyro.get_robot_pitch())
+        dy = self.pid.calculate(math.degrees(self.gyro.get_robot_pitch()))
         self.subsystem.set_robot_centric((dy, 0), 0)
     
     def isFinished(self) -> bool:
