@@ -204,7 +204,7 @@ class SetArm(SubsystemCommand[Arm]):
 
         # ------------ ELEVATOR ------------
 
-        elevator_maximum_power = 9
+        elevator_maximum_power = 11
 
         elevator_feed_forward = math.sin(math.pi / 2 - current_theta) * 1.1
 

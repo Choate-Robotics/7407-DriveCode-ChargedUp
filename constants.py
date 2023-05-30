@@ -171,7 +171,7 @@ drivetrain_max_target_accel: meters_per_second_squared = (
 ).asNumber(  # 10
     m / s
 )
-drivetrain_target_max_vel: meters_per_second = (2 * mile / hour).asNumber(m / s)  # 3
+drivetrain_target_max_vel: meters_per_second = (4 * mile / hour).asNumber(m / s)  # 3
 drivetrain_max_angular_vel: radians_per_second = (1 * rev / s).asNumber(rad / s)  # 5
 drivetrain_max_correction_vel: radians_per_second = (2 * rev / s).asNumber(rad / s)
 drivetrain_max_climb_vel: meters_per_second = (5 * mile / hour).asNumber(m / s)
@@ -222,12 +222,7 @@ ApriltagPositionDictRed = {
         (inches_to_meters * 18.22),
         Rotation3d(0.0, 0.0, math.pi),
     ),
-    8: Pose3d(
-        (field_length - inches_to_meters * 40.45),
-        (field_width - inches_to_meters * 42.19),
-        (inches_to_meters * 18.22),
-        Rotation3d(0.0, 0.0, math.pi),
-    ),
+    
 }
 
 ApriltagPositionDictBlue = {
