@@ -89,7 +89,7 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
                 dx = self.ramp_limit_x.reset(dx_scale)
             
             if abs(dy) > abs(dy_scale):
-                dx = self.ramp_limit_y.reset(dy_scale)
+                dy = self.ramp_limit_y.reset(dy_scale)
 
 
         if config.driver_centric:
