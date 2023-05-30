@@ -124,7 +124,7 @@ class DrivetrainDock(SubsystemCommand[Drivetrain]):
         pass
     
     def execute(self) -> None:
-        self.subsystem.set_robot_centric((.75, 0), 0)
+        self.subsystem.set_robot_centric((-.75, 0), 0)
     
     def isFinished(self) -> bool:
         return abs(self.gyro.get_robot_pitch()) > math.radians(15)
@@ -144,13 +144,14 @@ class DrivetrainEngage(SubsystemCommand[Drivetrain]):
     def initialize(self) -> None:
         self.pid.reset()
         self.pid.setGoal(0)
+        self.pid.setTolerance(3, 0.3)
     
     def execute(self) -> None:
         dy = self.pid.calculate(self.gyro.get_robot_pitch())
         self.subsystem.set_robot_centric((dy, 0), 0)
     
     def isFinished(self) -> bool:
-        return abs(self.gyro.get_robot_pitch()) < 3
+        return self.pid.atGoal()
     
     def end(self, interrupted: bool) -> None:
         pass
