@@ -74,11 +74,11 @@ class _Robot(wpilib.TimedRobot):
         )
 
         self.auto_selection.addOption(
-            "RED TWO BALANCE", autonomous.red_two_balance
+            "RED TWO BALANCE V2", autonomous.red_two_balance
         )
 
         self.auto_selection.addOption(
-            "BLUE TWO BALANCE", autonomous.blue_three_fast
+            "BLUE TWO BALANCE V2", autonomous.blue_two_balance
         )
 
         self.auto_selection.addOption(

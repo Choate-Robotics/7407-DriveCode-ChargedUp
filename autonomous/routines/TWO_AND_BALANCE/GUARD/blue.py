@@ -75,7 +75,7 @@ path_3 = FollowPathCustom(
 )
 
 path_4 = FollowPathCustom(
-    subsystem=Robot.drivetrain, 
+    subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
         start_pose=Pose2d(*go_get_second_cube[0]),
         waypoints=[Translation2d(*x) for x in go_to_balance[1]],
@@ -88,15 +88,6 @@ path_4 = FollowPathCustom(
     ),
     period=constants.period,
 )
-
-# auto = SequentialCommandGroup(
-#     path_1,
-#     path_2,
-#     path_3,
-#     path_4,
-#     path_5
-# )
-
 
 auto =  SequentialCommandGroup(
     command.ZeroElevator(Robot.arm),
@@ -242,5 +233,5 @@ auto =  SequentialCommandGroup(
     )
 )
 
-routine = AutoRoutine(Pose2d(*initial), auto, blue_team=blue_team)
 
+routine = AutoRoutine(Pose2d(*initial), auto, blue_team=blue_team)

@@ -89,22 +89,6 @@ path_4 = FollowPathCustom(
     period=constants.period,
 )
 
-path_5 = FollowPathCustom(
-    subsystem=Robot.drivetrain,
-    trajectory=CustomTrajectory(
-        start_pose=Pose2d(*go_to_balance[0]),
-        waypoints=[Translation2d(*x) for x in go_to_balance[1]],
-        end_pose=Pose2d(*go_to_balance[2]),
-        max_velocity=4.5,
-        max_accel=4,
-        start_velocity=0,
-        end_velocity=0,
-        rev=False,
-    ),
-    period=constants.period,
-)
-
-
 auto =  SequentialCommandGroup(
     command.ZeroElevator(Robot.arm),
     command.ZeroShoulder(Robot.arm),
