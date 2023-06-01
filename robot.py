@@ -74,6 +74,14 @@ class _Robot(wpilib.TimedRobot):
         )
 
         self.auto_selection.addOption(
+            "RED TWO BALANCE", autonomous.red_two_balance
+        )
+
+        self.auto_selection.addOption(
+            "BLUE TWO BALANCE", autonomous.blue_three_fast
+        )
+
+        self.auto_selection.addOption(
             "3 WITH GUARD BLUE", autonomous.blue_three_piece_with_guard
         )
 
@@ -98,11 +106,11 @@ class _Robot(wpilib.TimedRobot):
         )
 
         self.auto_selection.addOption(
-            "RED 3 GUARD BALANCE", autonomous.red_three_balance
+            "RED 3 GUARD FAST", autonomous.red_three_fast
         )
 
         self.auto_selection.addOption(
-            "BLUE 3 GUARD BALANCE", autonomous.blue_three_balance
+            "BLUE 3 GUARD FAST", autonomous.blue_three_fast
         )
 
         self.auto_selection.addOption(
@@ -116,7 +124,7 @@ class _Robot(wpilib.TimedRobot):
         self.auto_selection.addOption("NEW_BALANCE", autonomous.new_balance)
 
         self.auto_selection.addOption(
-            "Do Nothing", AutoRoutine(Pose2d(0, 0, 0), InstantCommand(lambda: None))
+            "Robot go brrr", AutoRoutine(Pose2d(0, 0, 0), InstantCommand(lambda: None))
         )
 
         wpilib.SmartDashboard.putData("Auto Mode", self.auto_selection)

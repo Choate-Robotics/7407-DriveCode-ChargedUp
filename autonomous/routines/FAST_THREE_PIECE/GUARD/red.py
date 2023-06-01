@@ -13,7 +13,7 @@ import command
 import config
 import constants
 from autonomous.auto_routine import AutoRoutine
-from autonomous.routines.THREE_PIECE_BALANCE_V2.GUARD.coords.blue import (
+from autonomous.routines.FAST_THREE_PIECE.GUARD.coords.red import (
     blue_team,
     come_back_with_first_cube,
     come_back_with_second_cube,
@@ -104,14 +104,6 @@ path_5 = FollowPathCustom(
     ),
     period=constants.period,
 )
-
-# auto = SequentialCommandGroup(
-#     path_1,
-#     path_2,
-#     path_3,
-#     path_4,
-#     path_5
-# )
 
 
 auto =  SequentialCommandGroup(
@@ -297,9 +289,8 @@ auto =  SequentialCommandGroup(
         Robot.intake,
         Sensors.odometry,
         target=config.scoring_locations["standard"],
-    ).generate(),
-    command.DrivetrainDock(Robot.drivetrain),
-    command.DrivetrainEngage(Robot.drivetrain)
+    ).generate()
 )
+
 
 routine = AutoRoutine(Pose2d(*initial), auto, blue_team=blue_team)

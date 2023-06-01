@@ -13,10 +13,9 @@ import command
 import config
 import constants
 from autonomous.auto_routine import AutoRoutine
-from autonomous.routines.THREE_PIECE_BALANCE_V2.GUARD.coords.red import (
+from autonomous.routines.TWO_AND_BALANCE.GUARD.coords.red import (
     blue_team,
     come_back_with_first_cube,
-    come_back_with_second_cube,
     go_get_first_cube,
     go_get_second_cube,
     go_to_balance,
@@ -78,9 +77,9 @@ path_3 = FollowPathCustom(
 path_4 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(*come_back_with_second_cube[0]),
-        waypoints=[Translation2d(*x) for x in come_back_with_second_cube[1]],
-        end_pose=Pose2d(*come_back_with_second_cube[2]),
+        start_pose=Pose2d(*go_get_second_cube[0]),
+        waypoints=[Translation2d(*x) for x in go_to_balance[1]],
+        end_pose=Pose2d(*go_to_balance[2]),
         max_velocity=4.5,
         max_accel=4,
         start_velocity=0,
@@ -139,7 +138,7 @@ auto =  SequentialCommandGroup(
         ],
     ),
     ParallelDeadlineGroup(
-        deadline=SequentialCommandGroup(path_2, WaitCommand(1.5)),
+        deadline=SequentialCommandGroup(path_2, WaitCommand(.5)),
         commands=[
             SequentialCommandGroup(
                 WaitCommand(0.5),
@@ -150,7 +149,7 @@ auto =  SequentialCommandGroup(
                     commands=[
                         command.SetArm(
                                 Robot.arm,
-                                config.scoring_locations["mid_auto_back_cube"].arm_length,
+                                config.scoring_locations["standard"].arm_length,
                                 config.scoring_locations["high_auto_back_cube"].arm_angle,
                             ),
                         command.SetGrabber(
@@ -177,10 +176,11 @@ auto =  SequentialCommandGroup(
         ],
     ),
 
-    InstantCommand(lambda: Robot.grabber.set_output(-0.3)),
+    InstantCommand(lambda: Robot.grabber.set_output(-0.7)),
     InstantCommand(lambda: Robot.grabber.open_claw()),
-
-    WaitCommand(0.25),
+    WaitCommand(.1),
+    InstantCommand(lambda: Robot.grabber.set_output(0)),
+    ##WaitCommand(0.25),
     ParallelDeadlineGroup(
         deadline=path_3,
         commands=[
@@ -210,7 +210,7 @@ auto =  SequentialCommandGroup(
         ],
     ),
     ParallelDeadlineGroup(
-        deadline=SequentialCommandGroup(path_4, WaitCommand(0.4)),
+        deadline=SequentialCommandGroup(path_4, WaitCommand(3)),
         commands=[
             SequentialCommandGroup(
                 InstantCommand(lambda: Robot.intake.intake_motor.set_raw_output(0)),
@@ -224,7 +224,7 @@ auto =  SequentialCommandGroup(
                 InstantCommand(lambda: Robot.grabber.set_output(0)),
             ),
             SequentialCommandGroup(
-                WaitCommand(0.4),
+                WaitCommand(0.6),
                 ParallelDeadlineGroup(
                     deadline=WaitCommand(1.2),
                     commands=[
@@ -240,47 +240,14 @@ auto =  SequentialCommandGroup(
                 ParallelCommandGroup(
                     command.SetArm(
                         Robot.arm,
-                        config.scoring_locations["mid_auto_back_cube"].arm_length,
-                        config.scoring_locations["mid_auto_back_cube"].arm_angle,
-                    ),
-                    SequentialCommandGroup(
-                        WaitCommand(0.6),
-                        command.SetGrabber(
-                            Robot.grabber,
-                            config.scoring_locations["mid_auto_back_cube"].wrist_angle,
-                            False,
-                        ),
+                        config.scoring_locations["standard"].arm_length,
+                        config.scoring_locations["standard"].arm_angle,
                     ),
                 ),
             ),
         ],
-    ),
-   
-    InstantCommand(lambda: Robot.grabber.open_claw()),
-    ParallelDeadlineGroup(
-        deadline=path_5,
-        commands=[
-            ParallelCommandGroup(
-                command.SetArm(
-                    Robot.arm,
-                    config.scoring_locations["standard"].arm_length,
-                    config.scoring_locations["standard"].arm_angle,
-                    
-                ),
-                InstantCommand(lambda: Robot.arm.enable_brake()),
-            )
-
-        ]
-    ), 
-    InstantCommand(lambda: Robot.grabber.open_claw()),
-    WaitCommand(0.2),
-    command.TargetAuto(
-        Robot.arm,
-        Robot.grabber,
-        Robot.intake,
-        Sensors.odometry,
-        target=config.scoring_locations["standard"],
-    ).generate(),
+    )
 )
+
 
 routine = AutoRoutine(Pose2d(*initial), auto, blue_team=blue_team)

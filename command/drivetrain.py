@@ -118,7 +118,7 @@ class DrivetrainDock(SubsystemCommand[Drivetrain]):
     def __init__(self, subsystem: Drivetrain):
         super().__init__(subsystem)
         self.subsystem = subsystem
-        self.gyro = Sensors.gyro
+        self.gyro = self.subsystem.gyro
         
     def initialize(self) -> None:
         pass
@@ -137,7 +137,7 @@ class DrivetrainEngage(SubsystemCommand[Drivetrain]):
     def __init__(self, subsystem: Drivetrain):
         super().__init__(subsystem)
         self.subsystem = subsystem
-        self.gyro = Sensors.gyro
+        self.gyro = self.subsystem.gyro
         self.constraints = TrapezoidProfile.Constraints(1, .3)
         self.pid = ProfiledPIDController(.3, .001, .3, self.constraints)
         
