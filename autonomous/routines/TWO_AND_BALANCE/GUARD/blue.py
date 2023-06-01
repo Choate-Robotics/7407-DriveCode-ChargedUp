@@ -77,7 +77,7 @@ path_3 = FollowPathCustom(
 path_4 = FollowPathCustom(
     subsystem=Robot.drivetrain,
     trajectory=CustomTrajectory(
-        start_pose=Pose2d(*go_get_second_cube[0]),
+        start_pose=Pose2d(*go_get_second_cube[2]),
         waypoints=[Translation2d(*x) for x in go_to_balance[1]],
         end_pose=Pose2d(*go_to_balance[2]),
         max_velocity=4.5,
@@ -186,24 +186,16 @@ auto =  SequentialCommandGroup(
                     Robot.grabber,
                     Robot.intake,
                     Sensors.odometry,
-                    target=config.scoring_locations[
-                        "cube_intake_auto_but_slightly_higher"
-                    ],
+                    target=config.scoring_locations["cube_intake_auto"],
                 ).generate(),
             )
         ],
     ),
     ParallelDeadlineGroup(
-        deadline=SequentialCommandGroup(path_4, WaitCommand(3)),
+        deadline=SequentialCommandGroup(path_4),
         commands=[
             SequentialCommandGroup(
-                InstantCommand(lambda: Robot.intake.intake_motor.set_raw_output(0)),
-                InstantCommand(lambda: Robot.intake.intake_piston.retract()),
-                WaitCommand(0.4),
-                InstantCommand(lambda: Robot.intake.intake_piston.extend()),
-                InstantCommand(lambda: Robot.intake.intake_motor.set_raw_output(0.1)),
                 WaitCommand(1),
-                InstantCommand(lambda: Robot.intake.intake_motor.set_raw_output(0.1)),
                 InstantCommand(lambda: Robot.grabber.disengage_claw()),
                 InstantCommand(lambda: Robot.grabber.set_output(0)),
             ),
@@ -217,7 +209,7 @@ auto =  SequentialCommandGroup(
                             Robot.grabber,
                             Robot.intake,
                             Sensors.odometry,
-                            target=config.scoring_locations["cube_intake_auto_2"],
+                            target=config.scoring_locations["standard"],
                         ).generate()
                     ],
                 ),
@@ -230,7 +222,12 @@ auto =  SequentialCommandGroup(
                 ),
             ),
         ],
+    ),
+    SequentialCommandGroup(
+        command.DrivetrainDock(Robot.drivetrain, False),
+        command.DrivetrainEngage(Robot.drivetrain, False)
     )
+    
 )
 
 

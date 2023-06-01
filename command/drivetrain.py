@@ -115,16 +115,22 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
         return False
 
 class DrivetrainDock(SubsystemCommand[Drivetrain]):
-    def __init__(self, subsystem: Drivetrain):
+    def __init__(self, subsystem: Drivetrain, dir_forward: bool):
         super().__init__(subsystem)
         self.subsystem = subsystem
+        self.dir_forward = dir_forward
+        self.accel = SlewRateLimiter(.1)
         self.gyro = self.subsystem.gyro
         
     def initialize(self) -> None:
-        pass
+        self.accel.reset(0)
     
     def execute(self) -> None:
-        self.subsystem.set_robot_centric((-.75, 0), 0)
+        limit = self.accel.calculate(.5)
+        speed = -limit * constants.drivetrain_max_vel
+        if not self.dir_forward:
+            speed = -speed
+        self.subsystem.set_robot_centric((speed, 0), 0)
     
     def isFinished(self) -> bool:
         return abs(self.gyro.get_robot_pitch()) > math.radians(15)
@@ -134,9 +140,10 @@ class DrivetrainDock(SubsystemCommand[Drivetrain]):
         
 
 class DrivetrainEngage(SubsystemCommand[Drivetrain]):
-    def __init__(self, subsystem: Drivetrain):
+    def __init__(self, subsystem: Drivetrain, dir_forward: bool):
         super().__init__(subsystem)
         self.subsystem = subsystem
+        self.dir_forward = dir_forward
         self.gyro = self.subsystem.gyro
         self.constraints = TrapezoidProfile.Constraints(1, .3)
         self.pid = ProfiledPIDController(.3, .001, .3, self.constraints)
@@ -147,7 +154,9 @@ class DrivetrainEngage(SubsystemCommand[Drivetrain]):
         self.pid.setTolerance(3, 0.3)
     
     def execute(self) -> None:
-        dy = self.pid.calculate(math.degrees(self.gyro.get_robot_pitch()))
+        dy = self.pid.calculate(math.degrees(self.gyro.get_robot_pitch())) * constants.drivetrain_max_vel / 2
+        if not self.dir_forward:
+            dy = -dy
         self.subsystem.set_robot_centric((dy, 0), 0)
     
     def isFinished(self) -> bool:
