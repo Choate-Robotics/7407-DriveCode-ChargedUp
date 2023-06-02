@@ -159,9 +159,9 @@ auto =  SequentialCommandGroup(
             ),
         ],
     ),
-
-    InstantCommand(lambda: Robot.grabber.set_output(-0.7)),
+    
     InstantCommand(lambda: Robot.grabber.open_claw()),
+    InstantCommand(lambda: Robot.grabber.set_output(-0.7)),
     WaitCommand(.1),
     InstantCommand(lambda: Robot.grabber.set_output(0)),
     ##WaitCommand(0.25),
