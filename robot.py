@@ -264,7 +264,6 @@ class _Robot(wpilib.TimedRobot):
             print(e)
 
     def teleopInit(self):
-        Leds.Default.setLED(Leds.Default.Type.KTrack(65, 105, 225, 0,0,0))
         # Robot.drivetrain.n_front_left.zero()
         # Robot.drivetrain.n_front_right.zero()
         # Robot.drivetrain.n_back_left.zero()
@@ -412,7 +411,6 @@ class _Robot(wpilib.TimedRobot):
         ...
 
     def autonomousInit(self):
-        Leds.Default.setLED(Leds.Default.Type.KBlink(212, 175, 55))
         Robot.drivetrain.n_front_left.zero()
         Robot.drivetrain.n_front_right.zero()
         Robot.drivetrain.n_back_left.zero()
