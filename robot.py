@@ -346,8 +346,12 @@ class _Robot(wpilib.TimedRobot):
         
         if Robot.grabber.get_cone_detected():
             Leds.Default.setLED(Leds.Default.Type.KStatic(225, 225, 51))
-        elif Robot.grabber.get_cube_detected() and Leds.Default.getLED()['color']['r'] == 225:
+        elif Robot.grabber.get_cube_detected():
             Leds.Default.setLED(Leds.Default.Type.KStatic(148, 0, 211))
+        # elif Leds.Default.getLED()['color']['r'] == 225 or Leds.Default.getLED()['color']['r'] == 148:
+        #     Leds.Default.setLast()
+        else:
+            Leds.Default.setLED(Leds.Default.Type.KStatic(15, 14, 231))
         # reported = math.degrees(Robot.drivetrain.n_front_left.get_current_motor_angle())
         # actual = (
         #     Robot.drivetrain.n_front_left.encoder.getAbsolutePosition()

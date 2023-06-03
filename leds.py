@@ -55,6 +55,8 @@ class ALeds():
         self.size = size
         self.id = id
         self.speed = 5
+        self.track_index = 0
+        self.blink_index = 0
         self.active_mode = None
         self.last_active_mode = None
         self.last_brightness = None
@@ -94,7 +96,17 @@ class ALeds():
         self.brightness = brightness
         
     def getLED(self):
-        return self.active_mode
+        if self.active_mode == None:
+            return {
+                'type': 0,
+                'color': {
+                    'r': 0,
+                    'g': 0,
+                    'b': 0
+                }
+            }
+        else:
+            return self.active_mode
         
     def setLast(self):
         self.active_mode = self.last_active_mode
@@ -142,12 +154,12 @@ class ALeds():
         for i in range(len(self.array)):
             self.array[i].setRGB(r1, g1, b1)
             
-        for i in range(3, len(self.array), 4):
-            self.array[i + self.track_index].setRGB(r2, g2, b2)
+        for i in range(self.track_index, len(self.array), 4):
+            self.array[i].setRGB(r2, g2, b2)
         
-        self.track_index += self.speed
+        self.track_index += 1
         
-        if self.track_index < len(self.array): 
+        if self.track_index > len(self.array): 
             self.track_index = 0
         
         self.m_led.setData(self.array)
@@ -160,8 +172,8 @@ class ALeds():
             for i in range(len(self.array)):
                 self.array[i].setRGB(0,0,0)
         
-        self.blink_index += self.speed
-        if self.blink_index < 10:
+        self.blink_index += 1
+        if self.blink_index > 10:
             self.blink_index = 0      
 class SLEDS:
     '''Switchable LEDS from Switchable PDH'''
