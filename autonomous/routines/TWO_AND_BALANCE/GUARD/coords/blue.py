@@ -26,13 +26,14 @@ go_get_second_cube: path = (
         (initial[0] + 1.85, initial[1] + 0.27),
         (initial[0] + 3.3, initial[1] + 0.24),
         (initial[0] + 4.2, initial[1] + 0.38),
-        (initial[0] + 4.6, initial[1] + 1.6),
+        (initial[0] + 4.6, initial[1] + 1.9),
+        
     ],
-    (initial[0] + 5.79, initial[1] + 1.83, 0),
+    (initial[0] + 5.79, initial[1] + 2.10, 0),
 )
 
 go_to_balance: path = (
     go_get_second_cube[2],
     [],
-    (initial[0] + 3.75, initial[1] + 1.45 , 0),
+    (initial[0] + 3.55, initial[1] + 1.56 , 0),
 )

@@ -119,7 +119,7 @@ class DrivetrainDock(SubsystemCommand[Drivetrain]):
         super().__init__(subsystem)
         self.subsystem = subsystem
         self.dir_forward = dir_forward
-        self.accel = SlewRateLimiter(.1)
+        self.accel = SlewRateLimiter(.3)
         self.gyro = self.subsystem.gyro
         
     def initialize(self) -> None:
@@ -133,7 +133,7 @@ class DrivetrainDock(SubsystemCommand[Drivetrain]):
         self.subsystem.set_robot_centric((speed, 0), 0)
     
     def isFinished(self) -> bool:
-        return abs(self.gyro.get_robot_pitch()) > math.radians(15)
+        return abs(self.gyro.get_robot_pitch()) > math.radians(10)
     
     def end(self, interrupted: bool) -> None:
         pass
@@ -145,16 +145,16 @@ class DrivetrainEngage(SubsystemCommand[Drivetrain]):
         self.subsystem = subsystem
         self.dir_forward = dir_forward
         self.gyro = self.subsystem.gyro
-        self.constraints = TrapezoidProfile.Constraints(1, .3)
-        self.pid = ProfiledPIDController(.3, .001, .3, self.constraints)
+        self.constraints = TrapezoidProfile.Constraints(.2, .05)
+        self.pid = ProfiledPIDController(.04, .001, .002, self.constraints)
         
     def initialize(self) -> None:
         self.pid.reset()
         self.pid.setGoal(0)
-        self.pid.setTolerance(3, 0.3)
+        self.pid.setTolerance(25.0)
     
     def execute(self) -> None:
-        dy = self.pid.calculate(math.degrees(self.gyro.get_robot_pitch())) * constants.drivetrain_max_vel / 2
+        dy = self.pid.calculate(math.degrees(self.gyro.get_robot_pitch())) * constants.drivetrain_max_vel
         if not self.dir_forward:
             dy = -dy
         self.subsystem.set_robot_centric((dy, 0), 0)
@@ -163,7 +163,7 @@ class DrivetrainEngage(SubsystemCommand[Drivetrain]):
         return self.pid.atGoal()
     
     def end(self, interrupted: bool) -> None:
-        pass
+        self.subsystem.set_driver_centric((0,0),0)
         
 
 class DrivetrainZero(SubsystemCommand[Drivetrain]):
