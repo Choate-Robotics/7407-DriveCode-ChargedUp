@@ -9,6 +9,7 @@ from wpimath.geometry import Pose2d, Rotation2d
 from wpimath.filter import SlewRateLimiter
 import command
 import command.autonomous.custom_pathing
+import wpilib
 import config
 import constants
 from command.autonomous import CustomTrajectory
@@ -18,7 +19,8 @@ from subsystem import Drivetrain
 
 
 def curve_abs(x):
-    return x**2
+    curve = wpilib.SmartDashboard.getNumber('curve', 2)
+    return x**curve
 
 
 def curve(x):
@@ -40,8 +42,10 @@ class DriveSwerveCustom(SubsystemCommand[Drivetrain]):
         self.target_angle = math.atan2(
             math.sin(self.target_angle), math.cos(self.target_angle)
         )
-        self.ramp_limit_x = SlewRateLimiter(constants.drivetrain_max_accel_tele, -constants.drivetrain_max_accel_tele, 0.0)
-        self.ramp_limit_y = SlewRateLimiter(constants.drivetrain_max_accel_tele, -constants.drivetrain_max_accel_tele, 0.0)
+        self.base_accel = constants.drivetrain_max_accel_tele
+        self.accel = wpilib.SmartDashboard.getNumber('tele_accel', self.base_accel)
+        self.ramp_limit_x = SlewRateLimiter(self.accel, -self.accel, 0.0)
+        self.ramp_limit_y = SlewRateLimiter(self.accel, -self.accel, 0.0)
     def execute(self) -> None:
         
         #might be better to add acceleration after scaling if its non-linear

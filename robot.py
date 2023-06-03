@@ -62,7 +62,8 @@ class _Robot(wpilib.TimedRobot):
         self.pv_selection.setDefaultOption("On", "on")
         self.pv_selection.addOption("Off", "off")
         wpilib.SmartDashboard.putData("Photonvision", self.pv_selection)
-
+        wpilib.SmartDashboard.putNumber('curve', 2.0)
+        wpilib.SmartDashboard.putNumber('tele_accel', constants.drivetrain_max_accel_tele)
         self.auto_selection = wpilib.SendableChooser()
 
         self.auto_selection.setDefaultOption("BALANCE", autonomous.balance_auto)

@@ -152,7 +152,7 @@ class Drivetrain(SwerveDrivetrain):
     max_vel: meters_per_second = constants.drivetrain_max_vel
     max_target_accel: meters_per_second_squared = constants.drivetrain_max_target_accel
     max_angular_vel: radians_per_second = constants.drivetrain_max_angular_vel
-    deadzone_velocity: meters_per_second = 0.01
+    deadzone_velocity: meters_per_second = 0.02
     deadzone_angular_velocity: radians_per_second = math.radians(5)
     start_angle: degrees = 0
     start_pose: Pose2d = Pose2d(
