@@ -1,10 +1,14 @@
 from wpilib import AddressableLED, PowerDistribution
 import math
-class ALEDS():
+class ALeds():
     '''Addressable LEDS from PWM RIO'''
     m_led: AddressableLED
-    active_mode: dict
-    speed: int
+    # active_mode: dict
+    # speed: int
+    # brightness: float
+    # last_active_mode: dict
+    # last_speed: int
+    # last_brightness: float
     # m_ledBuffer: AddressableLED.LEDData
     class Type():
         
@@ -51,10 +55,14 @@ class ALEDS():
         self.size = size
         self.id = id
         self.speed = 5
+        self.active_mode = None
+        self.last_active_mode = None
+        self.last_brightness = None
+        self.last_speed = None
+        self.brightness = 1
         
     def init(self):
         self.m_rainbowFirstPixelHue = 0
-        self.track_index
         self.m_led = AddressableLED(self.id)
         self.m_led.setLength(self.size)
         self.m_ledBuffer = self.m_led.LEDData
@@ -74,23 +82,41 @@ class ALEDS():
     def run(self):
         pass
     
+    def storeCurrent(self):
+        self.last_active_mode = self.active_mode
+        self.last_speed = self.speed
+        self.last_brightness = self.brightness
+    
     def setLED(self, type, brightness: float = 1.0, speed: int = 5):
+        self.storeCurrent()
         self.active_mode = type
         self.speed = speed
         self.brightness = brightness
+        
+    def getLED(self):
+        return self.active_mode
+        
+    def setLast(self):
+        self.active_mode = self.last_active_mode
+        self.speed = self.last_speed
+        self.brightness = self.last_brightness
                 
-    def cycle(self):
+    def cycle(self):  
+        '''
+        cycles through LED array
+        this should be called periodically
+        '''
         match self.active_mode['type']:
             case 1:
-                color = self.active_mode['type']
+                color = self.active_mode['color']
                 self._setStatic(color['r'], color['g'], color['b'])
             case 2:
                 self._setRainbow()
             case 3:
-                color = self.active_mode['type']
+                color = self.active_mode['color']
                 self._setTrack(color['r1'], color['g1'], color['b1'], color['r2'], color['g2'], color['b2'])
             case 4:
-                color = self.active_mode['type']
+                color = self.active_mode['color']
                 self._setBlink(color['r'], color['g'], color['b']) 
         
     def _setStatic(self, red: int, green: int, blue: int):
@@ -127,9 +153,12 @@ class ALEDS():
         self.m_led.setData(self.array)
         
     def _setBlink(self, r,g,b):
-        if self.blink_index / 10 < .5:
+        if self.blink_index / 10 <= .5:
             for i in range(len(self.array)):
-                self.array[i].setRGB(r, g, b) 
+                self.array[i].setRGB(r, g, b)
+        else:
+            for i in range(len(self.array)):
+                self.array[i].setRGB(0,0,0)
         
         self.blink_index += self.speed
         if self.blink_index < 10:

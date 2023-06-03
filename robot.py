@@ -36,8 +36,6 @@ class _Robot(wpilib.TimedRobot):
         Robot.arm.init()
         Robot.grabber.init()
         Leds.Default.init()
-        Leds.Default.setStatic(200, 0, 0)
-
 
         for i in range(10):
             Robot.intake.intake_motor.motor.setInverted(True)
@@ -59,7 +57,7 @@ class _Robot(wpilib.TimedRobot):
 
         OI.init()
         OI.map_controls()
-
+        Leds.Default.setLED(Leds.Default.Type.KTrack(212, 175, 55, 65, 105, 225))
         self.pv_selection = wpilib.SendableChooser()
         self.pv_selection.setDefaultOption("On", "on")
         self.pv_selection.addOption("Off", "off")
@@ -129,7 +127,7 @@ class _Robot(wpilib.TimedRobot):
             Robot.drivetrain.n_back_right.initial_zero()
 
     def robotPeriodic(self):
-        Leds.Default.setRainbow()
+        Leds.Default.cycle()
         SmartDashboard.putBoolean("Climbed", Robot.climber.is_climbed())
         SmartDashboard.putNumber(
             "Robot Roll", math.degrees(Sensors.gyro.get_robot_roll())
@@ -266,6 +264,7 @@ class _Robot(wpilib.TimedRobot):
             print(e)
 
     def teleopInit(self):
+        Leds.Default.setLED(Leds.Default.Type.KTrack(65, 105, 225, 0,0,0))
         # Robot.drivetrain.n_front_left.zero()
         # Robot.drivetrain.n_front_right.zero()
         # Robot.drivetrain.n_back_left.zero()
@@ -343,6 +342,12 @@ class _Robot(wpilib.TimedRobot):
         if config.grabber_disable_intake:
             Robot.intake.intake_motor.set_raw_output(0)
             config.grabber_disable_intake = False
+            
+        
+        if Robot.grabber.get_cone_detected():
+            Leds.Default.setLED(Leds.Default.Type.KStatic(225, 225, 51))
+        elif Robot.grabber.get_cube_detected() and Leds.Default.getLED()['color']['r'] == 225:
+            Leds.Default.setLED(Leds.Default.Type.KStatic(148, 0, 211))
         # reported = math.degrees(Robot.drivetrain.n_front_left.get_current_motor_angle())
         # actual = (
         #     Robot.drivetrain.n_front_left.encoder.getAbsolutePosition()
@@ -403,6 +408,7 @@ class _Robot(wpilib.TimedRobot):
         ...
 
     def autonomousInit(self):
+        Leds.Default.setLED(Leds.Default.Type.KBlink(212, 175, 55))
         Robot.drivetrain.n_front_left.zero()
         Robot.drivetrain.n_front_right.zero()
         Robot.drivetrain.n_back_left.zero()
@@ -431,7 +437,7 @@ class _Robot(wpilib.TimedRobot):
         pass
 
     def disabledInit(self) -> None:
-        pass
+        Leds.Default.setLED(Leds.Default.Type.KRainbow())
 
     def disabledPeriodic(self) -> None:
         pass
