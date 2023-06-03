@@ -3,7 +3,7 @@ from robotpy_toolkit_7407.subsystem_templates.drivetrain import SwerveGyro
 
 import subsystem
 from sensors import FieldOdometry, PV_Cameras
-
+from leds import ALeds
 
 class Robot:
     arm = subsystem.Arm()
@@ -25,3 +25,6 @@ class Sensors:
     pv_controller: PV_Cameras = None
     odometry: FieldOdometry = FieldOdometry(Robot.drivetrain, None)
     gyro: SwerveGyro
+    
+class Leds:
+    Default = ALeds(0, 46)

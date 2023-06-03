@@ -12,7 +12,7 @@ import config
 import constants
 from autonomous.auto_routine import AutoRoutine
 from oi.OI import OI
-from robot_systems import Pneumatics, Robot, Sensors
+from robot_systems import Pneumatics, Robot, Sensors, Leds
 from sensors import FieldOdometry, PV_Cameras
 from utils import logger
 
@@ -25,6 +25,7 @@ class _Robot(wpilib.TimedRobot):
         self.auto_selection: wpilib.SendableChooser | None = None
 
     def robotInit(self):
+        
         period = 0.05
         commands2.CommandScheduler.getInstance().setPeriod(period)
         Pneumatics.compressor.enableAnalog(90, 120)
@@ -34,6 +35,7 @@ class _Robot(wpilib.TimedRobot):
         Robot.drivetrain.init()
         Robot.arm.init()
         Robot.grabber.init()
+        Leds.Default.init()
 
         for i in range(10):
             Robot.intake.intake_motor.motor.setInverted(True)
@@ -55,7 +57,7 @@ class _Robot(wpilib.TimedRobot):
 
         OI.init()
         OI.map_controls()
-
+        Leds.Default.setLED(Leds.Default.Type.KTrack(212, 175, 55, 65, 105, 225))
         self.pv_selection = wpilib.SendableChooser()
         self.pv_selection.setDefaultOption("On", "on")
         self.pv_selection.addOption("Off", "off")
@@ -125,7 +127,9 @@ class _Robot(wpilib.TimedRobot):
             Robot.drivetrain.n_back_right.initial_zero()
 
     def robotPeriodic(self):
-
+        Leds.Default.cycle()
+            
+            
         SmartDashboard.putBoolean("Climbed", Robot.climber.is_climbed())
         SmartDashboard.putNumber(
             "Robot Roll", math.degrees(Sensors.gyro.get_robot_roll())
@@ -339,6 +343,14 @@ class _Robot(wpilib.TimedRobot):
         if config.grabber_disable_intake:
             Robot.intake.intake_motor.set_raw_output(0)
             config.grabber_disable_intake = False
+            
+        if Robot.grabber.get_cone_detected():
+            Leds.Default.setLED(Leds.Default.Type.KStatic(225, 215, 0))
+        elif Robot.grabber.get_cube_detected():
+            Leds.Default.setLED(Leds.Default.Type.KStatic(148, 0, 211))
+        else:
+            Leds.Default.setLED(Leds.Default.Type.KStatic(15, 14, 231))
+        
         # reported = math.degrees(Robot.drivetrain.n_front_left.get_current_motor_angle())
         # actual = (
         #     Robot.drivetrain.n_front_left.encoder.getAbsolutePosition()
@@ -424,10 +436,15 @@ class _Robot(wpilib.TimedRobot):
         self.auto_selection.getSelected().run()
 
     def autonomousPeriodic(self):
-        pass
+        if Robot.grabber.get_cone_detected():
+            Leds.Default.setLED(Leds.Default.Type.KStatic(225, 215, 0))
+        elif Robot.grabber.get_cube_detected():
+            Leds.Default.setLED(Leds.Default.Type.KStatic(148, 0, 211))
+        else:
+            Leds.Default.setLED(Leds.Default.Type.KStatic(15, 14, 231))
 
     def disabledInit(self) -> None:
-        pass
+        Leds.Default.setLED(Leds.Default.Type.KRainbow())
 
     def disabledPeriodic(self) -> None:
         pass
