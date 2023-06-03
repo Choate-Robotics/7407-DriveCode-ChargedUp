@@ -350,7 +350,7 @@ class _Robot(wpilib.TimedRobot):
         elif wpilib.DriverStation.getMatchTime() < 15:
             Leds.Default.setLED(Leds.Default.Type.KBlink(200, 0, 0)) 
         elif Robot.grabber.get_cone_detected():
-            Leds.Default.setLED(Leds.Default.Type.KStatic(225, 215, 0))
+            Leds.Default.setLED(Leds.Default.Type.KStatic(225, 178, 9))
         elif Robot.grabber.get_cube_detected():
             Leds.Default.setLED(Leds.Default.Type.KStatic(148, 0, 211))
         else:
@@ -416,7 +416,7 @@ class _Robot(wpilib.TimedRobot):
         ...
 
     def autonomousInit(self):
-        Leds.Default.setLED(Leds.Default.Type.KBlink(0, 0, 200))
+        # Leds.Default.setLED(Leds.Default.Type.KTrack(100, 100, 100, 225, 0, 0))
         Robot.drivetrain.n_front_left.zero()
         Robot.drivetrain.n_front_right.zero()
         Robot.drivetrain.n_back_left.zero()
@@ -442,15 +442,17 @@ class _Robot(wpilib.TimedRobot):
         self.auto_selection.getSelected().run()
 
     def autonomousPeriodic(self):
-        if Robot.grabber.get_cone_detected():
-            Leds.Default.setLED(Leds.Default.Type.KStatic(225, 215, 0))
-        elif Robot.grabber.get_cube_detected():
-            Leds.Default.setLED(Leds.Default.Type.KStatic(148, 0, 211))
-        else:
-            Leds.Default.setLED(Leds.Default.Type.KStatic(15, 14, 231))
+        pass
+        # if Robot.grabber.get_cone_detected():
+        #     Leds.Default.setLED(Leds.Default.Type.KStatic(225, 215, 0))
+        # elif Robot.grabber.get_cube_detected():
+        #     Leds.Default.setLED(Leds.Default.Type.KStatic(148, 0, 211))
+        # else:
+        #     Leds.Default.setLED(Leds.Default.Type.KTrack(100, 100, 100, 225, 0, 0))
 
     def disabledInit(self) -> None:
         Leds.Default.setLED(Leds.Default.Type.KRainbow())
+        # Leds.Default.setLED(Leds.Default.Type.KTrack(100, 100, 100, 225, 0, 0))
 
     def disabledPeriodic(self) -> None:
         pass

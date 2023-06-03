@@ -66,6 +66,7 @@ class ALeds():
         self.last_brightness = None
         self.last_speed = None
         self.brightness = 1
+        self.track_speed = 1 #out of 5
         
     def init(self):
         self.m_rainbowFirstPixelHue = 0
@@ -167,10 +168,16 @@ class ALeds():
         for i in range(len(self.array)):
             self.array[i].setRGB(r1, g1, b1)
             
-        for i in range(self.track_index, len(self.array), 4):
-            self.array[i].setRGB(r2, g2, b2)
+            for i in range(0, len(self.array), 6):
+                if i <= len(self.array):
+                    for j in range(3):
+                        if i + self.track_index + j >= len(self.array):
+                            self.array[(i + self.track_index + j) - len(self.array)].setRGB(r2, g2, b2)
+                        else:
+                            self.array[i + self.track_index + j].setRGB(r2,g2,b2)
+            
         
-        self.track_index += 1
+        self.track_index += 1 
         
         if self.track_index > len(self.array): 
             self.track_index = 0

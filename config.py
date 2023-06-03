@@ -268,7 +268,7 @@ scoring_locations: dict[str, TargetData] = {
     "double_station": TargetData(
         target_pose=Pose2d(16, 7.51, math.radians(0)),
         arm_angle=math.radians(32.84),
-        arm_length=0.350,  # .322 for comp
+        arm_length=0.3220,  # .322 for comp
         wrist_angle=math.radians(54.63),
         intake_enabled=False,
         claw_scoring=False,
