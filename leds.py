@@ -50,6 +50,10 @@ class ALeds():
                 }
             }
         
+        def KClimb():
+            return {
+                'type': 5,
+            }
     
     def __init__(self, id: int, size: int):
         self.size = size
@@ -90,10 +94,13 @@ class ALeds():
         self.last_brightness = self.brightness
     
     def setLED(self, type, brightness: float = 1.0, speed: int = 5):
-        self.storeCurrent()
-        self.active_mode = type
-        self.speed = speed
-        self.brightness = brightness
+        try:
+            self.storeCurrent()
+            self.active_mode = type
+            self.speed = speed
+            self.brightness = brightness
+        except Exception:
+            pass
         
     def getLED(self):
         if self.active_mode == None:
@@ -113,23 +120,28 @@ class ALeds():
         self.speed = self.last_speed
         self.brightness = self.last_brightness
                 
-    def cycle(self):  
+    def cycle(self): 
         '''
         cycles through LED array
         this should be called periodically
         '''
-        match self.active_mode['type']:
-            case 1:
-                color = self.active_mode['color']
-                self._setStatic(color['r'], color['g'], color['b'])
-            case 2:
-                self._setRainbow()
-            case 3:
-                color = self.active_mode['color']
-                self._setTrack(color['r1'], color['g1'], color['b1'], color['r2'], color['g2'], color['b2'])
-            case 4:
-                color = self.active_mode['color']
-                self._setBlink(color['r'], color['g'], color['b']) 
+        try:
+            match self.active_mode['type']:
+                case 1:
+                    color = self.active_mode['color']
+                    self._setStatic(color['r'], color['g'], color['b'])
+                case 2:
+                    self._setRainbow()
+                case 3:
+                    color = self.active_mode['color']
+                    self._setTrack(color['r1'], color['g1'], color['b1'], color['r2'], color['g2'], color['b2'])
+                case 4:
+                    color = self.active_mode['color']
+                    self._setBlink(color['r'], color['g'], color['b']) 
+                case 5:
+                    self._setClimb()
+        except Exception:
+            pass
         
     def _setStatic(self, red: int, green: int, blue: int):
         for i in range(self.size):
@@ -149,6 +161,7 @@ class ALeds():
         # Check bounds
         self.m_rainbowFirstPixelHue %= 180
         self.m_led.setData(self.array)
+
         
     def _setTrack(self, r1, g1, b1, r2, g2, b2):
         for i in range(len(self.array)):
@@ -174,7 +187,16 @@ class ALeds():
         
         self.blink_index += 1
         if self.blink_index > 10:
-            self.blink_index = 0      
+            self.blink_index = 0   
+        self.m_led.setData(self.array)
+
+    def _setClimb(self):
+        for i in range(len(self.array)):
+            self.array[i].setRGB(0, 225, 0)
+        
+        for i in range(12):
+            self.array[i].setRGB(225, 0, 0)
+        self.m_led.setData(self.array)
 class SLEDS:
     '''Switchable LEDS from Switchable PDH'''
     

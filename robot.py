@@ -344,8 +344,12 @@ class _Robot(wpilib.TimedRobot):
         if config.grabber_disable_intake:
             Robot.intake.intake_motor.set_raw_output(0)
             config.grabber_disable_intake = False
-            
-        if Robot.grabber.get_cone_detected():
+         
+        if Robot.climber.climber_active:
+            Leds.Default.setLED(Leds.Default.Type.KClimb())  
+        elif wpilib.DriverStation.getMatchTime() < 15:
+            Leds.Default.setLED(Leds.Default.Type.KBlink(200, 0, 0)) 
+        elif Robot.grabber.get_cone_detected():
             Leds.Default.setLED(Leds.Default.Type.KStatic(225, 215, 0))
         elif Robot.grabber.get_cube_detected():
             Leds.Default.setLED(Leds.Default.Type.KStatic(148, 0, 211))
@@ -412,6 +416,7 @@ class _Robot(wpilib.TimedRobot):
         ...
 
     def autonomousInit(self):
+        Leds.Default.setLED(Leds.Default.Type.KBlink(0, 0, 200))
         Robot.drivetrain.n_front_left.zero()
         Robot.drivetrain.n_front_right.zero()
         Robot.drivetrain.n_back_left.zero()
