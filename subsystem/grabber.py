@@ -138,6 +138,8 @@ class Grabber(Subsystem):
         motor_position: float = encoder_difference * constants.wrist_gear_ratio
         self.wrist.set_sensor_position(-motor_position)
         self.wrist.set_target_position(-motor_position)
+        # self.wrist.set_sensor_position(0)
+        # self.wrist.set_target_position(0)
 
     @staticmethod
     def wrist_angle_to_motor_rotations(angle: radians):

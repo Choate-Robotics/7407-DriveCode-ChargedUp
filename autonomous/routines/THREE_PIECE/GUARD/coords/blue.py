@@ -28,7 +28,7 @@ go_get_second_cube: path = (
         (initial[0] + 3.9, initial[1] + 0.68),
         (initial[0] + 4.3, initial[1] + 2.33),
     ],
-    (initial[0] + 5.5, initial[1] + 2.36, 0),
+    (initial[0] + 5, initial[1] + 2.36, 0),
 )
 
 come_back_with_second_cube: path = (
